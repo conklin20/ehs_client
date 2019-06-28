@@ -1,5 +1,5 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
+# React App / Client Files 
 # dependencies
 /EHS.Client/node_modules
 /EHS.Client/.pnp
@@ -25,3 +25,6 @@
 
 # Web API / Server Files 
 /EHS.Server/.vs
+
+# Root files 
+/temp
