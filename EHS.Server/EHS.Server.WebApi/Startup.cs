@@ -31,14 +31,17 @@ namespace EHS.Server.WebApi
         {
             services.AddCors(); 
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             var connectinString = Configuration["connectionStrings:EHSConnectionString"];
             services.AddDbContext<EhsDbContext>(o => o.UseSqlServer(connectinString));
 
             //services.AddSingleton<IConfiguration>(Configuration); believe this is called by the framework by default
+            
+            //azure ad config 
+            //services.AddAuthentication(AzureADDefaults.BearerAuthenticationScheme)
+            //    .AddAzureADBearer(options => Configuration.Bind("AzureAd", options));
 
-
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -63,6 +66,7 @@ namespace EHS.Server.WebApi
             }
 
             app.UseHttpsRedirection();
+            //app.UseAuthentication(); when using aad
             app.UseMvc();
         }
     }

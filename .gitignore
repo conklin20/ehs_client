@@ -1,3 +1,13 @@
+# Global
+*.dbmdl
+*.jfm
+**/bin
+**/obj
+/bin
+/obj
+/temp
+
+
 
 # React App / Client Files 
 # dependencies
@@ -25,6 +35,7 @@
 
 # Web API / Server Files 
 /EHS.Server/.vs
+
 
 # Root files 
 /temp

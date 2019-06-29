@@ -42,7 +42,7 @@ namespace EHS.Server.WebApi.Controllers
             }
             catch(Exception ex)
             {
-                logger.LogError("Exceotion occurred: " + ex.ToString()); 
+                logger.LogError("Exception occurred: " + ex.ToString()); 
             }
 
             return new string[] { "value1", "value2" };
