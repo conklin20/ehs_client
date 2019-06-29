@@ -14,6 +14,7 @@ using NLog.Extensions.Logging;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using EHS.Server.DataAccess.DatabaseModels;
+using EHS.Server.DataAccess.Repository;
 
 namespace EHS.Server.WebApi
 {
@@ -36,10 +37,14 @@ namespace EHS.Server.WebApi
             services.AddDbContext<EhsDbContext>(o => o.UseSqlServer(connectinString));
 
             //services.AddSingleton<IConfiguration>(Configuration); believe this is called by the framework by default
-            
+
             //azure ad config 
             //services.AddAuthentication(AzureADDefaults.BearerAuthenticationScheme)
             //    .AddAzureADBearer(options => Configuration.Bind("AzureAd", options));
+
+            // add Repos 
+            services.AddTransient<IHierarchyLevelRepository, HierarchyLevelRepository>();
+            services.AddTransient<IHierarchyRepository, HierarchyRepository>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }

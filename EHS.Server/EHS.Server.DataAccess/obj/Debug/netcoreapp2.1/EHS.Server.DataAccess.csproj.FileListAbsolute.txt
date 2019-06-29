@@ -1,0 +1,6 @@
+C:\Users\caryc\Projects\Vista Outdoor\EHS\EHS.Server\EHS.Server.DataAccess\bin\Debug\netcoreapp2.1\EHS.Server.DataAccess.deps.json
+C:\Users\caryc\Projects\Vista Outdoor\EHS\EHS.Server\EHS.Server.DataAccess\bin\Debug\netcoreapp2.1\EHS.Server.DataAccess.dll
+C:\Users\caryc\Projects\Vista Outdoor\EHS\EHS.Server\EHS.Server.DataAccess\obj\Debug\netcoreapp2.1\EHS.Server.DataAccess.csprojAssemblyReference.cache
+C:\Users\caryc\Projects\Vista Outdoor\EHS\EHS.Server\EHS.Server.DataAccess\obj\Debug\netcoreapp2.1\EHS.Server.DataAccess.csproj.CoreCompileInputs.cache
+C:\Users\caryc\Projects\Vista Outdoor\EHS\EHS.Server\EHS.Server.DataAccess\obj\Debug\netcoreapp2.1\EHS.Server.DataAccess.AssemblyInfoInputs.cache
+C:\Users\caryc\Projects\Vista Outdoor\EHS\EHS.Server\EHS.Server.DataAccess\obj\Debug\netcoreapp2.1\EHS.Server.DataAccess.AssemblyInfo.cs

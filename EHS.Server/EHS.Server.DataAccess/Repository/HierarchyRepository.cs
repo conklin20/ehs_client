@@ -8,11 +8,11 @@ using Dapper;
 
 namespace EHS.Server.DataAccess.Repository
 {
-    public class HierarchyRepositoryRepository : IHierarchyRepository
+    public class HierarchyRepository : IHierarchyRepository
     {
         private readonly IConfiguration _config;
         
-        public HierarchyRepositoryRepository(IConfiguration config)
+        public HierarchyRepository(IConfiguration config)
         {
             _config = config;
         }
