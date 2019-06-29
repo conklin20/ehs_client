@@ -1,6 +1,0 @@
-C:\Users\caryc\Projects\Vista Outdoor\EHS\EHS.Server\EHS.Server.DB\bin\Debug\EHS.Server.DB.dacpac
-C:\Users\caryc\Projects\Vista Outdoor\EHS\EHS.Server\EHS.Server.DB\bin\Debug\EHS.Server.DB.dll
-C:\Users\caryc\Projects\Vista Outdoor\EHS\EHS.Server\EHS.Server.DB\bin\Debug\EHS.Server.DB.pdb
-C:\Users\caryc\Projects\Vista Outdoor\EHS\EHS.Server\EHS.Server.DB\obj\Debug\EHS.Server.DB.sqlprojAssemblyReference.cache
-C:\Users\caryc\Projects\Vista Outdoor\EHS\EHS.Server\EHS.Server.DB\obj\Debug\EHS.Server.DB.dll
-C:\Users\caryc\Projects\Vista Outdoor\EHS\EHS.Server\EHS.Server.DB\obj\Debug\EHS.Server.DB.pdb

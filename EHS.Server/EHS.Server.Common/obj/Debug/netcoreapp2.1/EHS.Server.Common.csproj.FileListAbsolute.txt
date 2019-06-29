@@ -1,5 +1,0 @@
-C:\Users\caryc\Projects\Vista Outdoor\EHS\EHS.Server\EHS.Server.Common\bin\Debug\netcoreapp2.1\EHS.Server.Contracts.dll
-C:\Users\caryc\Projects\Vista Outdoor\EHS\EHS.Server\EHS.Server.Common\obj\Debug\netcoreapp2.1\EHS.Server.Common.csprojAssemblyReference.cache
-C:\Users\caryc\Projects\Vista Outdoor\EHS\EHS.Server\EHS.Server.Common\obj\Debug\netcoreapp2.1\EHS.Server.Common.csproj.CoreCompileInputs.cache
-C:\Users\caryc\Projects\Vista Outdoor\EHS\EHS.Server\EHS.Server.Common\obj\Debug\netcoreapp2.1\EHS.Server.Common.AssemblyInfoInputs.cache
-C:\Users\caryc\Projects\Vista Outdoor\EHS\EHS.Server\EHS.Server.Common\obj\Debug\netcoreapp2.1\EHS.Server.Common.AssemblyInfo.cs
