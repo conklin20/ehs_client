@@ -15,6 +15,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using EHS.Server.DataAccess.DatabaseModels;
 using EHS.Server.DataAccess.Repository;
+using EHS.Server.WebApi.Extensions; 
 
 namespace EHS.Server.WebApi
 {
@@ -30,8 +31,10 @@ namespace EHS.Server.WebApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddCors(); 
-
+            //from the ServiceExtensions class 
+            services.ConfigureCors();
+            services.ConfigureIISIntegration();
+            services.ConfigureApiVersioning(); 
 
             var connectinString = Configuration["connectionStrings:EHSConnectionString"];
             services.AddDbContext<EhsDbContext>(o => o.UseSqlServer(connectinString));

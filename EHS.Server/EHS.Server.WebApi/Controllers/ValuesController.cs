@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging;
 namespace EHS.Server.WebApi.Controllers
 {
     [Authorize]
-    [Route("api/[controller]")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
     public class ValuesController : ControllerBase
     {

@@ -31,7 +31,7 @@ namespace EHS.Server.DataAccess.Repository
             {
                 string sQuery = "select l.HierarchyLevelId, l.HierarchyLevelName from dbo.HierarchyLevels l where l.HierarchyLevelId = @hierarchyLevelId ";
                 sqlCon.Open();
-                var result = await sqlCon.QueryAsync<DatabaseModels.HierarchyLevel>(sQuery, new { Id = id });
+                var result = await sqlCon.QueryAsync<DatabaseModels.HierarchyLevel>(sQuery, new { hierarchyLevelId = id });
                 return result.FirstOrDefault();
             }
         }
