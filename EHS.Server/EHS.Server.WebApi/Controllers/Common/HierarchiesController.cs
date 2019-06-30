@@ -20,10 +20,10 @@ namespace EHS.Server.WebApi.Controllers.Common
         private readonly ILogger<HierarchiesController> _logger;
         private readonly IHierarchyRepository _hierarchyRepo;
         
-        public HierarchiesController(ILogger<HierarchiesController> logger, IHierarchyRepository attributeRepo)
+        public HierarchiesController(ILogger<HierarchiesController> logger, IHierarchyRepository hierarchyRepo)
         {
             _logger = logger;
-            _hierarchyRepo = attributeRepo;
+            _hierarchyRepo = hierarchyRepo;
         }
 
         // GET: api/Hierarchies
@@ -32,7 +32,6 @@ namespace EHS.Server.WebApi.Controllers.Common
         {
             try
             {
-                _logger.LogInformation("Awaiting hierarchy GetAll() Call");
                 return await _hierarchyRepo.GetAll();
             }
             catch (Exception ex)
@@ -43,12 +42,11 @@ namespace EHS.Server.WebApi.Controllers.Common
         }
 
         // GET: api/Hierarchies/5
-        [HttpGet("{id}", Name = "Get")]
+        [HttpGet("{id}", Name = "GetHierarchy")]
         public async Task<ActionResult<Hierarchy>> Get(int id)
         {
             try
             {
-                _logger.LogInformation("Awaiting hierarchy GetById() Call");
                 return await _hierarchyRepo.GetById(id); 
             }
             catch (Exception ex)
@@ -60,20 +58,47 @@ namespace EHS.Server.WebApi.Controllers.Common
 
         // POST: api/Hierarchies
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task<ActionResult<Hierarchy>> Post([FromBody] Hierarchy newHierarchy)
         {
+            try
+            {
+                return await _hierarchyRepo.Add(newHierarchy);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return BadRequest();
+            }
         }
 
         // PUT: api/Hierarchies/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public async Task<ActionResult<Hierarchy>> Put(int id, [FromBody] string userId)
         {
+            try
+            {
+                return await _hierarchyRepo.Update(id, userId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return BadRequest();
+            }
         }
 
         // DELETE: api/ApiWithActions/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<ActionResult<Hierarchy>> Delete(int id, [FromBody] string userId)
         {
+            try
+            {
+                return await _hierarchyRepo.Delete(id, userId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return BadRequest();
+            }
         }
     }
 }

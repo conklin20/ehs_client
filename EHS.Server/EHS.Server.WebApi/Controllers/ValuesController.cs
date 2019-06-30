@@ -27,25 +27,25 @@ namespace EHS.Server.WebApi.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<string>> Get()
         {
-            logger.LogInformation("Logging an information event");
-            logger.LogWarning("Logging a warning!");
-            logger.LogDebug("Logging debug event");
-            logger.LogTrace("Logging a trace event");
-            logger.LogError("Error occurred!!");
-            logger.LogCritical("Critical Error Occurred!!!"); 
+            logger.LogInformation("Logger Connnected, Web API is running! ");
+            //logger.LogWarning("Logging a warning!");
+            //logger.LogDebug("Logging debug event");
+            //logger.LogTrace("Logging a trace event");
+            //logger.LogError("Error occurred!!");
+            //logger.LogCritical("Critical Error Occurred!!!"); 
 
-            try
-            {
-                int x = 20;
-                int y = x / 0; 
+            //try
+            //{
+            //    int x = 20;
+            //    int y = x / 0; 
 
-            }
-            catch(Exception ex)
-            {
-                logger.LogError("Exception occurred: " + ex.ToString()); 
-            }
+            //}
+            //catch(Exception ex)
+            //{
+            //    logger.LogError("Exception occurred: " + ex.ToString()); 
+            //}
 
-            return new string[] { "value1", "value2" };
+            return new string[] { "Controller working!" };
         }
 
         // GET api/values/5

@@ -64,6 +64,7 @@
     <Folder Include="app\Tables\" />
     <Folder Include="dbo\Views\" />
     <Folder Include="Security\" />
+    <Folder Include="dbo\Stored Procedures\" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="dbo\Tables\HierarchyLevels.sql" />
@@ -86,5 +87,7 @@
     <Build Include="dbo\Views\vMaterials.sql" />
     <Build Include="dbo\Views\vJobTitles.sql" />
     <Build Include="Security\app.sql" />
+    <Build Include="dbo\Stored Procedures\spHierarchyDelete.sql" />
+    <Build Include="dbo\Stored Procedures\spHierarchyAddOrUpdate.sql" />
   </ItemGroup>
 </Project>

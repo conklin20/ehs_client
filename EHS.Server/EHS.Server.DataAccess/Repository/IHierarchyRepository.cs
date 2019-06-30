@@ -9,5 +9,8 @@ namespace EHS.Server.DataAccess.Repository
     {
         Task<DatabaseModels.Hierarchy> GetById(int id);
         Task<List<DatabaseModels.Hierarchy>> GetAll();
+        Task<DatabaseModels.Hierarchy> Add(DatabaseModels.Hierarchy hierarchy);
+        Task<DatabaseModels.Hierarchy> Update(int id, string userId);
+        Task<DatabaseModels.Hierarchy> Delete(int id, string userId);
     }
 }
