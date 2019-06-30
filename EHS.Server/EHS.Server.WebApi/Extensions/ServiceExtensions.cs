@@ -42,6 +42,8 @@ namespace EHS.Server.WebApi.Extensions
             });
         }
 
+
+
         //public static void ConfigureLoggerService(this IServiceCollection services)
         //{
         //    services.AddSingleton<ILoggerManager, LoggerManager>(); 

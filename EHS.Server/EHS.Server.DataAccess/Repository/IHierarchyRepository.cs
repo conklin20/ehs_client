@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using EHS.Server.DataAccess.DatabaseModels; 
 
 namespace EHS.Server.DataAccess.Repository
 {
@@ -9,8 +8,8 @@ namespace EHS.Server.DataAccess.Repository
     {
         Task<DatabaseModels.Hierarchy> GetById(int id);
         Task<List<DatabaseModels.Hierarchy>> GetAll();
-        Task<DatabaseModels.Hierarchy> Add(DatabaseModels.Hierarchy hierarchy);
-        Task<DatabaseModels.Hierarchy> Update(int id, string userId);
-        Task<DatabaseModels.Hierarchy> Delete(int id, string userId);
+        Task<DatabaseModels.Hierarchy> Add(Hierarchy hierarchy);
+        Task<DatabaseModels.Hierarchy> Update(Hierarchy hierarchyToUpdate, string userId);
+        Task<DatabaseModels.Hierarchy> Delete(Hierarchy hierarchyToDelete, string userId);
     }
 }

@@ -15,7 +15,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using EHS.Server.DataAccess.DatabaseModels;
 using EHS.Server.DataAccess.Repository;
-using EHS.Server.WebApi.Extensions; 
+using EHS.Server.WebApi.Extensions;
 
 namespace EHS.Server.WebApi
 {
@@ -49,7 +49,21 @@ namespace EHS.Server.WebApi
             services.AddTransient<IHierarchyLevelRepository, HierarchyLevelRepository>();
             services.AddTransient<IHierarchyRepository, HierarchyRepository>();
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            // Utility for mapping DTO's to Models 
+            var config = new AutoMapper.MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile(new Helpers.MappingHelper());
+            });
+            var mapper = config.CreateMapper();
+            services.AddSingleton(mapper); 
+
+            
+
+            services.AddMvc(o =>
+            {
+                
+            })
+            .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

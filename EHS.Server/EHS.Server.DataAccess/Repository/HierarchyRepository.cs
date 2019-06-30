@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
 using System.Linq;
+using EHS.Server.DataAccess.DatabaseModels; 
 using Dapper;
 
 namespace EHS.Server.DataAccess.Repository
@@ -25,7 +26,7 @@ namespace EHS.Server.DataAccess.Repository
             }
         }
         
-        public async Task<DatabaseModels.Hierarchy> GetById(int id)
+        public async Task<Hierarchy> GetById(int id)
         {
             using (IDbConnection sqlCon = Connection)
             {
@@ -33,24 +34,24 @@ namespace EHS.Server.DataAccess.Repository
                                   from Hierarchies h 
                                   where h.HierarchyId = @hierarchyId ";
                 sqlCon.Open();
-                var result = await sqlCon.QueryAsync<DatabaseModels.Hierarchy>(sQuery, new { hierarchyId = id });
+                var result = await sqlCon.QueryAsync<Hierarchy>(sQuery, new { hierarchyId = id });
                 return result.FirstOrDefault();
             }
         }
 
-        public async Task<List<DatabaseModels.Hierarchy>> GetAll()
+        public async Task<List<Hierarchy>> GetAll()
         {
             using (IDbConnection sqlCon = Connection)
             {
                 string sQuery = @"select h.HierarchyId, h.HierarchyName, h.HierarchyLevelId, h.Lft, h.Rgt, h.CreatedBy, h.CreatedOn, h.ModifiedBy, h.ModifiedOn 
                                   from dbo.Hierarchies h ";
                 sqlCon.Open();
-                var result = await sqlCon.QueryAsync<DatabaseModels.Hierarchy>(sQuery);
+                var result = await sqlCon.QueryAsync<Hierarchy>(sQuery);
                 return result.AsList();
             }
         }
 
-        public async Task<DatabaseModels.Hierarchy> Add(DatabaseModels.Hierarchy newHierarchy)
+        public async Task<Hierarchy> Add(Hierarchy hierarchyToAdd)
         {
             using (IDbConnection sqlCon = Connection)
             {
@@ -59,25 +60,22 @@ namespace EHS.Server.DataAccess.Repository
                     "dbo.spHierarchyAddOrUpdate",
                     new
                     {
-                        hierarchyName = newHierarchy.HierarchyName,
-                        lft = newHierarchy.Lft,
-                        rgt = newHierarchy.Rgt,
-                        hierarchyLevelId = newHierarchy.HierarchyLevelId,
-                        userId = newHierarchy.CreatedBy
+                        hierarchyName = hierarchyToAdd.HierarchyName,
+                        lft = hierarchyToAdd.Lft,
+                        rgt = hierarchyToAdd.Rgt,
+                        hierarchyLevelId = hierarchyToAdd.HierarchyLevelId,
+                        userId = hierarchyToAdd.CreatedBy
                     },
                     commandType: CommandType.StoredProcedure
                     );
-                return newHierarchy;
+                return hierarchyToAdd;
             }
         }
 
-        public async Task<DatabaseModels.Hierarchy> Update(int id, string userId)
+        public async Task<Hierarchy> Update(Hierarchy hierarchyToUpdate, string userId)
         {
             using (IDbConnection sqlCon = Connection)
-            {
-                //get the Hierarchy object that we want to update
-                DatabaseModels.Hierarchy hierarchyToUpdate = await GetById(id);         
-
+            {     
                 sqlCon.Open();
                 var result = await sqlCon.ExecuteAsync(
                     "dbo.spHierarchyAddOrUpdate",
@@ -96,13 +94,10 @@ namespace EHS.Server.DataAccess.Repository
             }
         }
 
-        public async Task<DatabaseModels.Hierarchy> Delete(int id, string userId)
+        public async Task<Hierarchy> Delete(Hierarchy hierarchyToDelete, string userId)
         {
             using (IDbConnection sqlCon = Connection)
             {
-                //get the Hierarchy object that we want to delete
-                DatabaseModels.Hierarchy hierarchyToDelete = await GetById(id);
-
                 sqlCon.Open();
                 var result = await sqlCon.ExecuteAsync(
                     "dbo.spHierarchyDelete",
