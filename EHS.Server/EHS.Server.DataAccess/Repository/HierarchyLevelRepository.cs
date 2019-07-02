@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
 using System.Linq;
+using EHS.Server.DataAccess.DatabaseModels;
 using Dapper;
 
 namespace EHS.Server.DataAccess.Repository
@@ -25,24 +26,24 @@ namespace EHS.Server.DataAccess.Repository
             }
         }
         
-        public async Task<DatabaseModels.HierarchyLevel> GetById(int id)
+        public async Task<HierarchyLevel> GetById(int id)
         {
             using (IDbConnection sqlCon = Connection)
             {
                 string sQuery = "select l.HierarchyLevelId, l.HierarchyLevelName from dbo.HierarchyLevels l where l.HierarchyLevelId = @hierarchyLevelId ";
                 sqlCon.Open();
-                var result = await sqlCon.QueryAsync<DatabaseModels.HierarchyLevel>(sQuery, new { hierarchyLevelId = id });
+                var result = await sqlCon.QueryAsync<HierarchyLevel>(sQuery, new { hierarchyLevelId = id });
                 return result.FirstOrDefault();
             }
         }
 
-        public async Task<List<DatabaseModels.HierarchyLevel>> GetAll()
+        public async Task<List<HierarchyLevel>> GetAll()
         {
             using (IDbConnection sqlCon = Connection)
             {
                 string sQuery = "select l.HierarchyLevelId, l.HierarchyLevelName from dbo.HierarchyLevels l";
                 sqlCon.Open();
-                var result = await sqlCon.QueryAsync<DatabaseModels.HierarchyLevel>(sQuery);
+                var result = await sqlCon.QueryAsync<HierarchyLevel>(sQuery);
                 return result.AsList();
             }
         }

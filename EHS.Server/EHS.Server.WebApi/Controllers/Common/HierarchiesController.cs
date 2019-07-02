@@ -71,7 +71,7 @@ namespace EHS.Server.WebApi.Controllers.Common
                 }
 
                 //map the hierarchy from the domain/database model object, to data transfer object to pass back to the client 
-                return Ok(_mapper.Map<Hierarchy, HierarchyDto>(hierarchy)); 
+                return Ok(_mapper.Map<Hierarchy, HierarchyDto>(hierarchy));
             }
             catch (Exception ex)
             {

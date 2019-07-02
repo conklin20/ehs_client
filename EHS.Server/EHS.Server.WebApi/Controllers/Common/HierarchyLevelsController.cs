@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using EHS.Server.DataAccess.Repository;
 using EHS.Server.DataAccess.DatabaseModels;
+using EHS.Server.DataAccess.Dtos;
+using AutoMapper;
 
 namespace EHS.Server.WebApi.Controllers.Common
 {
@@ -19,20 +21,31 @@ namespace EHS.Server.WebApi.Controllers.Common
     {
         private readonly ILogger<HierarchyLevelsController> _logger;
         private readonly IHierarchyLevelRepository _hierarchyLevelRepo;
+        private readonly IMapper _mapper;
 
-        public HierarchyLevelsController(ILogger<HierarchyLevelsController> logger, IHierarchyLevelRepository hierarchyLevelRepo)
+        public HierarchyLevelsController(ILogger<HierarchyLevelsController> logger, IHierarchyLevelRepository hierarchyLevelRepo, IMapper mapper)
         {
             _logger = logger;
             _hierarchyLevelRepo = hierarchyLevelRepo;
+            _mapper = mapper;
         }
 
         // GET: api/Hierarchies
         [HttpGet]
-        public async Task<ActionResult<List<HierarchyLevel>>> Get()
+        public async Task<ActionResult<List<HierarchyLevelDto>>> Get()
         {
             try
             {
-                return await _hierarchyLevelRepo.GetAll();
+                var hierarchyLevels = await _hierarchyLevelRepo.GetAll();
+
+                if (hierarchyLevels == null)
+                {
+                    _logger.LogError("No Hierarchy Levels found. {0}", NotFound().ToString());
+                    return NotFound();
+                }
+
+                //map the list from the domain/database model objects, to data transfer objects to pass back to the client 
+                return Ok(hierarchyLevels.Select(_mapper.Map<HierarchyLevel, HierarchyLevelDto>).ToList());
             }
             catch (Exception ex)
             {
@@ -43,11 +56,20 @@ namespace EHS.Server.WebApi.Controllers.Common
 
         // GET: api/Hierarchies/5
         [HttpGet("{id}", Name = "GetHierarchyLevel")]
-        public async Task<ActionResult<HierarchyLevel>> Get(int id)
+        public async Task<ActionResult<HierarchyLevelDto>> Get(int id)
         {
             try
             {
-                return await _hierarchyLevelRepo.GetById(id);
+                var hierarchyLevel = await _hierarchyLevelRepo.GetById(id);
+
+                if (hierarchyLevel == null)
+                {
+                    _logger.LogError("Hierarchy {0} not found. {1}", id, NotFound().ToString());
+                    return NotFound();
+                }
+                
+                //map the hierarchy from the domain/database model object, to data transfer object to pass back to the client 
+                return Ok(_mapper.Map<HierarchyLevel, HierarchyLevelDto>(hierarchyLevel));
             }
             catch (Exception ex)
             {

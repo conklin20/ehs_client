@@ -36,6 +36,36 @@ namespace EHS.Server.DataAccess.Repository
                 sqlCon.Open();
                 var result = await sqlCon.QueryAsync<Hierarchy>(sQuery, new { hierarchyId = id });
                 return result.FirstOrDefault();
+
+                //Populating sub-objects
+                //var hierarchyDictionary = new Dictionary<int, Hierarchy>();
+
+                //string sQuery = @"select h.HierarchyId, h.HierarchyName, h.HierarchyLevelId, h.Lft, h.Rgt, h.CreatedBy, h.CreatedOn, h.ModifiedBy, h.ModifiedOn
+                //                     , a.HierarchyAttributeId, a.HierarchyId, a.AttributeId, a.[Key], a.Value, a.Enabled, a.CreatedBy, a.CreatedOn, a.ModifiedBy, a.ModifiedOn
+                //                from Hierarchies h 
+                //                     join HierarchyAttributes a on a.HierarchyId = h.HierarchyId 
+                //                where h.HierarchyId = @hierarchyId ";
+                //var list = Connection.Query<Hierarchy, HierarchyAttribute, Hierarchy>(
+                //    sQuery,
+                //    (hierarchy, hierarchyAttribute) =>
+                //    {
+                //        Hierarchy hierarchyEntry;
+
+                //        if (!hierarchyDictionary.TryGetValue(hierarchy.HierarchyId, out hierarchyEntry))
+                //        {
+                //            hierarchyEntry = hierarchy;
+                //            hierarchyEntry.HierarchyAttributes = new List<HierarchyAttribute>();
+                //            hierarchyDictionary.Add(hierarchyEntry.HierarchyId, hierarchyEntry);
+                //        }
+
+                //        hierarchyEntry.HierarchyAttributes.Add(hierarchyAttribute);
+                //        return hierarchyEntry;
+                //    },
+                //    new { hierarchyId = id },
+                //    splitOn: "HierarchyAttributeId")
+                //.Distinct()
+                //.ToList();
+                //return list.FirstOrDefault();
             }
         }
 
@@ -86,7 +116,7 @@ namespace EHS.Server.DataAccess.Repository
                         lft = hierarchyToUpdate.Lft,
                         rgt = hierarchyToUpdate.Rgt,
                         hierarchyLevelId = hierarchyToUpdate.HierarchyLevelId,
-                        userId = userId
+                        userId
                     },
                     commandType: CommandType.StoredProcedure
                     );
@@ -106,7 +136,7 @@ namespace EHS.Server.DataAccess.Repository
                         hierarchyId = hierarchyToDelete.HierarchyId,
                         lft = hierarchyToDelete.Lft,
                         rgt = hierarchyToDelete.Rgt,
-                        userId = userId
+                        userId
                     },
                     commandType: CommandType.StoredProcedure
                     );
