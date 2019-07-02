@@ -8,6 +8,6 @@ namespace EHS.Server.WebApi.Services
 {
     public interface IUserService
     {
-        Task<User> AuthenticateAsync(string username, string password); 
+        Task<User> LoginAsync(string username, string password); 
     }
 }

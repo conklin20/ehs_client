@@ -9,9 +9,7 @@ namespace EHS.Server.DataAccess.DatabaseModels
     public class HierarchyAttribute : CreatedModified
     {
         public int HierarchyAttributeId { get; set; }
-        [ForeignKey("FK_HierarchyAttribute_Hierarchy")]
         public int HierarchyId { get; set; }
-        [ForeignKey("FK_HierarchyAttribute_Attribute")]
         public int AttributeId { get; set; }
         [Required, MaxLength(50)]
         public string Key { get; set; }

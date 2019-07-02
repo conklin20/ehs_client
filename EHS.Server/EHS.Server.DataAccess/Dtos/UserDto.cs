@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using static EHS.Server.DataAccess.Dtos.SharedDto;
+
 namespace EHS.Server.DataAccess.Dtos
 {
-    public class UserDto
+    public class UserDto : CreatedModifiedDto
     {
         [MaxLength(50), MinLength(5)]
         public string UserId { get; set; }
@@ -18,8 +20,6 @@ namespace EHS.Server.DataAccess.Dtos
         public string TimeZone { get; set; }
         [MaxLength(50)]
         public string DateFormat { get; set; }
-        public DateTime ModifiedOn { get; set; }
-
 
         public string Password { get; set; }
         public string Token { get; set; }

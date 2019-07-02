@@ -32,7 +32,15 @@ namespace EHS.Server.WebApi.Services
             _userRepo = userRepo;
         }
 
-        public async Task<User> AuthenticateAsync(string username, string password)
+        /// <summary>
+        /// This method will log a user into the system. It will first check that the userId/account exists in  the database, then check the password against AD, 
+        /// and then finally produce a JWT token for the user, which will be used to make API calls from the client. 
+        /// </summary>
+        /// <seealso cref="https://jasonwatmore.com/post/2018/08/14/aspnet-core-21-jwt-authentication-tutorial-with-example-api"/>
+        /// <param name="username">The userId or username. This should be the users Windows/AD Log In UserId</param>
+        /// <param name="password">The Windows/AD password</param>
+        /// <returns></returns>
+        public async Task<User> LoginAsync(string username, string password)
         {
             //check if user exists in db 
             var user = await _userRepo.GetById(username);
@@ -45,6 +53,11 @@ namespace EHS.Server.WebApi.Services
 
             //check password against AD 
             bool success = false;
+            //using (PrincipalContext pc = new PrincipalContext(ContextType.Domain, "VSTO"))
+            //{
+            //    success = pc.ValidateCredentials(loginCredentials.Username, loginCredentials.Password); 
+            //}
+            //Using local machine for testing
             using (PrincipalContext pc = new PrincipalContext(ContextType.Machine, null))
             {
                 success = pc.ValidateCredentials(username, password);

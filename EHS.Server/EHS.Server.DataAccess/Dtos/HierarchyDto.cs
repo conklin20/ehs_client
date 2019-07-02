@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using static EHS.Server.DataAccess.Dtos.SharedDto;
 
 namespace EHS.Server.DataAccess.Dtos
 {
-    public class HierarchyDto : SharedDto
+    public class HierarchyDto : CreatedModifiedDto
     {
         public int HierarchyId { get; set; }
         [Required, MaxLength(50)]

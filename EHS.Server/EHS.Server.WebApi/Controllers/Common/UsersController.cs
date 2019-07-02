@@ -2,17 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.Logging;
 using EHS.Server.WebApi.Services;
 using EHS.Server.DataAccess.DatabaseModels;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using EHS.Server.WebApi.Helpers;
-using Microsoft.Extensions.Logging;
 using EHS.Server.DataAccess.Repository;
-using AutoMapper;
 using EHS.Server.DataAccess.Dtos;
+using AutoMapper;
 
 namespace EHS.Server.WebApi.Controllers.Common
 {
@@ -36,13 +35,13 @@ namespace EHS.Server.WebApi.Controllers.Common
 
         // POST: api/users/authenticate
         [AllowAnonymous]
-        [HttpPost("authenticate")]
-        public async Task<IActionResult> Authenticate([FromBody]UserCredentials userCredentials)
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody]UserCredentials userCredentials)
         {
             try
             {
                 //call the authentication method in the userservices class to try to log the user in 
-                var user = await _userService.AuthenticateAsync(userCredentials.Username, userCredentials.Password);
+                var user = await _userService.LoginAsync(userCredentials.Username, userCredentials.Password);
 
                 if (user == null)
                     return BadRequest(new { message = "Username or password is incorrect." });
@@ -59,9 +58,27 @@ namespace EHS.Server.WebApi.Controllers.Common
 
         // GET: api/Users
         [HttpGet]
-        public IEnumerable<string> Get()
+        public async Task<ActionResult<List<UserDto>>> Get()
         {
-            return new string[] { "value1", "value2" };
+            try
+            {
+                //get the list of hierarchies 
+                var users = await _userRepo.GetAll();
+
+                if (users == null)
+                {
+                    _logger.LogError("No users found. {0}", NotFound().ToString());
+                    return NotFound();
+                }
+
+                //map the list from the domain/database model objects, to data transfer objects to pass back to the client 
+                return Ok(users.Select(_mapper.Map<User, UserDto>).ToList());
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return BadRequest();
+            }
         }
 
         // GET: api/Users/5

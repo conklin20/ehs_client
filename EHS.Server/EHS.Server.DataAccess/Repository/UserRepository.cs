@@ -32,7 +32,7 @@ namespace EHS.Server.DataAccess.Repository
         {
             using (IDbConnection sqlCon = Connection)
             {
-                string sQuery = @"select u.UserId, u.FullName, u.Email, u.Phone, u.RoleId, u.TimeZone, u.DateFormat
+                string sQuery = @"select u.UserId, u.FullName, u.Email, u.Phone, u.RoleId, u.TimeZone, u.DateFormat, u.CreatedBy, u.CreatedOn, u.ModifiedBy, u.ModifiedOn
                                   from Users u 
                                   where u.UserId = @UserId";
                 sqlCon.Open();
@@ -45,7 +45,7 @@ namespace EHS.Server.DataAccess.Repository
         {
             using (IDbConnection sqlCon = Connection)
             {
-                string sQuery = @"select u.UserId, u.FullName, u.Email, u.Phone, u.RoleId, u.TimeZone, u.DateFormat
+                string sQuery = @"select u.UserId, u.FullName, u.Email, u.Phone, u.RoleId, u.TimeZone, u.DateFormat, u.CreatedBy, u.CreatedOn, u.ModifiedBy, u.ModifiedOn
                                   from Users u";
                 sqlCon.Open();
                 var result = await sqlCon.QueryAsync<User>(sQuery);

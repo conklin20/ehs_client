@@ -14,9 +14,7 @@ namespace EHS.Server.DataAccess.DatabaseModels
         public string SeverityDescription { get; set; }
         public bool Enabled { get; set; }
 
-
         public ICollection<ApprovalRouting> ApprovalRoutings { get; set; }
-
         public ICollection<ResultSeverity> ResultSeverities { get; set; }
 
     }

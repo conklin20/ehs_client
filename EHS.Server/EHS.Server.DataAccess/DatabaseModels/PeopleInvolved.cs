@@ -11,11 +11,8 @@ namespace EHS.Server.DataAccess.DatabaseModels
     public class PeopleInvolved
     {
         public int PeopleInvolvedId { get; set; }
-        [ForeignKey("FK_PeopleInvolved_HierarchyAttribute_Role")]
         public int RoleId { get; set; }
-        [ForeignKey("FK_PeopleInvolved_SafetyEvent")]
         public int EventId { get; set; }
-        [ForeignKey("FK_PeopleInvolved_Employee")]
         public string EmployeeId { get; set; }
         [MaxLength(2000)]
         public string Comments { get; set; }

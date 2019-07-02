@@ -13,13 +13,10 @@ namespace EHS.Server.DataAccess.DatabaseModels
     { 
         [Key]
         public int EventId { get; set; }
-        //[ForeignKey("FK_SafetyEvent_HierarchyAttribute_EventType")] //Not refrencing the actual HierarchyAttributeId, but chunking the value in instead
-        /// <summary>From HierarchyAttribute</summary>
         [Required, MaxLength(50)]
         public string EventType { get; set; }       //From HierarchyAttribute
         [Required, MaxLength(50)]
         public string EventStatus { get; set; }     //From HierarchyAttribute
-        [ForeignKey("FK_SafetyEvent_User_ReportedBy")]
         public string ReportedBy { get; set; }
         [Required]
         public DateTime ReportedOn { get; set; }
@@ -27,7 +24,6 @@ namespace EHS.Server.DataAccess.DatabaseModels
         public DateTime EventDate { get; set; }
         [Required, DataType(DataType.Time)]
         public DateTime EventTime { get; set; }
-        [ForeignKey("FK_SafetyEvent_Employee_PersonInvolved")]
         public string EmployeeId { get; set; }
         [Required, MaxLength(50)]
         public string JobTitle { get; set; }        //From HierarchyAttribute
@@ -43,7 +39,6 @@ namespace EHS.Server.DataAccess.DatabaseModels
         public string InitialCategory { get; set; } //From HierarchyAttribute
         [Required, MaxLength(50)]
         public string ResultingCategory { get; set; }  //From HierarchyAttribute (To be available for Health/Safety to upgrade/downgrade an event later) 
-        [ForeignKey("FK_SafetyEvent_HierarchyAttribute_Department")]
         public int DepartmentId { get; set; }
         [MaxLength(50)]
         public string Division { get; set; }        //From HierarchyAttribute (Department Hierarchy)
@@ -53,7 +48,6 @@ namespace EHS.Server.DataAccess.DatabaseModels
         public string Area { get; set; }            //From HierarchyAttribute (Department Hierarchy)
         [MaxLength(50)]
         public string Department { get; set; }      //From HierarchyAttribute (Department Hierarchy)
-        [ForeignKey("FK_SafetyEvent_HierarchyAttribute_Locale")]
         public int LocaleId { get; set; }
         [MaxLength(50)]
         public string LocaleRegion { get; set; }    //From HierarchyAttribute (Locale/Building Hierarchy)
@@ -83,7 +77,6 @@ namespace EHS.Server.DataAccess.DatabaseModels
         public bool ER { get; set; }
         public bool PassedPOET { get; set; }
         public bool RecordedOnVideo { get; set; }
-        [ForeignKey("FK_SafetyEvent_HierarchyAttribute_Camera")]
         public int? CameraId { get; set; }
         public DateTime? VideoStartRef { get; set; }
         public DateTime? VideoEndRef { get; set; }

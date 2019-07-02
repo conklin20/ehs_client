@@ -11,17 +11,12 @@ namespace EHS.Server.DataAccess.DatabaseModels
     public class ResultSeverity
     {
         public int ResultSeverityId { get; set; }
-
         [Required]
-        [ForeignKey("FK_ResultSeverity_HierarchyAttribute")]
         public int HierarchyAttributeId { get; set; }
-        public HierarchyAttribute HierarchyAttribute { get; set; }
-        
+        public HierarchyAttribute HierarchyAttribute { get; set; }        
         [Required]
-        [ForeignKey("FK_Hierarchy_Severity")]
         public int SeverityId { get; set; }
         public Severity Severity { get; set; }
-
         public bool Enabled { get; set; }
     }
 }

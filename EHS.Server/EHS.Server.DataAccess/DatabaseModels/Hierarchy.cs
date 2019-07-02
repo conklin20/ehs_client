@@ -20,7 +20,6 @@ namespace EHS.Server.DataAccess.DatabaseModels
         [Required]
         public int Rgt { get; set; }
         [Required]
-        [ForeignKey("FK_Hierarchy_HierarchyLevel")]
         public int HierarchyLevelId { get; set; }
         public HierarchyLevel HierarchyLevel { get; set; }
 
