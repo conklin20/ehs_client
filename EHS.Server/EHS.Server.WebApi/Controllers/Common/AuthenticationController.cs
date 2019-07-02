@@ -14,15 +14,22 @@ namespace EHS.Server.WebApi.Controllers.Common
     public class AuthenticationController : ControllerBase
     {
         [HttpPost("Login")]
-        public IActionResult Login([FromBody] LoginCredentials loginCredentials)
+        public IActionResult Login([FromBody]LoginCredentials loginCredentials)
         {
             bool success = false;
-            using (PrincipalContext pc = new PrincipalContext(ContextType.Domain, "VSTO"))
-            {
-                success = pc.ValidateCredentials(loginCredentials.Username, loginCredentials.Password); 
-            }
+            //using (PrincipalContext pc = new PrincipalContext(ContextType.Domain, "VSTO"))
+            //{
+            //    success = pc.ValidateCredentials(loginCredentials.Username, loginCredentials.Password); 
+            //}
 
-            return Ok(success); 
+            //Using local machine for testing
+            using (PrincipalContext pc = new PrincipalContext(ContextType.Machine, null))
+            {
+                success = pc.ValidateCredentials(loginCredentials.Username, loginCredentials.Password);
+            }
+            
+            return Ok(success);
+            //return success ? Ok(success) : Unauthorized();
         }
 
         public class LoginCredentials

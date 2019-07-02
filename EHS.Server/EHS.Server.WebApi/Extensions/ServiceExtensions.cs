@@ -20,8 +20,8 @@ namespace EHS.Server.WebApi.Extensions
                 options.AddPolicy("CorsPolicy",
                     builder => builder.AllowAnyOrigin()
                     .AllowAnyMethod()
-                    .AllowAnyHeader()
-                    .AllowCredentials());
+                    .AllowAnyHeader());
+                    //.AllowCredentials()); No longer needed with .netcore 2.2
             });
         }
 

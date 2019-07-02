@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Server.IISIntegration; 
 using NLog;
 using NLog.Web;
 using NLog.Extensions.Logging;
@@ -44,6 +45,7 @@ namespace EHS.Server.WebApi
             //azure ad config 
             //services.AddAuthentication(AzureADDefaults.BearerAuthenticationScheme)
             //    .AddAzureADBearer(options => Configuration.Bind("AzureAd", options));
+            services.AddAuthentication(IISDefaults.AuthenticationScheme);
 
             // add Repos 
             services.AddTransient<IHierarchyLevelRepository, HierarchyLevelRepository>();
@@ -63,7 +65,7 @@ namespace EHS.Server.WebApi
             {
                 
             })
-            .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -88,7 +90,7 @@ namespace EHS.Server.WebApi
             }
 
             app.UseHttpsRedirection();
-            //app.UseAuthentication(); when using aad
+            app.UseAuthentication(); //when using aad
             app.UseMvc();
         }
     }

@@ -13,7 +13,7 @@ using AutoMapper;
 
 namespace EHS.Server.WebApi.Controllers.Common
 {
-    //[Authorize]
+    [Authorize]
     [Produces("application/json")]
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
