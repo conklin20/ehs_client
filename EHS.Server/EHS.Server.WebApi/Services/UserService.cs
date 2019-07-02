@@ -43,7 +43,7 @@ namespace EHS.Server.WebApi.Services
         public async Task<User> LoginAsync(string username, string password)
         {
             //check if user exists in db 
-            var user = await _userRepo.GetById(username);
+            var user = await _userRepo.GetByIdAsync(username);
 
             if (user == null)
             {

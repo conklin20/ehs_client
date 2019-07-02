@@ -28,7 +28,7 @@ namespace EHS.Server.DataAccess.Repository
             }
         }
         
-        public async Task<User> GetById(string id)
+        public async Task<User> GetByIdAsync(string id)
         {
             using (IDbConnection sqlCon = Connection)
             {
@@ -41,7 +41,7 @@ namespace EHS.Server.DataAccess.Repository
             }
         }
 
-        public async Task<List<User>> GetAll()
+        public async Task<List<User>> GetAllAsync()
         {
             using (IDbConnection sqlCon = Connection)
             {
@@ -50,6 +50,93 @@ namespace EHS.Server.DataAccess.Repository
                 sqlCon.Open();
                 var result = await sqlCon.QueryAsync<User>(sQuery);
                 return result.AsList();
+            }
+        }
+
+        public async Task<User> AddAsync(User userToAdd)
+        {
+            using (IDbConnection sqlCon = Connection)
+            {
+                sqlCon.Open();
+                var result = await sqlCon.ExecuteAsync(
+                    "dbo.spUserAddOrUpdate",
+                    new
+                    {
+                        userToAdd.UserId,
+                        userToAdd.Email, 
+                        userToAdd.FullName, 
+                        userToAdd.Phone, 
+                        userToAdd.RoleId, 
+                        userToAdd.TimeZone, 
+                        userToAdd.DateFormat, 
+                        userToAdd.CreatedBy, 
+                        userToAdd.ModifiedBy                        
+                    },
+                    commandType: CommandType.StoredProcedure
+                    );
+                return userToAdd;
+            }
+        }
+
+
+        public async Task<User> UpdateAsync(User userToUpdate)
+        {
+            using (IDbConnection sqlCon = Connection)
+            {
+                sqlCon.Open();
+                var result = await sqlCon.ExecuteAsync(
+                    "dbo.spUserAddOrUpdate",
+                    new
+                    {
+                        userToUpdate.UserId,
+                        userToUpdate.Email,
+                        userToUpdate.FullName,
+                        userToUpdate.Phone,
+                        userToUpdate.RoleId,
+                        userToUpdate.TimeZone,
+                        userToUpdate.DateFormat,
+                        userToUpdate.CreatedBy,
+                        userToUpdate.ModifiedBy
+                    },
+                    commandType: CommandType.StoredProcedure
+                    );
+                return userToUpdate;
+            }
+        }
+
+        public async Task<User> DeleteAsync(User userToDelete)
+        {
+            using (IDbConnection sqlCon = Connection)
+            {
+                sqlCon.Open();
+                var result = await sqlCon.ExecuteAsync(
+                    "dbo.spUserDelete",
+                    new
+                    {
+                        userToDelete.UserId, 
+                        userToDelete.ModifiedBy
+                    },
+                    commandType: CommandType.StoredProcedure
+                    );
+                return userToDelete;
+            }
+        }
+
+        public async Task<User> ReactivateAsync(User userToDelete)
+        {
+            using (IDbConnection sqlCon = Connection)
+            {
+                sqlCon.Open();
+                var result = await sqlCon.ExecuteAsync(
+                    "dbo.spUserReactivate",
+                    new
+                    {
+                        userToDelete.UserId,
+                        userToDelete.ModifiedBy
+                    },
+                    commandType: CommandType.StoredProcedure
+                    );
+                return userToDelete;
             }
         }
     }

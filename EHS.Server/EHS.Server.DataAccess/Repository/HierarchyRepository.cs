@@ -26,7 +26,7 @@ namespace EHS.Server.DataAccess.Repository
             }
         }
         
-        public async Task<Hierarchy> GetById(int id)
+        public async Task<Hierarchy> GetByIdAsync(int id)
         {
             using (IDbConnection sqlCon = Connection)
             {
@@ -69,7 +69,7 @@ namespace EHS.Server.DataAccess.Repository
             }
         }
 
-        public async Task<List<Hierarchy>> GetAll()
+        public async Task<List<Hierarchy>> GetAllAsync()
         {
             using (IDbConnection sqlCon = Connection)
             {
@@ -81,7 +81,7 @@ namespace EHS.Server.DataAccess.Repository
             }
         }
 
-        public async Task<Hierarchy> Add(Hierarchy hierarchyToAdd)
+        public async Task<Hierarchy> AddAsync(Hierarchy hierarchyToAdd)
         {
             using (IDbConnection sqlCon = Connection)
             {
@@ -102,7 +102,7 @@ namespace EHS.Server.DataAccess.Repository
             }
         }
 
-        public async Task<Hierarchy> Update(Hierarchy hierarchyToUpdate, string userId)
+        public async Task<Hierarchy> UpdateAsync(Hierarchy hierarchyToUpdate, string userId)
         {
             using (IDbConnection sqlCon = Connection)
             {     
@@ -124,7 +124,7 @@ namespace EHS.Server.DataAccess.Repository
             }
         }
 
-        public async Task<Hierarchy> Delete(Hierarchy hierarchyToDelete, string userId)
+        public async Task<Hierarchy> DeleteAsync(Hierarchy hierarchyToDelete, string userId)
         {
             using (IDbConnection sqlCon = Connection)
             {

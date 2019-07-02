@@ -26,7 +26,7 @@ namespace EHS.Server.DataAccess.Repository
             }
         }
         
-        public async Task<HierarchyLevel> GetById(int id)
+        public async Task<HierarchyLevel> GetByIdAsync(int id)
         {
             using (IDbConnection sqlCon = Connection)
             {
@@ -37,7 +37,7 @@ namespace EHS.Server.DataAccess.Repository
             }
         }
 
-        public async Task<List<HierarchyLevel>> GetAll()
+        public async Task<List<HierarchyLevel>> GetAllAsync()
         {
             using (IDbConnection sqlCon = Connection)
             {

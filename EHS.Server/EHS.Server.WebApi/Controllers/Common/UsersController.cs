@@ -63,7 +63,7 @@ namespace EHS.Server.WebApi.Controllers.Common
             try
             {
                 //get the list of hierarchies 
-                var users = await _userRepo.GetAll();
+                var users = await _userRepo.GetAllAsync();
 
                 if (users == null)
                 {
@@ -82,28 +82,107 @@ namespace EHS.Server.WebApi.Controllers.Common
         }
 
         // GET: api/Users/5
-        [HttpGet("{id}", Name = "Get")]
-        public string Get(int id)
+        [HttpGet("{id}", Name = "GetUser")]
+        public async Task<ActionResult<UserDto>> Get(string id)
         {
-            return "value";
+            try
+            {
+                //get the user 
+                var user = await _userRepo.GetByIdAsync(id);
+
+                if (user == null)
+                {
+                    _logger.LogError("User {0} not found. {1}", id, NotFound().ToString());
+                    return NotFound();
+                }
+
+                //map the user from the domain/database model object, to data transfer object to pass back to the client 
+                return Ok(_mapper.Map<User, UserDto>(user));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return BadRequest();
+            }
         }
 
         // POST: api/Users
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task<ActionResult<UserDto>> Post([FromBody]UserDto userToAddDto)
         {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    _logger.LogError(BadRequest().ToString());
+                    return BadRequest();
+                }
+
+                //map the new user from the incoming dto object to the domain/database model object so we can pass it to the Add() method
+                var userToAdd = _mapper.Map<UserDto, User>(userToAddDto);
+                var addedUser = await _userRepo.AddAsync(userToAdd);
+
+                //map back to dto, to pass back to client 
+                //return CreatedAtAction("Getuser", new { id = addeduser.userId }, addeduser); 
+                return CreatedAtAction("GetUser", new { id = addedUser.UserId }, _mapper.Map<User, UserDto>(addedUser));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return BadRequest();
+            }
         }
 
         // PUT: api/Users/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public async Task<ActionResult<UserDto>> Put([FromBody]UserDto userToUpdateDto)
         {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    _logger.LogError(BadRequest().ToString());
+                    return BadRequest();
+                }
+
+                //map the user from the incoming dto object to the domain/database model object so we can pass it to the Update() method
+                var userToUpdate = _mapper.Map<UserDto, User>(userToUpdateDto);
+                var updatedUser = await _userRepo.UpdateAsync(userToUpdate);
+
+                //map back to dto, to pass back to client 
+                return Accepted(_mapper.Map<User, UserDto>(updatedUser));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return BadRequest();
+            }
         }
 
         // DELETE: api/ApiWithActions/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<ActionResult<UserDto>> Delete([FromBody]UserDto userToDeleteDto)
         {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    _logger.LogError(BadRequest().ToString());
+                    return BadRequest();
+                }
+                
+                //map the user from the incoming dto object to the domain/database model object so we can pass it to the Delete() method
+                var userToDelete = _mapper.Map<UserDto, User>(userToDeleteDto);
+                var deletedUser = await _userRepo.DeleteAsync(userToDelete);
+
+                //map back to dto, to pass back to client 
+                return Accepted(_mapper.Map<User, UserDto>(deletedUser));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return BadRequest();
+            }
         }
     }
 }

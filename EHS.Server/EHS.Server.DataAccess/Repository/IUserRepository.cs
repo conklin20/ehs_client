@@ -6,7 +6,11 @@ namespace EHS.Server.DataAccess.Repository
 {
     public interface IUserRepository
     {
-        Task<User> GetById(string username);
-        Task<List<User>> GetAll(); 
+        Task<User> GetByIdAsync(string username);
+        Task<List<User>> GetAllAsync();
+        Task<User> AddAsync(User userToAdd);
+        Task<User> UpdateAsync(User userToUpdate);
+        Task<User> DeleteAsync(User userToDelete);
+        Task<User> ReactivateAsync(User userToReactivate);
     }
 }

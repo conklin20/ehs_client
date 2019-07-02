@@ -36,7 +36,7 @@ namespace EHS.Server.WebApi.Controllers.Common
         {
             try
             {
-                var hierarchyLevels = await _hierarchyLevelRepo.GetAll();
+                var hierarchyLevels = await _hierarchyLevelRepo.GetAllAsync();
 
                 if (hierarchyLevels == null)
                 {
@@ -60,7 +60,7 @@ namespace EHS.Server.WebApi.Controllers.Common
         {
             try
             {
-                var hierarchyLevel = await _hierarchyLevelRepo.GetById(id);
+                var hierarchyLevel = await _hierarchyLevelRepo.GetByIdAsync(id);
 
                 if (hierarchyLevel == null)
                 {
