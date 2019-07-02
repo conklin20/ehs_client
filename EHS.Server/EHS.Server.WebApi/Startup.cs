@@ -17,6 +17,11 @@ using Microsoft.EntityFrameworkCore;
 using EHS.Server.DataAccess.DatabaseModels;
 using EHS.Server.DataAccess.Repository;
 using EHS.Server.WebApi.Extensions;
+using EHS.Server.WebApi.Helpers;
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using EHS.Server.WebApi.Services;
 
 namespace EHS.Server.WebApi
 {
@@ -42,14 +47,40 @@ namespace EHS.Server.WebApi
 
             //services.AddSingleton<IConfiguration>(Configuration); believe this is called by the framework by default
 
-            //azure ad config 
-            //services.AddAuthentication(AzureADDefaults.BearerAuthenticationScheme)
-            //    .AddAzureADBearer(options => Configuration.Bind("AzureAd", options));
-            services.AddAuthentication(IISDefaults.AuthenticationScheme);
+            // configure strongly typed settings objects
+            var appSettingsSection = Configuration.GetSection("AppSettings");
+            services.Configure<AuthSettings>(appSettingsSection);
+
+            // configure jwt authentication
+            var appSettings = appSettingsSection.Get<AuthSettings>();
+            var key = Encoding.ASCII.GetBytes(appSettings.Secret);
+            services.AddAuthentication(o =>
+            {
+                o.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                o.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(o =>
+            {
+                o.RequireHttpsMetadata = false;
+                o.SaveToken = true;
+                o.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = false,
+                    ValidateAudience = false
+                };
+            });
+
+            // configure DI for application services
+            services.AddScoped<IUserService, UserService>();
+            //services.AddTransient<IUserService, UserService>();
+
 
             // add Repos 
             services.AddTransient<IHierarchyLevelRepository, HierarchyLevelRepository>();
             services.AddTransient<IHierarchyRepository, HierarchyRepository>();
+            services.AddTransient<IUserRepository, UserRepository>(); 
 
             // Utility for mapping DTO's to Models 
             var config = new AutoMapper.MapperConfiguration(cfg =>
@@ -59,8 +90,7 @@ namespace EHS.Server.WebApi
             var mapper = config.CreateMapper();
             services.AddSingleton(mapper); 
 
-            
-
+           
             services.AddMvc(o =>
             {
                 
@@ -90,7 +120,7 @@ namespace EHS.Server.WebApi
             }
 
             app.UseHttpsRedirection();
-            app.UseAuthentication(); //when using aad
+            app.UseAuthentication(); 
             app.UseMvc();
         }
     }
