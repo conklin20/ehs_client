@@ -3,7 +3,7 @@
 -- Create date: 06/29/2019
 -- Description:	Add or Update operations for the Hierachy Table
 -- =============================================
-CREATE PROCEDURE dbo.spHierarchyAddOrUpdate 
+CREATE PROCEDURE [dbo].[spHierarchyAddOrUpdate] 
 	@HierarchyId int = null, 
 	@HierarchyName nvarchar(50), 
 	@Lft int, 
@@ -20,9 +20,11 @@ BEGIN
     if(@HierarchyId is null) 
 	begin 
 		print 'Insert new hierarchy'
+		select max(HierarchyId)+1 from Hierarchies
 	end
 	else 
 	begin 
 		print 'Update existing hierarchy'
+		select @HierarchyId
 	end
 END

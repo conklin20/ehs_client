@@ -8,6 +8,12 @@ namespace EHS.Server.DataAccess.DatabaseModels
 {
     public class HierarchyAttribute : CreatedModified
     {
+        //public HierarchyAttribute()
+        //{
+        //    Hierarchy = new Hierarchy();
+        //    Attribute = new Attribute(); 
+        //}
+
         public int HierarchyAttributeId { get; set; }
         public int HierarchyId { get; set; }
         public int AttributeId { get; set; }

@@ -1,12 +1,11 @@
-﻿-- =============================================
+﻿
+-- =============================================
 -- Author:		CC
 -- Create date: 06/29/2019
--- Description:	Delete operation for the Hierachy Table
+-- Description:	Delete operation for the HierachyAttribute Table
 -- =============================================
-CREATE PROCEDURE [dbo].[spHierarchyDelete]
-	@HierarchyId int,	
-	@Lft int, 
-	@Rgt int, 
+CREATE PROCEDURE [dbo].[spHierarchyAttributeDelete]
+	@HierarchyAttributeId int,	
 	@UserId nvarchar(50)
 
 AS
@@ -15,8 +14,8 @@ BEGIN
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 	
-    print 'Delete hierarchy, adjust existinig hierarchies to account for the delete (new lft and rgt values)' 
-	select 1 from Hierarchies
+    print 'Delete hierarchyAttribute' 
+	select @HierarchyAttributeId
 	--INSERT INTO [app].[AppLog]
  --          ([AppId]
  --          ,[Level]
