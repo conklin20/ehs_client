@@ -36,6 +36,10 @@
 # Web API / Server Files 
 /EHS.Server/.vs
 
+**/EHS.Server/EHS.Server.WebApi/appsettings.development.json
+**/EHS.Server/EHS.Server.WebApi/appsettings.staging.json
+**/EHS.Server/EHS.Server.WebApi/appsettings.production.json
+
 
 # Root files 
-/temp
+**/temp

@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using static EHS.Server.DataAccess.Dtos.SharedDto;
 
 namespace EHS.Server.DataAccess.Dtos
 {
-    public class SafetyEventDto
+    public class SafetyEventDto : CreatedModifiedDto
     {
         [Key]
         public int EventId { get; set; }
@@ -55,7 +56,7 @@ namespace EHS.Server.DataAccess.Dtos
         [Required, MaxLength(50)]
         public string WorkEnvironment { get; set; } //From HierarchyAttribute
         [Required, MaxLength(50)]
-        public string NatureOfEnjury { get; set; }  //From HierarchyAttribute
+        public string NatureOfInjury { get; set; }  //From HierarchyAttribute
         [Required, MaxLength(50)]
         public string BodyPart { get; set; }        //From HierarchyAttribute
         [MaxLength(50)]

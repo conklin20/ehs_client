@@ -60,7 +60,7 @@ namespace EHS.Server.DataAccess.DatabaseModels
         [Required, MaxLength(50)]
         public string WorkEnvironment { get; set; } //From HierarchyAttribute
         [Required, MaxLength(50)]
-        public string NatureOfEnjury { get; set; }  //From HierarchyAttribute
+        public string NatureOfInjury { get; set; }  //From HierarchyAttribute
         [Required, MaxLength(50)]
         public string BodyPart { get; set; }        //From HierarchyAttribute
         [MaxLength(50)]

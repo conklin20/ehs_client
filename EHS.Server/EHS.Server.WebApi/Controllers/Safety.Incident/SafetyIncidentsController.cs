@@ -108,7 +108,7 @@ namespace EHS.Server.WebApi.Controllers.Common
 
         // PUT: api/Safety Events/5
         [HttpPut("{id}")]
-        public async Task<ActionResult<SafetyEventDto>> Put([FromBody]SafetyEventDto safetyEventToUpdateDto)
+        public async Task<ActionResult<SafetyEventDto>> Put([FromBody]SafetyEventDto safetyEventToUpdateDto, [FromRoute]int id)
         {
             try
             {
@@ -120,7 +120,7 @@ namespace EHS.Server.WebApi.Controllers.Common
 
                 //map the SafetyEvent from the incoming dto object to the domain/database model object so we can pass it to the Update() method
                 var safetyEventToUpdate = _mapper.Map<SafetyEventDto, SafetyEvent>(safetyEventToUpdateDto);
-                var updatedSafetyEvent = await _safetyEventsRepo.UpdateAsync(safetyEventToUpdate);
+                var updatedSafetyEvent = await _safetyEventsRepo.UpdateAsync(safetyEventToUpdate, id);
 
                 //map back to dto, to pass back to client 
                 return Accepted(_mapper.Map<SafetyEvent, SafetyEventDto>(updatedSafetyEvent));
@@ -134,24 +134,20 @@ namespace EHS.Server.WebApi.Controllers.Common
 
         // DELETE: api/ApiWithActions/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<SafetyEventDto>> Delete([FromBody]SafetyEventDto safetyEventToDeleteDto, [FromRoute]int id)
+        public async Task<ActionResult<SafetyEventDto>> Delete([FromRoute]int id)
         {
             try
             {
-                safetyEventToDeleteDto.EventId = id;
-
                 if (!ModelState.IsValid)
                 {
                     _logger.LogError(BadRequest().ToString());
                     return BadRequest();
                 }
 
-                //map the SafetyEvent from the incoming dto object to the domain/database model object so we can pass it to the Delete() method
-                var safetyEventToDelete = _mapper.Map<SafetyEventDto, SafetyEvent>(safetyEventToDeleteDto);
-                var deletedSafetyEvent = await _safetyEventsRepo.DeleteAsync(safetyEventToDelete);
+                var deletedSafetyEventStatus = await _safetyEventsRepo.DeleteAsync(id);
 
                 //map back to dto, to pass back to client 
-                return Accepted(_mapper.Map<SafetyEvent, SafetyEventDto>(deletedSafetyEvent));
+                return Accepted();
             }
             catch (Exception ex)
             {

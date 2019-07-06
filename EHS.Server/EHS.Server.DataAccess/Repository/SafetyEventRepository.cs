@@ -36,8 +36,8 @@ namespace EHS.Server.DataAccess.Repository
 	                                  ,a.*
 	                                  ,p.*
                                 from SafetyEvents e
-	                                 join Actions a on a.EventId = e.EventId 
-	                                 join PeopleInvolved p on p.EventId = e.EventId
+	                                 left join Actions a on a.EventId = e.EventId 
+	                                 left join PeopleInvolved p on p.EventId = e.EventId
                                 where e.EventId = @EventId";
 
                 //build param list 
@@ -92,8 +92,8 @@ namespace EHS.Server.DataAccess.Repository
 	                                  ,a.*
 	                                  ,p.*
                                 from SafetyEvents e
-	                                 join Actions a on a.EventId = e.EventId 
-	                                 join PeopleInvolved p on p.EventId = e.EventId";
+	                                 left join Actions a on a.EventId = e.EventId 
+	                                 left join PeopleInvolved p on p.EventId = e.EventId";
 
                 var safetyEventDictionary = new Dictionary<int, SafetyEvent>();
 
@@ -138,7 +138,47 @@ namespace EHS.Server.DataAccess.Repository
                     "dbo.spSafetyEventAddOrUpdate",
                     new
                     {
-                        //Add a millin params
+                        SafetyEventToAdd.EventType,
+                        SafetyEventToAdd.EventStatus,
+                        SafetyEventToAdd.ReportedBy,
+                        SafetyEventToAdd.ReportedOn,
+                        SafetyEventToAdd.EventDate,
+                        SafetyEventToAdd.EventTime,
+                        SafetyEventToAdd.EmployeeId,
+                        SafetyEventToAdd.JobTitle,
+                        SafetyEventToAdd.Shift,
+                        SafetyEventToAdd.WhatHappened,
+                        SafetyEventToAdd.IsInjury,
+                        SafetyEventToAdd.IsIllness,
+                        SafetyEventToAdd.HoursWorkedPrior,
+                        SafetyEventToAdd.InitialCategory,
+                        SafetyEventToAdd.ResultingCategory,
+                        SafetyEventToAdd.Division,
+                        SafetyEventToAdd.Site,
+                        SafetyEventToAdd.Area,
+                        SafetyEventToAdd.Department,
+                        SafetyEventToAdd.LocaleRegion,
+                        SafetyEventToAdd.LocaleSite,
+                        SafetyEventToAdd.LocalePlant,
+                        SafetyEventToAdd.LocalePlantArea,
+                        SafetyEventToAdd.WorkEnvironment,
+                        SafetyEventToAdd.NatureOfInjury,
+                        SafetyEventToAdd.BodyPart,
+                        SafetyEventToAdd.FirstAidType,
+                        SafetyEventToAdd.OffPlantMedicalFacility,
+                        SafetyEventToAdd.MaterialInvolved,
+                        SafetyEventToAdd.EquipmentInvolved,
+                        SafetyEventToAdd.LostTime,
+                        SafetyEventToAdd.FirstAid,
+                        SafetyEventToAdd.Transported,
+                        SafetyEventToAdd.ER,
+                        SafetyEventToAdd.PassedPOET,
+                        SafetyEventToAdd.RecordedOnVideo,
+                        SafetyEventToAdd.CameraId,
+                        SafetyEventToAdd.VideoStartRef,
+                        SafetyEventToAdd.VideoEndRef,
+                        SafetyEventToAdd.DepartmentId,
+                        SafetyEventToAdd.LocaleId,
                         userId = SafetyEventToAdd.CreatedBy
                     },
                     commandType: CommandType.StoredProcedure
@@ -147,7 +187,7 @@ namespace EHS.Server.DataAccess.Repository
             }
         }
 
-        public async Task<SafetyEvent> UpdateAsync(SafetyEvent SafetyEventToUpdate)
+        public async Task<SafetyEvent> UpdateAsync(SafetyEvent SafetyEventToUpdate, int id)
         {
             using (IDbConnection sqlCon = Connection)
             {
@@ -156,7 +196,48 @@ namespace EHS.Server.DataAccess.Repository
                     "dbo.spSafetyEventAddOrUpdate",
                     new
                     {
-                        //Add a millin params
+                        SafetyEventId = id, 
+                        SafetyEventToUpdate.EventType,
+                        SafetyEventToUpdate.EventStatus,
+                        SafetyEventToUpdate.ReportedBy,
+                        SafetyEventToUpdate.ReportedOn,
+                        SafetyEventToUpdate.EventDate,
+                        SafetyEventToUpdate.EventTime,
+                        SafetyEventToUpdate.EmployeeId,
+                        SafetyEventToUpdate.JobTitle,
+                        SafetyEventToUpdate.Shift,
+                        SafetyEventToUpdate.WhatHappened,
+                        SafetyEventToUpdate.IsInjury,
+                        SafetyEventToUpdate.IsIllness,
+                        SafetyEventToUpdate.HoursWorkedPrior,
+                        SafetyEventToUpdate.InitialCategory,
+                        SafetyEventToUpdate.ResultingCategory,
+                        SafetyEventToUpdate.Division,
+                        SafetyEventToUpdate.Site,
+                        SafetyEventToUpdate.Area,
+                        SafetyEventToUpdate.Department,
+                        SafetyEventToUpdate.LocaleRegion,
+                        SafetyEventToUpdate.LocaleSite,
+                        SafetyEventToUpdate.LocalePlant,
+                        SafetyEventToUpdate.LocalePlantArea,
+                        SafetyEventToUpdate.WorkEnvironment,
+                        SafetyEventToUpdate.NatureOfInjury,
+                        SafetyEventToUpdate.BodyPart,
+                        SafetyEventToUpdate.FirstAidType,
+                        SafetyEventToUpdate.OffPlantMedicalFacility,
+                        SafetyEventToUpdate.MaterialInvolved,
+                        SafetyEventToUpdate.EquipmentInvolved,
+                        SafetyEventToUpdate.LostTime,
+                        SafetyEventToUpdate.FirstAid,
+                        SafetyEventToUpdate.Transported,
+                        SafetyEventToUpdate.ER,
+                        SafetyEventToUpdate.PassedPOET,
+                        SafetyEventToUpdate.RecordedOnVideo,
+                        SafetyEventToUpdate.CameraId,
+                        SafetyEventToUpdate.VideoStartRef,
+                        SafetyEventToUpdate.VideoEndRef,
+                        SafetyEventToUpdate.DepartmentId,
+                        SafetyEventToUpdate.LocaleId,
                         userId = SafetyEventToUpdate.ModifiedBy
                     },
                     commandType: CommandType.StoredProcedure
@@ -165,7 +246,7 @@ namespace EHS.Server.DataAccess.Repository
             }
         }
 
-        public async Task<SafetyEvent> DeleteAsync(SafetyEvent SafetyEventToDelete)
+        public async Task<int> DeleteAsync(int id)
         {
             using (IDbConnection sqlCon = Connection)
             {
@@ -174,12 +255,12 @@ namespace EHS.Server.DataAccess.Repository
                     "dbo.spSafetyEventDelete",
                     new
                     {
-                        safetyEventId = SafetyEventToDelete.EventId,
-                        userId = SafetyEventToDelete.ModifiedBy
+                        safetyEventId = id,
+                        userId = "Update later!!"
                     },
                     commandType: CommandType.StoredProcedure
                     );
-                return SafetyEventToDelete;
+                return result;
             }
         }
     }
