@@ -80,7 +80,9 @@ namespace EHS.Server.DataAccess.DatabaseModels
         public int? CameraId { get; set; }
         public DateTime? VideoStartRef { get; set; }
         public DateTime? VideoEndRef { get; set; }
-        
+
+        public ICollection<Action> Actions { get; set; }
+        public ICollection<PeopleInvolved> PeopleInvolved { get; set; }
     }
 
 

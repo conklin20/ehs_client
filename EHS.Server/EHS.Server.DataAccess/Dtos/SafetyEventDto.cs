@@ -75,5 +75,8 @@ namespace EHS.Server.DataAccess.Dtos
         public int? CameraId { get; set; }
         public DateTime? VideoStartRef { get; set; }
         public DateTime? VideoEndRef { get; set; }
+
+        public ICollection<ActionDto> Actions { get; set; }
+        public ICollection<PeopleInvolvedDto> PeopleInvolved { get; set; }
     }
 }

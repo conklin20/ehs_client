@@ -120,10 +120,10 @@ namespace EHS.Server.WebApi.Controllers.Common
 
                 //map the approval from the incoming dto object to the domain/database model object so we can pass it to the Update() method
                 var approvalToUpdate = _mapper.Map<ApprovalDto, Approval>(approvalToUpdateDto);
-                var approvalAction = await _approvalRepo.UpdateAsync(approvalToUpdate);
+                var updatedApproval = await _approvalRepo.UpdateAsync(approvalToUpdate);
 
                 //map back to dto, to pass back to client 
-                return Accepted(_mapper.Map<Approval, ApprovalDto>(approvalAction));
+                return Accepted(_mapper.Map<Approval, ApprovalDto>(updatedApproval));
             }
             catch (Exception ex)
             {
