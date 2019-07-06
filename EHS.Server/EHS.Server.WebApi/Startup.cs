@@ -86,6 +86,7 @@ namespace EHS.Server.WebApi
             services.AddTransient<IHierarchyLevelRepository, HierarchyLevelRepository>();
             services.AddTransient<IHierarchyRepository, HierarchyRepository>();
             services.AddTransient<ISafetyEventRepository, SafetyEventRepository>();
+            services.AddTransient<ISeverityRepository, SeverityRepository>(); 
             services.AddTransient<IUserRepository, UserRepository>(); 
 
             // Utility for mapping DTO's to Models 
