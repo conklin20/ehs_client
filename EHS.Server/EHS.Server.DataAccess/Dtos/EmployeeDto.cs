@@ -24,6 +24,7 @@ namespace EHS.Server.DataAccess.Dtos
         public string SupervisorId { get; set; }
         public DateTime LastUpdatedOn { get; set; }
         public bool POET { get; set; }        
+
         public virtual EmployeeDto Supervisor { get; set; }
         public virtual ICollection<EmployeeDto> Subordinates { get; set; }
     }

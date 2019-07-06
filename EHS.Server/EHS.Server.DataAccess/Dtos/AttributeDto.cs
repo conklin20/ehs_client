@@ -13,6 +13,6 @@ namespace EHS.Server.DataAccess.Dtos
         public bool Enabled { get; set; }
         public bool ReadOnly { get; set; }
 
-        public ICollection<HierarchyAttributeDto> HierarchyAttributeDtos { get; set; }
+        public ICollection<HierarchyAttributeDto> HierarchyAttributes { get; set; }
     }
 }

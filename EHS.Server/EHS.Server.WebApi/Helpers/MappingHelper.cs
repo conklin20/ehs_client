@@ -11,36 +11,41 @@ namespace EHS.Server.WebApi.Helpers
     {
         public MappingHelper()
         {
-            CreateMap<DataAccess.DatabaseModels.Action, ActionDto>();
-            CreateMap<ActionDto, DataAccess.DatabaseModels.Action>();
-            CreateMap<Approval, ApprovalDto>();
-            CreateMap<ApprovalDto, Approval>();
-            CreateMap<ApprovalRouting, ApprovalRoutingDto>();
-            CreateMap<ApprovalRoutingDto, ApprovalRouting>();
-            CreateMap<DataAccess.DatabaseModels.Attribute, AttributeDto>();
-            CreateMap<AttributeDto, DataAccess.DatabaseModels.Attribute>();
-            CreateMap<Employee, EmployeeDto>();
-            CreateMap<EmployeeDto, Employee>();
-            CreateMap<Hierarchy, HierarchyDto>();
-            CreateMap<HierarchyDto, Hierarchy>();
-            CreateMap<HierarchyAttribute, HierarchyAttributeDto>();
-            CreateMap<HierarchyAttributeDto, HierarchyAttribute>();
-            CreateMap<HierarchyLevel, HierarchyLevelDto>();
-            CreateMap<HierarchyLevelDto, HierarchyLevel>();
-            CreateMap<PeopleInvolved, PeopleInvolvedDto>();
-            CreateMap<PeopleInvolvedDto, PeopleInvolved>();
-            CreateMap<ResultSeverity, ResultSeverityDto>();
-            CreateMap<ResultSeverityDto, ResultSeverity>();
-            CreateMap<SafetyEvent, SafetyEventDto>();
-            CreateMap<SafetyEventDto, SafetyEvent>();
-            CreateMap<Severity, SeverityDto>();
-            CreateMap<SeverityDto, Severity>();
-            CreateMap<Shared, SharedDto>();
-            CreateMap<SharedDto, Shared>();
-            CreateMap<User, UserDto>();
-            CreateMap<UserDto, User>();
-            CreateMap<UserRole, UserRoleDto>();
-            CreateMap<UserRoleDto, UserRole>();
+            //objects with no child dependancies need to be mapped first
+            CreateMap<DataAccess.DatabaseModels.Action, ActionDto>().ReverseMap();
+            CreateMap<Approval, ApprovalDto>().ReverseMap();
+            CreateMap<DataAccess.DatabaseModels.Attribute, AttributeDto>().ReverseMap();
+            CreateMap<Employee, EmployeeDto>().ReverseMap();
+            CreateMap<HierarchyLevel, HierarchyLevelDto>().ReverseMap();
+            CreateMap<Hierarchy, HierarchyDto>().ReverseMap();
+            CreateMap<PeopleInvolved, PeopleInvolvedDto>().ReverseMap();
+            CreateMap<SafetyEvent, SafetyEventDto>().ReverseMap();
+            CreateMap<Severity, SeverityDto>().ReverseMap();
+            CreateMap<User, UserDto>().ReverseMap();
+            CreateMap<UserRole, UserRoleDto>().ReverseMap();
+            
+            //now map the rest             
+            CreateMap<ApprovalRouting, ApprovalRoutingDto>().ReverseMap();
+            CreateMap<HierarchyAttribute, HierarchyAttributeDto>().ReverseMap();           
+            CreateMap<ResultSeverity, ResultSeverityDto>().ReverseMap();    
+            CreateMap<Shared, SharedDto>().ReverseMap();
+
+            //CreateMap<ActionDto, DataAccess.DatabaseModels.Action>();
+            //CreateMap<ApprovalDto, Approval>();
+            //CreateMap<ApprovalRoutingDto, ApprovalRouting>();
+            //CreateMap<AttributeDto, DataAccess.DatabaseModels.Attribute>();
+            //CreateMap<EmployeeDto, Employee>();
+            //CreateMap<HierarchyDto, Hierarchy>();
+            //CreateMap<HierarchyAttributeDto, HierarchyAttribute>();
+            //CreateMap<HierarchyLevelDto, HierarchyLevel>();
+            //CreateMap<PeopleInvolvedDto, PeopleInvolved>();
+            //CreateMap<ResultSeverityDto, ResultSeverity>();
+            //CreateMap<SafetyEventDto, SafetyEvent>();
+            //CreateMap<SeverityDto, Severity>();
+            //CreateMap<SharedDto, Shared>();
+            //CreateMap<UserDto, User>();
+            //CreateMap<UserRoleDto, UserRole>();
+
         }
     }
 }

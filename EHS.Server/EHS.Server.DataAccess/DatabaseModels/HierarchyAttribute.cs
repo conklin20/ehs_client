@@ -25,6 +25,5 @@ namespace EHS.Server.DataAccess.DatabaseModels
         public Hierarchy Hierarchy { get; set; }
         public Attribute Attribute { get; set; }
 
-        public ICollection<ResultSeverity> ResultSeverities { get; set; }
     }
 }

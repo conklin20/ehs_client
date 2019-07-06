@@ -8,8 +8,8 @@ namespace EHS.Server.DataAccess.Repository
     {
         Task<HierarchyAttribute> GetByIdAsync(int id);
         Task<List<HierarchyAttribute>> GetAllAsync();
-        Task<HierarchyAttribute> AddAsync(HierarchyAttribute HierarchyAttribute);
-        Task<HierarchyAttribute> UpdateAsync(HierarchyAttribute HierarchyAttributeToUpdate);
-        Task<HierarchyAttribute> DeleteAsync(HierarchyAttribute HierarchyAttributeToDelete);
+        Task<HierarchyAttribute> AddAsync(HierarchyAttribute hierarchyAttribute);
+        Task<HierarchyAttribute> UpdateAsync(HierarchyAttribute hierarchyAttributeToUpdate);
+        Task<HierarchyAttribute> DeleteAsync(HierarchyAttribute hierarchyAttributeToDelete);
     }
 }

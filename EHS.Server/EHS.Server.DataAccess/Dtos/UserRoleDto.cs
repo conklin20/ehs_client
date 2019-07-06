@@ -11,6 +11,6 @@ namespace EHS.Server.DataAccess.Dtos
         [Required, MaxLength(255)]
         public string RoleCapabilities { get; set; }
 
-        public ICollection<ApprovalRoutingDto> ApprovalRoutingDtos { get; set; }
+        public ICollection<ApprovalRoutingDto> ApprovalRoutings { get; set; }
     }
 }

@@ -19,9 +19,7 @@ namespace EHS.Server.DataAccess.Dtos
         [Required]
         public string Value { get; set; }
         public bool Enabled { get; set; }
-        //public HierarchyDto HierarchyDto { get; set; }
-        //public AttributeDto AttributeDto { get; set; }
-
-        //public ICollection<ResultSeverityDto> ResultSeverityDtos { get; set; }
+        public HierarchyDto Hierarchy { get; set; }
+        public AttributeDto Attribute { get; set; }
     }
 }

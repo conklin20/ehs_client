@@ -9,6 +9,6 @@ namespace EHS.Server.DataAccess.Dtos
         [MaxLength(50)]
         public string HierarchyLevelName { get; set; }
 
-        public ICollection<HierarchyDto> HierarchyDtos { get; set; }
+        public ICollection<HierarchyDto> Hierarchies { get; set; }
     }
 }

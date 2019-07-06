@@ -14,7 +14,7 @@ namespace EHS.Server.DataAccess.Dtos
         public int ApprovalLevel { get; set; }
         public bool Enabled { get; set; }
 
-        public SeverityDto SeverityDto { get; set; }
-        public UserRoleDto UserRoleDto { get; set; }
+        public SeverityDto Severity { get; set; }
+        public UserRoleDto UserRole { get; set; }
     }
 }

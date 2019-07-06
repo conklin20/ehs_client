@@ -30,23 +30,23 @@ namespace EHS.Server.DataAccess.Repository
         {
             using (IDbConnection sqlCon = Connection)
             {
-                string sQuery = @"select h.HierarchyId, h.HierarchyName, h.HierarchyLevelId, h.Lft, h.Rgt, h.CreatedBy, h.CreatedOn, h.ModifiedBy, h.ModifiedOn
+                string tsql = @"select h.HierarchyId, h.HierarchyName, h.HierarchyLevelId, h.Lft, h.Rgt, h.CreatedBy, h.CreatedOn, h.ModifiedBy, h.ModifiedOn
                                   from Hierarchies h 
                                   where h.HierarchyId = @hierarchyId ";
-                sqlCon.Open();
-                var result = await sqlCon.QueryAsync<Hierarchy>(sQuery, new { hierarchyId = id });
+                
+                var result = await sqlCon.QueryAsync<Hierarchy>(tsql, new { hierarchyId = id });
                 return result.FirstOrDefault();
 
                 //Populating sub-objects
                 //var hierarchyDictionary = new Dictionary<int, Hierarchy>();
 
-                //string sQuery = @"select h.HierarchyId, h.HierarchyName, h.HierarchyLevelId, h.Lft, h.Rgt, h.CreatedBy, h.CreatedOn, h.ModifiedBy, h.ModifiedOn
+                //string tsql = @"select h.HierarchyId, h.HierarchyName, h.HierarchyLevelId, h.Lft, h.Rgt, h.CreatedBy, h.CreatedOn, h.ModifiedBy, h.ModifiedOn
                 //                     , a.HierarchyAttributeId, a.HierarchyId, a.AttributeId, a.[Key], a.Value, a.Enabled, a.CreatedBy, a.CreatedOn, a.ModifiedBy, a.ModifiedOn
                 //                from Hierarchies h 
                 //                     join HierarchyAttributes a on a.HierarchyId = h.HierarchyId 
                 //                where h.HierarchyId = @hierarchyId ";
                 //var list = Connection.Query<Hierarchy, HierarchyAttribute, Hierarchy>(
-                //    sQuery,
+                //    tsql,
                 //    (hierarchy, hierarchyAttribute) =>
                 //    {
                 //        Hierarchy hierarchyEntry;
@@ -73,10 +73,10 @@ namespace EHS.Server.DataAccess.Repository
         {
             using (IDbConnection sqlCon = Connection)
             {
-                string sQuery = @"select h.HierarchyId, h.HierarchyName, h.HierarchyLevelId, h.Lft, h.Rgt, h.CreatedBy, h.CreatedOn, h.ModifiedBy, h.ModifiedOn 
+                string tsql = @"select h.HierarchyId, h.HierarchyName, h.HierarchyLevelId, h.Lft, h.Rgt, h.CreatedBy, h.CreatedOn, h.ModifiedBy, h.ModifiedOn 
                                   from dbo.Hierarchies h ";
-                sqlCon.Open();
-                var result = await sqlCon.QueryAsync<Hierarchy>(sQuery);
+                
+                var result = await sqlCon.QueryAsync<Hierarchy>(tsql);
                 return result.AsList();
             }
         }
@@ -85,7 +85,7 @@ namespace EHS.Server.DataAccess.Repository
         {
             using (IDbConnection sqlCon = Connection)
             {
-                sqlCon.Open();
+                
                 var result = await sqlCon.ExecuteAsync(
                     "dbo.spHierarchyAddOrUpdate",
                     new
@@ -106,7 +106,7 @@ namespace EHS.Server.DataAccess.Repository
         {
             using (IDbConnection sqlCon = Connection)
             {     
-                sqlCon.Open();
+                
                 var result = await sqlCon.ExecuteAsync(
                     "dbo.spHierarchyAddOrUpdate",
                     new
@@ -128,7 +128,7 @@ namespace EHS.Server.DataAccess.Repository
         {
             using (IDbConnection sqlCon = Connection)
             {
-                sqlCon.Open();
+                
                 var result = await sqlCon.ExecuteAsync(
                     "dbo.spHierarchyDelete",
                     new

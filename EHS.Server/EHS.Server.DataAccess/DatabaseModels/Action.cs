@@ -20,8 +20,10 @@ namespace EHS.Server.DataAccess.DatabaseModels
         [Required, DataType(DataType.Date)]
         public DateTime DueDate { get; set; }
         [DataType(DataType.Date)]
-        public DateTime CompletionDate { get; set; }
+        public DateTime? CompletionDate { get; set; }
         [DataType(DataType.Date)]
-        public DateTime ApprovalDate { get; set; }
+        public DateTime? ApprovalDate { get; set; }
+
+        public SafetyEvent SafetyEvent { get; set; }
     }
 }

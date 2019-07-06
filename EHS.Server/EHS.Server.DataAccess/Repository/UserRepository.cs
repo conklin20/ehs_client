@@ -32,11 +32,11 @@ namespace EHS.Server.DataAccess.Repository
         {
             using (IDbConnection sqlCon = Connection)
             {
-                string sQuery = @"select u.UserId, u.FullName, u.Email, u.Phone, u.RoleId, u.TimeZone, u.DateFormat, u.CreatedBy, u.CreatedOn, u.ModifiedBy, u.ModifiedOn
+                string tsql = @"select u.UserId, u.FullName, u.Email, u.Phone, u.RoleId, u.TimeZone, u.DateFormat, u.CreatedBy, u.CreatedOn, u.ModifiedBy, u.ModifiedOn
                                   from Users u 
                                   where u.UserId = @UserId";
-                sqlCon.Open();
-                var result = await sqlCon.QueryAsync<User>(sQuery, new { userId = id });
+                
+                var result = await sqlCon.QueryAsync<User>(tsql, new { userId = id });
                 return result.FirstOrDefault();
             }
         }
@@ -45,10 +45,10 @@ namespace EHS.Server.DataAccess.Repository
         {
             using (IDbConnection sqlCon = Connection)
             {
-                string sQuery = @"select u.UserId, u.FullName, u.Email, u.Phone, u.RoleId, u.TimeZone, u.DateFormat, u.CreatedBy, u.CreatedOn, u.ModifiedBy, u.ModifiedOn
+                string tsql = @"select u.UserId, u.FullName, u.Email, u.Phone, u.RoleId, u.TimeZone, u.DateFormat, u.CreatedBy, u.CreatedOn, u.ModifiedBy, u.ModifiedOn
                                   from Users u";
-                sqlCon.Open();
-                var result = await sqlCon.QueryAsync<User>(sQuery);
+                
+                var result = await sqlCon.QueryAsync<User>(tsql);
                 return result.AsList();
             }
         }
@@ -57,7 +57,7 @@ namespace EHS.Server.DataAccess.Repository
         {
             using (IDbConnection sqlCon = Connection)
             {
-                sqlCon.Open();
+                
                 var result = await sqlCon.ExecuteAsync(
                     "dbo.spUserAddOrUpdate",
                     new
@@ -83,7 +83,7 @@ namespace EHS.Server.DataAccess.Repository
         {
             using (IDbConnection sqlCon = Connection)
             {
-                sqlCon.Open();
+                
                 var result = await sqlCon.ExecuteAsync(
                     "dbo.spUserAddOrUpdate",
                     new
@@ -108,7 +108,7 @@ namespace EHS.Server.DataAccess.Repository
         {
             using (IDbConnection sqlCon = Connection)
             {
-                sqlCon.Open();
+                
                 var result = await sqlCon.ExecuteAsync(
                     "dbo.spUserDelete",
                     new
@@ -126,7 +126,7 @@ namespace EHS.Server.DataAccess.Repository
         {
             using (IDbConnection sqlCon = Connection)
             {
-                sqlCon.Open();
+                
                 var result = await sqlCon.ExecuteAsync(
                     "dbo.spUserReactivate",
                     new

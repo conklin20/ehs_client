@@ -12,7 +12,7 @@ namespace EHS.Server.DataAccess.Dtos
         public string SeverityDescription { get; set; }
         public bool Enabled { get; set; }
 
-        public ICollection<ApprovalRoutingDto> ApprovalRoutingDtos { get; set; }
-        public ICollection<ResultSeverityDto> ResultSeverityDtos { get; set; }
+        public ICollection<ApprovalRoutingDto> ApprovalRoutings { get; set; }
+        public ICollection<ResultSeverityDto> ResultSeverities { get; set; }
     }
 }

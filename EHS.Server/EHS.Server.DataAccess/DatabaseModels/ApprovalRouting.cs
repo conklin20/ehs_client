@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EHS.Server.DataAccess.DatabaseModels
@@ -15,6 +13,7 @@ namespace EHS.Server.DataAccess.DatabaseModels
         [Required]
         public int ApprovalLevel { get; set; }
         public bool Enabled { get; set; }
+
         public Severity Severity { get; set; }
         public UserRole UserRole { get; set; }
     }

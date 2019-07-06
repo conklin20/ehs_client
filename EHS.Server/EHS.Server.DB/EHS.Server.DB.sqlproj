@@ -89,5 +89,10 @@
     <Build Include="Security\app.sql" />
     <Build Include="dbo\Stored Procedures\spHierarchyDelete.sql" />
     <Build Include="dbo\Stored Procedures\spHierarchyAddOrUpdate.sql" />
+    <Build Include="dbo\Stored Procedures\spUserReactivate.sql" />
+    <Build Include="dbo\Stored Procedures\spUserDelete.sql" />
+    <Build Include="dbo\Stored Procedures\spUserAddOrUpdate.sql" />
+    <Build Include="dbo\Stored Procedures\spHierarchyAttributeDelete.sql" />
+    <Build Include="dbo\Stored Procedures\spHierarchyAttributeAddOrUpdate.sql" />
   </ItemGroup>
 </Project>

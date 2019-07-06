@@ -16,5 +16,7 @@ namespace EHS.Server.DataAccess.DatabaseModels
         public DateTime ApprovedOn { get; set; }
         [MaxLength(255)]
         public string Notes { get; set; }
+
+        public Action Action { get; set; }
     }
 }

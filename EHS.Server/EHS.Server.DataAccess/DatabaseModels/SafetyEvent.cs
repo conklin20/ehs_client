@@ -23,7 +23,7 @@ namespace EHS.Server.DataAccess.DatabaseModels
         [Required, DataType(DataType.Date)]
         public DateTime EventDate { get; set; }
         [Required, DataType(DataType.Time)]
-        public DateTime EventTime { get; set; }
+        public TimeSpan EventTime { get; set; }
         public string EmployeeId { get; set; }
         [Required, MaxLength(50)]
         public string JobTitle { get; set; }        //From HierarchyAttribute

@@ -8,10 +8,10 @@ namespace EHS.Server.DataAccess.Dtos
         public int ResultSeverityId { get; set; }
         [Required]
         public int HierarchyAttributeId { get; set; }
-        public HierarchyAttributeDto HierarchyAttributeDto { get; set; }
+        public HierarchyAttributeDto HierarchyAttribute { get; set; }
         [Required]
         public int SeverityId { get; set; }
-        public SeverityDto SeverityDto { get; set; }
+        public SeverityDto Severity { get; set; }
         public bool Enabled { get; set; }
     }
 }

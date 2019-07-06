@@ -30,9 +30,9 @@ namespace EHS.Server.DataAccess.Repository
         {
             using (IDbConnection sqlCon = Connection)
             {
-                string sQuery = "select l.HierarchyLevelId, l.HierarchyLevelName from dbo.HierarchyLevels l where l.HierarchyLevelId = @hierarchyLevelId ";
-                sqlCon.Open();
-                var result = await sqlCon.QueryAsync<HierarchyLevel>(sQuery, new { hierarchyLevelId = id });
+                string tsql = "select l.HierarchyLevelId, l.HierarchyLevelName from dbo.HierarchyLevels l where l.HierarchyLevelId = @hierarchyLevelId ";
+                
+                var result = await sqlCon.QueryAsync<HierarchyLevel>(tsql, new { hierarchyLevelId = id });
                 return result.FirstOrDefault();
             }
         }
@@ -41,9 +41,9 @@ namespace EHS.Server.DataAccess.Repository
         {
             using (IDbConnection sqlCon = Connection)
             {
-                string sQuery = "select l.HierarchyLevelId, l.HierarchyLevelName from dbo.HierarchyLevels l";
-                sqlCon.Open();
-                var result = await sqlCon.QueryAsync<HierarchyLevel>(sQuery);
+                string tsql = "select l.HierarchyLevelId, l.HierarchyLevelName from dbo.HierarchyLevels l";
+                
+                var result = await sqlCon.QueryAsync<HierarchyLevel>(tsql);
                 return result.AsList();
             }
         }

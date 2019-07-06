@@ -22,6 +22,7 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using EHS.Server.WebApi.Services;
+using Microsoft.AspNetCore.Http;
 
 namespace EHS.Server.WebApi
 {
@@ -75,9 +76,10 @@ namespace EHS.Server.WebApi
             // configure DI for application services
             services.AddScoped<IUserService, UserService>();
             //services.AddTransient<IUserService, UserService>();
-
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
             // add Repos 
+            services.AddTransient<IActionRepository, ActionRepository>();
             services.AddTransient<IHierarchyAttributeRepository, HierarchyAttributeRepository>();
             services.AddTransient<IHierarchyLevelRepository, HierarchyLevelRepository>();
             services.AddTransient<IHierarchyRepository, HierarchyRepository>();
@@ -86,8 +88,9 @@ namespace EHS.Server.WebApi
             // Utility for mapping DTO's to Models 
             var config = new AutoMapper.MapperConfiguration(cfg =>
             {
-                cfg.AddProfile(new Helpers.MappingHelper());
+                cfg.AddProfile(new MappingHelper());
             });
+            config.AssertConfigurationIsValid(); 
             var mapper = config.CreateMapper();
             services.AddSingleton(mapper); 
 
