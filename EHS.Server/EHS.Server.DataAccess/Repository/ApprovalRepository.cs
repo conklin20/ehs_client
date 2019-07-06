@@ -46,10 +46,10 @@ namespace EHS.Server.DataAccess.Repository
 
                 var result = await sqlCon.QueryAsync<Approval, Action, Approval>(
                     tsql, 
-                    (Approval, Action) =>
+                    (approval, action) =>
                     {
-                        Approval.Action = Action;
-                        return Approval;
+                        approval.Action = action;
+                        return approval;
                     },
                     p,
                     splitOn: "ActionId");
@@ -70,10 +70,10 @@ namespace EHS.Server.DataAccess.Repository
 
                 var result = await sqlCon.QueryAsync<Approval, Action, Approval>(
                     tsql,
-                    (Approvals, Actions) =>
+                    (approvals, actions) =>
                     {
-                        Approvals.Action = Actions;
-                        return Approvals;
+                        approvals.Action = actions;
+                        return approvals;
                     },
                     splitOn: "ActionId");
 

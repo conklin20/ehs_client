@@ -81,6 +81,7 @@ namespace EHS.Server.WebApi
             // add Repos 
             services.AddTransient<IActionRepository, ActionRepository>();
             services.AddTransient<IApprovalRepository, ApprovalRepository>();
+            services.AddTransient<IAttributeRepository, AttributeRepository>();
             services.AddTransient<IHierarchyAttributeRepository, HierarchyAttributeRepository>();
             services.AddTransient<IHierarchyLevelRepository, HierarchyLevelRepository>();
             services.AddTransient<IHierarchyRepository, HierarchyRepository>();
