@@ -1,5 +1,5 @@
 //root reducer 
-import { combineReducers } from "redux"; 
+import { combineReducers } from "redux";
 import currentUser from "./currentUser"; 
 import errors from "./errors";
 
