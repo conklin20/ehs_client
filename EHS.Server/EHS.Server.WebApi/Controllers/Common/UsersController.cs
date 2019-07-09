@@ -38,8 +38,16 @@ namespace EHS.Server.WebApi.Controllers.Common
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody]UserCredentials userCredentials)
         {
+            _logger.LogDebug($"Username: {userCredentials.Username} attempting to login.");
             try
             {
+                //cant leverage the [Required] data annotations on our dto because we're using a customer UserCredentials object instead here 
+                if (userCredentials.Username == null || userCredentials.Username == "")
+                    return BadRequest(new { message = "Username is required." });
+                if (userCredentials.Password == null || userCredentials.Password == "")
+                    return BadRequest(new { message = "Password is required." });
+
+
                 //call the authentication method in the userservices class to try to log the user in 
                 var user = await _userService.LoginAsync(userCredentials.Username, userCredentials.Password);
 

@@ -7,7 +7,7 @@ namespace EHS.Server.DataAccess.Dtos
 {
     public class UserDto : CreatedModifiedDto
     {
-        [MaxLength(50), MinLength(5)]
+        [Required, MaxLength(50), MinLength(5)]
         public string UserId { get; set; }
         [EmailAddress]
         public string Email { get; set; }
@@ -21,6 +21,7 @@ namespace EHS.Server.DataAccess.Dtos
         [MaxLength(50)]
         public string DateFormat { get; set; }
 
+        [Required]
         public string Password { get; set; }
         public string Token { get; set; }
     }

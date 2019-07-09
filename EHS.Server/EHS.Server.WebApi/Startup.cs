@@ -127,6 +127,7 @@ namespace EHS.Server.WebApi
                 //write custom global exception handler here 
             }
 
+            app.UseCors("CorsPolicy"); //important to be able to make API Calls from the client
             app.UseHttpsRedirection();
             app.UseAuthentication(); 
             app.UseMvc();

@@ -11,7 +11,7 @@ namespace EHS.Server.DataAccess.DatabaseModels
     /// </summary>
     public class User : CreatedModified
     {
-        [MaxLength(50), MinLength(5)]
+        [Required, MaxLength(50), MinLength(5)]
         public string UserId { get; set; }
         [EmailAddress]
         public string Email { get; set; }
@@ -25,7 +25,8 @@ namespace EHS.Server.DataAccess.DatabaseModels
         [MaxLength(50)]
         public string DateFormat { get; set; }
 
-        //not storing in db 
+        //not storing in db
+        [Required]
         public string Password { get; set; }
         public string Token { get; set; } 
     }

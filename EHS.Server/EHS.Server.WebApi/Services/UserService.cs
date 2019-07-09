@@ -44,6 +44,7 @@ namespace EHS.Server.WebApi.Services
         {
             //check if user exists in db 
             var user = await _userRepo.GetByIdAsync(username);
+            _logger.LogDebug($"User {user.FullName} found in the db");
 
             if (user == null)
             {
