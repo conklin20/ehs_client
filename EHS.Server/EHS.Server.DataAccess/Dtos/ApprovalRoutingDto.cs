@@ -8,9 +8,7 @@ namespace EHS.Server.DataAccess.Dtos
         public int ApprovalRoutingId { get; set; }
         public int SeverityId { get; set; }
         public int UserRoleId { get; set; }
-        [Required, MaxLength(50)]
         public string ApprovalLevelName { get; set; }
-        [Required]
         public int ApprovalLevel { get; set; }
         public bool Enabled { get; set; }
 

@@ -32,7 +32,7 @@ namespace EHS.Server.WebApi.Controllers.Common
 
         // GET: api/Hierarchies
         [HttpGet]
-        public async Task<ActionResult<List<HierarchyLevelDto>>> Get()
+        public async Task<ActionResult<List<HierarchyLevel>>> Get()
         {
             try
             {
@@ -56,7 +56,7 @@ namespace EHS.Server.WebApi.Controllers.Common
 
         // GET: api/Hierarchies/5
         [HttpGet("{id}", Name = "GetHierarchyLevel")]
-        public async Task<ActionResult<HierarchyLevelDto>> Get(int id)
+        public async Task<ActionResult<HierarchyLevel>> Get(int id)
         {
             try
             {

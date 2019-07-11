@@ -32,7 +32,7 @@ namespace EHS.Server.WebApi.Controllers.Common
 
         // GET: api/Actions
         [HttpGet]
-        public async Task<ActionResult<List<AttributeDto>>> Get()
+        public async Task<ActionResult<List<DataAccess.DatabaseModels.Attribute>>> Get()
         {
             try
             {
@@ -57,7 +57,7 @@ namespace EHS.Server.WebApi.Controllers.Common
 
         // GET: api/Actions/5
         [HttpGet("{id}", Name = "GetAttribute")]
-        public async Task<ActionResult<AttributeDto>> Get([FromRoute]int id)
+        public async Task<ActionResult<DataAccess.DatabaseModels.Attribute>> Get([FromRoute]int id)
         {
             try
             {

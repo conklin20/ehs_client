@@ -32,7 +32,7 @@ namespace EHS.Server.WebApi.Controllers.Common
 
         // GET: api/hierarchyAttributes
         [HttpGet]
-        public async Task<ActionResult<List<HierarchyAttributeDto>>> Get()
+        public async Task<ActionResult<List<HierarchyAttribute>>> Get()
         {
             try
             {
@@ -57,7 +57,7 @@ namespace EHS.Server.WebApi.Controllers.Common
 
         // GET: api/hierarchyAttributes/5
         [HttpGet("{id}", Name = "GetHierarchyAttribute")]
-        public async Task<ActionResult<HierarchyAttributeDto>> Get(int id)
+        public async Task<ActionResult<HierarchyAttribute>> Get(int id)
         {
             try
             {
@@ -82,7 +82,7 @@ namespace EHS.Server.WebApi.Controllers.Common
 
         // POST: api/hierarchyAttributes
         [HttpPost]
-        public async Task<ActionResult<HierarchyAttributeDto>> Post([FromBody]HierarchyAttributeDto hierarchyToAddDto)
+        public async Task<ActionResult<HierarchyAttribute>> Post([FromBody]HierarchyAttribute hierarchyToAdd)
         {
             try
             {
@@ -93,7 +93,7 @@ namespace EHS.Server.WebApi.Controllers.Common
                 }
 
                 //map the new hierarchyAttribute from the incoming dto object to the domain/database model object so we can pass it to the Add() method
-                var hierarchyToAdd = _mapper.Map<HierarchyAttributeDto, HierarchyAttribute>(hierarchyToAddDto);
+                //var hierarchyToAdd = _mapper.Map<HierarchyAttributeDto, HierarchyAttribute>(hierarchyToAddDto);
                 var addedHierarchy = await _hierarchyAttributeRepo.AddAsync(hierarchyToAdd);
 
                 //map back to dto, to pass back to client 
@@ -110,7 +110,7 @@ namespace EHS.Server.WebApi.Controllers.Common
 
         // PUT: api/hierarchyAttributes/5
         [HttpPut("{id}")]
-        public async Task<ActionResult<HierarchyAttributeDto>> Put([FromBody]HierarchyAttributeDto hierarchyToUpdateDto)
+        public async Task<ActionResult<HierarchyAttribute>> Put([FromBody]HierarchyAttribute hierarchyToUpdate)
         {
             try
             {
@@ -121,7 +121,7 @@ namespace EHS.Server.WebApi.Controllers.Common
                 }
 
                 //map the hierarchyAttribute from the incoming dto object to the domain/database model object so we can pass it to the Update() method
-                var hierarchyToUpdate = _mapper.Map<HierarchyAttributeDto, HierarchyAttribute>(hierarchyToUpdateDto);
+                //var hierarchyToUpdate = _mapper.Map<HierarchyAttributeDto, HierarchyAttribute>(hierarchyToUpdateDto);
                 var updatedHierarchy = await _hierarchyAttributeRepo.UpdateAsync(hierarchyToUpdate);
 
                 //map back to dto, to pass back to client 
@@ -136,7 +136,7 @@ namespace EHS.Server.WebApi.Controllers.Common
 
         // DELETE: api/ApiWithActions/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<HierarchyAttributeDto>> Delete([FromBody]HierarchyAttributeDto hierarchyToDeleteDto)
+        public async Task<ActionResult<HierarchyAttribute>> Delete([FromBody]HierarchyAttribute hierarchyToDelete)
         {
             try
             {
@@ -147,7 +147,7 @@ namespace EHS.Server.WebApi.Controllers.Common
                 }
 
                 //map the hierarchyAttribute from the incoming dto object to the domain/database model object so we can pass it to the Delete() method
-                var hierarchyToDelete = _mapper.Map<HierarchyAttributeDto, HierarchyAttribute>(hierarchyToDeleteDto);
+                //var hierarchyToDelete = _mapper.Map<HierarchyAttributeDto, HierarchyAttribute>(hierarchyToDeleteDto);
                 var deletedHierarchy = await _hierarchyAttributeRepo.DeleteAsync(hierarchyToDelete);
 
                 //map back to dto, to pass back to client 

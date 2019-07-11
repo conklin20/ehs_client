@@ -32,7 +32,7 @@ namespace EHS.Server.WebApi.Controllers.Common
 
         // GET: api/Safety Events
         [HttpGet]
-        public async Task<ActionResult<List<SafetyEventDto>>> Get()
+        public async Task<ActionResult<List<SafetyEvent>>> Get()
         {
             try
             {
@@ -57,7 +57,7 @@ namespace EHS.Server.WebApi.Controllers.Common
 
         // GET: api/Safety Events/5
         [HttpGet("{id}", Name = "GetSafetyEvent")]
-        public async Task<ActionResult<SafetyEventDto>> Get([FromRoute]int id)
+        public async Task<ActionResult<SafetyEvent>> Get([FromRoute]int id)
         {
             try
             {
@@ -82,7 +82,7 @@ namespace EHS.Server.WebApi.Controllers.Common
 
         // POST: api/Safety Events
         [HttpPost]
-        public async Task<ActionResult<SafetyEventDto>> Post([FromBody]SafetyEventDto safetyEventToAddDto)
+        public async Task<ActionResult<SafetyEvent>> Post([FromBody]SafetyEvent safetyEventToAdd)
         {
             try
             {
@@ -93,7 +93,7 @@ namespace EHS.Server.WebApi.Controllers.Common
                 }
 
                 //map the new SafetyEvent from the incoming dto object to the domain/database model object so we can pass it to the Add() method
-                var safetyEventToAdd = _mapper.Map<SafetyEventDto, SafetyEvent>(safetyEventToAddDto);
+                //var safetyEventToAdd = _mapper.Map<SafetyEventDto, SafetyEvent>(safetyEventToAddDto);
                 var addedSafetyEvent = await _safetyEventsRepo.AddAsync(safetyEventToAdd);
 
                 //map back to dto, to pass back to client 
@@ -108,7 +108,7 @@ namespace EHS.Server.WebApi.Controllers.Common
 
         // PUT: api/Safety Events/5
         [HttpPut("{id}")]
-        public async Task<ActionResult<SafetyEventDto>> Put([FromBody]SafetyEventDto safetyEventToUpdateDto, [FromRoute]int id)
+        public async Task<ActionResult<SafetyEvent>> Put([FromBody]SafetyEvent safetyEventToUpdate, [FromRoute]int id)
         {
             try
             {
@@ -119,7 +119,7 @@ namespace EHS.Server.WebApi.Controllers.Common
                 }
 
                 //map the SafetyEvent from the incoming dto object to the domain/database model object so we can pass it to the Update() method
-                var safetyEventToUpdate = _mapper.Map<SafetyEventDto, SafetyEvent>(safetyEventToUpdateDto);
+                //var safetyEventToUpdate = _mapper.Map<SafetyEventDto, SafetyEvent>(safetyEventToUpdateDto);
                 var updatedSafetyEvent = await _safetyEventsRepo.UpdateAsync(safetyEventToUpdate, id);
 
                 //map back to dto, to pass back to client 
@@ -134,7 +134,7 @@ namespace EHS.Server.WebApi.Controllers.Common
 
         // DELETE: api/ApiWithActions/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<SafetyEventDto>> Delete([FromRoute]int id)
+        public async Task<ActionResult<SafetyEvent>> Delete([FromRoute]int id)
         {
             try
             {

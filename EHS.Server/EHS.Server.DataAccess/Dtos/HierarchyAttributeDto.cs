@@ -14,9 +14,7 @@ namespace EHS.Server.DataAccess.Dtos
         public int HierarchyAttributeId { get; set; }
         public int HierarchyId { get; set; }
         public int AttributeId { get; set; }
-        [Required, MaxLength(50)]
         public string Key { get; set; }
-        [Required]
         public string Value { get; set; }
         public bool Enabled { get; set; }
         public HierarchyDto Hierarchy { get; set; }

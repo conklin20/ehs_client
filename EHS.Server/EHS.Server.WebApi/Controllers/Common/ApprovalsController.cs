@@ -32,7 +32,7 @@ namespace EHS.Server.WebApi.Controllers.Common
 
         // GET: api/Actions
         [HttpGet]
-        public async Task<ActionResult<List<ApprovalDto>>> Get()
+        public async Task<ActionResult<List<Approval>>> Get()
         {
             try
             {
@@ -57,7 +57,7 @@ namespace EHS.Server.WebApi.Controllers.Common
         
         // GET: api/Actions/5
         [HttpGet("{id}", Name = "GetApproval")]
-        public async Task<ActionResult<ApprovalDto>> Get([FromRoute]int id)
+        public async Task<ActionResult<Approval>> Get([FromRoute]int id)
         {
             try
             {
@@ -82,7 +82,7 @@ namespace EHS.Server.WebApi.Controllers.Common
 
         // POST: api/Actions
         [HttpPost]
-        public async Task<ActionResult<ApprovalDto>> Post([FromBody]ApprovalDto approvalToAddDto)
+        public async Task<ActionResult<Approval>> Post([FromBody]Approval approvalToAdd)
         {
             try
             {
@@ -93,7 +93,7 @@ namespace EHS.Server.WebApi.Controllers.Common
                 }
 
                 //map the new approval from the incoming dto object to the domain/database model object so we can pass it to the Add() method
-                var approvalToAdd = _mapper.Map<ApprovalDto, Approval>(approvalToAddDto);
+                //var approvalToAdd = _mapper.Map<ApprovalDto, Approval>(approvalToAddDto);
                 var addedApproval = await _approvalRepo.AddAsync(approvalToAdd);
 
                 //map back to dto, to pass back to client 
@@ -108,7 +108,7 @@ namespace EHS.Server.WebApi.Controllers.Common
 
         // PUT: api/Actions/5
         [HttpPut("{id}")]
-        public async Task<ActionResult<ApprovalDto>> Put([FromBody]ApprovalDto approvalToUpdateDto)
+        public async Task<ActionResult<Approval>> Put([FromBody]Approval approvalToUpdate)
         {
             try
             {
@@ -119,7 +119,7 @@ namespace EHS.Server.WebApi.Controllers.Common
                 }
 
                 //map the approval from the incoming dto object to the domain/database model object so we can pass it to the Update() method
-                var approvalToUpdate = _mapper.Map<ApprovalDto, Approval>(approvalToUpdateDto);
+                //var approvalToUpdate = _mapper.Map<ApprovalDto, Approval>(approvalToUpdateDto);
                 var updatedApproval = await _approvalRepo.UpdateAsync(approvalToUpdate);
 
                 //map back to dto, to pass back to client 
@@ -134,11 +134,11 @@ namespace EHS.Server.WebApi.Controllers.Common
 
         // DELETE: api/ApiWithActions/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<ApprovalDto>> Delete([FromBody]ApprovalDto approvalToDeleteDto, [FromRoute]int id)
+        public async Task<ActionResult<Approval>> Delete([FromBody]Approval approvalToDelete, [FromRoute]int id)
         {
             try
             {
-                approvalToDeleteDto.ApprovalId = id;
+                approvalToDelete.ApprovalId = id;
 
                 if (!ModelState.IsValid)
                 {
@@ -147,7 +147,7 @@ namespace EHS.Server.WebApi.Controllers.Common
                 }
 
                 //map the approval from the incoming dto object to the domain/database model object so we can pass it to the Delete() method
-                var approvalToDelete = _mapper.Map<ApprovalDto, Approval>(approvalToDeleteDto);
+                //var approvalToDelete = _mapper.Map<ApprovalDto, Approval>(approvalToDeleteDto);
                 var deletedApproval = await _approvalRepo.DeleteAsync(approvalToDelete);
 
                 //map back to dto, to pass back to client 

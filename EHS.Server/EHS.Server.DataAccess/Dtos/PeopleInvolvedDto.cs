@@ -9,7 +9,6 @@ namespace EHS.Server.DataAccess.Dtos
         public int RoleId { get; set; }
         public int EventId { get; set; }
         public string EmployeeId { get; set; }
-        [MaxLength(2000)]
         public string Comments { get; set; }
     }
 }

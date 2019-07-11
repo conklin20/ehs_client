@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EHS.Server.DataAccess.DatabaseModels.CustomValidations;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -13,31 +14,42 @@ namespace EHS.Server.DataAccess.DatabaseModels
     { 
         [Key]
         public int EventId { get; set; }
-        [Required, MaxLength(50)]
+        [Display(Name="Event Type")]
+        [AllowNullWhenDraft, MaxLength(50)]
         public string EventType { get; set; }       //From HierarchyAttribute
-        [Required, MaxLength(50)]
+        [Display(Name = "Event Status")]
+        [AllowNullWhenDraft, MaxLength(50)]
         public string EventStatus { get; set; }     //From HierarchyAttribute
+        [Display(Name = "Reported By")]
         public string ReportedBy { get; set; }
-        [Required]
+        [Display(Name = "Reported On")]
+        [AllowNullWhenDraft]
         public DateTime ReportedOn { get; set; }
-        [Required, DataType(DataType.Date)]
+        [Display(Name = "Event Date")]
+        [AllowNullWhenDraft, DataType(DataType.Date)]
         public DateTime EventDate { get; set; }
-        [Required, DataType(DataType.Time)]
+        [Display(Name = "Event Time")]
+        [AllowNullWhenDraft, DataType(DataType.Time)]
         public TimeSpan EventTime { get; set; }
         public string EmployeeId { get; set; }
-        [Required, MaxLength(50)]
+        [Display(Name = "Job Title")]
+        [AllowNullWhenDraft, MaxLength(50)]
         public string JobTitle { get; set; }        //From HierarchyAttribute
-        [Required, MaxLength(50)]
+        [AllowNullWhenDraft, MaxLength(50)]
         public string Shift { get; set; }           //From HierarchyAttribute
-        [Required]
+        [Display(Name = "What Happened")]
+        [AllowNullWhenDraft]
         public string WhatHappened { get; set; }
         public bool IsInjury { get; set; }
         public bool IsIllness { get; set; }
-        [Required, Range(.5, 24)]
+        [Display(Name = "Hours Worked Prior")]
+        [AllowNullWhenDraft, Range(.5, 24)]
         public byte HoursWorkedPrior { get; set; }
-        [Required, MaxLength(50),]
+        [Display(Name = "Initial Catagory")]
+        [AllowNullWhenDraft, MaxLength(50),]
         public string InitialCategory { get; set; } //From HierarchyAttribute
-        [Required, MaxLength(50)]
+        [Display(Name = "Resulting Catagory")]
+        [MaxLength(50)]
         public string ResultingCategory { get; set; }  //From HierarchyAttribute (To be available for Health/Safety to upgrade/downgrade an event later) 
         public int DepartmentId { get; set; }
         [MaxLength(50)]
@@ -57,18 +69,25 @@ namespace EHS.Server.DataAccess.DatabaseModels
         public string LocalePlant { get; set; }     //From HierarchyAttribute (Locale/Building Hierarchy)
         [MaxLength(50)]
         public string LocalePlantArea { get; set; } //From HierarchyAttribute (Locale/Building Hierarchy)
-        [Required, MaxLength(50)]
+        [Display(Name = "Work Environment")]
+        [AllowNullWhenDraft, MaxLength(50)]
         public string WorkEnvironment { get; set; } //From HierarchyAttribute
-        [Required, MaxLength(50)]
+        [Display(Name = "Nature of Injury")]
+        [AllowNullWhenDraft, MaxLength(50)]
         public string NatureOfInjury { get; set; }  //From HierarchyAttribute
-        [Required, MaxLength(50)]
+        [Display(Name = "Body Part")]
+        [AllowNullWhenDraft, MaxLength(50)]
         public string BodyPart { get; set; }        //From HierarchyAttribute
+        [Display(Name = "First Aid Type")]
         [MaxLength(50)]
         public string FirstAidType { get; set; }    //From HierarchyAttribute
+        [Display(Name = "Off Plant Medical Facility")]
         [MaxLength(50)]
         public string OffPlantMedicalFacility { get; set; } //From HierarchyAttribute
+        [Display(Name = "Material Involved")]
         [MaxLength(50)]
         public string MaterialInvolved { get; set; } //From HierarchyAttribute
+        [Display(Name = "Equipment Involved")]
         [MaxLength(50)]
         public string EquipmentInvolved { get; set; } //From HierarchyAttribute
         public bool LostTime { get; set; }

@@ -10,13 +10,15 @@ namespace EHS.Server.DataAccess.DatabaseModels
         /// </summary>
         public abstract class CreatedModified
         {
-            [Required]
+            [Display(Name = "Created On")]
             public DateTime CreatedOn { get; set; }
-            [Required, MaxLength(50)]
+            [Display(Name = "Created By")]
+            [MaxLength(50)]
             public string CreatedBy { get; set; }
-            [Required]
+            [Display(Name = "Modified On")]
             public DateTime ModifiedOn { get; set; }
-            [Required, MaxLength(50)]
+            [Display(Name = "Modified By")]
+            [MaxLength(50)]
             public string ModifiedBy { get; set; }
         }
     }

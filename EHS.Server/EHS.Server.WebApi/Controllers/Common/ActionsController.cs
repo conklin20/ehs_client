@@ -32,7 +32,7 @@ namespace EHS.Server.WebApi.Controllers.Common
 
         // GET: api/Actions
         [HttpGet]
-        public async Task<ActionResult<List<ActionDto>>> Get()
+        public async Task<ActionResult<List<DataAccess.DatabaseModels.Action>>> Get()
         {
             try
             {
@@ -57,7 +57,7 @@ namespace EHS.Server.WebApi.Controllers.Common
 
         // GET: api/Actions/5
         [HttpGet("/AssignedToMe", Name = "GetMyActions")]
-        public async Task<ActionResult<List<ActionDto>>> Get(string userId)
+        public async Task<ActionResult<List<DataAccess.DatabaseModels.Action>>> Get(string userId)
         {
             try
             {
@@ -82,7 +82,7 @@ namespace EHS.Server.WebApi.Controllers.Common
 
         // GET: api/Actions/5
         [HttpGet("{id}", Name = "GetAction")]
-        public async Task<ActionResult<ActionDto>> Get([FromRoute]int id)
+        public async Task<ActionResult<DataAccess.DatabaseModels.Action>> Get([FromRoute]int id)
         {
             try
             {
@@ -107,7 +107,7 @@ namespace EHS.Server.WebApi.Controllers.Common
 
         // POST: api/Actions
         [HttpPost]
-        public async Task<ActionResult<ActionDto>> Post([FromBody]ActionDto actionToAddDto)
+        public async Task<ActionResult<DataAccess.DatabaseModels.Action>> Post([FromBody]DataAccess.DatabaseModels.Action actionToAdd)
         {
             try
             {
@@ -118,7 +118,7 @@ namespace EHS.Server.WebApi.Controllers.Common
                 }
 
                 //map the new action from the incoming dto object to the domain/database model object so we can pass it to the Add() method
-                var actionToAdd = _mapper.Map<ActionDto, DataAccess.DatabaseModels.Action>(actionToAddDto);
+                //var actionToAdd = _mapper.Map<ActionDto, DataAccess.DatabaseModels.Action>(actionToAddDto);
                 var addedAction = await _actionRepo.AddAsync(actionToAdd);
 
                 //map back to dto, to pass back to client 
@@ -135,7 +135,7 @@ namespace EHS.Server.WebApi.Controllers.Common
 
         // PUT: api/Actions/5
         [HttpPut("{id}")]
-        public async Task<ActionResult<ActionDto>> Put([FromBody]ActionDto actionToUpdateDto)
+        public async Task<ActionResult<DataAccess.DatabaseModels.Action>> Put([FromBody]DataAccess.DatabaseModels.Action actionToUpdate)
         {
             try
             {
@@ -146,7 +146,7 @@ namespace EHS.Server.WebApi.Controllers.Common
                 }
 
                 //map the action from the incoming dto object to the domain/database model object so we can pass it to the Update() method
-                var actionToUpdate = _mapper.Map<ActionDto, DataAccess.DatabaseModels.Action>(actionToUpdateDto);
+                //var actionToUpdate = _mapper.Map<ActionDto, DataAccess.DatabaseModels.Action>(actionToUpdateDto);
                 var updatedAction = await _actionRepo.UpdateAsync(actionToUpdate);
 
                 //map back to dto, to pass back to client 

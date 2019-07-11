@@ -32,7 +32,7 @@ namespace EHS.Server.WebApi.Controllers.Common
 
         // GET: api/severities
         [HttpGet]
-        public async Task<ActionResult<List<SeverityDto>>> Get()
+        public async Task<ActionResult<List<Severity>>> Get()
         {
             try
             {
