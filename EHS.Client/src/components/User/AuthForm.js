@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Form, Button, Alert } from 'react-bootstrap';
-import errors from '../store/reducers/errors';
+import errors from '../../store/reducers/errors';
 
 export default class AuthForm extends Component {
     constructor(props) {

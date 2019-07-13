@@ -2,10 +2,12 @@
 import { combineReducers } from 'redux';
 import currentUser from './currentUser'; 
 import errors from './errors';
+import safetyIncidents from './events'; 
 
 const rootReducer = combineReducers({
     currentUser, 
-    errors
+    errors, 
+    safetyIncidents
 }); 
 
 export default rootReducer; 

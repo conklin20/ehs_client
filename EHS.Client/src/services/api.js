@@ -1,6 +1,15 @@
 import axios from "axios"; //lib for making ajax requests 
 
 const APIVERSION = 1;
+const AUTHORIZATION_HEADER = 'Authorization';
+
+export function setTokenHeader(token){
+    if(token){
+        axios.defaults.headers.common[AUTHORIZATION_HEADER] = `Bearer ${token}`;
+    } else {
+        delete axios.defaults.headers.common[AUTHORIZATION_HEADER];
+    }
+}
 
 /**
  * A wrapper around axios API call that formats errors, etc. 
@@ -10,6 +19,7 @@ const APIVERSION = 1;
  */
 export function apiCall(method, path, data){
     path = `/api/v${APIVERSION}${path}`;
+    // console.log(path); 
     return  new Promise((resolve, reject) => {
         return axios[method](path, data)
             .then(res => {

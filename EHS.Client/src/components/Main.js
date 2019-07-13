@@ -1,10 +1,11 @@
 import React from 'react'; 
 import { Switch, Route, withRouter, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
-import Homepage from '../components/Homepage.js'
-import AuthForm from '../components/AuthForm';
+import Homepage from './Homepage.js'
+import AuthForm from '../components/User/AuthForm';
 import { authUser } from '../store/actions/auth';
 import { removeError } from '../store/actions/errors'; 
+// import withAuth from '../hocs/withAuth'; 
 
 const Main = props => {
     const { authUser, errors, removeError, currentUser } = props;
@@ -13,22 +14,25 @@ const Main = props => {
             <Switch>
                 <Route 
                     exact 
-                    path='/' 
+                    path='/z' 
                     render={props => <Homepage currentUser={currentUser} {...props} /> } />
                 <Route 
                     exact 
-                    path='/login' 
+                    path='/' 
                     render={props => {
                     return (
-                        <AuthForm 
-                            errors={errors}
-                            removeError={removeError}
-                            onAuth={authUser}
-                            buttonText='Log In!'
-                            heading='Welcome Back'
-                            domain='VSTO\'
-                            {...props } 
-                        />
+                        <div>
+                            <Homepage 
+                                currentUser={currentUser} 
+                                errors={errors}
+                                removeError={removeError}
+                                onAuth={authUser}
+                                buttonText='Log In!'
+                                heading='Log In Here'
+                                domain='VSTO\'
+                                {...props } 
+                            />
+                        </div>
                     )
                 }} />
                 <Route 
