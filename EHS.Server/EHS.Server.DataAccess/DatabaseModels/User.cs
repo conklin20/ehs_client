@@ -16,7 +16,11 @@ namespace EHS.Server.DataAccess.DatabaseModels
         [EmailAddress]
         public string Email { get; set; }
         [MaxLength(100)]
-        public string FullName { get; set; }
+        public string FirstName { get; set; }
+        [MaxLength(100)]
+        public string LastName { get; set; }
+        [Required]
+        public int ReportingHierarchyId { get; set; }
         [Phone]
         public string Phone { get; set; }
         public int RoleId { get; set; }

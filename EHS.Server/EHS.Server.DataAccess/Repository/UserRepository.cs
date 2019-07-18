@@ -32,9 +32,9 @@ namespace EHS.Server.DataAccess.Repository
         {
             using (IDbConnection sqlCon = Connection)
             {
-                string tsql = @"select u.UserId, u.FullName, u.Email, u.Phone, u.RoleId, u.TimeZone, u.DateFormat, u.CreatedBy, u.CreatedOn, u.ModifiedBy, u.ModifiedOn
-                                  from Users u 
-                                  where u.UserId = @UserId";
+                string tsql = @"select u.UserId, u.FirstName, u.LastName, u.ReportingHierarchyId, u.Email, u.Phone, u.RoleId, u.TimeZone, u.DateFormat, u.CreatedBy, u.CreatedOn, u.ModifiedBy, u.ModifiedOn
+                                from Users u 
+                                where u.UserId = @UserId";
                 
                 var result = await sqlCon.QueryAsync<User>(tsql, new { userId = id });
                 return result.FirstOrDefault();
@@ -45,8 +45,8 @@ namespace EHS.Server.DataAccess.Repository
         {
             using (IDbConnection sqlCon = Connection)
             {
-                string tsql = @"select u.UserId, u.FullName, u.Email, u.Phone, u.RoleId, u.TimeZone, u.DateFormat, u.CreatedBy, u.CreatedOn, u.ModifiedBy, u.ModifiedOn
-                                  from Users u";
+                string tsql = @"select u.UserId, u.FirstName, u.LastName, u.ReportingHierarchyId, u.Email, u.Phone, u.RoleId, u.TimeZone, u.DateFormat, u.CreatedBy, u.CreatedOn, u.ModifiedBy, u.ModifiedOn
+                                from Users u";
                 
                 var result = await sqlCon.QueryAsync<User>(tsql);
                 return result.AsList();
@@ -64,7 +64,8 @@ namespace EHS.Server.DataAccess.Repository
                     {
                         userToAdd.UserId,
                         userToAdd.Email, 
-                        userToAdd.FullName, 
+                        userToAdd.FirstName,
+                        userToAdd.LastName,
                         userToAdd.Phone, 
                         userToAdd.RoleId, 
                         userToAdd.TimeZone, 
@@ -90,7 +91,8 @@ namespace EHS.Server.DataAccess.Repository
                     {
                         userToUpdate.UserId,
                         userToUpdate.Email,
-                        userToUpdate.FullName,
+                        userToUpdate.FirstName,
+                        userToUpdate.LastName,
                         userToUpdate.Phone,
                         userToUpdate.RoleId,
                         userToUpdate.TimeZone,

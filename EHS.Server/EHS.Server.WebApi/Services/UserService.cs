@@ -5,8 +5,8 @@ using EHS.Server.DataAccess.Repository;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System.IdentityModel.Tokens.Jwt;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -44,7 +44,7 @@ namespace EHS.Server.WebApi.Services
         {
             //check if user exists in db 
             var user = await _userRepo.GetByIdAsync(username);
-            _logger.LogDebug($"User {user.FullName} found in the db");
+            _logger.LogDebug($"User {user.UserId} found in the db");
 
             if (user == null)
             {
@@ -74,7 +74,15 @@ namespace EHS.Server.WebApi.Services
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                    new Claim(ClaimTypes.Name, user.UserId.ToString())
+                    new Claim(ClaimTypes.NameIdentifier, user.UserId),
+                    new Claim(ClaimTypes.GivenName, user.FirstName),
+                    new Claim(ClaimTypes.Surname, user.LastName),
+                    new Claim(ClaimTypes.Email, user.Email),
+                    new Claim(ClaimTypes.UserData, user.ReportingHierarchyId.ToString()),
+                    new Claim(ClaimTypes.MobilePhone, user.Phone),
+                    new Claim(ClaimTypes.Role, user.RoleId.ToString()),
+                    new Claim(ClaimTypes.UserData, user.TimeZone),
+                    new Claim(ClaimTypes.UserData, user.DateFormat)
                 }),
                 Expires = DateTime.UtcNow.AddDays(7),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)

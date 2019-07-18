@@ -15,7 +15,7 @@ namespace EHS.Server.DataAccess.DatabaseModels.CustomValidations
                 return ValidationResult.Success; 
             }
 
-            return string.IsNullOrEmpty(value.ToString()) 
+            return string.IsNullOrEmpty((value ?? string.Empty).ToString())
                 ? new ValidationResult($"{validationContext.DisplayName} is required") 
                 : ValidationResult.Success; 
         }
