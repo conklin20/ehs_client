@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom'; 
 import { Navbar, NavDropdown, Nav, NavItem, Form, Button } from 'react-bootstrap';
 import { connect } from 'react-redux';
-import { logout } from '../store/actions/auth'; 
-import Logo from '../images/vista-outdoor-vector-logo.png'
+import { logout } from '../../store/actions/auth'; 
+import Logo from '../../images/vista-outdoor-vector-logo.png'
 
 class EHSNavbar extends Component {
   constructor(props) {
@@ -27,11 +27,12 @@ class EHSNavbar extends Component {
   }
 
   render() {
+    // console.log(this.props.currentUser)
     return (
       <div>
         {this.props.currentUser.isAuthenticated ? (
           <Navbar bg='light' expand='lg'>
-              <Navbar.Brand href='#home'>
+              <Navbar.Brand href='/'>
                   <img
                       src={Logo} 
                       width='15%'
@@ -51,10 +52,14 @@ class EHSNavbar extends Component {
                           </NavDropdown>
                   </Nav>
               </Navbar.Collapse>
-              <span>Display Username and Icon</span>
-              <NavItem onClick={this.logout}>
-                <Link to="/">Log Out</Link>
-              </NavItem> 
+              <Navbar.Collapse className="justify-content-end flex-column">
+                <Navbar.Text>
+                  { `Welcome, ${ this.props.currentUser.user.given_name || this.props.currentUser.user.firstName }!` }
+                </Navbar.Text>
+                <NavItem onClick={this.logout}>
+                  <Link to="/">Log Out</Link>
+                </NavItem> 
+              </Navbar.Collapse>
           </Navbar>
           // if the user is not logged in, dont show the navbar 
         ) : null}

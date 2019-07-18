@@ -4,7 +4,7 @@ const APIVERSION = 1;
 const AUTHORIZATION_HEADER = 'Authorization';
 
 export function setTokenHeader(token){
-    if(token){
+    if (token){
         axios.defaults.headers.common[AUTHORIZATION_HEADER] = `Bearer ${token}`;
     } else {
         delete axios.defaults.headers.common[AUTHORIZATION_HEADER];

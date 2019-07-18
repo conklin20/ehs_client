@@ -26,7 +26,7 @@ handleSubmit = e => {
     this.props.onAuth(authType, this.state)
         .then( () => {
             //use react-router to redirect use to dashboard 
-            this.props.history.push("/"); 
+            this.props.history.push("/dashboard");
         })
         .catch(() => {
             return; 

@@ -5,17 +5,17 @@ import { fetchSafteyIncidents } from '../../../store/actions/safetyIncidents';
 import IncidentItem from './IncidentItem'; 
 
 const tableStyles = {
-    color: "white"
+    color: "white",
+    margin: "5px"
 }
 
 class IncidentList extends Component {
-    componentWillMount() {
+    componentDidMount() {
         this.props.fetchSafteyIncidents();
     }
     render() {
         const { safetyIncidents } = this.props; 
-        console.log(safetyIncidents);
-        let safetyIncidentList = safetyIncidents.map(i => (
+        let safetyIncidentList = safetyIncidents.map(i => (            
             <IncidentItem 
                 key={i.eventId}
                 eventId={i.eventId}
@@ -46,7 +46,7 @@ class IncidentList extends Component {
 }
 
 function mapStateToProps(state) {
-    console.log(state)
+    // console.log(state)
     return {
         safetyIncidents: state.safetyIncidents
     };
