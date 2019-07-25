@@ -14,10 +14,13 @@ export function setAuthorizationToken(token) {
 }
 
 export function logout(){
+  console.log("made it here")
   return dispatch => {
     sessionStorage.clear();
+    console.log(sessionStorage)
     setAuthorizationToken(false); //clear the token/force log out
     dispatch(setCurrentUser({})); 
+    console.log("and finally here")
   }
 }
 

@@ -1,17 +1,16 @@
 import React from 'react'; 
 import { Switch, Route, withRouter, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
-import Homepage from '../presentation/Homepage';
-import AuthForm from '../presentation/AuthForm';
+import AppBar from './AppBar';
+import Homepage from '../function/Homepage';
+import AuthForm from '../function/AuthForm';
 import Dashboard from '../containers/Dashboard'; 
-import ReportAside from '../containers/ReportAside'; 
-import UserAside from '../containers/UserAside'; 
-import { authUser } from '../../store/actions/auth';
+import { authUser, logout } from '../../store/actions/auth';
 import { removeError } from '../../store/actions/errors'; 
 import withAuth from '../../hocs/withAuth'; 
 
 const Main = props => {
-    const { authUser, errors, removeError, currentUser } = props;
+    const { authUser, logout, errors, removeError, currentUser } = props;
     return(
         <div className=''>
             <Switch>
@@ -26,9 +25,6 @@ const Main = props => {
                                     errors={errors}
                                     removeError={removeError}
                                     onAuth={authUser}
-                                    buttonText='Log In!'
-                                    heading='Log In Here'
-                                    domain='VSTO\'
                                     {...props } 
                                 />
                             </div>
@@ -42,7 +38,6 @@ const Main = props => {
                         <AuthForm 
                             errors={errors}
                             removeError={removeError}
-                            // onAuth={authUser}
                             buttonText='Sign Up!'
                             heading='Create an account'
                             domain=''
@@ -55,13 +50,16 @@ const Main = props => {
                     path='/dashboard' 
                     render={props => {
                         return (
-                            <div className='dashboard-parent'>
-                                <ReportAside   
+                            <div>
+                                <AppBar 
+                                currentUser={currentUser} 
+                                onLogout={logout}
                                 />
-                                <Dashboard 
-                                />
-                                <UserAside 
-                                />
+                                <div className='dashboard-parent'>
+                                    <Dashboard 
+                                        currentUser={currentUser} 
+                                    />
+                                </div>
                             </div>
                         )
                          }} />
@@ -79,5 +77,5 @@ function mapStateToProps(state){
 }
 
 export default withRouter(
-    connect(mapStateToProps, { authUser, removeError })(Main)
+    connect(mapStateToProps, { authUser, logout, removeError })(Main)
 ); 

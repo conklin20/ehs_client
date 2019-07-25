@@ -23,7 +23,6 @@ if (sessionStorage.jwtToken) {
 const App = () => (
   <Provider store={store}>
     <Router>
-        <Navbar />
         <Main />
     </Router>    
   </Provider>

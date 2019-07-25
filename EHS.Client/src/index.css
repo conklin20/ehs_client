@@ -20,25 +20,3 @@ code {
     monospace;
 }
 
-/* Main dashboard Components, including the Dashboard, ReportsAside, and UserAside components  */
-.dashboard-parent {
-  display: flex; 
-  justify-content: space-between;
-  height: 90vh;
-  overflow: hidden;
-}
-
-.dashboard {
-  flex-grow: 6; 
-  background-color: lightblue; 
-}
-
-.report-aside {
-  flex-grow: 1; 
-  background-color: lightyellow;  
-}
-
-.user-aside {
-  flex-grow: 1; 
-  background-color: lightgreen;  
-}
