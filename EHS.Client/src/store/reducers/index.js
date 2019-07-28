@@ -7,7 +7,7 @@ import safetyIncidents from './events';
 const rootReducer = combineReducers({
     currentUser, 
     errors, 
-    safetyIncidents
+    safetyIncidents, 
 }); 
 
 export default rootReducer; 

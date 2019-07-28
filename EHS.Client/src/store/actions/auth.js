@@ -3,9 +3,35 @@ import { SET_CURRENT_USER } from "../actionTypes";
 import { addError, removeError } from './errors'; 
 
 export function setCurrentUser(user){
+  let newUserObj = {}
+  //if we're retreiving the user data from the JWT toke, it wont be in the same format as when we initially just pull it from the db, 
+  //so we need to map the fields we want from the JWT object to the user object 
+  if(user.nameid){
+    //nameid indicates we're working with the JWT token array
+    //the userData array is created on the server when the user is authenticated and the jwt tokens payload is created. 
+    //if the order of which these fields are added to the payload changes, the order in the array below will also need updated 
+    const userData = user[`http://schemas.microsoft.com/ws/2008/06/identity/claims/userdata`];
+    const phone = user[`http://schemas.xmlsoap.org/ws/2005/05/identity/claims/mobilephone`];
+  
+    newUserObj = {
+      dateFormat: userData[2],
+      email: user.email,
+      firstName: user.given_name, 
+      lastName: user.family_name, 
+      fullName: `${user.given_name} ${user.family_name}`,
+      phone: phone, 
+      reportingHierarchyId: userData[0],
+      roleId: user.role,
+      timeZone: userData[1],
+      userId: user.nameId
+    }
+  } else {
+    newUserObj = user; 
+  }
+  
   return {
     type: SET_CURRENT_USER, 
-    user
+    user: newUserObj
   }
 }
 
@@ -14,13 +40,10 @@ export function setAuthorizationToken(token) {
 }
 
 export function logout(){
-  console.log("made it here")
   return dispatch => {
     sessionStorage.clear();
-    console.log(sessionStorage)
     setAuthorizationToken(false); //clear the token/force log out
-    dispatch(setCurrentUser({})); 
-    console.log("and finally here")
+    dispatch(setCurrentUser({}));
   }
 }
 

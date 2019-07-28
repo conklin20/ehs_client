@@ -1,6 +1,6 @@
 import React from 'react'; 
 import { makeStyles } from '@material-ui/core/styles';
-import { Paper, Grid, Hidden, Typography } from '@material-ui/core';
+import { Paper, Grid, Hidden, Typography, Divider } from '@material-ui/core';
 import CopyrightIcon from '@material-ui/icons/Copyright';
 import { Link } from 'react-router-dom';
 import AuthForm from './AuthForm';
@@ -67,8 +67,8 @@ const Homepage = (props) => {
                       heading='Log In Here'
                       domain='VSTO\'
                       {...props } 
-                  />                  
-                  <hr />
+                  />        
+                  <Divider variant='middle'/>
                   <Typography>                        
                     <CopyrightIcon className={classes.icon} /> 2019 All Rights Reserved
                   </Typography>
@@ -76,28 +76,6 @@ const Homepage = (props) => {
               </Grid>
             </Grid>
           </div>
-          // <div style={homepageCss}>
-          //     <div style={homepageLeftCss}>
-          //         {/* background image rendered */}
-          //     </div>
-          //     <div style={homepageRightCss}>
-          //         <h1>Welcome to the newly designed Incident Investigation System!</h1>
-          //         <AuthForm 
-          //             errors={errors}
-          //             removeError={removeError}
-          //             onAuth={authUser}
-          //             buttonText='Log In!'
-          //             heading='Welcome Back'
-          //             domain='VSTO\'
-          //             {...props } 
-          //         />
-          //         <div>
-          //             <span>
-          //                 &copy 2019 All Rights Reserved
-          //             </span>
-          //         </div>
-          //     </div>
-          // </div>
       );
   }
   //if user is logged in, route them to their dashboard

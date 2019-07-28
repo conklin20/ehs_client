@@ -1,22 +1,25 @@
-import React, { useState } from 'react'; 
+import React, { useState, useEffect } from 'react'; 
 import { connect } from "react-redux";
+import { fetchSafteyIncidents } from '../../store/actions/safetyIncidents';
 import { makeStyles } from '@material-ui/core/styles';
 import { Paper, Grid, Hidden, Typography } from '@material-ui/core';
 import EventList from './EventList';
+import EventSearch from '../function/EventSearch';
 import ReportAside from '../containers/ReportAside'; 
 import UserAside from '../containers/UserAside'; 
 
 const useStyles = makeStyles(theme => ({
   root: {
     flexGrow: 1,
+		overflowY: 'hidden'
   },
   paper: {
     padding: theme.spacing(2),
     textAlign: 'center',
     color: theme.palette.text.secondary,
-    height: '100vh',
+    height: '94vh',
     margin: '0', 
-    padding: '0'
+		padding: '0',
   },
   icon: {
     margin: theme.spacing(0),
@@ -24,9 +27,96 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const Dashboard = ( props ) => {    
-	const classes = useStyles();
+const parseSearchFilters = filters => {
+	let parsedFilters = '?'; 
+	//loop through all object properties
+	for (let prop in filters){
+		// Array.isArray(filters[prop]) ? 
+		parsedFilters += `${prop}=${filters[prop]}&`
+	}
 	
+	return parsedFilters.slice(0, -1); //removing  the last & char 
+}
+
+const Dashboard = props => {    
+	const classes = useStyles();
+	const [searchFilters, setSearchFilters] = useState(
+		{
+			status: ['Open', 'Draft']
+		}
+	)
+	const [searchText, setSearchText] = useState(''); 
+	const [showSearchFilters, setShowSearchFilters] = useState(false); 
+	const [dense, setDense] = useState(true);
+	
+  // Essentially what was componentDidMount and componentDidUpdate before Hooks
+	useEffect(() => {
+		console.log('fetchSafteyIncidents called')
+		// console.log(JSON.stringify(parseSearchFilters(searchFilters)))
+		props.fetchSafteyIncidents(parseSearchFilters(searchFilters)); 	 	
+		return () => {
+			console.log('Cleanup function (ComponentDidUnmount)')
+		}
+	}, [props.searchFilters]); //this 2nd arg is important, it tells what to look for changes in, and will re-run the hook when this changes 
+
+	//handler for the search textbox
+	const handleSearchText = e => {
+		setSearchText(e.target.value)
+		//filter incident list 
+		// console.log(e.target.value)
+	}
+	
+	//handler for the show search filters button
+	const handleShowSearchFilters = () => {
+		setShowSearchFilters(!showSearchFilters)
+		// console.log(showSearchFilters)
+	}
+
+	//handler for the search filters 
+	const handleSearchFilters = e => {
+		setSearchFilters(e.target.value); 
+		// console.log(searchFilters)
+	}
+
+	//handler for the dense padding
+	const handleDensePadding = () => {
+		setDense(!dense); 
+		console.log(dense)
+	}
+
+	//handler for the search button
+	const handleSearch = e => {
+		// e.preventDafault(); 
+		props.fetchSafteyIncidents(parseSearchFilters(searchFilters));
+		setShowSearchFilters(false); 
+		// console.log('handleSearch called!')
+	}
+
+
+	const filterSafetyIncidents = () => {
+		const searchTextSplit = searchText.toLowerCase().split(' ');
+
+		//filter the list on what the dynamic search input has, split out key words and search on each
+		const filteredSafetyIncidents = searchTextSplit[0] !== ''
+			? props.safetyIncidents
+					.filter(inc => 
+						searchTextSplit.every(cond => 
+							JSON.stringify(inc)
+								.toLowerCase()
+								.includes(cond)
+						)
+					)
+			: props.safetyIncidents 
+		
+		// filteredSafetyIncidents.filter(si => {
+		// 	return searchFilters.status.some(status => {
+		// 		return si.eventStatus === status
+		// 	})
+		// })
+
+		return filteredSafetyIncidents; 
+	}
+
 	return (
 		<div className={classes.root}>			
 			<Grid container spacing={0}>
@@ -42,13 +132,24 @@ const Dashboard = ( props ) => {
 					</Grid>
 				</Hidden>
 				<Grid item xs={12} md={8}>
-					<Paper className={[classes.paper, ]}
+					<Paper className={[classes.paper]}
 							square={true}
 					>                 
-						<Typography variant="h3" gutterBottom>Incident List!</Typography>     
-						
+						<EventSearch 
+							onSearchTextChange={handleSearchText}
+							onShowSearchFilters={handleShowSearchFilters}
+							onSearchFiltersChange={handleSearchFilters}
+							onDensePadding={handleDensePadding}
+							onSearch={handleSearch}
+							showSearchFilters={showSearchFilters}
+							searchFilters={searchFilters}
+							dense={dense}
+						/>
+
 						<EventList 
-								currentUser={props.currentUser} 
+							currentUser={props.currentUser} 
+							safetyIncidents={filterSafetyIncidents()}
+							dense={dense}
 						/>
 					</Paper>
 				</Grid>				
@@ -65,8 +166,14 @@ const Dashboard = ( props ) => {
 				</Hidden>
 			</Grid>
 		</div>
-	) 
-    
+	)     
 }
 
-export default Dashboard; 
+function mapStateToProps(state) {
+	// console.log(state)
+	return {
+			safetyIncidents: state.safetyIncidents, 
+	};
+}
+
+export default connect(mapStateToProps, { fetchSafteyIncidents })(Dashboard); 
