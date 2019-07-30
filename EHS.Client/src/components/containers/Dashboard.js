@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react'; 
 import { connect } from "react-redux";
 import { fetchSafteyIncidents } from '../../store/actions/safetyIncidents';
+import { fetchLookupData } from '../../store/actions/lookupData'; 
 import { makeStyles } from '@material-ui/core/styles';
 import { Paper, Grid, Hidden, Typography } from '@material-ui/core';
 import EventList from './EventList';
 import EventSearch from '../function/EventSearch';
 import ReportAside from '../containers/ReportAside'; 
 import UserAside from '../containers/UserAside'; 
+import Notification from '../function/Notification';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -52,8 +54,11 @@ const Dashboard = props => {
   // Essentially what was componentDidMount and componentDidUpdate before Hooks
 	useEffect(() => {
 		console.log('fetchSafteyIncidents called')
-		// console.log(JSON.stringify(parseSearchFilters(searchFilters)))
 		props.fetchSafteyIncidents(parseSearchFilters(searchFilters)); 	 	
+
+		//fetch lookup data, which will be used in various places 
+		props.fetchLookupData('?enabled=true'); 
+
 		return () => {
 			console.log('Cleanup function (ComponentDidUnmount)')
 		}
@@ -89,7 +94,7 @@ const Dashboard = props => {
 		// e.preventDafault(); 
 		props.fetchSafteyIncidents(parseSearchFilters(searchFilters));
 		setShowSearchFilters(false); 
-		// console.log('handleSearch called!')
+		console.log('handleSearch called!')
 	}
 
 
@@ -117,8 +122,20 @@ const Dashboard = props => {
 		return filteredSafetyIncidents; 
 	}
 
+	const { errors, removeError } = props; 
+
 	return (
-		<div className={classes.root}>			
+		<div className={classes.root}>
+			{/* display error if any are encountered  */}
+			{errors.message && (							
+				<Notification
+					open={true} 
+					variant="error"
+					className={classes.margin}
+					message={errors.message}	
+					removeError={removeError}							
+				/>		
+			)}
 			<Grid container spacing={0}>
 				<Hidden smDown>
 					<Grid item md={2}>
@@ -144,6 +161,7 @@ const Dashboard = props => {
 							showSearchFilters={showSearchFilters}
 							searchFilters={searchFilters}
 							dense={dense}
+							lookupData={props.lookupData}
 						/>
 
 						<EventList 
@@ -173,7 +191,8 @@ function mapStateToProps(state) {
 	// console.log(state)
 	return {
 			safetyIncidents: state.safetyIncidents, 
+			lookupData: state.lookupData,
 	};
 }
 
-export default connect(mapStateToProps, { fetchSafteyIncidents })(Dashboard); 
+export default connect(mapStateToProps, { fetchSafteyIncidents, fetchLookupData })(Dashboard); 

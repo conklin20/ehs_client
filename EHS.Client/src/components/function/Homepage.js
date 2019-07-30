@@ -4,7 +4,6 @@ import { Paper, Grid, Hidden, Typography, Divider } from '@material-ui/core';
 import CopyrightIcon from '@material-ui/icons/Copyright';
 import { Link } from 'react-router-dom';
 import AuthForm from './AuthForm';
-import SafetyIncidentList from '../Event/Safety/Incidents'; 
 import coverImage from '../../images/mfg-plant.jpg';
 
 const useStyles = makeStyles(theme => ({

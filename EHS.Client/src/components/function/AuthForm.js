@@ -36,23 +36,23 @@
 		};
 			
 		const handleSubmit = e => {
-				e.preventDefault(); 
-				const authType = props.signUp ? "signup" : "signin";
-				props.onAuth(authType, values)
-						.then( () => {
-								//use react-router to redirect use to dashboard 
-								props.history.push("/dashboard");
-						})
-						.catch(() => {
-								return; 
-						})
+			e.preventDefault(); 
+			const authType = props.signUp ? "signup" : "signin";
+			props.onAuth(authType, values)
+				.then( () => {
+					//use react-router to redirect use to dashboard 
+					props.history.push("/dashboard");
+				})
+				.catch(() => {
+					return; 
+				})
 		}
 
 		const { heading, buttonText , domain, errors, history, removeError } = props; 
 
 		// this is react-router, listening for any changes in the route. If there is a change in the route, call removeError() to remove any errors from the page
 		history.listen(() => {
-				removeError(); 
+			removeError(); 
 		});
 
 		return (
@@ -61,13 +61,13 @@
 					<h2>{heading}</h2>
 					{/* How we show an alert with an error message returned from the API */}
 					{errors.message && (							
-							<Notification
-								open={true} 
-								variant="error"
-								className={classes.margin}
-								message={errors.message}	
-								removeError={removeError}							
-							/>		
+						<Notification
+							open={true} 
+							variant="error"
+							className={classes.margin}
+							message={errors.message}	
+							removeError={removeError}							
+						/>		
 					)}
 					<form className={classes.container} noValidate autoComplete="off" onSubmit={handleSubmit}>
 						<TextField

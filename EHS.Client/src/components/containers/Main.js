@@ -57,6 +57,8 @@ const Main = props => {
                                 />
                                 <div className='dashboard-parent'>
                                     <Dashboard 
+                                        errors={errors}
+                                        removeError={removeError}
                                         currentUser={currentUser} 
                                     />
                                 </div>

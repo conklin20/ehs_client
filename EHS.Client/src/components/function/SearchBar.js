@@ -20,10 +20,10 @@ const useStyles = makeStyles(theme => ({
 	menu: {
 		width: 200,
 	},
-  icon: {
-    margin: theme.spacing(2),
-	fontSize: 32,
-	cursor: 'pointer',
+ 	icon: {
+		margin: theme.spacing(2),
+		fontSize: 32,
+		cursor: 'pointer',
   },
 }));
 
@@ -36,7 +36,7 @@ const SearchBar = props => {
 				id="event-search-bar"
 				className={classes.textField}
 				onChange={props.onSearchTextChange}
-				label="Dynamic Search"
+				label="Quick Search"
 				placeholder="Ex. First Aid 4304 John Doe"
 				helperText="Search for events using multiple keywords, just put a space in-between each keyword"
 				margin="dense"
@@ -49,11 +49,17 @@ const SearchBar = props => {
 				className={classes.icon} 
 				onClick={props.onShowSearchFilters}
 			/>
-			<SearchFilters
-				showSearchFilters={props.showSearchFilters}
-				onShowSearchFilters={props.onShowSearchFilters}
-				onSearch={props.onSearch}
-			/>			
+			{props.showSearchFilters 
+				? 	<SearchFilters
+						showSearchFilters={props.showSearchFilters}
+						onShowSearchFilters={props.onShowSearchFilters}
+						onSearchFiltersChange={props.onSearchFiltersChange}
+						onSearch={props.onSearch}
+						searchFilters={props.searchFilters}
+						lookupData={props.lookupData}
+					/>	
+				: null
+			}		
 			<FormControlLabel
 				control={
 					<Switch 

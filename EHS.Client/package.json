@@ -16,10 +16,11 @@
     "react-redux": "^7.0.3",
     "react-router-dom": "^5.0.0",
     "react-scripts": "3.0.1",
+    "react-select": "^3.0.4",
     "redux": "^4.0.1",
     "redux-thunk": "^2.3.0"
   },
-  "proxy": "http://localhost:51292",
+  "proxy": "http://localhost:7000",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",

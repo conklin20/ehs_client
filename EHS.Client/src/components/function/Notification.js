@@ -50,7 +50,7 @@ function MySnackbarContentWrapper(props) {
   const classes = useStyles1();
   const { className, message, onClose, variant, ...other } = props;
   const Icon = variantIcon[variant];
-
+  
   return (
     <SnackbarContent
       className={clsx(classes[variant], className)}
@@ -58,7 +58,7 @@ function MySnackbarContentWrapper(props) {
       message={
         <span id="client-snackbar" className={classes.message}>
           <Icon className={clsx(classes.icon, classes.iconVariant)} />
-          {message}
+          {message.response.data.message || 'An unknown error has occured.'}
         </span>
       }
       action={[
