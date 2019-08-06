@@ -1,15 +1,10 @@
 ﻿CREATE TABLE [dbo].[SafetyEvents] (
-    [CreatedOn]               DATETIME2 (7)  NOT NULL,
-    [CreatedBy]               NVARCHAR (50)  NOT NULL,
-    [ModifiedOn]              DATETIME2 (7)  NOT NULL,
-    [ModifiedBy]              NVARCHAR (50)  NOT NULL,
     [EventId]                 INT            IDENTITY (1, 1) NOT NULL,
     [EventType]               NVARCHAR (50)  NOT NULL,
     [EventStatus]             NVARCHAR (50)  NOT NULL,
     [ReportedBy]              NVARCHAR (MAX) NULL,
     [ReportedOn]              DATETIME2 (7)  NOT NULL,
-    [EventDate]               DATETIME2 (7)  NOT NULL,
-    [EventTime]               DATETIME2 (7)  NOT NULL,
+    [EventDate]               DATETIME       NOT NULL,
     [EmployeeId]              NVARCHAR (MAX) NULL,
     [JobTitle]                NVARCHAR (50)  NOT NULL,
     [Shift]                   NVARCHAR (50)  NOT NULL,
@@ -28,7 +23,7 @@
     [LocalePlant]             NVARCHAR (50)  NULL,
     [LocalePlantArea]         NVARCHAR (50)  NULL,
     [WorkEnvironment]         NVARCHAR (50)  NOT NULL,
-    [NatureOfEnjury]          NVARCHAR (50)  NOT NULL,
+    [NatureOfInjury]          NVARCHAR (50)  NOT NULL,
     [BodyPart]                NVARCHAR (50)  NOT NULL,
     [FirstAidType]            NVARCHAR (50)  NULL,
     [OffPlantMedicalFacility] NVARCHAR (50)  NULL,
@@ -43,8 +38,15 @@
     [CameraId]                INT            NULL,
     [VideoStartRef]           DATETIME2 (7)  NULL,
     [VideoEndRef]             DATETIME2 (7)  NULL,
-    [DepartmentId]            INT            DEFAULT ((0)) NOT NULL,
-    [LocaleId]                INT            DEFAULT ((0)) NOT NULL,
+    [DepartmentId]            INT            CONSTRAINT [DF__SafetyEve__Depar__74AE54BC] DEFAULT ((0)) NOT NULL,
+    [LocaleId]                INT            CONSTRAINT [DF__SafetyEve__Local__75A278F5] DEFAULT ((0)) NOT NULL,
+    [CreatedOn]               DATETIME2 (7)  NOT NULL,
+    [CreatedBy]               NVARCHAR (50)  NOT NULL,
+    [ModifiedOn]              DATETIME2 (7)  NOT NULL,
+    [ModifiedBy]              NVARCHAR (50)  NOT NULL,
+    [LegacyIncidentId]        INT            NULL,
     CONSTRAINT [PK_SafetyEvents] PRIMARY KEY CLUSTERED ([EventId] ASC)
 );
+
+
 

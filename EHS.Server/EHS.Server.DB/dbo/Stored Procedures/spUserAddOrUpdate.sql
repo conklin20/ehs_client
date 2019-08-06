@@ -3,11 +3,13 @@
 -- Author:		CC
 -- Create date: 07/02/2019
 -- Description:	Add or Update operations for the User Table
+-- select * from users
 -- =============================================
 CREATE PROCEDURE [dbo].[spUserAddOrUpdate] 
 		@UserId nvarchar(50), 
 		@Email nvarchar(255), 
-		@FullName nvarchar(100), 
+		@FirstName nvarchar(100), 
+		@LastName nvarchar(100), 
 		@Phone nvarchar(20), 
 		@RoleId int,
 		@TimeZone nvarchar(50), 

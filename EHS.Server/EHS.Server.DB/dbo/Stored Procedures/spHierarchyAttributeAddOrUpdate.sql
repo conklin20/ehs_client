@@ -21,12 +21,19 @@ BEGIN
 
     if(@HierarchyAttributeId is null) 
 	begin 
-		print 'Insert new hierarchyAttribute'
-		select max(HierarchyAttributeId)+1 from HierarchyAttributes 
+		insert into HierarchyAttributes 
+		select @HierarchyId, @AttributeId, @Key, @Value, @Enabled, GETUTCDATE(), @UserId, GETUTCDATE(), @UserId
 	end
 	else 
 	begin 
-		print 'Update existing hierarchyAttribute'
-		select @HierarchyAttributeId
+		update HierarchyAttributes 
+		set [HierarchyId] = @HierarchyId
+			,AttributeId = @AttributeId
+			,[Key] = @Key
+			,[Value] = @Value
+			,[Enabled] = @Enabled
+			,ModifiedOn = GETUTCDATE()
+			,ModifiedBy = @UserId
+		where HierarchyAttributeId = @HierarchyAttributeId
 	end
 END
