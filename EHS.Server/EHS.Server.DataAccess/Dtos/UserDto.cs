@@ -11,7 +11,8 @@ namespace EHS.Server.DataAccess.Dtos
         public string Email { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        public int ReportingHierarchyId { get; set; }
+        public int LogicalHierarchyId { get; set; }
+        public int PhysicalHierarchyId { get; set; }
         public string Phone { get; set; }
         public int RoleId { get; set; }
         public string TimeZone { get; set; }

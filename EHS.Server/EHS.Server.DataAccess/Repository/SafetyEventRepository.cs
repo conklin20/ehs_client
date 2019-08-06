@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Linq;
 using EHS.Server.DataAccess.DatabaseModels;
 using Dapper;
-
+using EHS.Server.DataAccess.Queries;
 
 namespace EHS.Server.DataAccess.Repository
 { 
@@ -83,7 +83,7 @@ namespace EHS.Server.DataAccess.Repository
             }
         }
 
-        public async Task<List<SafetyEvent>> GetAllAsync()
+        public async Task<List<SafetyEvent>> GetAllAsync(List<DynamicParam> queryParams)
         {
             using (IDbConnection sqlCon = Connection)
             {
@@ -93,10 +93,29 @@ namespace EHS.Server.DataAccess.Repository
 	                                  ,p.*
                                 from SafetyEvents e
 	                                 left join Actions a on a.EventId = e.EventId 
-	                                 left join PeopleInvolved p on p.EventId = e.EventId";
+	                                 left join PeopleInvolved p on p.EventId = e.EventId 
+                                where 1 = 1 ";
+
+                //build param list 
+                DynamicParameters paramList = new DynamicParameters(); 
+
+                foreach (DynamicParam param in queryParams)
+                {
+                    //add the where clause to the sql string 
+                    tsql += $" and {param.TableAlias}{param.FieldName} {param.Operator} {param.ParamName}";
+                    //then add the param to the param list 
+                    //a value should always either be single string, or string[], never both 
+                    if(param.SingleValue != null)
+                    {
+                        paramList.Add($"{param.ParamName}", param.SingleValue); //, DbType.String, ParameterDirection.Input);
+                    } else
+                    {
+                        paramList.Add($"{param.ParamName}", param.MultiValue.ToList());
+                    }
+                }
 
                 var safetyEventDictionary = new Dictionary<int, SafetyEvent>();
-
+                
                 var result = await sqlCon.QueryAsync<SafetyEvent, Action, PeopleInvolved, SafetyEvent>(
                     tsql,
                     (safetyEvent, action, personInvolved) =>
@@ -112,17 +131,24 @@ namespace EHS.Server.DataAccess.Repository
                         //check if this action has already been added to the event
                         if (!eventEntry.Actions.Any(actionToAdd => actionToAdd.ActionId == action.ActionId))
                         {
-                            eventEntry.Actions.Add(action);
+                            if (action != null)
+                            {
+                                eventEntry.Actions.Add(action);
+                            }
                         }
 
                         //check if this person has already been added to the event
                         if (!eventEntry.PeopleInvolved.Any(personToAdd => personToAdd.PeopleInvolvedId == personInvolved.PeopleInvolvedId))
                         {
-                            eventEntry.PeopleInvolved.Add(personInvolved);
+                            if (personInvolved != null)
+                            {
+                                eventEntry.PeopleInvolved.Add(personInvolved);
+                            }
                         }
 
                         return eventEntry;
                     },
+                    paramList,
                     splitOn: "ActionId, PeopleInvolvedId");
 
 
@@ -143,7 +169,7 @@ namespace EHS.Server.DataAccess.Repository
                         SafetyEventToAdd.ReportedBy,
                         SafetyEventToAdd.ReportedOn,
                         SafetyEventToAdd.EventDate,
-                        SafetyEventToAdd.EventTime,
+                        //SafetyEventToAdd.EventTime,
                         SafetyEventToAdd.EmployeeId,
                         SafetyEventToAdd.JobTitle,
                         SafetyEventToAdd.Shift,
@@ -202,7 +228,7 @@ namespace EHS.Server.DataAccess.Repository
                         SafetyEventToUpdate.ReportedBy,
                         SafetyEventToUpdate.ReportedOn,
                         SafetyEventToUpdate.EventDate,
-                        SafetyEventToUpdate.EventTime,
+                        //SafetyEventToUpdate.EventTime,
                         SafetyEventToUpdate.EmployeeId,
                         SafetyEventToUpdate.JobTitle,
                         SafetyEventToUpdate.Shift,

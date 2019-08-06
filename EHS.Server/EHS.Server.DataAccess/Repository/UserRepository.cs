@@ -32,7 +32,7 @@ namespace EHS.Server.DataAccess.Repository
         {
             using (IDbConnection sqlCon = Connection)
             {
-                string tsql = @"select u.UserId, u.FirstName, u.LastName, u.ReportingHierarchyId, u.Email, u.Phone, u.RoleId, u.TimeZone, u.DateFormat, u.CreatedBy, u.CreatedOn, u.ModifiedBy, u.ModifiedOn
+                string tsql = @"select u.UserId, u.FirstName, u.LastName, u.LogicalHierarchyId, u.PhysicalHierarchyId, u.Email, u.Phone, u.RoleId, u.TimeZone, u.DateFormat, u.CreatedBy, u.CreatedOn, u.ModifiedBy, u.ModifiedOn
                                 from Users u 
                                 where u.UserId = @UserId";
                 
@@ -45,8 +45,8 @@ namespace EHS.Server.DataAccess.Repository
         {
             using (IDbConnection sqlCon = Connection)
             {
-                string tsql = @"select u.UserId, u.FirstName, u.LastName, u.ReportingHierarchyId, u.Email, u.Phone, u.RoleId, u.TimeZone, u.DateFormat, u.CreatedBy, u.CreatedOn, u.ModifiedBy, u.ModifiedOn
-                                from Users u";
+                string tsql = @"select u.UserId, u.FirstName, u.LastName, u.LogicalHierarchyId, u.PhysicalHierarchyId, u.Email, u.Phone, u.RoleId, u.TimeZone, u.DateFormat, u.CreatedBy, u.CreatedOn, u.ModifiedBy, u.ModifiedOn
+                                from Users u ";
                 
                 var result = await sqlCon.QueryAsync<User>(tsql);
                 return result.AsList();

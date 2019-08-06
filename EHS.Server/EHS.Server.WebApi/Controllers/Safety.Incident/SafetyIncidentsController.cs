@@ -10,6 +10,8 @@ using EHS.Server.DataAccess.Repository;
 using EHS.Server.DataAccess.DatabaseModels;
 using EHS.Server.DataAccess.Dtos;
 using AutoMapper;
+using EHS.Server.DataAccess.Queries;
+using EHS.Server.WebApi.Helpers.Queries;
 
 namespace EHS.Server.WebApi.Controllers.Common
 {
@@ -32,12 +34,34 @@ namespace EHS.Server.WebApi.Controllers.Common
 
         // GET: api/Safety Events
         [HttpGet]
-        public async Task<ActionResult<List<SafetyEvent>>> Get()
+        public async Task<ActionResult<List<SafetyEvent>>> Get([FromQuery] SafetyIncidentsQuery queryParams)
         {
             try
             {
+                //parse the queryParams object and send list to repo
+                List<DynamicParam> dynamicParamList = new List<DynamicParam>();
+                if (queryParams.EventId != null)
+                {
+                    dynamicParamList.Add(new DynamicParam { TableAlias = "e.", FieldName = "EventId", Operator = "=", ParamName = "@EventId", SingleValue = queryParams.EventId });
+                }
+                if (queryParams.EventDate != DateTime.MinValue)
+                {
+                    dynamicParamList.Add(new DynamicParam { TableAlias = "e.", FieldName = "EventDate", Operator = "=", ParamName = "@EventDate", SingleValue = queryParams.EventDate.ToShortDateString() });
+                }
+                if (queryParams.StartDate != DateTime.MinValue)
+                {
+                    dynamicParamList.Add(new DynamicParam { TableAlias = "e.", FieldName = "EventDate", Operator = ">", ParamName = "@StartDate", SingleValue = queryParams.StartDate.ToShortDateString() });
+                }
+                if (queryParams.EndDate != DateTime.MinValue)
+                {
+                    dynamicParamList.Add(new DynamicParam { TableAlias = "e.", FieldName = "EventDate", Operator = "<", ParamName = "@EndDate", SingleValue = queryParams.EndDate.ToShortDateString() });
+                }
+                if (queryParams.Statuses != null)
+                {
+                    dynamicParamList.Add(new DynamicParam { TableAlias = "e.", FieldName = "EventStatus", Operator = "in", ParamName = "@EventStatus", MultiValue = queryParams.Statuses.Split(",") });
+                }
                 //get the list of safetyEvents 
-                var safetyEvents = await _safetyEventsRepo.GetAllAsync();
+                var safetyEvents = await _safetyEventsRepo.GetAllAsync(dynamicParamList);
 
                 if (safetyEvents == null)
                 {

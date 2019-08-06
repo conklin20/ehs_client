@@ -8,6 +8,7 @@ namespace EHS.Server.DataAccess.Repository
     {
         Task<Hierarchy> GetByIdAsync(int id);
         Task<List<Hierarchy>> GetAllAsync();
+        Task<List<Hierarchy>> GetFullTreeAsync(int id, int minLevel);
         Task<Hierarchy> AddAsync(Hierarchy hierarchy);
         Task<Hierarchy> UpdateAsync(Hierarchy hierarchyToUpdate, string userId);
         Task<Hierarchy> DeleteAsync(Hierarchy hierarchyToDelete, string userId);

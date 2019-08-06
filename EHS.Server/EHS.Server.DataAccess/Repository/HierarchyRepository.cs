@@ -69,6 +69,26 @@ namespace EHS.Server.DataAccess.Repository
             }
         }
 
+        public async Task<List<Hierarchy>> GetFullTreeAsync(int id, int minLevel)
+        {
+            using (IDbConnection sqlCon = Connection)
+            {
+                string tsql = @"select h.HierarchyId, h.HierarchyName
+                                from dbo.fnHierarchyFullTree(@HierarhcyId, @MinLevel) h
+                                order by HierarchyName";
+
+                //build param list 
+                var p = new
+                {
+                    HierarhcyId = id,
+                    MinLevel = minLevel
+                };
+
+                var result = await sqlCon.QueryAsync<Hierarchy>(tsql, p);
+                return result.AsList();
+            }
+        }
+
         public async Task<List<Hierarchy>> GetAllAsync()
         {
             using (IDbConnection sqlCon = Connection)

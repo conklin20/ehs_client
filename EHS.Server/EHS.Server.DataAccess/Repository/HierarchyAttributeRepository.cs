@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using System.Linq;
 using EHS.Server.DataAccess.DatabaseModels;
 using Dapper;
+using EHS.Server.DataAccess.Queries;
+using EHS.Server.DataAccess.Helpers; 
 
 namespace EHS.Server.DataAccess.Repository
 {
@@ -46,16 +48,37 @@ namespace EHS.Server.DataAccess.Repository
             }
         }
 
-        public async Task<List<HierarchyAttribute>> GetAllAsync()
+        public async Task<List<HierarchyAttribute>> GetAllAsync(List<DynamicParam> queryParams)
         {
             using (IDbConnection sqlCon = Connection)
             {
                 string tsql = @"select ha.* 
                                        , a.*
                                        , h.*
-                                  from dbo.HierarchyAttributes ha 
+                                from dbo.HierarchyAttributes ha 
                                        join dbo.Hierarchies h on h.HierarchyId = ha.HierarchyId
-                                       join dbo.Attributes a on a.AttributeId = ha.AttributeId";
+                                       join dbo.Attributes a on a.AttributeId = ha.AttributeId ";
+
+                //build param list 
+                DynamicParameters paramList = new DynamicParameters();
+
+                foreach (DynamicParam param in queryParams)
+                {
+                    //add the where clause to the sql string 
+                    tsql += $" and {param.TableAlias}{param.FieldName} {param.Operator} {param.ParamName}";
+                    //then add the param to the param list 
+                    //a value should always either be single string, or string[], never both 
+                    if (param.SingleValue != null)
+                    {
+                        paramList.Add($"{param.ParamName}", param.SingleValue); //, DbType.String, ParameterDirection.Input);
+                    }
+                    else
+                    {
+                        paramList.Add($"{param.ParamName}", param.MultiValue.ToList());
+                    }
+                }
+
+                tsql += " order by ha.Value";
 
                 var result = await sqlCon.QueryAsync<HierarchyAttribute, Attribute, Hierarchy, HierarchyAttribute>(
                         tsql,
@@ -65,6 +88,7 @@ namespace EHS.Server.DataAccess.Repository
                             hierarchyAttribute.Hierarchy = hierarchy;
                             return hierarchyAttribute;
                         },
+                        paramList,
                         splitOn: "AttributeId, HierarchyId");
 
                 return result.AsList();

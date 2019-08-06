@@ -55,6 +55,31 @@ namespace EHS.Server.WebApi.Controllers.Common
             }
         }
 
+        // GET: api/Hierarchies
+        [HttpGet("{id}/{minLevel}", Name = "GetFullTree")]
+        public async Task<ActionResult<List<Hierarchy>>> Get([FromRoute] int id, [FromRoute] int minLevel = 0)
+        {
+            try
+            {
+                //get the list of hierarchies 
+                var hierarchies = await _hierarchyRepo.GetFullTreeAsync(id, minLevel);
+
+                if (hierarchies == null)
+                {
+                    _logger.LogError("No Hierarchies found. {0}", NotFound().ToString());
+                    return NotFound();
+                }
+
+                //map the list from the domain/database model objects, to data transfer objects to pass back to the client 
+                return Ok(hierarchies.Select(_mapper.Map<Hierarchy, HierarchyDto>).ToList());
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return BadRequest();
+            }
+        }
+
         // GET: api/Hierarchies/5
         [HttpGet("{id}", Name = "GetHierarchy")]
         public async Task<ActionResult<Hierarchy>> Get(int id)

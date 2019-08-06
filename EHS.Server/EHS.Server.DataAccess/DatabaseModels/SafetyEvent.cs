@@ -26,10 +26,10 @@ namespace EHS.Server.DataAccess.DatabaseModels
         [AllowNullWhenDraft]
         public DateTime ReportedOn { get; set; }
         [Display(Name = "Event Date")]
-        [AllowNullWhenDraft, DataType(DataType.Date)]
+        [AllowNullWhenDraft, DataType(DataType.DateTime)]
         public DateTime EventDate { get; set; }
-        [Display(Name = "Event Time")]
-        [AllowNullWhenDraft, DataType(DataType.Time)]
+        //[Display(Name = "Event Time")]
+        //[AllowNullWhenDraft, DataType(DataType.Time)]
         public TimeSpan EventTime { get; set; }
         public string EmployeeId { get; set; }
         [Display(Name = "Job Title")]
@@ -99,6 +99,7 @@ namespace EHS.Server.DataAccess.DatabaseModels
         public int? CameraId { get; set; }
         public DateTime? VideoStartRef { get; set; }
         public DateTime? VideoEndRef { get; set; }
+        public int LegacyIncidentId { get; set; }
 
         public ICollection<Action> Actions { get; set; }
         public ICollection<PeopleInvolved> PeopleInvolved { get; set; }

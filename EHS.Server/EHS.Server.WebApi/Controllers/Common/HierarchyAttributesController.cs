@@ -10,6 +10,8 @@ using EHS.Server.DataAccess.Repository;
 using EHS.Server.DataAccess.DatabaseModels;
 using EHS.Server.DataAccess.Dtos;
 using AutoMapper;
+using EHS.Server.WebApi.Helpers.Queries;
+using EHS.Server.DataAccess.Queries;
 
 namespace EHS.Server.WebApi.Controllers.Common
 {
@@ -32,12 +34,19 @@ namespace EHS.Server.WebApi.Controllers.Common
 
         // GET: api/hierarchyAttributes
         [HttpGet]
-        public async Task<ActionResult<List<HierarchyAttribute>>> Get()
+        public async Task<ActionResult<List<HierarchyAttribute>>> Get([FromQuery] HierarchyAttributesQuery queryParams)
         {
             try
             {
+                //parse the queryParams object and send list to repo
+                List<DynamicParam> dynamicParamList = new List<DynamicParam>();
+                if (queryParams.enabled != null)
+                {
+                    dynamicParamList.Add(new DynamicParam { TableAlias = "ha.", FieldName = "Enabled", Operator = "=", ParamName = "@Enabled", SingleValue = queryParams.enabled });
+                }
+
                 //get the list of hierarchyAttributes 
-                var hierarchyAttributes = await _hierarchyAttributeRepo.GetAllAsync();
+                var hierarchyAttributes = await _hierarchyAttributeRepo.GetAllAsync(dynamicParamList);
 
                 if (hierarchyAttributes == null)
                 {

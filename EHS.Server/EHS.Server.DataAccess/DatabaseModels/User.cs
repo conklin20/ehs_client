@@ -20,7 +20,9 @@ namespace EHS.Server.DataAccess.DatabaseModels
         [MaxLength(100)]
         public string LastName { get; set; }
         [Required]
-        public int ReportingHierarchyId { get; set; }
+        public int LogicalHierarchyId { get; set; }
+        [Required]
+        public int PhysicalHierarchyId { get; set; }
         [Phone]
         public string Phone { get; set; }
         public int RoleId { get; set; }

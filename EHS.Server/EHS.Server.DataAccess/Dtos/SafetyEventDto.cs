@@ -13,7 +13,7 @@ namespace EHS.Server.DataAccess.Dtos
         public string ReportedBy { get; set; }
         public DateTime ReportedOn { get; set; }
         public DateTime EventDate { get; set; }
-        public TimeSpan EventTime { get; set; }
+        //public TimeSpan EventTime { get; set; }
         public string EmployeeId { get; set; }
         public string JobTitle { get; set; }        //From HierarchyAttribute
         public string Shift { get; set; }           //From HierarchyAttribute
@@ -49,6 +49,7 @@ namespace EHS.Server.DataAccess.Dtos
         public int? CameraId { get; set; }
         public DateTime? VideoStartRef { get; set; }
         public DateTime? VideoEndRef { get; set; }
+        public int LegacyIncidentId { get; set; }
 
         public ICollection<ActionDto> Actions { get; set; }
         public ICollection<PeopleInvolvedDto> PeopleInvolved { get; set; }
