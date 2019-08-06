@@ -1,10 +1,24 @@
 import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Button, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, FormControl } from '@material-ui/core';
-import DatePicker from './inputs/DatePicker'; 
-import TimePicker from './inputs/TimePicker';
-import SingleSelect from './inputs/SingleSelect';
-import MultiSelect from './inputs/MultiSelect';
+import AutoComplete from './inputs/AutoComplete';
+import AutoCompleteMulti from './inputs/AutoCompleteMulti';
+import { 
+	Button, 
+	Checkbox,
+	Dialog,
+	DialogActions, 
+	DialogContent, 
+	DialogContentText, 
+	DialogTitle, 
+	Divider, 
+	FormControl, 
+	FormControlLabel, 
+	Grid,
+	Paper, 
+	Select,
+	TextField, 
+	Typography,
+} from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
 	root: {
@@ -15,8 +29,8 @@ const useStyles = makeStyles(theme => ({
 	  flexWrap: 'wrap',
 	},
 	textField: {
-	  marginLeft: theme.spacing(1),
-	  marginRight: theme.spacing(1),
+	//   marginLeft: theme.spacing(1),
+	//   marginRight: theme.spacing(1),
 	},
 	dense: {
 	  marginTop: theme.spacing(2),
@@ -29,29 +43,38 @@ const useStyles = makeStyles(theme => ({
 		// width: 'fit-content',
 	  },
 	formControl: {
-		marginTop: theme.spacing(2),
+		// marginTop: theme.spacing(2),
 		minWidth: 120,
+		marginRight: theme.spacing(1),
 	},
 		formControlLabel: {
-		marginTop: theme.spacing(1),
+		// marginTop: theme.spacing(1),
 	},	
+	sectionHeading: {
+		fontStyle: 'italic'
+	}, 
+	autoComplete: {
+		marginTop: theme.spacing(2),
+	}
   }));
 
 const SearchFilters = props => {
 	const classes = useStyles();
 	
+	const { showSearchFilters, handleShowSearchFilters, handleSearchFiltersChange, handleAutoCompleteChange, handleSearch, searchFilters, lookupData } = props
+
 	//filtering lookup data on key=Statueses, then mapping over it and creating an object with value and label, which react-dropdown needs
-	const statuses = props.lookupData.filter(d => d.key === "Statuses").sort().map(status => ({		
-		value: status.hierarchyAttributeId, 
+	const statuses = lookupData.filter(d => d.key === "Statuses").sort().map(status => ({		
+		// value: status.hierarchyAttributeId, 
+		value: status.value, 
 		label: status.value,
 	}));
-	
 	
 	return (
 		<div className={classes.root}>
 			<Dialog 
-				open={props.showSearchFilters} 
-				onClose={props.onShowSearchFilters} 
+				open={showSearchFilters} 
+				onClose={handleShowSearchFilters} 
 				aria-labelledby="form-dialog-title"
 				fullWidth={true}
 				maxWidth="md"
@@ -60,13 +83,15 @@ const SearchFilters = props => {
 				<DialogContent>		
 					<form className={classes.form} noValidate>						
 						<Grid container spacing={2}>
-							<Grid item xs={6} md={3}>
+							<Grid item xs={6} md={12}>
+								<Typography className={classes.sectionHeading}>You know ya shit</Typography>
 								<FormControl className={classes.formControl}>
 									<TextField
 										id="event-id"
+										name="eventId"
 										label="Event #"
-										value={props.searchFilters.EventId}
-										onChange={props.onSearchFiltersChange}
+										value={searchFilters.eventId}
+										onChange={handleSearchFiltersChange}
 										type="number"
 										className={classes.formControl}
 										InputLabelProps={{
@@ -76,74 +101,69 @@ const SearchFilters = props => {
 										variant="outlined"
 									/>
 								</FormControl>
-							</Grid>
-							<Grid item xs={6} md={3}>
-								<FormControl className={classes.formControl}>
-									<DatePicker label="Event Date"/>
-								</FormControl>
-							</Grid>
-							<Grid item xs={6} md={3}>
-								<FormControl className={classes.formControl}>
-									<TimePicker label="Event Time"/>
-								</FormControl>
-							</Grid>
-							<Grid item xs={12} md={12}>
-								<FormControl className={classes.formControl}>
-									<MultiSelect  
+								<FormControl className={[classes.formControl, classes.autoComplete]}>									
+									<AutoCompleteMulti
+										name="eventStatuses"
 										options={statuses}
 										label="Event Status"
-										placeholder="Select a status"
-										>
-									</MultiSelect>
+										placeholder="Select statuses"
+										handleChange={handleAutoCompleteChange}
+										value={searchFilters.eventStatuses}
+									>
+									</AutoCompleteMulti> 
 								</FormControl>
-							</Grid>
-										
-										
+							</Grid>		
 							<Grid item xs={12} md={12}>
-								<FormControl className={classes.formControl}>
-									PlaceHolder
-								</FormControl>
+								<Typography className={classes.sectionHeading}>Who</Typography>
 							</Grid>
 							<Grid item xs={12} md={12}>
-								<FormControl className={classes.formControl}>
-									PlaceHolder
-								</FormControl>
+								<Typography className={classes.sectionHeading}>What</Typography>
 							</Grid>
 							<Grid item xs={12} md={12}>
-								<FormControl className={classes.formControl}>
-									PlaceHolder
-								</FormControl>
-							</Grid>
-							<Grid item xs={12} md={12}>
-								<FormControl className={classes.formControl}>
-									PlaceHolder
-								</FormControl>
-							</Grid>
-							<Grid item xs={12} md={12}>
-								<FormControl className={classes.formControl}>
-									PlaceHolder
-								</FormControl>
-							</Grid>
-							<Grid item xs={12} md={12}>
-								<FormControl className={classes.formControl}>
-									PlaceHolder
+								<Typography className={classes.sectionHeading}>When</Typography>
+								<FormControl className={classes.formControl}>									
+									<TextField
+										id="event-date"
+										name="eventDate"
+										label='Event Date'
+										onChange={handleSearchFiltersChange}
+										type="date"
+										className={classes.textField}
+										InputLabelProps={{
+											shrink: true,
+										}}
+										margin="normal"
+										value={searchFilters.eventDate}
+										variant="outlined"
+									/>
 								</FormControl>
 							</Grid>
 							<Grid item xs={12} md={12}>
-								<FormControl className={classes.formControl}>
-									PlaceHolder
-								</FormControl>
+								<Typography className={classes.sectionHeading}>Where</Typography>
 							</Grid>
 							<Grid item xs={12} md={12}>
-								<FormControl className={classes.formControl}>
-									PlaceHolder
+								<Typography className={classes.sectionHeading}>Why</Typography>
+							</Grid>
+							<Grid item xs={12} md={12}>
+								<FormControl className={classes.formControl}>									
+									<FormControlLabel
+										control={
+											<Checkbox
+												checked={true}
+												onChange={() => console.log("checked!")}
+												value="checkedB"
+												color="primary"
+											/>
+										}
+										label="Primary"
+									/>
 								</FormControl>
 							</Grid>
 						</Grid>
 					</form>				
 				</DialogContent>
 				<DialogActions>
-					<Button onClick={props.onSearch} color="primary">
+					<Button onClick={handleSearch} color="primary">
 						Search!
 					</Button>
 				</DialogActions>

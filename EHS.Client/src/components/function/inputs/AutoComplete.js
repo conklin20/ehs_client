@@ -3,8 +3,7 @@ import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import Select from 'react-select';
 import { emphasize, makeStyles, useTheme } from '@material-ui/core/styles';
-import { Typography, NoSsr, TextField, Paper, Chip, MenuItem } from '@material-ui/core';
-import CancelIcon from '@material-ui/icons/Cancel';
+import { Typography, NoSsr, TextField, Paper, MenuItem } from '@material-ui/core';
 
 // this code essentially comes from https://material-ui.com/components/autocomplete/
 // made tweaks to work dynamically for this app 
@@ -25,34 +24,25 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'center',
     overflow: 'hidden',
   },
-  chip: {
-    margin: theme.spacing(0.5, 0.25),
-  },
-  chipFocused: {
-    backgroundColor: emphasize(
-      theme.palette.type === 'light' ? theme.palette.grey[300] : theme.palette.grey[700],
-      0.08,
-    ),
-  },
   noOptionsMessage: {
     padding: theme.spacing(1, 2),
   },
-//   singleValue: {
-//     fontSize: 16,
-//   },
-//   placeholder: {
-//     position: 'absolute',
-//     left: 2,
-//     bottom: 6,
-//     fontSize: 16,
-//   },
-//   paper: {
-//     position: 'absolute',
-//     zIndex: 1,
-//     marginTop: theme.spacing(1),
-//     left: 0,
-//     right: 0,
-//   },
+  singleValue: {
+    fontSize: 16,
+  },
+  // placeholder: {
+  //   position: 'absolute',
+  //   left: 2,
+  //   bottom: 6,
+  //   fontSize: 16,
+  // },
+  // paper: {
+  //   position: 'absolute',
+  //   zIndex: 1,
+  //   marginTop: theme.spacing(1),
+  //   left: 0,
+  //   right: 0,
+  // }
 }));
 
 function NoOptionsMessage(props) {
@@ -211,6 +201,26 @@ Placeholder.propTypes = {
   selectProps: PropTypes.object.isRequired,
 };
 
+function SingleValue(props) {
+  return (
+    <Typography className={props.selectProps.classes.singleValue} {...props.innerProps}>
+      {props.children}
+    </Typography>
+  );
+}
+
+SingleValue.propTypes = {
+  /**
+   * The children to be rendered.
+   */
+  children: PropTypes.node,
+  /**
+   * Props passed to the wrapping element for the group.
+   */
+  innerProps: PropTypes.any.isRequired,
+  selectProps: PropTypes.object.isRequired,
+};
+
 function ValueContainer(props) {
   return <div className={props.selectProps.classes.valueContainer}>{props.children}</div>;
 }
@@ -220,31 +230,6 @@ ValueContainer.propTypes = {
    * The children to be rendered.
    */
   children: PropTypes.node,
-  selectProps: PropTypes.object.isRequired,
-};
-
-function MultiValue(props) {
-  return (
-    <Chip
-      tabIndex={-1}
-      label={props.children}
-      className={clsx(props.selectProps.classes.chip, {
-        [props.selectProps.classes.chipFocused]: props.isFocused,
-      })}
-      onDelete={props.removeProps.onClick}
-      deleteIcon={<CancelIcon {...props.removeProps} />}
-    />
-  );
-}
-
-MultiValue.propTypes = {
-  children: PropTypes.node,
-  isFocused: PropTypes.bool.isRequired,
-  removeProps: PropTypes.shape({
-    onClick: PropTypes.func.isRequired,
-    onMouseDown: PropTypes.func.isRequired,
-    onTouchEnd: PropTypes.func.isRequired,
-  }).isRequired,
   selectProps: PropTypes.object.isRequired,
 };
 
@@ -271,22 +256,16 @@ Menu.propTypes = {
 const components = {
   Control,
   Menu,
-  MultiValue,
   NoOptionsMessage,
   Option,
   Placeholder,
+  SingleValue,
   ValueContainer,
 };
 
-const MultiSelect = (props) => {
+const AutoComplete = (props) => {
   const classes = useStyles();
   const theme = useTheme();
-  const [multi, setMulti] = React.useState(null);
-
-  function handleChangeMulti(value) {
-    setMulti(value);
-    console.log(multi)
-  }
 
   const selectStyles = {
     input: base => ({
@@ -306,61 +285,24 @@ const MultiSelect = (props) => {
         <Select
           classes={classes}
           styles={selectStyles}
-          inputId="react-select-multiple"
+          inputId="react-select-single"
           TextFieldProps={{
             label: label,
             InputLabelProps: {
-              htmlFor: 'react-select-multiple',
+              htmlFor: 'react-select-single',
               shrink: true,
             },
           }}
           placeholder={placeholder}
           options={props.options}
           components={components}
-          value={multi}
-          onChange={handleChangeMulti}
-          isMulti
+          value={props.value}
+          onChange={props.handleChange}
         />
+        <div className={classes.divider} />
       </NoSsr>
     </div>
   );
 }
 
-export default MultiSelect; 
-
-// import React, { useState, Fragment } from 'react';
-// import Select from 'react-select';
-
-// const SingleSelect = props => {
-//     const [isClearable, setIsClearable] = useState(true);
-//     const [isDisabled, setIsDisabled] = useState(false);
-//     const [isLoading, setIsLoading] = useState(false);
-//     const [isRtl, setIsRtl] = useState(false);
-//     const [isSearchable, setIsSearchable] = useState(true);
-
-
-// 	const toggleClearable = () => setIsClearable(!isClearable); 
-// 	const toggleDisabled = () => setIsDisabled(!isDisabled); 
-// 	const toggleLoading = () => setIsLoading(!isLoading); 
-// 	const toggleRtl = () => setIsRtl(!isRtl); 
-// 	const toggleSearchable = () => setIsSearchable(!isSearchable); 
-
-//     return (
-//       <Fragment>
-//         <Select
-//           className="basic-single"
-//           classNamePrefix="select"
-//           defaultValue={props.data[0]}
-//           isDisabled={isDisabled}
-//           isLoading={isLoading}
-//           isClearable={isClearable}
-//           isRtl={isRtl}
-//           isSearchable={isSearchable}
-//           name="color"
-//           options={props.data}
-//         />
-//       </Fragment>
-//     );	
-// }
-
-// export default SingleSelect; 
+export default AutoComplete; 

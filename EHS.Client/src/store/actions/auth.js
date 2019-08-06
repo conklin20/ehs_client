@@ -12,18 +12,19 @@ export function setCurrentUser(user){
     //if the order of which these fields are added to the payload changes, the order in the array below will also need updated 
     const userData = user[`http://schemas.microsoft.com/ws/2008/06/identity/claims/userdata`];
     const phone = user[`http://schemas.xmlsoap.org/ws/2005/05/identity/claims/mobilephone`];
-  
+    
     newUserObj = {
-      dateFormat: userData[2],
+      dateFormat: userData[3],
       email: user.email,
       firstName: user.given_name, 
       lastName: user.family_name, 
       fullName: `${user.given_name} ${user.family_name}`,
       phone: phone, 
-      reportingHierarchyId: userData[0],
+      logicalHierarchyId: userData[0],
+      physicalHierarchyId: userData[1],
       roleId: user.role,
-      timeZone: userData[1],
-      userId: user.nameId
+      timeZone: userData[2],
+      userId: user.nameid
     }
   } else {
     newUserObj = user; 

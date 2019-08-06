@@ -15,8 +15,9 @@ const useStyles = makeStyles(theme => ({
   },
   input: {
     display: 'flex',
-	marginLeft: theme.spacing(1),
-	marginRight: theme.spacing(1),
+    marginLeft: theme.spacing(1),
+    marginRight: theme.spacing(1),
+    width: '100%',
   },
   valueContainer: {
     display: 'flex',
@@ -37,25 +38,22 @@ const useStyles = makeStyles(theme => ({
   noOptionsMessage: {
     padding: theme.spacing(1, 2),
   },
-  singleValue: {
-    fontSize: 16,
-  },
-  placeholder: {
-    position: 'absolute',
-    left: 2,
-    bottom: 6,
-    fontSize: 16,
-  },
-  paper: {
-    position: 'absolute',
-    zIndex: 1,
-    marginTop: theme.spacing(1),
-    left: 0,
-    right: 0,
-  },
-  divider: {
-    height: theme.spacing(2),
-  },
+//   singleValue: {
+//     fontSize: 16,
+//   },
+//   placeholder: {
+//     position: 'absolute',
+//     left: 2,
+//     bottom: 6,
+//     fontSize: 16,
+//   },
+//   paper: {
+//     position: 'absolute',
+//     zIndex: 1,
+//     marginTop: theme.spacing(1),
+//     left: 0,
+//     right: 0,
+//   },
 }));
 
 function NoOptionsMessage(props) {
@@ -105,17 +103,17 @@ function Control(props) {
 
   return (
     <TextField
-		variant="outlined"
-		InputProps={{
-			inputComponent,
-			inputProps: {
-			className: classes.input,
-			ref: innerRef,
-			children,
-			...innerProps,
-			},
-		}}
-		{...TextFieldProps}
+      variant={'outlined'}
+      InputProps={{
+        inputComponent,
+        inputProps: {
+        className: classes.input,
+        ref: innerRef,
+        children,
+        ...innerProps,
+        },
+      }}
+      {...TextFieldProps}
     />
   );
 }
@@ -214,26 +212,6 @@ Placeholder.propTypes = {
   selectProps: PropTypes.object.isRequired,
 };
 
-function SingleValue(props) {
-  return (
-    <Typography className={props.selectProps.classes.singleValue} {...props.innerProps}>
-      {props.children}
-    </Typography>
-  );
-}
-
-SingleValue.propTypes = {
-  /**
-   * The children to be rendered.
-   */
-  children: PropTypes.node,
-  /**
-   * Props passed to the wrapping element for the group.
-   */
-  innerProps: PropTypes.any.isRequired,
-  selectProps: PropTypes.object.isRequired,
-};
-
 function ValueContainer(props) {
   return <div className={props.selectProps.classes.valueContainer}>{props.children}</div>;
 }
@@ -243,6 +221,31 @@ ValueContainer.propTypes = {
    * The children to be rendered.
    */
   children: PropTypes.node,
+  selectProps: PropTypes.object.isRequired,
+};
+
+function MultiValue(props) {
+  return (
+    <Chip
+      tabIndex={-1}
+      label={props.children}
+      className={clsx(props.selectProps.classes.chip, {
+        [props.selectProps.classes.chipFocused]: props.isFocused,
+      })}
+      onDelete={props.removeProps.onClick}
+      deleteIcon={<CancelIcon {...props.removeProps} />}
+    />
+  );
+}
+
+MultiValue.propTypes = {
+  children: PropTypes.node,
+  isFocused: PropTypes.bool.isRequired,
+  removeProps: PropTypes.shape({
+    onClick: PropTypes.func.isRequired,
+    onMouseDown: PropTypes.func.isRequired,
+    onTouchEnd: PropTypes.func.isRequired,
+  }).isRequired,
   selectProps: PropTypes.object.isRequired,
 };
 
@@ -269,21 +272,16 @@ Menu.propTypes = {
 const components = {
   Control,
   Menu,
+  MultiValue,
   NoOptionsMessage,
   Option,
   Placeholder,
-  SingleValue,
   ValueContainer,
 };
 
-const SingleSelect = (props) => {
+const AutoCompleteMulti = (props) => {
   const classes = useStyles();
   const theme = useTheme();
-  const [single, setSingle] = React.useState(null);
-
-  function handleChangeSingle(value) {
-    setSingle(value);
-  }
 
   const selectStyles = {
     input: base => ({
@@ -301,63 +299,27 @@ const SingleSelect = (props) => {
     <div className={classes.root}>
       <NoSsr>
         <Select
+          name={props.name}
           classes={classes}
           styles={selectStyles}
-          inputId="react-select-single"
+          inputId="react-select-multiple"
           TextFieldProps={{
             label: label,
             InputLabelProps: {
-              htmlFor: 'react-select-single',
+              htmlFor: 'react-select-multiple',
               shrink: true,
             },
           }}
           placeholder={placeholder}
           options={props.options}
           components={components}
-          value={single}
-          onChange={handleChangeSingle}
+          value={props.value}
+          onChange={props.handleChange}
+          isMulti
         />
-        <div className={classes.divider} />
       </NoSsr>
     </div>
   );
 }
 
-export default SingleSelect; 
-
-// import React, { useState, Fragment } from 'react';
-// import Select from 'react-select';
-
-// const SingleSelect = props => {
-//     const [isClearable, setIsClearable] = useState(true);
-//     const [isDisabled, setIsDisabled] = useState(false);
-//     const [isLoading, setIsLoading] = useState(false);
-//     const [isRtl, setIsRtl] = useState(false);
-//     const [isSearchable, setIsSearchable] = useState(true);
-
-
-// 	const toggleClearable = () => setIsClearable(!isClearable); 
-// 	const toggleDisabled = () => setIsDisabled(!isDisabled); 
-// 	const toggleLoading = () => setIsLoading(!isLoading); 
-// 	const toggleRtl = () => setIsRtl(!isRtl); 
-// 	const toggleSearchable = () => setIsSearchable(!isSearchable); 
-
-//     return (
-//       <Fragment>
-//         <Select
-//           className="basic-single"
-//           classNamePrefix="select"
-//           defaultValue={props.data[0]}
-//           isDisabled={isDisabled}
-//           isLoading={isLoading}
-//           isClearable={isClearable}
-//           isRtl={isRtl}
-//           isSearchable={isSearchable}
-//           name="color"
-//           options={props.data}
-//         />
-//       </Fragment>
-//     );	
-// }
-
-// export default SingleSelect; 
+export default AutoCompleteMulti; 

@@ -59,7 +59,6 @@ const Main = props => {
                                     <Dashboard 
                                         errors={errors}
                                         removeError={removeError}
-                                        currentUser={currentUser} 
                                     />
                                 </div>
                             </div>

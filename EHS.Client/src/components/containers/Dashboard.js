@@ -1,7 +1,10 @@
-import React, { useState, useEffect } from 'react'; 
+import React, { useState, useEffect, useReducer } from 'react'; 
 import { connect } from "react-redux";
 import { fetchSafteyIncidents } from '../../store/actions/safetyIncidents';
 import { fetchLookupData } from '../../store/actions/lookupData'; 
+import { fetchLogicalHierarchyTree } from '../../store/actions/hierarchyData'; 
+import { fetchPhysicalHierarchyTree } from '../../store/actions/hierarchyData'; 
+import { addError } from '../../store/actions/errors';
 import { makeStyles } from '@material-ui/core/styles';
 import { Paper, Grid, Hidden, Typography } from '@material-ui/core';
 import EventList from './EventList';
@@ -32,32 +35,67 @@ const useStyles = makeStyles(theme => ({
 const parseSearchFilters = filters => {
 	let parsedFilters = '?'; 
 	//loop through all object properties
-	for (let prop in filters){
-		// Array.isArray(filters[prop]) ? 
-		parsedFilters += `${prop}=${filters[prop]}&`
+	for (var filter in filters){
+		// check if the filter is an object from one of our autoComplete components (all have a value/label property)
+		
+		if(filters[filter] && typeof(filters[filter]) === 'object' && filters[filter].length) {
+			parsedFilters += filter + '='
+			
+			for (var listItem in filters[filter]){
+				parsedFilters += filters[filter][listItem].value + ',';
+			}
+
+			//removing last , char
+			parsedFilters = parsedFilters.slice(0, -1) + '&';
+
+			//check if the filter is regular string, if so, make sure it has value 
+		} else if (typeof(filters[filter]) === 'string' && filters[filter]) {
+			parsedFilters += `${filter}=${filters[filter]}&`;
+		}
 	}
-	
+	// console.log(parsedFilters.slice(0,-1))
 	return parsedFilters.slice(0, -1); //removing  the last & char 
+}
+
+//defaulting the initial search to only return Events that are 'Open'
+const initialSearchFilterState = { eventStatuses: [ { value: "Open", label: "Open"} ] };
+
+const searchFilterReducer = (state, action) => {
+	switch (action.type) {
+		case 'eventId':
+			return { ...state, eventId: action.value }
+		case 'eventDate':
+			return { ...state, eventDate: action.value }
+		case 'eventTime':
+			return { ...state, eventTime: action.value }
+		case 'eventStatuses':
+			return { ...state, eventStatuses: action.value }
+		default: 
+			addError("Invalid Action");
+			return state;
+	}
 }
 
 const Dashboard = props => {    
 	const classes = useStyles();
-	const [searchFilters, setSearchFilters] = useState(
-		{
-			status: ['Open', 'Draft']
-		}
-	)
+	const [searchFilters, dispatch] = useReducer(searchFilterReducer, initialSearchFilterState); 
+	// console.log('re-rendered. searchfilters: ', searchFilters)
+
 	const [searchText, setSearchText] = useState(''); 
 	const [showSearchFilters, setShowSearchFilters] = useState(false); 
 	const [dense, setDense] = useState(true);
 	
   // Essentially what was componentDidMount and componentDidUpdate before Hooks
 	useEffect(() => {
-		console.log('fetchSafteyIncidents called')
+		// console.log('fetchSafteyIncidents called')
 		props.fetchSafteyIncidents(parseSearchFilters(searchFilters)); 	 	
 
 		//fetch lookup data, which will be used in various places 
 		props.fetchLookupData('?enabled=true'); 
+
+		//fetch logical and physical hierarchy trees (based on users setup) 
+		props.fetchLogicalHierarchyTree(props.currentUser.user.logicalHierarchyId, 600)
+		props.fetchPhysicalHierarchyTree(props.currentUser.user.physicalHierarchyId, 600)
 
 		return () => {
 			console.log('Cleanup function (ComponentDidUnmount)')
@@ -65,43 +103,37 @@ const Dashboard = props => {
 	}, [props.searchFilters]); //this 2nd arg is important, it tells what to look for changes in, and will re-run the hook when this changes 
 
 	//handler for the search textbox
-	const handleSearchText = e => {
+	const handleSearchTextChange = e => {
+		console.log(e.target.value)
 		setSearchText(e.target.value)
 		//filter incident list 
-		// console.log(e.target.value)
 	}
 	
 	//handler for the show search filters button
 	const handleShowSearchFilters = () => {
 		setShowSearchFilters(!showSearchFilters)
-		// console.log(showSearchFilters)
-	}
-
-	//handler for the search filters 
-	const handleSearchFilters = e => {
-		setSearchFilters(e.target.value); 
-		// console.log(searchFilters)
 	}
 
 	//handler for the dense padding
 	const handleDensePadding = () => {
 		setDense(!dense); 
-		console.log(dense)
+		// console.log(dense)
 	}
 
 	//handler for the search button
 	const handleSearch = e => {
-		// e.preventDafault(); 
+		// e.preventDefault(); 
 		props.fetchSafteyIncidents(parseSearchFilters(searchFilters));
+		console.log(parseSearchFilters(searchFilters));
 		setShowSearchFilters(false); 
 		console.log('handleSearch called!')
 	}
 
 
+	//filter the list on what the dynamic search input has, split out key words and search on each
 	const filterSafetyIncidents = () => {
 		const searchTextSplit = searchText.toLowerCase().split(' ');
 
-		//filter the list on what the dynamic search input has, split out key words and search on each
 		const filteredSafetyIncidents = searchTextSplit[0] !== ''
 			? props.safetyIncidents
 					.filter(inc => 
@@ -113,12 +145,6 @@ const Dashboard = props => {
 					)
 			: props.safetyIncidents 
 		
-		// filteredSafetyIncidents.filter(si => {
-		// 	return searchFilters.status.some(status => {
-		// 		return si.eventStatus === status
-		// 	})
-		// })
-
 		return filteredSafetyIncidents; 
 	}
 
@@ -153,11 +179,12 @@ const Dashboard = props => {
 							square={true}
 					>                 
 						<EventSearch 
-							onSearchTextChange={handleSearchText}
-							onShowSearchFilters={handleShowSearchFilters}
-							onSearchFiltersChange={handleSearchFilters}
-							onDensePadding={handleDensePadding}
-							onSearch={handleSearch}
+							handleSearchTextChange={handleSearchTextChange}
+							handleShowSearchFilters={handleShowSearchFilters}
+							handleSearchFiltersChange={(e) => dispatch( { type: e.target.name, value: e.target.value })}
+							handleAutoCompleteChange={(data, action) => dispatch({ type: action.name, value: data })}
+							handleDensePadding={handleDensePadding}
+							handleSearch={handleSearch}
 							showSearchFilters={showSearchFilters}
 							searchFilters={searchFilters}
 							dense={dense}
@@ -192,7 +219,10 @@ function mapStateToProps(state) {
 	return {
 			safetyIncidents: state.safetyIncidents, 
 			lookupData: state.lookupData,
+			hierarchyData: state.hierarchyData,
+			currentUser: state.currentUser,
+			// isLoading: state.isLoading,
 	};
 }
 
-export default connect(mapStateToProps, { fetchSafteyIncidents, fetchLookupData })(Dashboard); 
+export default connect(mapStateToProps, { fetchSafteyIncidents, fetchLookupData, fetchLogicalHierarchyTree, fetchPhysicalHierarchyTree })(Dashboard); 

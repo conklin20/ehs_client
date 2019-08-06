@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
-import { FormControlLabel, Switch, TextField } from '@material-ui/core';
+import { FormControlLabel, TextField } from '@material-ui/core';
 import Filter from '@material-ui/icons/FilterList';
 import SearchFilters from './SearchFilters'; 
 
@@ -35,7 +35,7 @@ const SearchBar = props => {
 			<TextField
 				id="event-search-bar"
 				className={classes.textField}
-				onChange={props.onSearchTextChange}
+				onChange={props.handleSearchTextChange}
 				label="Quick Search"
 				placeholder="Ex. First Aid 4304 John Doe"
 				helperText="Search for events using multiple keywords, just put a space in-between each keyword"
@@ -47,28 +47,20 @@ const SearchBar = props => {
 			/>			
 			<Filter 
 				className={classes.icon} 
-				onClick={props.onShowSearchFilters}
+				onClick={props.handleShowSearchFilters}
 			/>
 			{props.showSearchFilters 
 				? 	<SearchFilters
 						showSearchFilters={props.showSearchFilters}
-						onShowSearchFilters={props.onShowSearchFilters}
-						onSearchFiltersChange={props.onSearchFiltersChange}
-						onSearch={props.onSearch}
+						handleShowSearchFilters={props.handleShowSearchFilters}
+						handleSearchFiltersChange={props.handleSearchFiltersChange}
+						handleAutoCompleteChange={props.handleAutoCompleteChange}
+						handleSearch={props.handleSearch}
 						searchFilters={props.searchFilters}
 						lookupData={props.lookupData}
 					/>	
 				: null
-			}		
-			<FormControlLabel
-				control={
-					<Switch 
-						checked={props.dense} 
-						onChange={props.onDensePadding} 
-					/>
-				}
-				label="Dense padding"
-			/>
+			}	
 		</div>
 	)
 }

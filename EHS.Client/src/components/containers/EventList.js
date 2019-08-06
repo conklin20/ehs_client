@@ -6,6 +6,7 @@ import { Table, TableBody, TableCell, TableHead, TablePagination, TableRow, Tabl
 import Moment from 'react-moment'; 
 // import EventItem from '../function/EventItem'; 
 import SearchBar from '../function/SearchBar';
+import SafetyEventForm from '../function/SafetyEventForm'; 
 
 
 function desc(a, b, orderBy) {
@@ -33,20 +34,20 @@ function getSorting(order, orderBy) {
 }
 
 const headerRows = [
-  { id: 'eventId', numeric: true, disablePadding: false, label: 'Id' , width: 'auto' },
+  { id: 'eventId', numeric: true, disablePadding: false, label: 'Id' ,  },
   // { id: 'type', numeric: true, disablePadding: false, label: 'Event Type' }, (Safety, Env, Obs etc)
-  { id: 'status', numeric: false, disablePadding: false, label: 'Status' , width: 'auto' },
-  { id: 'dateOccurred', numeric: false, disablePadding: false, label: 'Date' , width: 'auto' },
-  { id: 'timeOccurred', numeric: false, disablePadding: false, label: 'Time' , width: 'auto' },
-  { id: 'category', numeric: false, disablePadding: false, label: 'Category' , width: 'auto' },
-  { id: 'employeeId', numeric: false, disablePadding: false, label: 'Emplooyee ID' , width: 'auto' },
-  { id: 'job', numeric: false, disablePadding: false, label: 'Job' , width: 'auto' },
-  { id: 'area', numeric: false, disablePadding: false, label: 'Area' , width: 'auto' },
-  { id: 'department', numeric: false, disablePadding: false, label: 'Dept.' , width: 'auto' },
-  { id: 'localePlant', numeric: false, disablePadding: false, label: 'Plant' , width: 'auto' },
-  { id: 'localePlantArea', numeric: false, disablePadding: false, label: 'Plant Area' , width: 'auto' },
-  { id: 'whatHappened', numeric: false, disablePadding: false, label: 'What Happened' , width: '20%' },
-  { id: 'openAction', numeric: true, disablePadding: false, label: 'Open Actions' , width: 'auto' },
+  { id: 'status', numeric: false, disablePadding: false, label: 'Status' ,  },
+  { id: 'dateOccurred', numeric: false, disablePadding: false, label: 'Date' ,  },
+  { id: 'timeOccurred', numeric: false, disablePadding: false, label: 'Time' ,  },
+  { id: 'category', numeric: false, disablePadding: false, label: 'Category' ,  },
+  { id: 'employeeId', numeric: false, disablePadding: false, label: 'Emplooyee ID' ,  },
+  { id: 'job', numeric: false, disablePadding: false, label: 'Job' ,  },
+  { id: 'area', numeric: false, disablePadding: false, label: 'Area' ,  },
+  { id: 'department', numeric: false, disablePadding: false, label: 'Dept.' ,  },
+  { id: 'localePlant', numeric: false, disablePadding: false, label: 'Plant' ,  },
+  { id: 'localePlantArea', numeric: false, disablePadding: false, label: 'Plant Area' ,  },
+  // { id: 'whatHappened', numeric: false, disablePadding: false, label: 'What Happened' , width: '20%' },
+  { id: 'openAction', numeric: true, disablePadding: false, label: 'Open Actions' ,  },
 ];
 
 function EnhancedTableHead(props) {
@@ -107,10 +108,10 @@ const EventList = props => {
   const classes = useStyles();
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState('dateOccurred');
-  const [selected, setSelected] = React.useState([]);
+  const [selected, setSelected] = useState(-1);
   const [page, setPage] = useState(0);
-  const [dense, setDense] = useState(true);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [showSafetyEventForm, setShowSafetyEventForm] = useState(false); 
 
   function handleRequestSort(event, property) {
     const isDesc = orderBy === property && order === 'desc';
@@ -119,23 +120,8 @@ const EventList = props => {
   }
 
   function handleClick(event, name) {
-    const selectedIndex = selected.indexOf(name);
-    let newSelected = [];
-
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex), 
-        selected.slice(selectedIndex + 1),
-      );
-    }
-
-    setSelected(newSelected);
+    setSelected(name);
+    setShowSafetyEventForm(true); 
   }
 
   function handleChangePage(event, newPage) {
@@ -147,71 +133,79 @@ const EventList = props => {
     setPage(0);
   }
 
-  function handleChangeDense(event) {
-    setDense(event.target.checked);
+  const handleShowSafetyEventForm = () => {
+    setShowSafetyEventForm(!showSafetyEventForm); 
   }
 
-  const isSelected = name => selected.indexOf(name) !== -1;
-
-	const { safetyIncidents, currentUser } = props;
+  const { safetyIncidents, currentUser, dense } = props;
 	
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, safetyIncidents.length - page * rowsPerPage);
 
   return (
     <div className={classes.root}>
+      {/* show Incident form if one is selected  */}
+      {showSafetyEventForm 
+        ? <SafetyEventForm 
+			existingEventDetail={safetyIncidents.filter(e => e.eventId === selected)[0]}
+            handleShowSafetyEventForm={handleShowSafetyEventForm}
+            showSafetyEventForm={showSafetyEventForm}
+			currentUser={currentUser}
+			isNew={false}
+          />
+        : null
+      }
       <Paper className={classes.paper}>
         <div className={classes.tableWrapper}>
           <Table
             className={classes.table}
             aria-labelledby="tableTitle"
-            size={dense ? 'medium' : 'small'}
+            size={dense ? 'medium' : 'small'} 
           >
             <EnhancedTableHead
               order={order}
               orderBy={orderBy}
 							onRequestSort={handleRequestSort}
 							dense={dense}
-							handleChangeDense={handleChangeDense}
             />
             <TableBody>
               {stableSort(safetyIncidents, getSorting(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
-                  const isItemSelected = isSelected(row.name);
+                  // const isItemSelected = isSelected(row.name);
                   const labelId = `enhanced-table-checkbox-${index}`;
 
                   return (
                     <TableRow
                       hover
                       onClick={event => handleClick(event, row.eventId)}
-                      aria-checked={isItemSelected}
+                      // aria-checked={isItemSelected}
                       tabIndex={-1}
                       key={row.eventId}
-                      selected={isItemSelected}
+                      selected={selected}
                     >
-                      <TableCell component="th" id={labelId} scope="row" size="small" padding="none" align="right">
+                      <TableCell component="th" id={labelId} scope="row"  padding="none" align="right">
                         {row.eventId}
                       </TableCell>
-                      <TableCell size="small">{row.eventStatus}</TableCell>
-											<TableCell size="small">
-												<Moment format={currentUser.user.dateFormat || 'YYYY/MM/DD'}>{row.eventDate}</Moment>	
+                      <TableCell >{row.eventStatus}</TableCell>
+											<TableCell >
+												<Moment format={currentUser.user.dateFormat || 'YYYY/MM/DD'} add={{ hours: currentUser.user.timeZone}}>{row.eventDate}</Moment>	
 											</TableCell>
-											<TableCell size="small">
+											<TableCell >
 												<Moment format="LTS" add={{ hours: currentUser.user.timeZone}}>{row.eventDate}</Moment>	
 											</TableCell>
-                      <TableCell size="small">{
+                      <TableCell >{
 												row.initialCategory === row.resultingCategory 
 													? row.resultingCategory
 													: `${row.initialCategory}|${row.resultingCategory}`
 											}</TableCell>
-                      <TableCell size="small">{row.employeeId}</TableCell>
-                      <TableCell size="small">{row.jobTitle}</TableCell>
-                      <TableCell size="small">{row.area}</TableCell>
-                      <TableCell size="small">{row.department}</TableCell>
-                      <TableCell size="small">{row.localePlant}</TableCell>
-                      <TableCell size="small">{row.localePlantArea}</TableCell>
-                      <TableCell size="small">{row.whatHappened.length > 100 ? row.whatHappened.substring(0, 100).concat('...') : row.whatHappened }</TableCell>
-                      <TableCell size="small">{row.actions.length}</TableCell>
+                      <TableCell >{row.employeeId}</TableCell>
+                      <TableCell >{row.jobTitle}</TableCell>
+                      <TableCell >{row.area}</TableCell>
+                      <TableCell >{row.department}</TableCell>
+                      <TableCell >{row.localePlant}</TableCell>
+                      <TableCell >{row.localePlantArea}</TableCell>
+                      {/* <TableCell >{row.whatHappened.length > 100 ? row.whatHappened.substring(0, 100).concat('...') : row.whatHappened }</TableCell> */}
+                      <TableCell >{row.actions.filter(a => a.completionDate !== null).length}</TableCell>
                     </TableRow>
                   );
                 })}
