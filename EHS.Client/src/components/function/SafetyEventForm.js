@@ -51,9 +51,8 @@ const useStyles = makeStyles(theme => ({
         // width: 'fit-content',
         height: '70vh',
       },
-    
 	formControl: {
-		// marginTop: theme.spacing(2),
+		marginTop: theme.spacing(2),
 		minWidth: 120,
 		marginRight: theme.spacing(1),
 	},
@@ -118,8 +117,8 @@ const SafetyEventForm = props => {
         modifiedBy: currentUser.user.userId,        
     });
     const [hierarchySelections, setHierarchySelections] = useState({
-        departmentId: !isNew ? existingEventDetail.departmentId : currentUser.user.reportingHierarchyId,
-        localeId:     !isNew ? existingEventDetail.localeId : 0,
+        departmentId: !isNew ? existingEventDetail.departmentId : currentUser.user.logicalHierarchyId,
+        localeId:     !isNew ? existingEventDetail.localeId : currentUser.user.physicalHierarchyId,
     });
     const [eventDetails, setEventDetails] = useState({
         eventType:              'Safety Incident', // <<-- DONT HARD CODE THIS 
@@ -163,7 +162,7 @@ const SafetyEventForm = props => {
             case 'eventLocation':
                 break; 
             case 'eventDetails':
-                setEventDetails({ ...eventDetails, [input]: e.target.value })
+                setEventDetails({ ...eventDetails, [input]: e.target.value });
                 break;
             default:
                 addError('Invalid section')
@@ -173,11 +172,10 @@ const SafetyEventForm = props => {
     //for the react-select (single) component
     // const handleAutoCompleteChange = (data, action) => e => {
     const handleAutoCompleteChange = (state, action)  => {
-        //need to figure out how to get the control that sent this
-        console.log(state) ; 
-        console.log(action) ; 
-        // console.log(section, input) ; 
-        // handleAutoCompleteChange={(data, action) => dispatch({ type: action.name, value: data })}
+        console.log(action.name, state.value)
+        setHierarchySelections({ ...hierarchySelections, [action.name]: state.value })
+
+        //get new lookupData values now
     }
 
     //for the react-select (multi) component
@@ -240,7 +238,7 @@ const SafetyEventForm = props => {
     const isStepComplete = (step) => {
         return completed.has(step);
     }  
-
+    
     const getStepContent = (step) => {
         switch (step) {
             case 0:

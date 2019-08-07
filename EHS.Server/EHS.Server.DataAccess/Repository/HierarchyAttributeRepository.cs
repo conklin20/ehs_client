@@ -94,7 +94,109 @@ namespace EHS.Server.DataAccess.Repository
                 return result.AsList();
             }
         }
+        
+        public async Task<List<HierarchyAttribute>> GetFullTreeAsync(List<DynamicParam> queryParams, int hierarchyId)
+        {
+            using (IDbConnection sqlCon = Connection)
+            {
+                string tsql = @"select ha.* 
+	                                  , a.*
+	                                  , h.*
+                                from dbo.HierarchyAttributes ha 
+	                                join dbo.fnGetHierarchyFullTree(@hierarchyId) h on h.HierarchyId = ha.HierarchyId
+	                                join dbo.Attributes a on a.AttributeId = ha.AttributeId  ";
 
+
+                //dynamic params from querystring 
+                DynamicParameters paramList = new DynamicParameters();
+
+                foreach (DynamicParam param in queryParams)
+                {
+                    //add the where clause to the sql string 
+                    tsql += $" and {param.TableAlias}{param.FieldName} {param.Operator} {param.ParamName}";
+                    //then add the param to the param list 
+                    //a value should always either be single string, or string[], never both 
+                    if (param.SingleValue != null)
+                    {
+                        paramList.Add($"{param.ParamName}", param.SingleValue); //, DbType.String, ParameterDirection.Input);
+                    }
+                    else
+                    {
+                        paramList.Add($"{param.ParamName}", param.MultiValue.ToList());
+                    }
+                }
+
+                //add param from route (hierarchyId)
+                paramList.Add("@HierarchyId", hierarchyId); 
+
+                tsql += " order by ha.Value";
+
+                var result = await sqlCon.QueryAsync<HierarchyAttribute, Attribute, Hierarchy, HierarchyAttribute>(
+                        tsql,
+                        (hierarchyAttribute, attribute, hierarchy) =>
+                        {
+                            hierarchyAttribute.Attribute = attribute;
+                            hierarchyAttribute.Hierarchy = hierarchy;
+                            return hierarchyAttribute;
+                        },
+                        paramList,
+                        splitOn: "AttributeId, HierarchyId");
+
+                return result.AsList();
+            }
+        }
+
+        public async Task<List<HierarchyAttribute>> GetSinglePathAsync(List<DynamicParam> queryParams, int hierarchyId)
+        {
+            using (IDbConnection sqlCon = Connection)
+            {
+                string tsql = @"select ha.* 
+	                                  , a.*
+	                                  , h.*
+                                from dbo.HierarchyAttributes ha 
+	                                join dbo.fnGetHierarchySinglePath(@hierarchyId) h on h.HierarchyId = ha.HierarchyId
+	                                join dbo.Attributes a on a.AttributeId = ha.AttributeId  
+                                where 1 = 1 ";
+
+                //build param list 
+                DynamicParameters paramList = new DynamicParameters();
+
+                foreach (DynamicParam param in queryParams)
+                {
+                    //add the where clause to the sql string 
+                    tsql += $" and {param.TableAlias}{param.FieldName} {param.Operator} {param.ParamName}";
+                    //then add the param to the param list 
+                    //a value should always either be single string, or string[], never both 
+                    if (param.SingleValue != null)
+                    {
+                        paramList.Add($"{param.ParamName}", param.SingleValue); //, DbType.String, ParameterDirection.Input);
+                    }
+                    else
+                    {
+                        paramList.Add($"{param.ParamName}", param.MultiValue.ToList());
+                    }
+                }
+
+                //add param from route (hierarchyId)
+                paramList.Add("@HierarchyId", hierarchyId);
+
+                tsql += " order by ha.Value";
+
+                var result = await sqlCon.QueryAsync<HierarchyAttribute, Attribute, Hierarchy, HierarchyAttribute>(
+                        tsql,
+                        (hierarchyAttribute, attribute, hierarchy) =>
+                        {
+                            hierarchyAttribute.Attribute = attribute;
+                            hierarchyAttribute.Hierarchy = hierarchy;
+                            return hierarchyAttribute;
+                        },
+                        paramList,
+                        splitOn: "AttributeId, HierarchyId");
+
+                return result.AsList();
+            }
+        }
+        
         public async Task<HierarchyAttribute> AddAsync(HierarchyAttribute HierarchyAttributeToAdd)
         {
             using (IDbConnection sqlCon = Connection)

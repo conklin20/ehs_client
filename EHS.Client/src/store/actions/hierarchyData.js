@@ -12,9 +12,9 @@ export const loadFullPhysicalTree = physicalHierarchyData => ({
     physicalHierarchyData
 }); 
 
-export const fetchLogicalHierarchyTree = (hierachyId, minLevel = 0) => {
+export const fetchLogicalHierarchyTree = () => {
     return dispatch => {
-        return apiCall('get', '/hierarchies/' + hierachyId + '/' + minLevel)
+        return apiCall('get', '/hierarchies/leafnodes/department') //+ hierachyId)
             .then(res => {
                 dispatch(loadFullLogicalTree(res)); 
             })
@@ -25,9 +25,9 @@ export const fetchLogicalHierarchyTree = (hierachyId, minLevel = 0) => {
     }
 }
 
-export const fetchPhysicalHierarchyTree = (hierachyId, minLevel = 0) => {
+export const fetchPhysicalHierarchyTree = () => {
     return dispatch => {
-        return apiCall('get', '/hierarchies/' + hierachyId + '/' + minLevel)
+        return apiCall('get', '/hierarchies/leafnodes/plantarea') //+ hierachyId)
             .then(res => {
                 dispatch(loadFullPhysicalTree(res)); 
             })

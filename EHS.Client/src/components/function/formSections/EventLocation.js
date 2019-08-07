@@ -1,6 +1,5 @@
 import React, { useEffect, Fragment } from 'react';
 import { Typography, Grid, TextField } from '@material-ui/core'; 
-
 import AutoComplete from '../inputs/AutoComplete'; 
 // import { fetchFullTree } from '../../../store/actions/hierarchyData'; 
 
@@ -9,29 +8,18 @@ const EventLocation = (props) => {
 
     const { hierarchyData, values, handleAutoCompleteChange } = props; 
     
-    // Essentially what was componentDidMount and componentDidUpdate before Hooks
-	useEffect(() => {
-		//fetch lookup data, which will be used in various places 
-        // const logicalLocations = fetchFullTree(4001, 600); 
-        // console.log(logicalLocations); 
-        // const physicalLocations = fetchFullTree(4000, 600); 
-        // console.log(physicalLocations); 
-
-		return () => {
-			console.log('Cleanup function (ComponentDidUnmount)')
-		}
-	}, []); //this 2nd arg is important, it tells what to look for changes in, and will re-run the hook when this changes 
-
-
-    const logical = hierarchyData.logicalHierarchyData.map(hierarchy => ({
+    //generate the list of options for the logical/dept dropwdown list 
+    const logicalOptions = hierarchyData.logicalHierarchyData.map(hierarchy => ({
         value: hierarchy.hierarchyId, 
-        label: hierarchy.hierarchyName
+        label: hierarchy.hierarchyName, 
+        selected: hierarchy.hierarchyId === values.departmentId ? true : false  
     }));
-    const physical = hierarchyData.physicalHierarchyData.map(hierarchy => ({
+    const physicalOptions = hierarchyData.physicalHierarchyData.map(hierarchy => ({
         value: hierarchy.hierarchyId, 
-        label: hierarchy.hierarchyName
+        label: hierarchy.hierarchyName,
+        selected: hierarchy.hierarchyId === values.localeId ? true : false  
     }));
-
+    
     return (
         <Fragment>  
             <Typography variant='h4' gutterBottom>
@@ -44,23 +32,24 @@ const EventLocation = (props) => {
             <Grid container spacing={2}>  
                 <Grid item xs={12} md={6}>							
                     <AutoComplete
-                        name="logicalHierarchies"
-                        options={logical}
+                        name="departmentId"
+                        options={logicalOptions}
                         label="Logical Hierarchy"                        
                         placeholder="Select Hierarchy"
                         handleChange={handleAutoCompleteChange}
-                        value={values.departmentId}
+                        value={logicalOptions.filter(o => o.selected === true)}
+                        className={classes.select}
                     >
                     </AutoComplete> 
                 </Grid>
                 <Grid item xs={12} md={6}>							
                     <AutoComplete
-                        name="physicalHierarchyies"
-                        options={physical}
+                        name="localeId"
+                        options={physicalOptions}
                         label="Physical Hierarchy"
                         placeholder="Select Hierarchy"
                         handleChange={handleAutoCompleteChange}
-                        value={values.localeId}
+                        value={physicalOptions.filter(o => o.selected === true)}
                     >
                     </AutoComplete> 
                 </Grid>

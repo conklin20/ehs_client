@@ -2,6 +2,8 @@ import React, { useState, useEffect, useReducer } from 'react';
 import { connect } from "react-redux";
 import { fetchSafteyIncidents } from '../../store/actions/safetyIncidents';
 import { fetchLookupData } from '../../store/actions/lookupData'; 
+import { fetchFullTree } from '../../store/actions/lookupData'; 
+import { fetchSinglePath } from '../../store/actions/lookupData'; 
 import { fetchLogicalHierarchyTree } from '../../store/actions/hierarchyData'; 
 import { fetchPhysicalHierarchyTree } from '../../store/actions/hierarchyData'; 
 import { addError } from '../../store/actions/errors';
@@ -90,12 +92,14 @@ const Dashboard = props => {
 		// console.log('fetchSafteyIncidents called')
 		props.fetchSafteyIncidents(parseSearchFilters(searchFilters)); 	 	
 
-		//fetch lookup data, which will be used in various places 
-		props.fetchLookupData('?enabled=true'); 
+		//fetch lookup data, defaulting to everything (1000), will get narrowed down by the users selctions in various  pages 
+		// props.fetchLookupData('?enabled=true');
+		// props.fetchSinglePath(props.currentUser.user.logicalHierarchyId, '?enabled=true');
+		props.fetchFullTree(1000, '?enabled=true');
 
 		//fetch logical and physical hierarchy trees (based on users setup) 
-		props.fetchLogicalHierarchyTree(props.currentUser.user.logicalHierarchyId, 600)
-		props.fetchPhysicalHierarchyTree(props.currentUser.user.physicalHierarchyId, 600)
+		props.fetchLogicalHierarchyTree();
+		props.fetchPhysicalHierarchyTree();
 
 		return () => {
 			console.log('Cleanup function (ComponentDidUnmount)')
@@ -225,4 +229,4 @@ function mapStateToProps(state) {
 	};
 }
 
-export default connect(mapStateToProps, { fetchSafteyIncidents, fetchLookupData, fetchLogicalHierarchyTree, fetchPhysicalHierarchyTree })(Dashboard); 
+export default connect(mapStateToProps, { fetchSafteyIncidents, fetchLookupData, fetchFullTree, fetchSinglePath, fetchLogicalHierarchyTree, fetchPhysicalHierarchyTree })(Dashboard); 

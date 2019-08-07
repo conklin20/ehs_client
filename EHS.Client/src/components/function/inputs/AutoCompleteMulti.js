@@ -293,13 +293,13 @@ const AutoCompleteMulti = (props) => {
     }),
   };
 
-  const { label, placeholder } = props; 
-
+  const { label, placeholder, name, options, value, handleChange } = props; 
+  console.log(value)
   return (
     <div className={classes.root}>
       <NoSsr>
         <Select
-          name={props.name}
+          name={name}
           classes={classes}
           styles={selectStyles}
           inputId="react-select-multiple"
@@ -311,10 +311,10 @@ const AutoCompleteMulti = (props) => {
             },
           }}
           placeholder={placeholder}
-          options={props.options}
+          options={options}
           components={components}
-          value={props.value}
-          onChange={props.handleChange}
+          value={value}
+          onChange={handleChange}
           isMulti
         />
       </NoSsr>

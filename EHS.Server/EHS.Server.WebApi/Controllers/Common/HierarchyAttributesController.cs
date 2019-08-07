@@ -43,10 +43,77 @@ namespace EHS.Server.WebApi.Controllers.Common
                 if (queryParams.enabled != null)
                 {
                     dynamicParamList.Add(new DynamicParam { TableAlias = "ha.", FieldName = "Enabled", Operator = "=", ParamName = "@Enabled", SingleValue = queryParams.enabled });
+                    dynamicParamList.Add(new DynamicParam { TableAlias = "a.", FieldName = "Enabled", Operator = "=", ParamName = "@AttrEnabled", SingleValue = queryParams.enabled });
                 }
 
                 //get the list of hierarchyAttributes 
                 var hierarchyAttributes = await _hierarchyAttributeRepo.GetAllAsync(dynamicParamList);
+
+                if (hierarchyAttributes == null)
+                {
+                    _logger.LogError("No HierarchyAttribute Attributes found. {0}", NotFound().ToString());
+                    return NotFound();
+                }
+
+                //map the list from the domain/database model objects, to data transfer objects to pass back to the client 
+                return Ok(hierarchyAttributes.Select(_mapper.Map<HierarchyAttribute, HierarchyAttributeDto>).ToList());
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return BadRequest();
+            }
+        }
+
+        // GET: api/Hierarchies
+        [HttpGet("fulltree/{id}", Name = "GetFullTreeWithAttr")]
+        public async Task<ActionResult<List<HierarchyAttribute>>> GetFullTree([FromQuery] HierarchyAttributesQuery queryParams, [FromRoute] int id)
+        {
+            try
+            {
+                //parse the queryParams object and send list to repo
+                List<DynamicParam> dynamicParamList = new List<DynamicParam>();
+                if (queryParams.enabled != null)
+                {
+                    dynamicParamList.Add(new DynamicParam { TableAlias = "ha.", FieldName = "Enabled", Operator = "=", ParamName = "@Enabled", SingleValue = queryParams.enabled });
+                    dynamicParamList.Add(new DynamicParam { TableAlias = "a.", FieldName = "Enabled", Operator = "=", ParamName = "@AttrEnabled", SingleValue = queryParams.enabled });
+                }
+
+                //get the list of hierarchyAttributes 
+                var hierarchyAttributes = await _hierarchyAttributeRepo.GetFullTreeAsync(dynamicParamList, id);
+
+                if (hierarchyAttributes == null)
+                {
+                    _logger.LogError("No HierarchyAttribute Attributes found. {0}", NotFound().ToString());
+                    return NotFound();
+                }
+
+                //map the list from the domain/database model objects, to data transfer objects to pass back to the client 
+                return Ok(hierarchyAttributes.Select(_mapper.Map<HierarchyAttribute, HierarchyAttributeDto>).ToList());
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return BadRequest();
+            }
+        }
+
+        // GET: api/Hierarchies
+        [HttpGet("singlepath/{id}", Name = "GetSinglePath")]
+        public async Task<ActionResult<List<HierarchyAttribute>>> GetSinglePath([FromQuery] HierarchyAttributesQuery queryParams, [FromRoute] int id)
+        {
+            try
+            {
+                //parse the queryParams object and send list to repo
+                List<DynamicParam> dynamicParamList = new List<DynamicParam>();
+                if (queryParams.enabled != null)
+                {
+                    dynamicParamList.Add(new DynamicParam { TableAlias = "ha.", FieldName = "Enabled", Operator = "=", ParamName = "@Enabled", SingleValue = queryParams.enabled });
+                    dynamicParamList.Add(new DynamicParam { TableAlias = "a.", FieldName = "Enabled", Operator = "=", ParamName = "@AttrEnabled", SingleValue = queryParams.enabled });
+                }
+
+                //get the list of hierarchyAttributes 
+                var hierarchyAttributes = await _hierarchyAttributeRepo.GetSinglePathAsync(dynamicParamList, id);
 
                 if (hierarchyAttributes == null)
                 {

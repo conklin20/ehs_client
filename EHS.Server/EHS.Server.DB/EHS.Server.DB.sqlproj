@@ -65,6 +65,7 @@
     <Folder Include="dbo\Views\" />
     <Folder Include="Security\" />
     <Folder Include="dbo\Stored Procedures\" />
+    <Folder Include="dbo\Functions\" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="dbo\Tables\HierarchyLevels.sql" />
@@ -84,8 +85,6 @@
     <Build Include="dbo\Tables\SafetyEvents.sql" />
     <Build Include="dbo\Tables\Actions.sql" />
     <Build Include="dbo\Tables\Approvals.sql" />
-    <Build Include="dbo\Views\vMaterials.sql" />
-    <Build Include="dbo\Views\vJobTitles.sql" />
     <Build Include="Security\app.sql" />
     <Build Include="dbo\Stored Procedures\spHierarchyDelete.sql" />
     <Build Include="dbo\Stored Procedures\spHierarchyAddOrUpdate.sql" />
@@ -94,5 +93,20 @@
     <Build Include="dbo\Stored Procedures\spUserAddOrUpdate.sql" />
     <Build Include="dbo\Stored Procedures\spHierarchyAttributeDelete.sql" />
     <Build Include="dbo\Stored Procedures\spHierarchyAttributeAddOrUpdate.sql" />
+    <Build Include="dbo\Tables\EventCauses.sql" />
+    <Build Include="dbo\Functions\fnSiteAreaTOHierarchyIdMapper.sql" />
+    <Build Include="dbo\Functions\fnSiteAreaDeptTOHierarchyIdMapper.sql" />
+    <Build Include="dbo\Functions\fnHierarchyFullTree.sql" />
+    <Build Include="dbo\Stored Procedures\spSafetyEventDelete.sql" />
+    <Build Include="dbo\Stored Procedures\spSafetyEventAddOrUpdate.sql" />
+    <Build Include="dbo\Stored Procedures\spPeopleInvolvedDelete.sql" />
+    <Build Include="dbo\Stored Procedures\spPeopleInvolvedAddOrUpdate.sql" />
+    <Build Include="dbo\Stored Procedures\spLegacyIncidentMigration.sql" />
+    <Build Include="dbo\Stored Procedures\spEventCauseDelete.sql" />
+    <Build Include="dbo\Stored Procedures\spEventCauseAddOrUpdate.sql" />
+    <Build Include="dbo\Stored Procedures\spApprovalDelete.sql" />
+    <Build Include="dbo\Stored Procedures\spApprovalAddOrUpdate.sql" />
+    <Build Include="dbo\Stored Procedures\spActionDelete.sql" />
+    <Build Include="dbo\Stored Procedures\spActionAddOrUpdate.sql" />
   </ItemGroup>
 </Project>

@@ -10,7 +10,7 @@ import { Typography, NoSsr, TextField, Paper, MenuItem } from '@material-ui/core
 
 const useStyles = makeStyles(theme => ({
   root: {
-    flexGrow: 1,
+    flexGrow: 2,
   },
   input: {
     display: 'flex',
@@ -277,12 +277,13 @@ const AutoComplete = (props) => {
     }),
   };
 
-  const { label, placeholder } = props; 
-
+  const { label, placeholder, name, options, value, handleChange } = props; 
+  // console.log(value)
   return (
     <div className={classes.root}>
       <NoSsr>
         <Select
+          name={name}
           classes={classes}
           styles={selectStyles}
           inputId="react-select-single"
@@ -294,12 +295,11 @@ const AutoComplete = (props) => {
             },
           }}
           placeholder={placeholder}
-          options={props.options}
+          options={options}
           components={components}
-          value={props.value}
-          onChange={props.handleChange}
+          value={value}
+          onChange={handleChange}
         />
-        <div className={classes.divider} />
       </NoSsr>
     </div>
   );

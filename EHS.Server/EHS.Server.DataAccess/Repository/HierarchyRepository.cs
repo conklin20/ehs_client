@@ -36,52 +36,40 @@ namespace EHS.Server.DataAccess.Repository
                 
                 var result = await sqlCon.QueryAsync<Hierarchy>(tsql, new { hierarchyId = id });
                 return result.FirstOrDefault();
-
-                //Populating sub-objects
-                //var hierarchyDictionary = new Dictionary<int, Hierarchy>();
-
-                //string tsql = @"select h.HierarchyId, h.HierarchyName, h.HierarchyLevelId, h.Lft, h.Rgt, h.CreatedBy, h.CreatedOn, h.ModifiedBy, h.ModifiedOn
-                //                     , a.HierarchyAttributeId, a.HierarchyId, a.AttributeId, a.[Key], a.Value, a.Enabled, a.CreatedBy, a.CreatedOn, a.ModifiedBy, a.ModifiedOn
-                //                from Hierarchies h 
-                //                     join HierarchyAttributes a on a.HierarchyId = h.HierarchyId 
-                //                where h.HierarchyId = @hierarchyId ";
-                //var list = Connection.Query<Hierarchy, HierarchyAttribute, Hierarchy>(
-                //    tsql,
-                //    (hierarchy, hierarchyAttribute) =>
-                //    {
-                //        Hierarchy hierarchyEntry;
-
-                //        if (!hierarchyDictionary.TryGetValue(hierarchy.HierarchyId, out hierarchyEntry))
-                //        {
-                //            hierarchyEntry = hierarchy;
-                //            hierarchyEntry.HierarchyAttributes = new List<HierarchyAttribute>();
-                //            hierarchyDictionary.Add(hierarchyEntry.HierarchyId, hierarchyEntry);
-                //        }
-
-                //        hierarchyEntry.HierarchyAttributes.Add(hierarchyAttribute);
-                //        return hierarchyEntry;
-                //    },
-                //    new { hierarchyId = id },
-                //    splitOn: "HierarchyAttributeId")
-                //.Distinct()
-                //.ToList();
-                //return list.FirstOrDefault();
             }
         }
 
-        public async Task<List<Hierarchy>> GetFullTreeAsync(int id, int minLevel)
+        public async Task<List<Hierarchy>> GetFullTreeAsync(int id)
         {
             using (IDbConnection sqlCon = Connection)
             {
                 string tsql = @"select h.HierarchyId, h.HierarchyName
-                                from dbo.fnHierarchyFullTree(@HierarhcyId, @MinLevel) h
+                                from dbo.fnGetHierarchyFullTree(@HierarhcyId) h
                                 order by HierarchyName";
 
                 //build param list 
                 var p = new
                 {
-                    HierarhcyId = id,
-                    MinLevel = minLevel
+                    HierarhcyId = id
+                };
+
+                var result = await sqlCon.QueryAsync<Hierarchy>(tsql, p);
+                return result.AsList();
+            }
+        }
+
+        public async Task<List<Hierarchy>> GetLeafNodesAsync(string levelName)
+        {
+            using (IDbConnection sqlCon = Connection)
+            {
+                string tsql = @"select *
+                                from dbo.fnGetHierarchyLeafNodes(@LevelName) h
+                                order by HierarchyName";
+
+                //build param list 
+                var p = new
+                {
+                    LevelName = levelName
                 };
 
                 var result = await sqlCon.QueryAsync<Hierarchy>(tsql, p);

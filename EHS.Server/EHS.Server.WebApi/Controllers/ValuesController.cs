@@ -9,71 +9,23 @@ using Microsoft.Extensions.Logging;
 
 namespace EHS.Server.WebApi.Controllers
 {
-    [Authorize]
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
     public class ValuesController : ControllerBase
     {
-        private readonly IConfiguration configuration;
-        private readonly ILogger<ValuesController> logger;
+        private readonly ILogger<ValuesController> _logger;
 
-        public ValuesController(IConfiguration configuration, ILogger<ValuesController> logger)
+        public ValuesController(ILogger<ValuesController> logger)
         {
-            this.configuration = configuration;
-            this.logger = logger; 
+            this._logger = logger; 
         }
 
         // GET api/values
         [HttpGet]
         public ActionResult<IEnumerable<string>> Get()
         {
-            logger.LogInformation("Logger Connnected, Web API is running! ");
-            //logger.LogWarning("Logging a warning!");
-            //logger.LogDebug("Logging debug event");
-            //logger.LogTrace("Logging a trace event");
-            //logger.LogError("Error occurred!!");
-            //logger.LogCritical("Critical Error Occurred!!!"); 
-
-            //try
-            //{
-            //    int x = 20;
-            //    int y = x / 0; 
-
-            //}
-            //catch(Exception ex)
-            //{
-            //    logger.LogError("Exception occurred: " + ex.ToString()); 
-            //}
-
-            return new string[] { "Controller working!" };
-        }
-
-        // GET api/values/5
-        [HttpGet("{id}")]
-        public ActionResult<string> Get(int id)
-        {
-            return "value";
-        }
-
-        // POST api/values
-        [HttpPost]
-        public void Post([FromBody] string value)
-        {
-            // For more information on protecting this API from Cross Site Request Forgery (CSRF) attacks, see https://go.microsoft.com/fwlink/?LinkID=717803
-        }
-
-        // PUT api/values/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-            // For more information on protecting this API from Cross Site Request Forgery (CSRF) attacks, see https://go.microsoft.com/fwlink/?LinkID=717803
-        }
-
-        // DELETE api/values/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-            // For more information on protecting this API from Cross Site Request Forgery (CSRF) attacks, see https://go.microsoft.com/fwlink/?LinkID=717803
+            _logger.LogInformation("Web API Is Running!"); 
+            return new string[] { "Web API Is Running!" };
         }
     }
 }
