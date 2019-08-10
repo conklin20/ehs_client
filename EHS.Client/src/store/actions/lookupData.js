@@ -1,17 +1,65 @@
 import { apiCall } from '../../services/api'; 
 import { addError } from './errors'; 
-import { LOAD_LOOKUP_DATA } from '../actionTypes'; 
+import { 
+    LOAD_LOGICAL_HIERARCHIES, 
+    LOAD_PHYSICAL_HIERARCHIES,
+    LOAD_LOGICAL_HIERARCHY_ATTRIBUTES, 
+    LOAD_PHYSICAL_HIERARCHY_ATTRIBUTES, 
+    LOAD_EMPLOYEES,
+} from '../actionTypes'; 
 
-export const loadLookupData = lookupData => ({
-    type: LOAD_LOOKUP_DATA, 
-    lookupData
+export const loadLogicalHierarchies = logicalHierarchies => ({
+    type: LOAD_LOGICAL_HIERARCHIES, 
+    logicalHierarchies
 }); 
 
-export const fetchLookupData = (query) => {
+export const loadPhysicalHierarchies = physicalHierarchies => ({
+    type: LOAD_PHYSICAL_HIERARCHIES, 
+    physicalHierarchies
+}); 
+
+export const loadLogicalHierarchyAttributes = logicalHierarchyAttributes => ({
+    type: LOAD_LOGICAL_HIERARCHY_ATTRIBUTES, 
+    logicalHierarchyAttributes
+}); 
+
+export const loadPhysicalHierarchyAttributes = physicalHierarchyAttributes => ({
+    type: LOAD_PHYSICAL_HIERARCHY_ATTRIBUTES, 
+    physicalHierarchyAttributes
+}); 
+
+export const fetchLogicalHierarchyTree = (hierachyId) => {
     return dispatch => {
-        return apiCall('get', '/hierarchyattributes' + (query ? query : ''))
+        return apiCall('get', '/hierarchies/fulltree/' + hierachyId)
             .then(res => {
-                dispatch(loadLookupData(res)); 
+                dispatch(loadLogicalHierarchies(res)); 
+            })
+            .catch(err => {
+                console.log(err)
+                dispatch(addError(err || 'An unknown error has occured.')); 
+            });
+    }
+}
+
+export const fetchPhysicalHierarchyTree = (hierachyId) => {
+    return dispatch => {
+        return apiCall('get', '/hierarchies/fulltree/' + hierachyId)
+            .then(res => {
+                dispatch(loadPhysicalHierarchies(res)); 
+            })
+            .catch(err => {
+                console.log(err)
+                dispatch(addError(err || 'An unknown error has occured.')); 
+            });
+    }
+}
+
+//Type = fulltree or singlepath 
+export const fetchLogicalHierarchyAttributes = (hierarchyId, type, query) => {
+    return dispatch => {
+        return apiCall('get', `/hierarchyattributes/${type}/${hierarchyId}${query ? query : ''}`)
+            .then(res => {
+                dispatch(loadLogicalHierarchyAttributes(res)); 
             })
             .catch(err => {
                 // console.log(err)
@@ -20,26 +68,12 @@ export const fetchLookupData = (query) => {
     }
 }
 
-export const fetchFullTree = (hierarchyId, query) => {
+//Type = fulltree or singlepath 
+export const fetchPhysicalHierarchyAttributes = (hierarchyId, type, query) => {
     return dispatch => {
-        return apiCall('get', `/hierarchyattributes/fulltree/${hierarchyId}${query ? query : ''}`)
+        return apiCall('get', `/hierarchyattributes/${type}/${hierarchyId}${query ? query : ''}`)
             .then(res => {
-                dispatch(loadLookupData(res)); 
-            })
-            .catch(err => {
-                // console.log(err)
-                dispatch(addError(err || 'An unknown error has occured.')); 
-            });
-    }
-}
-
-//This is used to retreive all lookup data/attributes configured for a single dept/plant area 
-//(should always take hierarchyId with a level 600)
-export const fetchSinglePath = (hierarchyId, query) => {
-    return dispatch => {
-        return apiCall('get', `/hierarchyattributes/singlepath/${hierarchyId}${query ? query : ''}`)
-            .then(res => {
-                dispatch(loadLookupData(res)); 
+                dispatch(loadPhysicalHierarchyAttributes(res)); 
             })
             .catch(err => {
                 // console.log(err)

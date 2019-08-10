@@ -277,10 +277,10 @@ const AutoComplete = (props) => {
     }),
   };
 
-  const { label, placeholder, name, options, value, handleChange } = props; 
+  const { label, placeholder, name, options, value, handleChange, className } = props; 
   // console.log(value)
   return (
-    <div className={classes.root}>
+    <div className={className}>
       <NoSsr>
         <Select
           name={name}

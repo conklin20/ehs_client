@@ -1,5 +1,5 @@
 import React, { useState, useEffect, Fragment } from 'react';
-import { Typography, Grid, TextField,  } from '@material-ui/core'; 
+import { Typography, Grid, TextField, Divider } from '@material-ui/core'; 
 import Moment from 'react-moment'; 
 
 
@@ -14,7 +14,8 @@ const ReportingInformation = (props) => {
             </Typography>
             <Typography className={classes.caption} variant="caption" display="block" gutterBottom>
                 Instructions: No input required, these fields will be defaulted 
-            </Typography>       				
+            </Typography>       
+            <Divider/>    						
             <Grid container spacing={2}>			
                 <Grid item xs={12}>		
                     <Typography className={classes.label} variant="body1" gutterBottom>
@@ -37,7 +38,13 @@ const ReportingInformation = (props) => {
                             {values.reportedOn}
                         </Moment>	
                     </Typography>	
-                </Grid>            
+                </Grid>      
+                <Grid item xs={12}>		
+                    <Typography className={classes.label} variant="body1" gutterBottom>   
+                        <span>Event Status: </span>
+                        {values.eventStatus}
+                    </Typography>	
+                </Grid>        
             </Grid>
         </Fragment>
     );

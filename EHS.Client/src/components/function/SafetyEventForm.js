@@ -1,7 +1,11 @@
 import React, { useState, useReducer, useEffect, Fragment } from 'react';
 import { connect } from "react-redux";
 import { makeStyles } from '@material-ui/core/styles';
-import { fetchLookupData } from '../../store/actions/lookupData'; 
+import { 
+	fetchLogicalHierarchyTree, 
+	fetchPhysicalHierarchyTree, 
+	fetchLogicalHierarchyAttributes, 
+	fetchPhysicalHierarchyAttributes } from '../../store/actions/lookupData'; 
 import AutoComplete from './inputs/AutoComplete';
 import AutoCompleteMulti from './inputs/AutoCompleteMulti';
 import { addError } from '../../store/actions/errors';
@@ -58,7 +62,10 @@ const useStyles = makeStyles(theme => ({
 	},
 		formControlLabel: {
 		// marginTop: theme.spacing(1),
-	},	
+    },	
+    slider: {
+        width: 250,
+    },
 	sectionHeading: {
 		fontStyle: 'italic'
     }, 
@@ -68,9 +75,6 @@ const useStyles = makeStyles(theme => ({
 		flexDirection: 'column',
         justifyContent: 'space-between',
     },
-	autoComplete: {
-		marginTop: theme.spacing(2),
-	},
     button: {
       marginRight: theme.spacing(1),
     },
@@ -98,7 +102,6 @@ const getSteps = () => {
     ]
 }
 
-
 // All of the State related to an event needs to live here
 const SafetyEventForm = props => {
 	const classes = useStyles();
@@ -106,15 +109,16 @@ const SafetyEventForm = props => {
     const [completed, setCompleted] = useState(new Set());
     const steps = getSteps();
 
-    const { showSafetyEventForm, handleShowSafetyEventForm, existingEventDetail, currentUser, lookupData, hierarchyData, isNew } = props
+    const { showSafetyEventForm, handleShowSafetyEventForm, existingEventDetail, currentUser, lookupData, isNew } = props
     
     //Event State by section 
     const [reportingInformation, setReportingInformation] = useState({
-        //currentUser from redux (mapStateToProps)
+                                                              //currentUser from redux (mapStateToProps)
         reportedBy: !isNew ? existingEventDetail.reportedBy : currentUser.user.userId,
         reportedOn: !isNew ? existingEventDetail.reportedOn : Date.now(), //  <<--- NEED TO GET UTC DATE 
         createdBy: isNew ? currentUser.user.userId : null,
-        modifiedBy: currentUser.user.userId,        
+        modifiedBy: currentUser.user.userId,
+        eventStatus: !isNew ? existingEventDetail.eventStatus : 'Draft'
     });
     const [hierarchySelections, setHierarchySelections] = useState({
         departmentId: !isNew ? existingEventDetail.departmentId : currentUser.user.logicalHierarchyId,
@@ -162,7 +166,8 @@ const SafetyEventForm = props => {
             case 'eventLocation':
                 break; 
             case 'eventDetails':
-                setEventDetails({ ...eventDetails, [input]: e.target.value });
+                //if its a bool/checkbox, we need to use the checked property as opposed to value property 
+                setEventDetails({ ...eventDetails, [input]: e.target.checked ? e.target.checked : e.target.value });
                 break;
             default:
                 addError('Invalid section')
@@ -172,10 +177,26 @@ const SafetyEventForm = props => {
     //for the react-select (single) component
     // const handleAutoCompleteChange = (data, action) => e => {
     const handleAutoCompleteChange = (state, action)  => {
-        console.log(action.name, state.value)
-        setHierarchySelections({ ...hierarchySelections, [action.name]: state.value })
-
-        //get new lookupData values now
+        console.log(action.name, state.value); 
+        switch (action.name){
+            case 'departmentId':
+            case 'localeId':
+                return setHierarchySelections({ ...hierarchySelections, [action.name]: state.value });
+            case 'shift':
+            case 'jobTitle':
+            case 'natureOfInjury':
+            case 'bodyPart':
+            case 'firstAidType':
+            case 'offPlantMedicalFacility':
+            case 'materialInvolved':
+            case 'equipmentInvolved':
+            case 'workEnvironment':
+            case 'initialCategory':
+            case 'resultingCategory':
+                return setEventDetails({ ...eventDetails, [action.name]: state.value });
+            default:
+                console.log("Invalid Action:", action.name)
+        }
     }
 
     //for the react-select (multi) component
@@ -183,7 +204,17 @@ const SafetyEventForm = props => {
         console.log(data, Actions, e) ; 
         // handleAutoCompleteChange={(data, action) => dispatch({ type: action.name, value: data })}
     }
-    
+
+    const handleRefreshData = () => {
+        // console.log('handleRefreshData being called')
+        // console.log(lookupData.logicalHierarchyAttributes.length)
+        props.fetchLogicalHierarchyAttributes(hierarchySelections.departmentId, 'singlepath', '?enabled=true');
+        props.fetchPhysicalHierarchyAttributes(hierarchySelections.localeId, 'singlepath', '?enabled=true&excludeglobal=true');
+        // console.log(lookupData.logicalHierarchyAttributes.length)
+    }
+
+
+    //Code copied from material-ui for the stepping functionality   
     const totalSteps = () => {
         return getSteps().length;
     }
@@ -250,9 +281,10 @@ const SafetyEventForm = props => {
             case 1: 
                 return <EventLocation 
                             useStyles={useStyles} 
-                            hierarchyData={hierarchyData}
+                            lookupData={lookupData} 
                             values={hierarchySelections}
                             handleAutoCompleteChange={handleAutoCompleteChange}
+                            handleRefreshData={handleRefreshData}
                         />        
             case 2: 
                 return <SIEventDetails 
@@ -261,6 +293,7 @@ const SafetyEventForm = props => {
                             values={eventDetails}
                             handleChange={handleChange}
                             handleAutoCompleteChange={handleAutoCompleteChange}
+                            handleSave={reportingInformation.eventStatus === "Draft" ? handleSaveDraft : handleSubmit}
                         />             
             case 3: 
                 return <Actions  
@@ -305,7 +338,9 @@ const SafetyEventForm = props => {
 				fullWidth={true}
 				maxWidth="lg"
 			>
-				<DialogTitle id="form-dialog-title">{!isNew ? `${existingEventDetail.eventType} - ${existingEventDetail.eventId}` : "Event Form - New Event"}</DialogTitle>
+                <DialogTitle id="form-dialog-title">
+                    { !isNew ? `${existingEventDetail.eventType} - ${existingEventDetail.eventId} - ${existingEventDetail.eventStatus}` : "Event Form - New Event" } 
+                </DialogTitle>
 				<DialogContent>		
 					<form className={classes.form} onSubmit={handleSubmit}>                        
                         <Stepper alternativeLabel nonLinear activeStep={activeStep}>
@@ -397,8 +432,12 @@ function mapStateToProps(state) {
 	return {
 			lookupData: state.lookupData,
 			currentUser: state.currentUser,
-			hierarchyData: state.hierarchyData,
 	};
 }
 
-export default connect(mapStateToProps, { fetchLookupData })(SafetyEventForm); 
+export default connect(mapStateToProps, { 
+    fetchLogicalHierarchyTree, 
+    fetchPhysicalHierarchyTree, 
+    fetchLogicalHierarchyAttributes, 
+    fetchPhysicalHierarchyAttributes 
+})(SafetyEventForm); 

@@ -64,7 +64,7 @@ const SearchFilters = props => {
 	const { showSearchFilters, handleShowSearchFilters, handleSearchFiltersChange, handleAutoCompleteChange, handleSearch, searchFilters, lookupData } = props
 
 	//filtering lookup data on key=Statueses, then mapping over it and creating an object with value and label, which react-dropdown needs
-	const statuses = lookupData.filter(d => d.key === "Statuses").sort().map(status => ({		
+	const statuses = lookupData.logicalHierarchyAttributes.filter(d => d.key === "Statuses").sort().map(status => ({		
 		// value: status.hierarchyAttributeId, 
 		value: status.value, 
 		label: status.value,

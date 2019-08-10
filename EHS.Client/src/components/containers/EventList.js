@@ -146,11 +146,11 @@ const EventList = props => {
       {/* show Incident form if one is selected  */}
       {showSafetyEventForm 
         ? <SafetyEventForm 
-			existingEventDetail={safetyIncidents.filter(e => e.eventId === selected)[0]}
+			      existingEventDetail={safetyIncidents.filter(e => e.eventId === selected)[0]}
             handleShowSafetyEventForm={handleShowSafetyEventForm}
             showSafetyEventForm={showSafetyEventForm}
-			currentUser={currentUser}
-			isNew={false}
+            currentUser={currentUser}
+            isNew={false}
           />
         : null
       }

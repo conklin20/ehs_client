@@ -1,11 +1,15 @@
 import React, { useState, useEffect, useReducer } from 'react'; 
 import { connect } from "react-redux";
 import { fetchSafteyIncidents } from '../../store/actions/safetyIncidents';
-import { fetchLookupData } from '../../store/actions/lookupData'; 
-import { fetchFullTree } from '../../store/actions/lookupData'; 
-import { fetchSinglePath } from '../../store/actions/lookupData'; 
-import { fetchLogicalHierarchyTree } from '../../store/actions/hierarchyData'; 
-import { fetchPhysicalHierarchyTree } from '../../store/actions/hierarchyData'; 
+import { 
+	fetchLogicalHierarchyTree, 
+	fetchPhysicalHierarchyTree, 
+	fetchLogicalHierarchyAttributes, 
+	fetchPhysicalHierarchyAttributes } from '../../store/actions/lookupData'; 
+// import { fetchFullTree } from '../../store/actions/lookupData'; 
+// import { fetchSinglePath } from '../../store/actions/lookupData'; 
+// import { fetchLogicalHierarchyTree } from '../../store/actions'; 
+// import { fetchPhysicalHierarchyTree } from '../../store/actions'; 
 import { addError } from '../../store/actions/errors';
 import { makeStyles } from '@material-ui/core/styles';
 import { Paper, Grid, Hidden, Typography } from '@material-ui/core';
@@ -93,13 +97,10 @@ const Dashboard = props => {
 		props.fetchSafteyIncidents(parseSearchFilters(searchFilters)); 	 	
 
 		//fetch lookup data, defaulting to everything (1000), will get narrowed down by the users selctions in various  pages 
-		// props.fetchLookupData('?enabled=true');
-		// props.fetchSinglePath(props.currentUser.user.logicalHierarchyId, '?enabled=true');
-		props.fetchFullTree(1000, '?enabled=true');
-
-		//fetch logical and physical hierarchy trees (based on users setup) 
-		props.fetchLogicalHierarchyTree();
-		props.fetchPhysicalHierarchyTree();
+		props.fetchLogicalHierarchyTree(4001); //need to remove the hardcoded value for Lewiston eventually
+		props.fetchPhysicalHierarchyTree(4000);
+		props.fetchLogicalHierarchyAttributes(1000, 'fulltree', '?enabled=true');
+		props.fetchPhysicalHierarchyAttributes(1000, 'fulltree', '?enabled=true&excludeglobal=true');
 
 		return () => {
 			console.log('Cleanup function (ComponentDidUnmount)')
@@ -223,10 +224,15 @@ function mapStateToProps(state) {
 	return {
 			safetyIncidents: state.safetyIncidents, 
 			lookupData: state.lookupData,
-			hierarchyData: state.hierarchyData,
 			currentUser: state.currentUser,
 			// isLoading: state.isLoading,
 	};
 }
 
-export default connect(mapStateToProps, { fetchSafteyIncidents, fetchLookupData, fetchFullTree, fetchSinglePath, fetchLogicalHierarchyTree, fetchPhysicalHierarchyTree })(Dashboard); 
+export default connect(mapStateToProps, { 
+	fetchSafteyIncidents,
+	fetchLogicalHierarchyAttributes, 
+	fetchPhysicalHierarchyAttributes, 
+	fetchLogicalHierarchyTree, 
+	fetchPhysicalHierarchyTree 
+})(Dashboard); 
