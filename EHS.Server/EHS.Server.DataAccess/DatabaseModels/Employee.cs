@@ -28,8 +28,12 @@ namespace EHS.Server.DataAccess.DatabaseModels
         public string SupervisorId { get; set; }
         public DateTime LastUpdatedOn { get; set; }
         public bool POET { get; set; }
-        public virtual Employee Supervisor { get; set; }
+        public bool Active { get; set; }
+        public string Email { get; set; }
+        public int HierarchyId { get; set; }
+        public Boolean IsSupervisor { get; set; }
 
+        public virtual Employee Supervisor { get; set; }
         public virtual ICollection<Employee> Subordinates { get; set; }        
     }
 }

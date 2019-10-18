@@ -103,6 +103,7 @@ function Control(props) {
 
   return (
     <TextField
+      fullWidth
       variant={'outlined'}
       InputProps={{
         inputComponent,

@@ -50,7 +50,7 @@ function MySnackbarContentWrapper(props) {
   const classes = useStyles1();
   const { className, message, onClose, variant, ...other } = props;
   const Icon = variantIcon[variant];
-  
+  console.log(message)
   return (
     <SnackbarContent
       className={clsx(classes[variant], className)}

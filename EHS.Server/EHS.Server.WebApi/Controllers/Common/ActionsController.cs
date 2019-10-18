@@ -10,6 +10,8 @@ using EHS.Server.DataAccess.Repository;
 using EHS.Server.DataAccess.DatabaseModels;
 using EHS.Server.DataAccess.Dtos;
 using AutoMapper;
+using EHS.Server.WebApi.Helpers.Queries;
+using EHS.Server.DataAccess.Queries;
 
 namespace EHS.Server.WebApi.Controllers.Common
 {
@@ -32,12 +34,19 @@ namespace EHS.Server.WebApi.Controllers.Common
 
         // GET: api/Actions
         [HttpGet]
-        public async Task<ActionResult<List<DataAccess.DatabaseModels.Action>>> Get()
+        public async Task<ActionResult<List<DataAccess.DatabaseModels.Action>>> Get([FromQuery] ActionsQuery queryParams)
         {
             try
             {
+                //parse the queryParams object and send list to repo
+                List<DynamicParam> dynamicParamList = new List<DynamicParam>();
+                if (queryParams.EventId != null)
+                {
+                    dynamicParamList.Add(new DynamicParam { TableAlias = "ac.", FieldName = "EventId", Operator = "=", ParamName = "@EventId", SingleValue = queryParams.EventId });
+                }
+
                 //get the list of actions 
-                var actions = await _actionRepo.GetAllAsync();
+                var actions = await _actionRepo.GetAllAsync(dynamicParamList);
 
                 if (actions == null)
                 {
@@ -46,6 +55,30 @@ namespace EHS.Server.WebApi.Controllers.Common
                 }
 
                 //map the list from the domain/database model objects, to data transfer objects to pass back to the client 
+                return Ok(actions.Select(_mapper.Map<DataAccess.DatabaseModels.Action, ActionDto>).ToList());
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return BadRequest();
+            }
+        }
+
+        [HttpGet("/event/{eventId}", Name = "GetEventActions")]
+        public async Task<ActionResult<List<DataAccess.DatabaseModels.Action>>> Get([FromRoute]int eventId)
+        {
+            try
+            {
+                //get the action 
+                var actions = await _actionRepo.GetAllByEventAsync(eventId);
+
+                if (actions == null)
+                {
+                    _logger.LogError("Actions for event {0} not found. {1}", eventId, NotFound().ToString());
+                    return NotFound();
+                }
+
+                //map the action from the domain/database model object, to data transfer object to pass back to the client 
                 return Ok(actions.Select(_mapper.Map<DataAccess.DatabaseModels.Action, ActionDto>).ToList());
             }
             catch (Exception ex)
@@ -81,33 +114,33 @@ namespace EHS.Server.WebApi.Controllers.Common
         }
 
         // GET: api/Actions/5
-        [HttpGet("{id}", Name = "GetAction")]
-        public async Task<ActionResult<DataAccess.DatabaseModels.Action>> Get([FromRoute]int id)
-        {
-            try
-            {
-                //get the action 
-                var action = await  _actionRepo.GetByIdAsync(id);
+        //[HttpGet("{id}", Name = "GetAction")]
+        //public async Task<ActionResult<DataAccess.DatabaseModels.Action>> Get([FromRoute]int id)
+        //{
+        //    try
+        //    {
+        //        //get the action 
+        //        var action = await  _actionRepo.GetByIdAsync(id);
 
-                if (action == null)
-                {
-                    _logger.LogError("Action {0} not found. {1}", id, NotFound().ToString());
-                    return NotFound();
-                }
+        //        if (action == null)
+        //        {
+        //            _logger.LogError("Action {0} not found. {1}", id, NotFound().ToString());
+        //            return NotFound();
+        //        }
 
-                //map the action from the domain/database model object, to data transfer object to pass back to the client 
-                return Ok(_mapper.Map<DataAccess.DatabaseModels.Action, ActionDto>(action));
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message);
-                return BadRequest();
-            }
-        }
+        //        //map the action from the domain/database model object, to data transfer object to pass back to the client 
+        //        return Ok(_mapper.Map<DataAccess.DatabaseModels.Action, ActionDto>(action));
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(ex.Message);
+        //        return BadRequest();
+        //    }
+        //}
 
         // POST: api/Actions
         [HttpPost]
-        public async Task<ActionResult<DataAccess.DatabaseModels.Action>> Post([FromBody]DataAccess.DatabaseModels.Action actionToAdd)
+        public async Task<ActionResult<DataAccess.DatabaseModels.Action>> Post([FromBody]List<DataAccess.DatabaseModels.Action> actionsToAdd)
         {
             try
             {
@@ -119,12 +152,13 @@ namespace EHS.Server.WebApi.Controllers.Common
 
                 //map the new action from the incoming dto object to the domain/database model object so we can pass it to the Add() method
                 //var actionToAdd = _mapper.Map<ActionDto, DataAccess.DatabaseModels.Action>(actionToAddDto);
-                var addedAction = await _actionRepo.AddAsync(actionToAdd);
+                var addedActions = await _actionRepo.AddAsync(actionsToAdd);
 
                 //map back to dto, to pass back to client 
                 //return CreatedAtAction("GetHierarchy", new { id = addedAction.HierarchyId }, addedAction); 
-                return CreatedAtAction("GetAction", new { id = addedAction.ActionId }, _mapper.Map<DataAccess.DatabaseModels.Action, ActionDto>(addedAction));
-                //return _mapper.Map<DataAccess.DatabaseModels.Action, ActionDto>(addedAction);
+                //return CreatedAtAction("GetAction", new { id = addedAction.ActionId }, _mapper.Map<DataAccess.DatabaseModels.Action, ActionDto>(addedAction));
+           
+                return CreatedAtAction("Post", "Actions");
             }
             catch (Exception ex)
             {
@@ -160,12 +194,11 @@ namespace EHS.Server.WebApi.Controllers.Common
         }
 
         // DELETE: api/ApiWithActions/5
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<ActionDto>> Delete([FromBody]ActionDto actionToDeleteDto, [FromRoute]int id)
+        [HttpDelete("{actionId}")]
+        public async Task<ActionResult<ActionDto>> Delete( [FromRoute]int actionId, [FromQuery]string userId)
         {
             try
             {
-                actionToDeleteDto.ActionId = id; 
 
                 if (!ModelState.IsValid)
                 {
@@ -174,11 +207,11 @@ namespace EHS.Server.WebApi.Controllers.Common
                 }
 
                 //map the action from the incoming dto object to the domain/database model object so we can pass it to the Delete() method
-                var actionToDelete = _mapper.Map<ActionDto, DataAccess.DatabaseModels.Action>(actionToDeleteDto);
-                var deletedAction = await _actionRepo.DeleteAsync(actionToDelete);
+                //var actionToDelete = _mapper.Map<ActionDto, DataAccess.DatabaseModels.Action>(actionToDeleteDto);
+                var deletedAction = await _actionRepo.DeleteAsync(actionId, userId);
 
                 //map back to dto, to pass back to client 
-                return Accepted(_mapper.Map<DataAccess.DatabaseModels.Action, ActionDto>(deletedAction));
+                return AcceptedAtAction("Delete", "Actions");
             }
             catch (Exception ex)
             {

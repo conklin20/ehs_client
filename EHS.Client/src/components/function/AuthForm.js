@@ -31,8 +31,8 @@
 			password: '',
 		});	
 
-		const handleChange = name => event => {
-			setValues({ ...values, [name]: event.target.value });
+		const handleChange = name => e => {
+			setValues({ ...values, [name]: e.target.value });
 		};
 			
 		const handleSubmit = e => {
@@ -43,7 +43,8 @@
 					//use react-router to redirect use to dashboard 
 					props.history.push("/dashboard");
 				})
-				.catch(() => {
+				.catch((err) => {
+					console.log(err);
 					return; 
 				})
 		}

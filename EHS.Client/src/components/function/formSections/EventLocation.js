@@ -10,6 +10,7 @@ const EventLocation = (props) => {
     
     // Essentially what was componentDidMount and componentDidUpdate before Hooks
 	useEffect(() => {
+        // this.nameInput.focus()
 		return () => {
             //when component unmounts, go retrieve the new lookup data given the selctions made 
             //idea here is that we dont need to query the db everytime the selection changes, only when the user advances to the next screen

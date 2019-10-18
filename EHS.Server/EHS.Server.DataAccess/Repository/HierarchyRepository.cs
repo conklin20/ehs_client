@@ -43,17 +43,26 @@ namespace EHS.Server.DataAccess.Repository
         {
             using (IDbConnection sqlCon = Connection)
             {
-                string tsql = @"select h.HierarchyId, h.HierarchyName
-                                from dbo.fnGetHierarchyFullTree(@HierarhcyId) h
+                string tsql = @"select h.*
+	                                  ,l.HierarchyLevelId, l.HierarchyLevelName, l.HierarchyLevel as HierarchyLevelNumber, l.HierarchyLevelAlias
+                                from dbo.fnGetHierarchyFullTree(@HierarchyId) h
+	                                 join HierarchyLevels l on h.HierarchyLevelId = l.HierarchyLevelId
                                 order by HierarchyName";
 
-                //build param list 
-                var p = new
-                {
-                    HierarhcyId = id
-                };
+                DynamicParameters paramList = new DynamicParameters(); 
+                //add param from route (hierarchyId)
+                paramList.Add("@HierarchyId", id);
 
-                var result = await sqlCon.QueryAsync<Hierarchy>(tsql, p);
+                //var result = await sqlCon.QueryAsync<Hierarchy>(tsql, p);
+                var result = await sqlCon.QueryAsync<Hierarchy, HierarchyLevel, Hierarchy>(
+                    tsql,
+                    (hierarchy, hierarchyLevel) =>
+                    {
+                        hierarchy.HierarchyLevel = hierarchyLevel;
+                        return hierarchy;
+                    }, 
+                    paramList,
+                    splitOn: "HierarchyLevelId");
                 return result.AsList();
             }
         }

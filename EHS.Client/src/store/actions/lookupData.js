@@ -28,6 +28,11 @@ export const loadPhysicalHierarchyAttributes = physicalHierarchyAttributes => ({
     physicalHierarchyAttributes
 }); 
 
+export const loadEmployees = employees => ({
+    type: LOAD_EMPLOYEES,
+    employees
+});
+
 export const fetchLogicalHierarchyTree = (hierachyId) => {
     return dispatch => {
         return apiCall('get', '/hierarchies/fulltree/' + hierachyId)
@@ -79,5 +84,17 @@ export const fetchPhysicalHierarchyAttributes = (hierarchyId, type, query) => {
                 // console.log(err)
                 dispatch(addError(err || 'An unknown error has occured.')); 
             });
+    }
+}
+
+export const fetchEmployees = () => {
+    return dispatch => {
+        return apiCall('get', '/employees')
+            .then(res => {
+                dispatch(loadEmployees(res));
+            })
+            .catch(err => {
+                dispatch(addError(err || 'An unknown error has occured.'));
+            })
     }
 }

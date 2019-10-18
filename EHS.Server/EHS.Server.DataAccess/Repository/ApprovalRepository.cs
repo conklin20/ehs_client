@@ -81,25 +81,31 @@ namespace EHS.Server.DataAccess.Repository
             }
         }
 
-        public async Task<Approval> AddAsync(Approval approvalToAdd)
+        public async Task<int> AddAsync(Approval approvalToAdd)
         {
             using (IDbConnection sqlCon = Connection)
             {
+                try
+                {
+
                 var result = await sqlCon.ExecuteAsync(
                     "dbo.spApprovalAddOrUpdate",
                     new
                     {
-                        approvalToAdd.ApprovalId,
                         approvalToAdd.ActionId,
-                        approvalToAdd.ApprovalLevelId,
                         approvalToAdd.ApprovedBy,
                         approvalToAdd.ApprovedOn,
-                        approvalToAdd.Notes,
-                        userId = "fix this later!"
+                        //approvalToAdd.Notes,
+                        userId = approvalToAdd.ApprovedBy
                     },
                     commandType: CommandType.StoredProcedure
                     );
-                return approvalToAdd;
+                return result;
+                }
+                catch(SqlException ex)
+                {
+                    return ex.Number;
+                }
             }
         }
 

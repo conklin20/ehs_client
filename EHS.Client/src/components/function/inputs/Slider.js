@@ -10,7 +10,7 @@ function valuetext(value) {
 
 const CustomSlider = (props) => {
 
-  const { min, max, step, value, className } = props;
+  const { min, max, step, defaultValue, className, handleSliderChange } = props;
 
   let marks = [];
   for(let i = min; i <= max; i += step){
@@ -23,7 +23,7 @@ const CustomSlider = (props) => {
   return (
 	<div className={className}>
 		<Slider
-			defaultValue={value}
+			defaultValue={defaultValue}
 			getAriaValueText={valuetext}
 			aria-labelledby="discrete-slider"
 			valueLabelDisplay="auto"
@@ -31,7 +31,7 @@ const CustomSlider = (props) => {
 			marks
 			min={min}
 			max={max}
-			
+			onChange={handleSliderChange}
 		/>	  
     </div>
   );

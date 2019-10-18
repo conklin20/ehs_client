@@ -9,6 +9,7 @@ namespace EHS.Server.DataAccess.DatabaseModels
     public class Action : CreatedModified
     {
         public int ActionId { get; set; }
+        [Required]
         public int EventId { get; set; }
         [Required, MaxLength(50)]
         public string EventType { get; set; }       //From HierarchyAttribute
@@ -17,13 +18,13 @@ namespace EHS.Server.DataAccess.DatabaseModels
         public string ActionToTake { get; set; }
         [Required, MaxLength(50)]
         public string ActionType { get; set; }       //From HierarchyAttribute
-        [Required, DataType(DataType.Date)]
+        [Required]
         public DateTime DueDate { get; set; }
-        [DataType(DataType.Date)]
         public DateTime? CompletionDate { get; set; }
-        [DataType(DataType.Date)]
         public DateTime? ApprovalDate { get; set; }
 
         public SafetyEvent SafetyEvent { get; set; }
+        public List<Approval> Approvals { get; set; }
+        public List<ApprovalRouting> ApprovalsNeeded { get; set; }
     }
 }

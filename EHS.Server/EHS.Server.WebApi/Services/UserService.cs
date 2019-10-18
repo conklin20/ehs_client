@@ -83,7 +83,8 @@ namespace EHS.Server.WebApi.Services
                     new Claim(ClaimTypes.MobilePhone, user.Phone),
                     new Claim(ClaimTypes.Role, user.RoleId.ToString()),
                     new Claim(ClaimTypes.UserData, user.TimeZone),
-                    new Claim(ClaimTypes.UserData, user.DateFormat)
+                    new Claim(ClaimTypes.UserData, user.DateFormat),
+                    new Claim(ClaimTypes.UserData, user.ApprovalLevel.ToString())
                 }),
                 Expires = DateTime.UtcNow.AddDays(7),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)

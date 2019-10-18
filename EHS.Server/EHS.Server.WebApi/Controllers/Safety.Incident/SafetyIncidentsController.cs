@@ -18,12 +18,13 @@ namespace EHS.Server.WebApi.Controllers.Common
     [Authorize]
     [Produces("application/json")]
     [Route("api/v{version:apiVersion}/[controller]")]
-    [ApiController]
+    //[ApiController]
     public class SafetyIncidentsController : ControllerBase
     {
         private readonly ILogger<SafetyIncidentsController> _logger;
         private readonly ISafetyEventRepository _safetyEventsRepo;
         private readonly IMapper _mapper;
+        //private const string apiVersion = HttpContext.GetRequestedApiVersion();
 
         public SafetyIncidentsController(ILogger<SafetyIncidentsController> logger, IMapper mapper, ISafetyEventRepository safetyEventsRepo)
         {
@@ -80,17 +81,17 @@ namespace EHS.Server.WebApi.Controllers.Common
         }
 
         // GET: api/Safety Events/5
-        [HttpGet("{id}", Name = "GetSafetyEvent")]
-        public async Task<ActionResult<SafetyEvent>> Get([FromRoute]int id)
+        [HttpGet("{eventId}", Name = "GetSafetyEvent")]
+        public async Task<ActionResult<SafetyEvent>> Get([FromRoute]int eventId)
         {
             try
             {
                 //get the SafetyEvent 
-                var SafetyEvent = await _safetyEventsRepo.GetByIdAsync(id);
+                var SafetyEvent = await _safetyEventsRepo.GetByIdAsync(eventId);
 
                 if (SafetyEvent == null)
                 {
-                    _logger.LogError("SafetyEvent {0} not found. {1}", id, NotFound().ToString());
+                    _logger.LogError("SafetyEvent {0} not found. {1}", eventId, NotFound().ToString());
                     return NotFound();
                 }
 
@@ -118,10 +119,24 @@ namespace EHS.Server.WebApi.Controllers.Common
 
                 //map the new SafetyEvent from the incoming dto object to the domain/database model object so we can pass it to the Add() method
                 //var safetyEventToAdd = _mapper.Map<SafetyEventDto, SafetyEvent>(safetyEventToAddDto);
-                var addedSafetyEvent = await _safetyEventsRepo.AddAsync(safetyEventToAdd);
+                int newId = await _safetyEventsRepo.AddAsync(safetyEventToAdd);
 
                 //map back to dto, to pass back to client 
-                return CreatedAtAction("GetSafetyEvent", new { id = addedSafetyEvent.EventId }, _mapper.Map<SafetyEvent, SafetyEventDto>(addedSafetyEvent));
+                //return CreatedAtAction(nameof(SafetyIncidentsController.Get), "GetSafetyEvent",
+                //    new
+                //    {
+                //        eventId = newId,
+                //        version = "v1" //apiVersion.ToString()
+                //    },
+                //    safetyEventToAdd);
+                safetyEventToAdd.EventId = newId; // <--not how i should do this
+                return CreatedAtRoute(
+                    routeName: "GetSafetyEvent",
+                    routeValues: new { eventId = newId },
+                    value: safetyEventToAdd
+                    );
+                //return CreatedAtAction(nameof(SafetyIncidentsController.Get),"GetSafetyEvent", new { id = newId }, null);
+                //return CreatedAtRoute(nameof(SafetyIncidentsController.Get), "GetSafetyEvent", safetyEventToAdd);
             }
             catch (Exception ex)
             {

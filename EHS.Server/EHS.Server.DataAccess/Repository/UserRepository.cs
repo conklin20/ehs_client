@@ -32,8 +32,10 @@ namespace EHS.Server.DataAccess.Repository
         {
             using (IDbConnection sqlCon = Connection)
             {
-                string tsql = @"select u.UserId, u.FirstName, u.LastName, u.LogicalHierarchyId, u.PhysicalHierarchyId, u.Email, u.Phone, u.RoleId, u.TimeZone, u.DateFormat, u.CreatedBy, u.CreatedOn, u.ModifiedBy, u.ModifiedOn
+                string tsql = @"select distinct u.UserId, u.FirstName, u.LastName, u.LogicalHierarchyId, u.PhysicalHierarchyId, u.Email, u.Phone, u.RoleId, u.TimeZone, u.DateFormat, u.CreatedBy, u.CreatedOn, u.ModifiedBy, u.ModifiedOn
+                                    , ar.ApprovalLevel
                                 from Users u 
+	                                 join ApprovalRoutings ar on ar.UserRoleId = u.RoleId
                                 where u.UserId = @UserId";
                 
                 var result = await sqlCon.QueryAsync<User>(tsql, new { userId = id });

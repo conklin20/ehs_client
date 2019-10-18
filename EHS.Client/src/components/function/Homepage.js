@@ -57,7 +57,7 @@ const Homepage = (props) => {
                 <Paper className={[classes.paper, classes.homepageRightCss]}
                     square={true}
                 >                 
-                  <Typography variant="h3" gutterBottom>Welcome to _________, the new Incident Investigation System!</Typography>
+                  <Typography variant="h3" gutterBottom>Welcome to the new Incident Investigation System!</Typography>
                   <AuthForm 
                       errors={errors}
                       removeError={removeError}

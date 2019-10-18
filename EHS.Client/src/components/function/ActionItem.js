@@ -1,0 +1,236 @@
+import React, { useState, Fragment } from 'react';
+import DeleteIcon from '@material-ui/icons/Delete';
+import { makeStyles } from '@material-ui/core/styles';
+import { Typography
+        , Card
+        , CardContent
+        , CardActions
+        , Button
+        , ButtonGroup
+        , Grid
+        , List
+        , ListItem
+        , ListItemText
+        , ListSubheader
+        , Badge
+        , Divider
+        , Chip
+        , Tooltip
+    } from '@material-ui/core';
+import MomentDate from '../containers/MomentDate';
+
+const useStyles = makeStyles(theme => ({
+    card: {
+        minWidth: '15vw',
+        maxWidth: '30%',
+        margin: 10,
+        backgroundColor: '#e2f1f8', //theme.palette.primary.light, 
+        paddingBottom: 20,
+    },
+    cardActions: {
+        display: 'flex', 
+        justifyContent: 'center', 
+        marginTop: theme.spacing(1),
+    }, 
+    spanButton: {
+        backgroundColor: theme.palette.secondary.light,
+    },
+    title: {
+        display: 'flex', 
+        justifyContent: 'space-between',
+    },
+    approvalsTitle: {
+        display: 'flex', 
+        justifyContent: 'center', 
+    },
+    approvalsSubTitle: {
+        display: 'flex',
+        alignItems: 'center',
+    },
+    approvalsBody: {
+        display: 'flex', 
+        justifyContent: 'space-around',
+      },
+    list: {
+        width: '45%', 
+        backgroundColor: theme.palette.background.paper, 
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        // justifyContent: 'center', 
+    },
+    // margin: {
+    //   margin: theme.spacing(2),
+    // },
+    badge: {
+    //   padding: theme.spacing(2),
+        left: theme.spacing(2),
+    },
+})); 
+
+const ActionItem = (props) => {
+    const classes = useStyles();
+
+    const { 
+        action, 
+        employees, 
+        currentUser, 
+        handleDelete, 
+        handleCompleteAction, 
+        handleApproveAction,
+        event, 
+    } = props
+    
+    const assignedTo = employees.filter(e => e.employeeId === action.assignedTo)[0].fullName;
+
+    const dateFormat = currentUser.user.dateFormat || 'MM/DD/YYYY'; 
+    const utcOffset = currentUser.user.timeZone; 
+    // console.log(new Date(action.dueDate).toISOString())
+    // console.log(<MomentDate date={ new Date('2019-10-10T05:00:00.000Z' )}/>)
+    
+    const approvalsReceived = action.approvals
+        .map(ar => {
+            return (
+                <ListItem>
+                    <Tooltip title={`${employees.filter(e => e.employeeId === ar.approvedBy)[0].fullName} - ${ar.approvedOn}`} >
+                        <Chip label={ar.approvalLevel.approvalLevelName.replace('Approval', '')} />
+                    </Tooltip>
+                </ListItem>
+            )
+    }); 
+    
+    const approvalsNeeded = action.approvalsNeeded
+        .map(an => {
+            return (
+                <ListItem>
+                    <Chip label={an.approvalLevelName.replace('Approval', '')} />
+                </ListItem>
+            )
+    }); 
+
+    /*
+    User Role Id's that have permission to delete actions 
+    UserRoleId	RoleName
+    1	        SysAdmin
+    2	        TenantAdmin
+    3	        SafetyAdmin  */
+    const adminRoles = ['1','2','3']; //using strings for now because I plan to bring in the RoleName eventually 
+    const isAdmin = adminRoles.includes(currentUser.user.roleId)
+
+    //criteria and reasoning for the "Complete" button being disabled 
+    const completeButtomCriteria = [];
+    if(action.completionDate) completeButtomCriteria.push(`${assignedTo} has already completed this action. `); 
+    if(typeof(action.actionId) !== 'number') completeButtomCriteria.push('This action is still pending. '); 
+    if(action.assignedTo !== currentUser.user.userId) completeButtomCriteria.push('This action is not assigned to you. '); 
+    if(event.eventStatus !== 'Open') completeButtomCriteria.push('This event is not in an "Open" status. '); 
+
+    //criteria and reasoning for the "Approve" button being disabled 
+    const approveButtonCriteria = []; 
+    if(!action.completionDate) approveButtonCriteria.push(`This action hasn't been completed by ${assignedTo} yet. `);
+    if(action.approvalDate) approveButtonCriteria.push(`This action has already been approved. `);
+    if(typeof(action.actionId) !== 'number') approveButtonCriteria.push('This action is still pending. ');
+    if(event.eventStatus !== 'Open') approveButtonCriteria.push('This event is not in an "Open" status. ');
+    if(action.assignedTo === currentUser.user.userId) approveButtonCriteria.push(`This action was assigned to you, you can't approve your own action. `);
+    // if(action.approvals.filter(ar => ar.approvalLevelId === currentUser.user.approvalLevel)) {
+    //     approveButtonCriteria.push(`This action has already received ${action.approvals.filter(al => al.approvalLevelId === 1)[0].approvalLevel.approvalLevelName} level approval. `);
+    // // }
+    // console.log(action.approvals)
+    // console.log(action.approvals.filter(ar => ar.approvalLevel.approvalLevel == currentUser.user.approvalLevel)[0].approvalLevel.approvalLevelName)
+    // console.log(action.approvals.filter(al => al.approvalLevelId === 1)[0].approvalLevel.approvalLevelName)
+    
+    
+    return (
+        <Card className={classes.card} >
+            <CardContent >
+                <Grid container spacing={2} >
+                    <Grid item xs={12}>	
+                        <Typography variant="h5" gutterBottom>
+                            {`${action.actionId} - ${assignedTo}`}
+                        </Typography>
+                        { isAdmin ?  
+                            <span>
+                                <DeleteIcon 
+                                    onClick={handleDelete(typeof(action.actionId) !== 'number' ? 'pending' : 'assigned', action.actionId)}
+                                    size={'large'}
+                                    />
+                            </span>
+                            : null
+                        }
+                        <Typography variant="overline" display="block" gutterBottom>
+                            {
+                                action.completionDate 
+                                    ? `Completion Date: ${action.completionDate}` 
+                                    : `Due Date: ${action.dueDate}`
+                            }
+                        </Typography>
+                        <Typography variant="body2" gutterBottom>
+                            {action.actionToTake}
+                        </Typography>
+                        <Divider />                        
+                    </Grid>
+                    <Grid item xs={12}>	
+                        <Typography variant="h5" className={classes.approvalsTitle} gutterBottom >
+                            Approvals
+                        </Typography>
+                    </Grid>
+                    <Grid container className={classes.approvalsBody}>
+                        <div className={classes.list}>
+                            <div className={classes.approvalsSubTitle}>
+                                <Typography variant="h6" >
+                                    Needed
+                                </Typography>
+                                <Badge color="primary" badgeContent={approvalsNeeded.length} className={classes.badge} />
+                            </div>
+                            <List dense={true}>
+                                {approvalsNeeded}
+                            </List>    
+                        </div>
+                        <Divider orientation="vertical" />
+                        <div className={classes.list}>
+                            <div className={classes.approvalsSubTitle}>
+                                <Typography variant="h6" >
+                                    Received
+                                </Typography>
+                                <Badge color="primary" badgeContent={approvalsReceived.length} className={classes.badge} />
+                            </div>
+                            <List dense={true}>
+                                {approvalsReceived}
+                            </List>   
+                        </div>
+                    </Grid>
+                </Grid>
+            </CardContent>
+            <Divider />              
+            <CardActions className={classes.cardActions}>
+                    <ButtonGroup 
+                        size='small' 
+                        aria-label='actions'
+                        variant='contained' 
+                        color="secondary" 
+                    >
+                        <Tooltip title={completeButtomCriteria.length > 0 ? completeButtomCriteria.join(' ') : 'Click to mark this action as complete'}>
+                            <span className={classes.spanButton}>
+                                <Button 
+                                    onClick={handleCompleteAction(action)}
+                                    disabled={completeButtomCriteria.length > 0 ? true : false}
+                                >
+                                Complete Action
+                                </Button>
+                            </span>
+                        </Tooltip>
+                        <Tooltip title={approveButtonCriteria.length > 0 ? approveButtonCriteria.join(' ') : 'Click to approve this action'}>
+                            <span className={classes.spanButton}>
+                                <Button 
+                                    onClick={handleApproveAction(action)}
+                                    disabled={approveButtonCriteria.length > 0 ? true : false}
+                                >
+                                    Approve Action
+                                </Button>
+                            </span>
+                        </Tooltip>
+                    </ButtonGroup>
+                </CardActions>
+        </Card>
+    )
+}
+export default ActionItem; 

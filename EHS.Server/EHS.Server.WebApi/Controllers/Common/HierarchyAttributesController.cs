@@ -40,10 +40,14 @@ namespace EHS.Server.WebApi.Controllers.Common
             {
                 //parse the queryParams object and send list to repo
                 List<DynamicParam> dynamicParamList = new List<DynamicParam>();
-                if (queryParams.enabled != null)
+                if (queryParams.Enabled != null)
                 {
-                    dynamicParamList.Add(new DynamicParam { TableAlias = "ha.", FieldName = "Enabled", Operator = "=", ParamName = "@Enabled", SingleValue = queryParams.enabled });
-                    dynamicParamList.Add(new DynamicParam { TableAlias = "a.", FieldName = "Enabled", Operator = "=", ParamName = "@AttrEnabled", SingleValue = queryParams.enabled });
+                    dynamicParamList.Add(new DynamicParam { TableAlias = "ha.", FieldName = "Enabled", Operator = "=", ParamName = "@Enabled", SingleValue = queryParams.Enabled });
+                    dynamicParamList.Add(new DynamicParam { TableAlias = "a.", FieldName = "Enabled", Operator = "=", ParamName = "@AttrEnabled", SingleValue = queryParams.Enabled });
+                }
+                if (queryParams.ExcludeGlobal != null && bool.Parse(queryParams.ExcludeGlobal) == true)
+                {
+                    dynamicParamList.Add(new DynamicParam { TableAlias = "a.", FieldName = "AttributeName", Operator = "!=", ParamName = "@AttributeName", SingleValue = "Global Attributes" });
                 }
 
                 //get the list of hierarchyAttributes 
@@ -73,10 +77,14 @@ namespace EHS.Server.WebApi.Controllers.Common
             {
                 //parse the queryParams object and send list to repo
                 List<DynamicParam> dynamicParamList = new List<DynamicParam>();
-                if (queryParams.enabled != null)
+                if (queryParams.Enabled != null)
                 {
-                    dynamicParamList.Add(new DynamicParam { TableAlias = "ha.", FieldName = "Enabled", Operator = "=", ParamName = "@Enabled", SingleValue = queryParams.enabled });
-                    dynamicParamList.Add(new DynamicParam { TableAlias = "a.", FieldName = "Enabled", Operator = "=", ParamName = "@AttrEnabled", SingleValue = queryParams.enabled });
+                    dynamicParamList.Add(new DynamicParam { TableAlias = "ha.", FieldName = "Enabled", Operator = "=", ParamName = "@Enabled", SingleValue = queryParams.Enabled });
+                    dynamicParamList.Add(new DynamicParam { TableAlias = "a.", FieldName = "Enabled", Operator = "=", ParamName = "@AttrEnabled", SingleValue = queryParams.Enabled });
+                }
+                if (queryParams.ExcludeGlobal != null && bool.Parse(queryParams.ExcludeGlobal) == true)
+                {
+                    dynamicParamList.Add(new DynamicParam { TableAlias = "a.", FieldName = "AttributeName", Operator = "!=", ParamName = "@AttributeName", SingleValue = "Global Attributes" });
                 }
 
                 //get the list of hierarchyAttributes 
@@ -106,10 +114,14 @@ namespace EHS.Server.WebApi.Controllers.Common
             {
                 //parse the queryParams object and send list to repo
                 List<DynamicParam> dynamicParamList = new List<DynamicParam>();
-                if (queryParams.enabled != null)
+                if (queryParams.Enabled != null)
                 {
-                    dynamicParamList.Add(new DynamicParam { TableAlias = "ha.", FieldName = "Enabled", Operator = "=", ParamName = "@Enabled", SingleValue = queryParams.enabled });
-                    dynamicParamList.Add(new DynamicParam { TableAlias = "a.", FieldName = "Enabled", Operator = "=", ParamName = "@AttrEnabled", SingleValue = queryParams.enabled });
+                    dynamicParamList.Add(new DynamicParam { TableAlias = "ha.", FieldName = "Enabled", Operator = "=", ParamName = "@Enabled", SingleValue = queryParams.Enabled });
+                    dynamicParamList.Add(new DynamicParam { TableAlias = "a.", FieldName = "Enabled", Operator = "=", ParamName = "@AttrEnabled", SingleValue = queryParams.Enabled });
+                }
+                if (queryParams.ExcludeGlobal != null && bool.Parse(queryParams.ExcludeGlobal) == true)
+                {
+                    dynamicParamList.Add(new DynamicParam { TableAlias = "a.", FieldName = "AttributeName", Operator = "!=", ParamName = "@AttributeName", SingleValue = "Global Attributes" });
                 }
 
                 //get the list of hierarchyAttributes 

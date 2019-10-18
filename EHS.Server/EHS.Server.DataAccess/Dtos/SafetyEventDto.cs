@@ -20,7 +20,7 @@ namespace EHS.Server.DataAccess.Dtos
         public string WhatHappened { get; set; }
         public bool IsInjury { get; set; }
         public bool IsIllness { get; set; }
-        public byte HoursWorkedPrior { get; set; }
+        public decimal HoursWorkedPrior { get; set; }
         public string InitialCategory { get; set; } //From HierarchyAttribute
         public string ResultingCategory { get; set; }  //From HierarchyAttribute (To be available for Health/Safety to upgrade/downgrade an event later) 
         public int DepartmentId { get; set; }
@@ -44,7 +44,6 @@ namespace EHS.Server.DataAccess.Dtos
         public bool FirstAid { get; set; }
         public bool Transported { get; set; }
         public bool ER { get; set; }
-        public bool PassedPOET { get; set; }
         public bool RecordedOnVideo { get; set; }
         public int? CameraId { get; set; }
         public DateTime? VideoStartRef { get; set; }

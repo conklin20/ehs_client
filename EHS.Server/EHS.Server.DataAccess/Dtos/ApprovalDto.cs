@@ -13,6 +13,7 @@ namespace EHS.Server.DataAccess.Dtos
         public DateTime ApprovedOn { get; set; }
         public string Notes { get; set; }
 
+        public ApprovalRoutingDto ApprovalLevel { get; set; }
         public ActionDto Action { get; set; }
     }
 }

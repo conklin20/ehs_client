@@ -92,17 +92,18 @@ function Control(props) {
 
   return (
     <TextField
-		variant="outlined"
-		InputProps={{
-			inputComponent,
-			inputProps: {
-			className: classes.input,
-			ref: innerRef,
-			children,
-			...innerProps,
-			},
-		}}
-		{...TextFieldProps}
+      fullWidth
+      variant="outlined"
+      InputProps={{
+        inputComponent,
+        inputProps: {
+        className: classes.input,
+        ref: innerRef,
+        children,
+        ...innerProps,
+        },
+      }}
+      {...TextFieldProps}
     />
   );
 }
@@ -277,7 +278,7 @@ const AutoComplete = (props) => {
     }),
   };
 
-  const { label, placeholder, name, options, value, handleChange, className } = props; 
+  const { label, placeholder, name, options, value, handleChange, className, required } = props; 
   // console.log(value)
   return (
     <div className={className}>
@@ -287,12 +288,14 @@ const AutoComplete = (props) => {
           classes={classes}
           styles={selectStyles}
           inputId="react-select-single"
-          TextFieldProps={{
+          TextFieldProps={{            
+            required,
             label: label,
             InputLabelProps: {
               htmlFor: 'react-select-single',
               shrink: true,
             },
+          // filterOption={createFilter({ignoreAccents: false})}
           }}
           placeholder={placeholder}
           options={options}

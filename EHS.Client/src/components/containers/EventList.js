@@ -40,12 +40,12 @@ const headerRows = [
   { id: 'dateOccurred', numeric: false, disablePadding: false, label: 'Date' ,  },
   { id: 'timeOccurred', numeric: false, disablePadding: false, label: 'Time' ,  },
   { id: 'category', numeric: false, disablePadding: false, label: 'Category' ,  },
-  { id: 'employeeId', numeric: false, disablePadding: false, label: 'Emplooyee ID' ,  },
+  { id: 'employeeId', numeric: false, disablePadding: false, label: 'Employee ID' ,  },
   { id: 'job', numeric: false, disablePadding: false, label: 'Job' ,  },
   { id: 'area', numeric: false, disablePadding: false, label: 'Area' ,  },
   { id: 'department', numeric: false, disablePadding: false, label: 'Dept.' ,  },
   { id: 'localePlant', numeric: false, disablePadding: false, label: 'Plant' ,  },
-  { id: 'localePlantArea', numeric: false, disablePadding: false, label: 'Plant Area' ,  },
+  // { id: 'localePlantArea', numeric: false, disablePadding: false, label: 'Plant Area' ,  },
   // { id: 'whatHappened', numeric: false, disablePadding: false, label: 'What Happened' , width: '20%' },
   { id: 'openAction', numeric: true, disablePadding: false, label: 'Open Actions' ,  },
 ];
@@ -88,16 +88,9 @@ EnhancedTableHead.propTypes = {
 };
 
 const useStyles = makeStyles(theme => ({
-  root: {
-    width: '100%',
-    // marginTop: theme.spacing(3),
-  },
   paper: {
 		width: '100%',
     marginBottom: theme.spacing(2),
-  },
-  table: {
-		minWidth: 750,	
   },
   tableWrapper: {
 		overflowX: 'auto',
@@ -110,7 +103,7 @@ const EventList = props => {
   const [orderBy, setOrderBy] = useState('dateOccurred');
   const [selected, setSelected] = useState(-1);
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [showSafetyEventForm, setShowSafetyEventForm] = useState(false); 
 
   function handleRequestSort(event, property) {
@@ -155,7 +148,6 @@ const EventList = props => {
         : null
       }
       <Paper className={classes.paper}>
-        <div className={classes.tableWrapper}>
           <Table
             className={classes.table}
             aria-labelledby="tableTitle"
@@ -203,7 +195,7 @@ const EventList = props => {
                       <TableCell >{row.area}</TableCell>
                       <TableCell >{row.department}</TableCell>
                       <TableCell >{row.localePlant}</TableCell>
-                      <TableCell >{row.localePlantArea}</TableCell>
+                      {/* <TableCell >{row.localePlantArea}</TableCell> */}
                       {/* <TableCell >{row.whatHappened.length > 100 ? row.whatHappened.substring(0, 100).concat('...') : row.whatHappened }</TableCell> */}
                       <TableCell >{row.actions.filter(a => a.completionDate !== null).length}</TableCell>
                     </TableRow>
@@ -216,7 +208,6 @@ const EventList = props => {
               )}
             </TableBody>
           </Table>
-        </div>
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"

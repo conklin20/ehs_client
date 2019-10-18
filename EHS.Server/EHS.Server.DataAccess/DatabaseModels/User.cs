@@ -30,6 +30,7 @@ namespace EHS.Server.DataAccess.DatabaseModels
         public string TimeZone { get; set; }
         [MaxLength(50)]
         public string DateFormat { get; set; }
+        public int ApprovalLevel { get; set; }
 
         //not storing in db
         [Required]

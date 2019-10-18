@@ -12,7 +12,6 @@ namespace EHS.Server.DataAccess.DatabaseModels
     /// </summary> CreatedModified
     public class SafetyEvent : CreatedModified
     { 
-        [Key]
         public int EventId { get; set; }
         [Display(Name="Event Type")]
         [AllowNullWhenDraft, MaxLength(50)]
@@ -44,7 +43,7 @@ namespace EHS.Server.DataAccess.DatabaseModels
         public bool IsIllness { get; set; }
         [Display(Name = "Hours Worked Prior")]
         [AllowNullWhenDraft, Range(.5, 24)]
-        public byte HoursWorkedPrior { get; set; }
+        public decimal HoursWorkedPrior { get; set; }
         [Display(Name = "Initial Catagory")]
         [AllowNullWhenDraft, MaxLength(50),]
         public string InitialCategory { get; set; } //From HierarchyAttribute
@@ -94,7 +93,6 @@ namespace EHS.Server.DataAccess.DatabaseModels
         public bool FirstAid { get; set; }
         public bool Transported { get; set; }
         public bool ER { get; set; }
-        public bool PassedPOET { get; set; }
         public bool RecordedOnVideo { get; set; }
         public int? CameraId { get; set; }
         public DateTime? VideoStartRef { get; set; }

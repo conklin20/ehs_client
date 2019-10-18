@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Linq;
 using EHS.Server.DataAccess.DatabaseModels;
 using Dapper;
-
+using EHS.Server.DataAccess.Queries;
 
 namespace EHS.Server.DataAccess.Repository
 { 
@@ -87,50 +87,162 @@ namespace EHS.Server.DataAccess.Repository
             }
         }
 
-        public async Task<List<Action>> GetAllAsync()
+        public async Task<List<Action>> GetAllAsync(List<DynamicParam> queryParams)
         {
             using (IDbConnection sqlCon = Connection)
             {
                 //build sql query 
-                string tsql = @"select a.*, 
-	                                   e.*
-                                from Actions a 
-	                                 join SafetyEvents e on e.EventId = a.EventId";
+                //string tsql = @"select a.*, 
+                //                       ap.*
+                //                from Actions a 
+                //                     left join Approvals ap on a.ActionId = ap.ActionId
+                //                where 1 = 1 ";
 
-                var result = await sqlCon.QueryAsync<Action, SafetyEvent, Action>(
-                    tsql,
-                    (actions, safetyEvents) =>
+                string tsql = @"select ac.*, 
+	                                   ar.*,
+	                                   ap.*
+                                from Actions ac
+	                                 join SafetyEvents sev on sev.EventId = ac.EventId
+	                                 join ApprovalRoutings ar on ar.SeverityId = dbo.fnGetEventSeverity(isnull(sev.InitialCategory, sev.ResultingCategory))
+	                                 left join Approvals ap on ap.ActionId = ac.ActionId and ap.ApprovalLevelId = ar.ApprovalLevel
+                                where 1 = 1 ";
+
+                //build param list 
+                DynamicParameters paramList = new DynamicParameters();
+
+                foreach (DynamicParam param in queryParams)
+                {
+                    //add the where clause to the sql string 
+                    tsql += $" and {param.TableAlias}{param.FieldName} {param.Operator} {param.ParamName}";
+                    //then add the param to the param list 
+                    //a value should always either be single string, or string[], never both 
+                    if (param.SingleValue != null)
                     {
-                        actions.SafetyEvent = safetyEvents;
-                        return actions;
-                    },
-                    splitOn: "EventId");
+                        paramList.Add($"{param.ParamName}", param.SingleValue); //, DbType.String, ParameterDirection.Input);
+                    }
+                    else
+                    {
+                        paramList.Add($"{param.ParamName}", param.MultiValue.ToList());
+                    }
+                }
 
+                tsql += " order by ac.ActionId, ar.ApprovalLevel ";
+
+                //var result = await sqlCon.QueryAsync<Action>(tsql, paramList);
+
+                var actionDictionary = new Dictionary<int, Action>();
+
+                var result = await sqlCon.QueryAsync<Action, ApprovalRouting, Approval, Action>(
+                    tsql,
+                    (action, approvalLevel, approval) =>
+                    {
+
+                        if (!actionDictionary.TryGetValue(action.ActionId, out Action actionEntry))
+                        {
+                            actionEntry = action;
+                            actionEntry.ApprovalsNeeded = new List<ApprovalRouting>();
+                            actionEntry.Approvals = new List<Approval>();
+                            actionDictionary.Add(actionEntry.ActionId, actionEntry);
+                        }
+
+                        if (approvalLevel != null)
+                        {
+                            //check if this approval level has already been added to the event
+                            if (!actionEntry.ApprovalsNeeded.Any(approvalLevelToAdd => approvalLevelToAdd.ApprovalRoutingId == approvalLevel.ApprovalRoutingId)
+                                //If this approval level hasnt already been approved 
+                                && (approval != null ? approvalLevel.ApprovalLevel != approval.ApprovalLevelId : true))
+                            {
+                                actionEntry.ApprovalsNeeded.Add(approvalLevel);
+                            }
+                        }
+
+                        if (approval != null)
+                        {
+                            //check if this approval has already been added to the event
+                            if (!actionEntry.Approvals.Any(approvalToAdd => approvalToAdd.ApprovalId == approval.ApprovalId))
+                            {
+                                approval.ApprovalLevel = approvalLevel; 
+                                actionEntry.Approvals.Add(approval);
+                            }
+                        }
+
+                        return action;
+                    },
+                    paramList,
+                    splitOn: "ApprovalRoutingId, ApprovalId");
+
+                return actionDictionary.Values.ToList();
+            }
+        }
+
+        public async Task<List<Action>> GetAllByEventAsync(int eventId)
+        {
+            using (IDbConnection sqlCon = Connection)
+            {
+                //build sql query 
+                string tsql = @"select a.*
+                                from Actions a 
+                                where a.eventId = @EventId";
+
+                //build param list 
+                var p = new
+                {
+                    EventId = eventId
+                };
+
+                var result = await sqlCon.QueryAsync<Action>(tsql, p);
+                
                 return result.AsList();
             }
         }
 
-        public async Task<Action> AddAsync(Action ActionToAdd)
+        public async Task<int> AddAsync(List<Action> ActionsToAdd)
         {
+            //var parameters = new List<DynamicParameters>();
+
+            //for (var i = 0; i < ActionsToAdd.Count; i++)
+            //{
+            //    var p = new DynamicParameters();
+            //    p.Add("@EventId", ActionsToAdd[i].EventId, DbType.Int32, ParameterDirection.Input);
+            //    p.Add("@EventType", ActionsToAdd[i].EventType, DbType.String, ParameterDirection.Input);
+            //    p.Add("@AssignedTo", ActionsToAdd[i].AssignedTo, DbType.String, ParameterDirection.Input);
+            //    p.Add("@ActionToTake", ActionsToAdd[i].ActionToTake, DbType.String, ParameterDirection.Input);
+            //    p.Add("@ActionType", ActionsToAdd[i].ActionType, DbType.String, ParameterDirection.Input);
+            //    p.Add("@DueDate", ActionsToAdd[i].DueDate, DbType.Date, ParameterDirection.Input);
+            //    p.Add("@UserId", ActionsToAdd[i].CreatedBy, DbType.String, ParameterDirection.Input);
+
+            //    //p.Add("@EventType", ActionsToAdd[i].EventType, DbType.String, ParameterDirection.Input);                //p.Add("@EventType", ActionsToAdd[i].EventType, DbType.String, ParameterDirection.Input);
+
+            //    parameters.Add(p);
+            //}                       
+
             using (IDbConnection sqlCon = Connection)
             {
-                var result = await sqlCon.ExecuteAsync(
+                for (var i = 0; i < ActionsToAdd.Count; i++)
+                {
+                    var result = await sqlCon.ExecuteAsync(
                     "dbo.spActionAddOrUpdate",
                     new
                     {
-                        ActionToAdd.EventId,
-                        ActionToAdd.EventType,
-                        ActionToAdd.AssignedTo,
-                        ActionToAdd.ActionToTake,
-                        ActionToAdd.ActionType,
-                        ActionToAdd.DueDate, 
-                        ActionToAdd.CompletionDate, 
-                        ActionToAdd.ApprovalDate,
-                        userId = ActionToAdd.CreatedBy
+                        //parameters
+                        ActionsToAdd[i].EventId,
+                        ActionsToAdd[i].EventType,
+                        ActionsToAdd[i].AssignedTo,
+                        ActionsToAdd[i].ActionToTake,
+                        ActionsToAdd[i].ActionType,
+                        ActionsToAdd[i].DueDate,
+                        ActionsToAdd[i].CompletionDate,
+                        //ActionToAdd.ApprovalDate,
+                        userId = ActionsToAdd[i].CreatedBy
                     },
                     commandType: CommandType.StoredProcedure
                     );
-                return ActionToAdd;
+
+
+                }
+
+
+                return 1;
             }
         }
 
@@ -160,7 +272,7 @@ namespace EHS.Server.DataAccess.Repository
             }
         }
 
-        public async Task<Action> DeleteAsync(Action ActionToDelete)
+        public async Task<int> DeleteAsync(int actionId, string userId)
         {
             using (IDbConnection sqlCon = Connection)
             {
@@ -169,12 +281,12 @@ namespace EHS.Server.DataAccess.Repository
                     "dbo.spActionDelete",
                     new
                     {
-                        ActionToDelete.ActionId,
-                        userId = ActionToDelete.ModifiedBy
+                        actionId,
+                        userId
                     },
                     commandType: CommandType.StoredProcedure
                     );
-                return ActionToDelete;
+                return actionId;
             }
         }
     }

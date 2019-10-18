@@ -6,7 +6,7 @@ import Moment from 'react-moment';
 const ReportingInformation = (props) => {
     const classes = props.useStyles();    
     const { values, currentUser } = props; 
- 	
+    	
     return (
         <Fragment>  
             <Typography variant='h4' gutterBottom>

@@ -87,7 +87,8 @@ namespace EHS.Server.WebApi
             services.AddTransient<IHierarchyRepository, HierarchyRepository>();
             services.AddTransient<ISafetyEventRepository, SafetyEventRepository>();
             services.AddTransient<ISeverityRepository, SeverityRepository>(); 
-            services.AddTransient<IUserRepository, UserRepository>(); 
+            services.AddTransient<IUserRepository, UserRepository>();
+            services.AddTransient<IEmployeeRepository, EmployeeRepository>();
 
             // Utility for mapping DTO's to Models 
             var config = new AutoMapper.MapperConfiguration(cfg =>

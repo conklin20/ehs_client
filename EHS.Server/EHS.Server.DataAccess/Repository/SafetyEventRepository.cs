@@ -156,60 +156,89 @@ namespace EHS.Server.DataAccess.Repository
             }
         }
 
-        public async Task<SafetyEvent> AddAsync(SafetyEvent SafetyEventToAdd)
+        public async Task<int> AddAsync(SafetyEvent SafetyEventToAdd)
         {
             using (IDbConnection sqlCon = Connection)
             {
-                var result = await sqlCon.ExecuteAsync(
+                DynamicParameters parameters = new DynamicParameters();
+
+                parameters.Add("@EventType", SafetyEventToAdd.EventType, dbType: DbType.String);
+                parameters.Add("@EventStatus", SafetyEventToAdd.EventStatus, dbType: DbType.String);
+                parameters.Add("@ReportedBy", SafetyEventToAdd.ReportedBy, dbType: DbType.String);
+                parameters.Add("@ReportedOn", SafetyEventToAdd.ReportedOn, dbType: DbType.DateTime2);
+                parameters.Add("@EventDate", SafetyEventToAdd.EventDate, dbType: DbType.Date);
+                parameters.Add("@EmployeeId", SafetyEventToAdd.EmployeeId, dbType: DbType.String);
+                parameters.Add("@JobTitle", SafetyEventToAdd.JobTitle, dbType: DbType.String);
+                parameters.Add("@Shift", SafetyEventToAdd.Shift, dbType: DbType.String);
+                parameters.Add("@WhatHappened", SafetyEventToAdd.WhatHappened, dbType: DbType.String);
+                parameters.Add("@IsInjury", SafetyEventToAdd.IsInjury, dbType: DbType.Boolean);
+                parameters.Add("@IsIllness", SafetyEventToAdd.IsIllness, dbType: DbType.Boolean);
+                parameters.Add("@HoursWorkedPrior", SafetyEventToAdd.HoursWorkedPrior, dbType: DbType.Decimal);
+                parameters.Add("@InitialCategory", SafetyEventToAdd.InitialCategory, dbType: DbType.String);
+                parameters.Add("@ResultingCategory", SafetyEventToAdd.ResultingCategory, dbType: DbType.String);
+                parameters.Add("@WorkEnvironment", SafetyEventToAdd.WorkEnvironment, dbType: DbType.String);
+                parameters.Add("@NatureOfInjury", SafetyEventToAdd.NatureOfInjury, dbType: DbType.String);
+                parameters.Add("@BodyPart", SafetyEventToAdd.BodyPart, dbType: DbType.String);
+                parameters.Add("@FirstAidType", SafetyEventToAdd.FirstAidType, dbType: DbType.String);
+                parameters.Add("@OffPlantMedicalFacility", SafetyEventToAdd.OffPlantMedicalFacility, dbType: DbType.String);
+                parameters.Add("@MaterialInvolved", SafetyEventToAdd.MaterialInvolved, dbType: DbType.String);
+                parameters.Add("@EquipmentInvolved", SafetyEventToAdd.EquipmentInvolved, dbType: DbType.String);
+                parameters.Add("@LostTime", SafetyEventToAdd.LostTime, dbType: DbType.Boolean);
+                parameters.Add("@FirstAid", SafetyEventToAdd.FirstAid, dbType: DbType.Boolean);
+                parameters.Add("@Transported", SafetyEventToAdd.Transported, dbType: DbType.Boolean);
+                parameters.Add("@ER", SafetyEventToAdd.ER, dbType: DbType.Boolean);
+                parameters.Add("@RecordedOnVideo", SafetyEventToAdd.RecordedOnVideo, dbType: DbType.Boolean);
+                parameters.Add("@CameraId", SafetyEventToAdd.CameraId, dbType: DbType.Int32);
+                parameters.Add("@VideoStartRef", SafetyEventToAdd.VideoStartRef, dbType: DbType.DateTime2);
+                parameters.Add("@VideoEndRef", SafetyEventToAdd.VideoEndRef, dbType: DbType.DateTime2);
+                parameters.Add("@DepartmentId", SafetyEventToAdd.DepartmentId, dbType: DbType.Int32);
+                parameters.Add("@LocaleId", SafetyEventToAdd.LocaleId, dbType: DbType.Int32);
+                parameters.Add("@UserId", SafetyEventToAdd.CreatedBy, dbType: DbType.String);
+                parameters.Add("@NewEventId", dbType: DbType.Int32, direction: ParameterDirection.Output);
+
+                var addedSafetyEvent = sqlCon.Execute(
                     "dbo.spSafetyEventAddOrUpdate",
-                    new
-                    {
-                        SafetyEventToAdd.EventType,
-                        SafetyEventToAdd.EventStatus,
-                        SafetyEventToAdd.ReportedBy,
-                        SafetyEventToAdd.ReportedOn,
-                        SafetyEventToAdd.EventDate,
-                        //SafetyEventToAdd.EventTime,
-                        SafetyEventToAdd.EmployeeId,
-                        SafetyEventToAdd.JobTitle,
-                        SafetyEventToAdd.Shift,
-                        SafetyEventToAdd.WhatHappened,
-                        SafetyEventToAdd.IsInjury,
-                        SafetyEventToAdd.IsIllness,
-                        SafetyEventToAdd.HoursWorkedPrior,
-                        SafetyEventToAdd.InitialCategory,
-                        SafetyEventToAdd.ResultingCategory,
-                        SafetyEventToAdd.Division,
-                        SafetyEventToAdd.Site,
-                        SafetyEventToAdd.Area,
-                        SafetyEventToAdd.Department,
-                        SafetyEventToAdd.LocaleRegion,
-                        SafetyEventToAdd.LocaleSite,
-                        SafetyEventToAdd.LocalePlant,
-                        SafetyEventToAdd.LocalePlantArea,
-                        SafetyEventToAdd.WorkEnvironment,
-                        SafetyEventToAdd.NatureOfInjury,
-                        SafetyEventToAdd.BodyPart,
-                        SafetyEventToAdd.FirstAidType,
-                        SafetyEventToAdd.OffPlantMedicalFacility,
-                        SafetyEventToAdd.MaterialInvolved,
-                        SafetyEventToAdd.EquipmentInvolved,
-                        SafetyEventToAdd.LostTime,
-                        SafetyEventToAdd.FirstAid,
-                        SafetyEventToAdd.Transported,
-                        SafetyEventToAdd.ER,
-                        SafetyEventToAdd.PassedPOET,
-                        SafetyEventToAdd.RecordedOnVideo,
-                        SafetyEventToAdd.CameraId,
-                        SafetyEventToAdd.VideoStartRef,
-                        SafetyEventToAdd.VideoEndRef,
-                        SafetyEventToAdd.DepartmentId,
-                        SafetyEventToAdd.LocaleId,
-                        userId = SafetyEventToAdd.CreatedBy
-                    },
+                    parameters,
+                    //new
+                    //{
+                        //SafetyEventToAdd.EventType,
+                        //SafetyEventToAdd.EventStatus,
+                        //SafetyEventToAdd.ReportedBy,
+                        //SafetyEventToAdd.ReportedOn,
+                        //SafetyEventToAdd.EventDate,
+                        //SafetyEventToAdd.EmployeeId,
+                        //SafetyEventToAdd.JobTitle,
+                        //SafetyEventToAdd.Shift,
+                        //SafetyEventToAdd.WhatHappened,
+                        //SafetyEventToAdd.IsInjury,
+                        //SafetyEventToAdd.IsIllness,
+                        //SafetyEventToAdd.HoursWorkedPrior,
+                        //SafetyEventToAdd.InitialCategory,
+                        //SafetyEventToAdd.ResultingCategory,
+                        //SafetyEventToAdd.WorkEnvironment,
+                        //SafetyEventToAdd.NatureOfInjury,
+                        //SafetyEventToAdd.BodyPart,
+                        //SafetyEventToAdd.FirstAidType,
+                        //SafetyEventToAdd.OffPlantMedicalFacility,
+                        //SafetyEventToAdd.MaterialInvolved,
+                        //SafetyEventToAdd.EquipmentInvolved,
+                        //SafetyEventToAdd.LostTime,
+                        //SafetyEventToAdd.FirstAid,
+                        //SafetyEventToAdd.Transported,
+                        //SafetyEventToAdd.ER,
+                        //SafetyEventToAdd.RecordedOnVideo,
+                        //SafetyEventToAdd.CameraId,
+                        //SafetyEventToAdd.VideoStartRef,
+                        //SafetyEventToAdd.VideoEndRef,
+                        //SafetyEventToAdd.DepartmentId,
+                        //SafetyEventToAdd.LocaleId,
+                        //userId = SafetyEventToAdd.CreatedBy
+                    //},
                     commandType: CommandType.StoredProcedure
                     );
-                return SafetyEventToAdd;
+
+                int newId = parameters.Get<int>("@NewEventId");
+                return newId;
             }
         }
 
@@ -228,7 +257,6 @@ namespace EHS.Server.DataAccess.Repository
                         SafetyEventToUpdate.ReportedBy,
                         SafetyEventToUpdate.ReportedOn,
                         SafetyEventToUpdate.EventDate,
-                        //SafetyEventToUpdate.EventTime,
                         SafetyEventToUpdate.EmployeeId,
                         SafetyEventToUpdate.JobTitle,
                         SafetyEventToUpdate.Shift,
@@ -238,14 +266,6 @@ namespace EHS.Server.DataAccess.Repository
                         SafetyEventToUpdate.HoursWorkedPrior,
                         SafetyEventToUpdate.InitialCategory,
                         SafetyEventToUpdate.ResultingCategory,
-                        SafetyEventToUpdate.Division,
-                        SafetyEventToUpdate.Site,
-                        SafetyEventToUpdate.Area,
-                        SafetyEventToUpdate.Department,
-                        SafetyEventToUpdate.LocaleRegion,
-                        SafetyEventToUpdate.LocaleSite,
-                        SafetyEventToUpdate.LocalePlant,
-                        SafetyEventToUpdate.LocalePlantArea,
                         SafetyEventToUpdate.WorkEnvironment,
                         SafetyEventToUpdate.NatureOfInjury,
                         SafetyEventToUpdate.BodyPart,
@@ -257,7 +277,6 @@ namespace EHS.Server.DataAccess.Repository
                         SafetyEventToUpdate.FirstAid,
                         SafetyEventToUpdate.Transported,
                         SafetyEventToUpdate.ER,
-                        SafetyEventToUpdate.PassedPOET,
                         SafetyEventToUpdate.RecordedOnVideo,
                         SafetyEventToUpdate.CameraId,
                         SafetyEventToUpdate.VideoStartRef,

@@ -155,8 +155,7 @@ namespace EHS.Server.DataAccess.Repository
 	                                  , h.*
                                 from dbo.HierarchyAttributes ha 
 	                                join dbo.fnGetHierarchySinglePath(@hierarchyId) h on h.HierarchyId = ha.HierarchyId
-	                                join dbo.Attributes a on a.AttributeId = ha.AttributeId  
-                                where 1 = 1 ";
+	                                join dbo.Attributes a on a.AttributeId = ha.AttributeId  ";
 
                 //build param list 
                 DynamicParameters paramList = new DynamicParameters();

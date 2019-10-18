@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import AutoComplete from './inputs/AutoComplete';
 import AutoCompleteMulti from './inputs/AutoCompleteMulti';
+import filterLookupDataByKey from '../../helpers/filterLookupDataByKey';
 import { 
 	Button, 
 	Checkbox,
@@ -43,7 +44,7 @@ const useStyles = makeStyles(theme => ({
 		// width: 'fit-content',
 	  },
 	formControl: {
-		// marginTop: theme.spacing(2),
+		marginTop: theme.spacing(0),
 		minWidth: 120,
 		marginRight: theme.spacing(1),
 	},
@@ -62,13 +63,30 @@ const SearchFilters = props => {
 	const classes = useStyles();
 	
 	const { showSearchFilters, handleShowSearchFilters, handleSearchFiltersChange, handleAutoCompleteChange, handleSearch, searchFilters, lookupData } = props
-
+	console.log(searchFilters)
 	//filtering lookup data on key=Statueses, then mapping over it and creating an object with value and label, which react-dropdown needs
-	const statuses = lookupData.logicalHierarchyAttributes.filter(d => d.key === "Statuses").sort().map(status => ({		
-		// value: status.hierarchyAttributeId, 
-		value: status.value, 
-		label: status.value,
+	const statuses = lookupData.logicalHierarchyAttributes
+		.filter(d => d.key === 'Statuses')
+		.sort()
+		.filter(s => s.value !== 'Draft') //filter our Drafts, you dont want to be able to look up other peoples drafts
+		.map(status => ({		
+			// value: status.hierarchyAttributeId, 
+			value: status.value, 
+			label: status.value,
 	}));
+	
+    //building each lookup data object 
+    // const shifts = filterLookupDataByKey(lookupData, 'logicalHierarchyAttributes', 'Shifts'); 
+    // const jobTitles = filterLookupDataByKey(lookupData, 'logicalHierarchyAttributes', 'Job Titles', values['jobTitle']); 
+    // const injuryNatures = filterLookupDataByKey(lookupData, 'logicalHierarchyAttributes', 'Nature of Injury', values['natureOfInjury']); 
+    // const bodyParts = filterLookupDataByKey(lookupData, 'logicalHierarchyAttributes', 'Body Parts', values['bodyPart']); 
+    // const firstAidTypes = filterLookupDataByKey(lookupData, 'logicalHierarchyAttributes', 'First Aid Types', values['firstAidType']);
+    // const offPlantMedicalFacilities = filterLookupDataByKey(lookupData, 'physicalHierarchyAttributes', 'Off Plant Medical Facility', values['offPlantMedicalFacility']);
+    // const workEnvironments = filterLookupDataByKey(lookupData, 'logicalHierarchyAttributes', 'Work Environment', values['workEnvironment']);
+    // const materials = filterLookupDataByKey(lookupData, 'logicalHierarchyAttributes', 'Materials', values['materialInvolved']);
+    // const equipment = filterLookupDataByKey(lookupData, 'logicalHierarchyAttributes', 'Equipment', values['equipmentInvolved']);
+    const initialCategories = filterLookupDataByKey(lookupData, 'logicalHierarchyAttributes', 'Initial Category', searchFilters['initialCategory']);
+    const resultingCategories = filterLookupDataByKey(lookupData, 'logicalHierarchyAttributes', 'Resulting Category', searchFilters['resultingCategory']);
 	
 	return (
 		<div className={classes.root}>
@@ -84,59 +102,108 @@ const SearchFilters = props => {
 					<form className={classes.form} noValidate>						
 						<Grid container spacing={2}>
 							<Grid item xs={6} md={12}>
-								<Typography className={classes.sectionHeading}>You know ya shit</Typography>
-								<FormControl className={classes.formControl}>
-									<TextField
-										id="event-id"
-										name="eventId"
-										label="Event #"
-										value={searchFilters.eventId}
-										onChange={handleSearchFiltersChange}
-										type="number"
-										className={classes.formControl}
-										InputLabelProps={{
-											shrink: true,
-										}}
-										margin="normal"
-										variant="outlined"
-									/>
-								</FormControl>
-								<FormControl className={[classes.formControl, classes.autoComplete]}>									
-									<AutoCompleteMulti
-										name="eventStatuses"
-										options={statuses}
-										label="Event Status"
-										placeholder="Select statuses"
-										handleChange={handleAutoCompleteChange}
-										value={searchFilters.eventStatuses}
-									>
-									</AutoCompleteMulti> 
-								</FormControl>
+								<Typography className={classes.sectionHeading}>Specific Event # or Status</Typography>
 							</Grid>		
+							<Grid item xs={12} md={3}>			
+								<TextField
+									id="event-id"
+									name="eventId"
+									label="Event #"
+									value={searchFilters.eventId}
+									onChange={handleSearchFiltersChange}
+									type="number"
+									className={classes.formControl}
+									InputLabelProps={{
+										shrink: true,
+									}}
+									margin="normal"
+									variant="outlined"
+								/>
+							</Grid>
+							<Grid item xs={12} md={3}>											
+								<AutoCompleteMulti
+									name="eventStatuses"
+									options={statuses}
+									label="Event Status"
+									placeholder="Select statuses"
+									handleChange={handleAutoCompleteChange}
+									value={searchFilters.eventStatuses}
+									className={classes.formControl}
+								>
+								</AutoCompleteMulti> 
+							</Grid>
 							<Grid item xs={12} md={12}>
 								<Typography className={classes.sectionHeading}>Who</Typography>
+							</Grid>
+							<Grid item xs={12} md={3}>							
+								<AutoComplete
+									name="employeeInvolved"
+									// options={null}
+									label="Employee Involved"                        
+									placeholder="Select Employee"
+									// handleChange={handleAutoCompleteChange}
+									// value={null}
+									className={classes.formControl}
+								>
+								</AutoComplete> 
+							</Grid>	
+							<Grid item xs={12} md={3}>							
+								<AutoComplete
+									name="reportedBy"
+									// options={null}
+									label="Reported By"                        
+									placeholder="Select Employee"
+									// handleChange={handleAutoCompleteChange}
+									// value={null}
+									className={classes.formControl}
+								>
+								</AutoComplete> 
 							</Grid>
 							<Grid item xs={12} md={12}>
 								<Typography className={classes.sectionHeading}>What</Typography>
 							</Grid>
+							<Grid item xs={12} md={3}>							
+								<AutoComplete
+									name="initialCategory" //must match the key name for the state to update correctly
+									options={initialCategories}
+									label="Initial Category"                        
+									placeholder="Select Category"
+									handleChange={handleAutoCompleteChange}
+									value={initialCategories.filter(o => o.selected === true)}
+									className={classes.formControl}
+								>
+								</AutoComplete> 
+							</Grid>
+							<Grid item xs={12} md={3}>							
+								<AutoComplete
+									name="resultingCategory" //must match the key name for the state to update correctly
+									options={resultingCategories}
+									label="Resulting Category"                        
+									placeholder="Select Category"
+									handleChange={handleAutoCompleteChange}
+									value={resultingCategories.filter(o => o.selected === true)}
+									className={classes.formControl}
+								>
+								</AutoComplete> 
+							</Grid>
 							<Grid item xs={12} md={12}>
 								<Typography className={classes.sectionHeading}>When</Typography>
-								<FormControl className={classes.formControl}>									
-									<TextField
-										id="event-date"
-										name="eventDate"
-										label='Event Date'
-										onChange={handleSearchFiltersChange}
-										type="date"
-										className={classes.textField}
-										InputLabelProps={{
-											shrink: true,
-										}}
-										margin="normal"
-										value={searchFilters.eventDate}
-										variant="outlined"
-									/>
-								</FormControl>
+							</Grid>
+							<Grid item xs={12} md={3}>				
+								<TextField
+									id="event-date"
+									name="eventDate"
+									label='Event Date'
+									onChange={handleSearchFiltersChange}
+									type="date"
+									className={classes.formControl}
+									InputLabelProps={{
+										shrink: true,
+									}}
+									margin="normal"
+									value={searchFilters.eventDate}
+									variant="outlined"
+								/>
 							</Grid>
 							<Grid item xs={12} md={12}>
 								<Typography className={classes.sectionHeading}>Where</Typography>

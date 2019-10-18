@@ -8,7 +8,7 @@ namespace EHS.Server.DataAccess.Repository
     {
         Task<Approval> GetByIdAsync(int id);
         Task<List<Approval>> GetAllAsync();
-        Task<Approval> AddAsync(Approval approvalToAdd);
+        Task<int> AddAsync(Approval approvalToAdd);
         Task<Approval> UpdateAsync(Approval approvalToUpdate);
         Task<Approval> DeleteAsync(Approval approvalToDelete);
     }

@@ -1,4 +1,5 @@
-﻿using System; 
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using static EHS.Server.DataAccess.Dtos.SharedDto;
 
@@ -17,6 +18,8 @@ namespace EHS.Server.DataAccess.Dtos
         public DateTime? ApprovalDate { get; set; }
 
         public SafetyEventDto SafetyEvent { get; set; }
+        public List<ApprovalDto> Approvals { get; set; }
+        public List<ApprovalRoutingDto> ApprovalsNeeded { get; set; }
 
     }
 }

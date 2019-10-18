@@ -13,6 +13,6 @@ namespace EHS.Server.DataAccess.Dtos
         public int HierarchyLevelId { get; set; }
 
         public HierarchyLevelDto HierarchyLevel { get; set; }
-        public ICollection<HierarchyAttributeDto> HierarchyAttributes { get; set; }
+        //public ICollection<HierarchyAttributeDto> HierarchyAttributes { get; set; }
     }
 }

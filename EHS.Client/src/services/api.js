@@ -19,7 +19,7 @@ export function setTokenHeader(token){
  */
 export function apiCall(method, path, data){
     path = `/api/v${APIVERSION}${path}`;
-    // console.log(path); 
+    console.log(method, path, data); 
     return  new Promise((resolve, reject) => {
         return axios[method](path, data)
             .then(res => {
@@ -27,6 +27,7 @@ export function apiCall(method, path, data){
                 return resolve(res.data)
             })
             .catch(err => {
+                console.log(err);
                 return reject({
                     error: err, 
                     response: err.response

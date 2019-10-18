@@ -13,8 +13,11 @@ namespace EHS.Server.DataAccess.DatabaseModels
         public int HierarchyLevelId { get; set; }
         [MaxLength(50)]
         public string HierarchyLevelName { get; set; }
+        public int HierarchyLevelNumber { get; set; }
+        [MaxLength(50)]
+        public string HierarchyLevelAlias { get; set; }
 
-        public ICollection<Hierarchy> Hierarchies { get; set; }
+        //public ICollection<Hierarchy> Hierarchies { get; set; }
         
     }
 }

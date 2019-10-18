@@ -20,6 +20,9 @@ const lookupData = (state = {}, action) => {
         case LOAD_PHYSICAL_HIERARCHY_ATTRIBUTES: 
             // console.log(action)
             return {...state, physicalHierarchyAttributes: action.physicalHierarchyAttributes}
+        case LOAD_EMPLOYEES: 
+            // console.log(action)
+            return {...state, employees: action.employees}
         default: 
             return state;
     }

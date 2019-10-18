@@ -21,9 +21,9 @@ namespace EHS.Server.DataAccess.DatabaseModels
         public int Rgt { get; set; }
         [Required]
         public int HierarchyLevelId { get; set; }
-        public HierarchyLevel HierarchyLevel { get; set; }
 
-        public ICollection<HierarchyAttribute> HierarchyAttributes { get; set; }
+        public HierarchyLevel HierarchyLevel { get; set; }
+        //public ICollection<HierarchyAttribute> HierarchyAttributes { get; set; }
         
     }
 }

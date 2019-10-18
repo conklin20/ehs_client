@@ -17,6 +17,7 @@ namespace EHS.Server.DataAccess.Dtos
         public int RoleId { get; set; }
         public string TimeZone { get; set; }
         public string DateFormat { get; set; }
+        public int ApprovalLevel { get; set; }
 
 
         public string FullName => $"{FirstName} {LastName}";

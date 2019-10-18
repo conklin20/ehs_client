@@ -1,11 +1,12 @@
-import React, { useState, useEffect, useReducer } from 'react'; 
+import React, { useState, useEffect, useReducer, Fragment } from 'react'; 
 import { connect } from "react-redux";
 import { fetchSafteyIncidents } from '../../store/actions/safetyIncidents';
 import { 
 	fetchLogicalHierarchyTree, 
 	fetchPhysicalHierarchyTree, 
 	fetchLogicalHierarchyAttributes, 
-	fetchPhysicalHierarchyAttributes } from '../../store/actions/lookupData'; 
+	fetchPhysicalHierarchyAttributes, 
+	fetchEmployees } from '../../store/actions/lookupData'; 
 // import { fetchFullTree } from '../../store/actions/lookupData'; 
 // import { fetchSinglePath } from '../../store/actions/lookupData'; 
 // import { fetchLogicalHierarchyTree } from '../../store/actions'; 
@@ -15,27 +16,26 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Paper, Grid, Hidden, Typography } from '@material-ui/core';
 import EventList from './EventList';
 import EventSearch from '../function/EventSearch';
-import ReportAside from '../containers/ReportAside'; 
-import UserAside from '../containers/UserAside'; 
+import ReportAside from '../reportAside/ReportAside'; 
+import UserAside from '../userAside/UserAside'; 
 import Notification from '../function/Notification';
 
 const useStyles = makeStyles(theme => ({
-  root: {
-    flexGrow: 1,
-		overflowY: 'hidden'
-  },
-  paper: {
-    padding: theme.spacing(2),
-    textAlign: 'center',
-    color: theme.palette.text.secondary,
-    height: '94vh',
-    margin: '0', 
+	root: {
+        flex: 1,
+	},
+	paper: {
+		padding: theme.spacing(2),
+		textAlign: 'center',
+		color: theme.palette.text.secondary,
+		height: '94vh',
+		margin: '0', 
 		padding: '0',
-  },
-  icon: {
-    margin: theme.spacing(0),
-    fontSize: 20,
-  },
+	},
+	icon: {
+		margin: theme.spacing(0),
+		fontSize: 20,
+	},
 }));
 
 const parseSearchFilters = filters => {
@@ -85,13 +85,12 @@ const searchFilterReducer = (state, action) => {
 const Dashboard = props => {    
 	const classes = useStyles();
 	const [searchFilters, dispatch] = useReducer(searchFilterReducer, initialSearchFilterState); 
-	// console.log('re-rendered. searchfilters: ', searchFilters)
 
 	const [searchText, setSearchText] = useState(''); 
 	const [showSearchFilters, setShowSearchFilters] = useState(false); 
 	const [dense, setDense] = useState(true);
 	
-  // Essentially what was componentDidMount and componentDidUpdate before Hooks
+ 	// Essentially what was componentDidMount and componentDidUpdate before Hooks
 	useEffect(() => {
 		// console.log('fetchSafteyIncidents called')
 		props.fetchSafteyIncidents(parseSearchFilters(searchFilters)); 	 	
@@ -101,6 +100,7 @@ const Dashboard = props => {
 		props.fetchPhysicalHierarchyTree(4000);
 		props.fetchLogicalHierarchyAttributes(1000, 'fulltree', '?enabled=true');
 		props.fetchPhysicalHierarchyAttributes(1000, 'fulltree', '?enabled=true&excludeglobal=true');
+		props.fetchEmployees(); 
 
 		return () => {
 			console.log('Cleanup function (ComponentDidUnmount)')
@@ -109,7 +109,6 @@ const Dashboard = props => {
 
 	//handler for the search textbox
 	const handleSearchTextChange = e => {
-		console.log(e.target.value)
 		setSearchText(e.target.value)
 		//filter incident list 
 	}
@@ -156,7 +155,7 @@ const Dashboard = props => {
 	const { errors, removeError } = props; 
 
 	return (
-		<div className={classes.root}>
+		<Fragment>
 			{/* display error if any are encountered  */}
 			{errors.message && (							
 				<Notification
@@ -166,66 +165,40 @@ const Dashboard = props => {
 					message={errors.message}	
 					removeError={removeError}							
 				/>		
-			)}
-			<Grid container spacing={0}>
-				<Hidden smDown>
-					<Grid item md={2}>
-						<Paper className={[classes.paper, ]}
-							square={true}
-						>
-						<Typography variant="h4" gutterBottom>Report Aside!</Typography>  
-						<ReportAside   
-						/>
-						</Paper>
-					</Grid>
-				</Hidden>
-				<Grid item xs={12} md={8}>
-					<Paper className={[classes.paper]}
-							square={true}
-					>                 
-						<EventSearch 
-							handleSearchTextChange={handleSearchTextChange}
-							handleShowSearchFilters={handleShowSearchFilters}
-							handleSearchFiltersChange={(e) => dispatch( { type: e.target.name, value: e.target.value })}
-							handleAutoCompleteChange={(data, action) => dispatch({ type: action.name, value: data })}
-							handleDensePadding={handleDensePadding}
-							handleSearch={handleSearch}
-							showSearchFilters={showSearchFilters}
-							searchFilters={searchFilters}
-							dense={dense}
-							lookupData={props.lookupData}
+				)}
+				<Paper className={[classes.paper]}
+						square={true}
+						>                 
+					<EventSearch 
+						handleSearchTextChange={handleSearchTextChange}
+						handleShowSearchFilters={handleShowSearchFilters}
+						handleSearchFiltersChange={(e) => dispatch( { type: e.target.name, value: e.target.value })}
+						handleAutoCompleteChange={(data, action) => dispatch({ type: action.name, value: data })}
+						handleDensePadding={handleDensePadding}
+						handleSearch={handleSearch}
+						showSearchFilters={showSearchFilters}
+						searchFilters={searchFilters}
+						dense={dense}
+						lookupData={props.lookupData}
 						/>
 
-						<EventList 
-							currentUser={props.currentUser} 
-							safetyIncidents={filterSafetyIncidents()}
-							dense={dense}
+					<EventList 
+						currentUser={props.currentUser} 
+						safetyIncidents={filterSafetyIncidents()}
+						dense={dense}
 						/>
-					</Paper>
-				</Grid>				
-				<Hidden smDown>
-					<Grid item md={2}>
-						<Paper className={[classes.paper, ]}
-								square={true}
-						>                 
-							<Typography variant="h4" gutterBottom>User Aside!</Typography>     
-							<UserAside 
-							/>
-						</Paper>
-					</Grid>
-				</Hidden>
-			</Grid>
-		</div>
+				</Paper>
+		</Fragment>
 	)     
 }
 
 function mapStateToProps(state) {
 	// console.log(state)
 	return {
-			safetyIncidents: state.safetyIncidents, 
-			lookupData: state.lookupData,
-			currentUser: state.currentUser,
-			// isLoading: state.isLoading,
+		safetyIncidents: state.safetyIncidents, 
+		lookupData: state.lookupData,
+		currentUser: state.currentUser,
+		// isLoading: state.isLoading,
 	};
 }
 
@@ -234,5 +207,6 @@ export default connect(mapStateToProps, {
 	fetchLogicalHierarchyAttributes, 
 	fetchPhysicalHierarchyAttributes, 
 	fetchLogicalHierarchyTree, 
-	fetchPhysicalHierarchyTree 
+	fetchPhysicalHierarchyTree, 
+	fetchEmployees 
 })(Dashboard); 

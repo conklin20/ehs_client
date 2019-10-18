@@ -7,7 +7,9 @@ namespace EHS.Server.DataAccess.Dtos
     {
         public int HierarchyLevelId { get; set; }
         public string HierarchyLevelName { get; set; }
+        public int HierarchyLevelNumber { get; set; }
+        public string HierarchyLevelAlias { get; set; }
 
-        public ICollection<HierarchyDto> Hierarchies { get; set; }
+        //public ICollection<HierarchyDto> Hierarchies { get; set; }
     }
 }

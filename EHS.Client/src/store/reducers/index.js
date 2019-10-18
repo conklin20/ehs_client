@@ -5,6 +5,7 @@ import errors from './errors';
 import safetyIncidents from './events'; 
 import lookupData from './lookupData'; 
 import hierarchyData from './hierarchyData'; 
+import actions from './actions';
 
 const rootReducer = combineReducers({
     currentUser, 
@@ -12,6 +13,7 @@ const rootReducer = combineReducers({
     safetyIncidents, 
     lookupData, 
     hierarchyData,
+    actions,
 }); 
 
 export default rootReducer; 

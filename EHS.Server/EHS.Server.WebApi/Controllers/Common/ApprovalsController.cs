@@ -97,7 +97,8 @@ namespace EHS.Server.WebApi.Controllers.Common
                 var addedApproval = await _approvalRepo.AddAsync(approvalToAdd);
 
                 //map back to dto, to pass back to client 
-                return CreatedAtAction("GetApproval", new { id = addedApproval.ApprovalId }, _mapper.Map<Approval, ApprovalDto>(addedApproval));
+                //return CreatedAtAction("post", new { id = addedApproval.ApprovalId }, _mapper.Map<Approval, ApprovalDto>(addedApproval));
+                return CreatedAtAction("post", "approval");
             }
             catch (Exception ex)
             {
