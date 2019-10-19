@@ -16,6 +16,11 @@ import { Typography
         , Divider
         , Chip
         , Tooltip
+        , Dialog
+        , DialogActions
+        , DialogContent
+        , DialogContentText
+        , DialogTitle
     } from '@material-ui/core';
 import MomentDate from '../containers/MomentDate';
 
@@ -26,6 +31,10 @@ const useStyles = makeStyles(theme => ({
         margin: 10,
         backgroundColor: '#e2f1f8', //theme.palette.primary.light, 
         paddingBottom: 20,
+    },
+    cardHeader: {
+        display: 'flex',
+        justifyContent: 'space-between',
     },
     cardActions: {
         display: 'flex', 
@@ -56,20 +65,16 @@ const useStyles = makeStyles(theme => ({
         backgroundColor: theme.palette.background.paper, 
         display: 'flex',
         flexDirection: 'column',
-        alignItems: 'center',
-        // justifyContent: 'center', 
+        alignItems: 'center', 
     },
-    // margin: {
-    //   margin: theme.spacing(2),
-    // },
     badge: {
-    //   padding: theme.spacing(2),
         left: theme.spacing(2),
     },
 })); 
 
 const ActionItem = (props) => {
     const classes = useStyles();
+    const [openDialog, setOpenDialog] = useState(false); 
 
     const { 
         action, 
@@ -80,6 +85,17 @@ const ActionItem = (props) => {
         handleApproveAction,
         event, 
     } = props
+
+    const handleClickOpen = () => {
+        setOpenDialog(true); 
+    }; 
+
+    const handleClose = (e) => {
+        if(e.currentTarget.id === 'deleteAction'){   
+            handleDelete(typeof(action.actionId) !== 'number' ? 'pending' : 'assigned', action.actionId)();
+        }
+        setOpenDialog(false);
+    }
     
     const assignedTo = employees.filter(e => e.employeeId === action.assignedTo)[0].fullName;
 
@@ -131,31 +147,48 @@ const ActionItem = (props) => {
     if(typeof(action.actionId) !== 'number') approveButtonCriteria.push('This action is still pending. ');
     if(event.eventStatus !== 'Open') approveButtonCriteria.push('This event is not in an "Open" status. ');
     if(action.assignedTo === currentUser.user.userId) approveButtonCriteria.push(`This action was assigned to you, you can't approve your own action. `);
-    // if(action.approvals.filter(ar => ar.approvalLevelId === currentUser.user.approvalLevel)) {
-    //     approveButtonCriteria.push(`This action has already received ${action.approvals.filter(al => al.approvalLevelId === 1)[0].approvalLevel.approvalLevelName} level approval. `);
-    // // }
-    // console.log(action.approvals)
-    // console.log(action.approvals.filter(ar => ar.approvalLevel.approvalLevel == currentUser.user.approvalLevel)[0].approvalLevel.approvalLevelName)
-    // console.log(action.approvals.filter(al => al.approvalLevelId === 1)[0].approvalLevel.approvalLevelName)
-    
+    if(action.approvals.filter(ar => ar.approvalLevelId == currentUser.user.approvalLevel).length) {
+        approveButtonCriteria.push(`This action has already received
+            ${action.approvals.filter(ar => ar.approvalLevelId == currentUser.user.approvalLevel)[0].approvalLevel.approvalLevelName}. `);        
+    }    
     
     return (
         <Card className={classes.card} >
+            {/* Dialog Box */}
+            <Dialog 
+                open={openDialog}
+                onClose={handleClose}
+                aria-labelledby='confirm-dialog-title'
+                aria-describedby='confirm-dialog-description'
+            >
+                <DialogTitle id='confirm-dialog-title'>{"Are you sure you want to delete this action?"}</DialogTitle>
+                <DialogContent>
+                    <DialogContentText id='confirm-dialog-description'>
+                        {`Are you sure you want to delete action ${action.actionId}? You will not be able to undo this action.`}
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button id='deleteAction' onClick={handleClose} color='primary' autofocus>Yes</Button>
+                    <Button onClick={handleClose} color='primary'>No</Button>
+                </DialogActions>
+            </Dialog>
             <CardContent >
                 <Grid container spacing={2} >
-                    <Grid item xs={12}>	
-                        <Typography variant="h5" gutterBottom>
-                            {`${action.actionId} - ${assignedTo}`}
-                        </Typography>
-                        { isAdmin ?  
-                            <span>
-                                <DeleteIcon 
-                                    onClick={handleDelete(typeof(action.actionId) !== 'number' ? 'pending' : 'assigned', action.actionId)}
-                                    size={'large'}
-                                    />
-                            </span>
-                            : null
-                        }
+                    <Grid item xs={12}>
+                        <div className={classes.cardHeader}>
+                            <Typography variant="h5" gutterBottom>
+                                {`${action.actionId} - ${assignedTo}`}
+                            </Typography>
+                            { isAdmin || typeof(action.actionId) !== 'number' ?  
+                                <span>
+                                    <DeleteIcon 
+                                        onClick={handleClickOpen}
+                                        size={'large'}
+                                        />
+                                </span>
+                                : null
+                            }
+                        </div>
                         <Typography variant="overline" display="block" gutterBottom>
                             {
                                 action.completionDate 

@@ -1,90 +1,190 @@
 import React, { useState, Fragment } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography, Grid, TextField, Divider, Checkbox, FormControlLabel  } from '@material-ui/core'; 
+import { Typography, Grid, TextField, Divider, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Paper } from '@material-ui/core'; 
 import filterLookupDataByKey from '../../../helpers/filterLookupDataByKey'; 
 import filterEmployeeList from '../../../helpers/filterEmployeeList'; 
 import AutoCompleteMulti from '../inputs/AutoCompleteMulti'; 
+import { savePeopleInvolved } from '../../../store/actions/peopleInvolved';
+import { connect } from "react-redux";
 
 const useStyles = makeStyles(theme => ({
-
+    paper: {
+      padding: theme.spacing(3, 2),
+      margin: theme.spacing(2), 
+    },
 }));
 
 const PeopleInvolved = (props) => {
-    const classes = props.useStyles();    
+    const classes = useStyles();    
     
-    const { lookupData, currentUser, event, people } = props; 
+    const { event } = props; 
     
     //building each lookup data object
-    const employees = filterEmployeeList(lookupData['employees'], null, 4001, true, false)
-    const involvement = lookupData['logicalHierarchyAttributes'].filter(attr => attr.key === 'Employee Involvement');
-    
-    const [peopleInvolved, setPeopleInvolved] = useState([
-        {
-            hierarchyAttributeId: involvement.filter(attr => attr.value === 'Supervisor')[0].hierarchyAttributeId, 
-            eventId: event.eventId, 
-            employeeId: event.supervisorId,
-            comments: 'Supervisor automatically added from step 3',
-        }
-    ])
+    const employees = filterEmployeeList(props.lookupData['employees'], null, 4001, true, false)
+    const involvement = props.lookupData['logicalHierarchyAttributes'].filter(attr => attr.key === 'Employee Involvement');
 
     
-    //for the react-select (multi) component
-    const handleAutoCompleteMultiChange = (data, action) => e => {
-        console.log(data);
-        // handleAutoCompleteChange={(data, action) => dispatch({ type: action.name, value: data })}
+    const currentPeople = event.peopleInvolved.map(pe => {
+        return {
+            roleId: pe.roleId, 
+            eventId: pe.eventId, 
+            employeeId: pe.employeeId, 
+            comments: pe.comments
+        }
+    });
+    
+    const [peopleInvolved, setPeopleInvolved] = useState(currentPeople);
+    const [openDialog, setOpenDialog] = useState(false); 
+    
+    const handleClickOpen = () => {
+        setOpenDialog(true); 
+    }; 
+
+    const handleClose = (e) => {
+        setOpenDialog(false);
+    }
+    
+    const handleSubmit = () => {
+        //save PeopleInvolved to db 
+        if(peopleInvolved.length){       
+            props.savePeopleInvolved(peopleInvolved, props.currentUser.user.userId)
+                .then(res => {
+                    return res === 'PeopleInvolved' ?  handleClickOpen() : null
+                })
+                .catch(err => {
+                    console.log(err); 
+                })                               
+        };
     }
 
-
     const sections = involvement.map(section => {
-        // if(section.value === "Supervisor"){
-        //     console.log(peopleInvolved.filter(pi => pi.hierarchyAttributeId === section.hierarchyAttributeId))
-        //     console.log(
-        //         employees.filter(e => {
-        //             e.value === peopleInvolved.filter(pi => pi.hierarchyAttributeId === section.hierarchyAttributeId)
-        //         })
-        //     )
-        // }
+        
+        const handleAutoCompleteMultiChange = (state, action)  => {
+            switch (action.action){
+                case 'remove-value':                    
+                    return setPeopleInvolved(peopleInvolved.filter(pi => pi.RoleId !== action.name && pi.employeeId !== action.removedValue.value)) 
+                case 'clear':                    
+                    return setPeopleInvolved(peopleInvolved.filter(pi => pi.roleId !== action.name)) 
+                case 'select-option':                    
+                    const newPerson = {
+                        roleId: action.name, 
+                        eventId: event.eventId, 
+                        employeeId: state[state.length-1].value,                
+                    }
+                    return setPeopleInvolved( [ ...peopleInvolved, { ...newPerson } ] );                    
+                default:
+                    console.log(`Invalid action: ${action.action}`)
+            }
+        }
 
+        // Handle field change 
+        const handleChange = () => e => {
+            peopleInvolved
+                .filter(pi => pi.roleId == e.target.name)
+                .map(p => {
+                    p.comments = e.target.value
+                    setPeopleInvolved([ ...peopleInvolved ])
+                })            
+        }
+
+        const values = peopleInvolved                                               //currently saved peopleInvolved records
+                        .filter(pi => pi.roleId === section.hierarchyAttributeId)   // filter on roleId (HierarchyId)
+                        .map(person => employees                                    // map over each person in the arry 
+                            .find(emp => emp.value === person.employeeId))          // extract out the value from the employees array 
+        
+        // values.map(v => v.selected = true); 
+                            
         return (
-            <Fragment>
+            <Paper className={classes.paper}>
                 <Typography variant='h5' gutterBottom>
                     {section.value}
                 </Typography>
                 <Grid item xs={12}>											
                     <AutoCompleteMulti
-                        name={section.value}
+                        key={section.hierarchyAttributeId}
+                        name={section.hierarchyAttributeId}
                         options={employees}
                         // label="Event Status"
-                        // placeholder="Select statuses"
+                        placeholder="Type or select names..."
                         handleChange={handleAutoCompleteMultiChange}
-                        value={peopleInvolved.filter(pi => pi.hierarchyAttributeId === section.hierarchyAttributeId)}
+                        value={values}
                         className={classes.formControl}
                         >
-                    </AutoCompleteMulti> 
+                    </AutoCompleteMulti>
+                    <Typography variant='caption' >
+                        Hint: Start typing a name, and then hit "Tab" when you've found the person, then start typing the next name (if applicable).
+                    </Typography>
                 </Grid>
                 <Grid item xs={12}>		
                     <TextField
-                        name={`${section.value} Comments`}
+                        key={section.hierarchyAttributeId}
+                        name={section.hierarchyAttributeId}
                         placeholder={`${section.value} Comments...`}
                         variant='outlined'
                         className={classes.formControl}
+                        onChange={handleChange('comments')}
+                        value={
+                            peopleInvolved.filter(pi => pi.roleId === section.hierarchyAttributeId).length 
+                                ? peopleInvolved.find(pi => pi.roleId === section.hierarchyAttributeId).comments 
+                                : ''
+                        }
                         fullWidth
                     >
                     </TextField>
                     <Divider className={classes.divider} />
                 </Grid>
-            </Fragment>
+            </Paper>
         )
     })
 
     return (
-        <Fragment>  
-            <Typography variant='h4' gutterBottom>
-                People Involved
-            </Typography>
-            {sections}
+        <Fragment>            
+            <Dialog 
+                open={openDialog}
+                onClose={handleClose}
+                aria-labelledby='confirm-dialog-title'
+                aria-describedby='confirm-dialog-description'
+            >
+                <DialogTitle id='confirm-dialog-title'>{"Saved Successfully!"}</DialogTitle>
+                <DialogContent>
+                    <DialogContentText id='confirm-dialog-description'>
+                        {`Employees assigned to roles have been successfully saved to the database. `}
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button id='success' onClick={handleClose} color='primary' autofocus>OK</Button>
+                </DialogActions>
+            </Dialog>
+            <form onSubmit={handleSubmit}>  
+                <Typography variant='h4' gutterBottom>
+                    People Involved
+                </Typography>
+
+                {sections}
+                
+                <Button 
+                    type="submit"
+                    name='savePeople'
+                    variant='contained' 
+                    color="secondary" 
+                    className={classes.button}
+                >
+                    Save
+                </Button>
+            </form>        
+            <Divider />
         </Fragment>
     );
 }	
 
-export default PeopleInvolved; 
+function mapStateToProps(state) {
+	// console.log(state)
+	return {
+			lookupData: state.lookupData,
+			currentUser: state.currentUser,
+	};
+}
+
+export default connect(mapStateToProps, { 
+    savePeopleInvolved
+})(PeopleInvolved); 

@@ -19,10 +19,10 @@ const useStyles = makeStyles(theme => ({
   },
   valueContainer: {
     display: 'flex',
-    flexWrap: 'wrap',
+    // flexWrap: 'wrap',
     flex: 1,
     alignItems: 'center',
-    overflow: 'hidden',
+    // overflow: 'hidden',
   },
   noOptionsMessage: {
     padding: theme.spacing(1, 2),
@@ -130,6 +130,8 @@ Control.propTypes = {
 };
 
 function Option(props) {
+  // Fix https://github.com/JedWatson/react-select/issues/3128#issuecomment-439207355
+  const { onMouseMove, onMouseOver, ...newInnerProps } = props.innerProps;
   return (
     <MenuItem
       ref={props.innerRef}
@@ -138,7 +140,7 @@ function Option(props) {
       style={{
         fontWeight: props.isSelected ? 500 : 400,
       }}
-      {...props.innerProps}
+      {...newInnerProps}
     >
       {props.children}
     </MenuItem>

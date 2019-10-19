@@ -197,24 +197,7 @@ namespace EHS.Server.DataAccess.Repository
         }
 
         public async Task<int> AddAsync(List<Action> ActionsToAdd)
-        {
-            //var parameters = new List<DynamicParameters>();
-
-            //for (var i = 0; i < ActionsToAdd.Count; i++)
-            //{
-            //    var p = new DynamicParameters();
-            //    p.Add("@EventId", ActionsToAdd[i].EventId, DbType.Int32, ParameterDirection.Input);
-            //    p.Add("@EventType", ActionsToAdd[i].EventType, DbType.String, ParameterDirection.Input);
-            //    p.Add("@AssignedTo", ActionsToAdd[i].AssignedTo, DbType.String, ParameterDirection.Input);
-            //    p.Add("@ActionToTake", ActionsToAdd[i].ActionToTake, DbType.String, ParameterDirection.Input);
-            //    p.Add("@ActionType", ActionsToAdd[i].ActionType, DbType.String, ParameterDirection.Input);
-            //    p.Add("@DueDate", ActionsToAdd[i].DueDate, DbType.Date, ParameterDirection.Input);
-            //    p.Add("@UserId", ActionsToAdd[i].CreatedBy, DbType.String, ParameterDirection.Input);
-
-            //    //p.Add("@EventType", ActionsToAdd[i].EventType, DbType.String, ParameterDirection.Input);                //p.Add("@EventType", ActionsToAdd[i].EventType, DbType.String, ParameterDirection.Input);
-
-            //    parameters.Add(p);
-            //}                       
+        {   
 
             using (IDbConnection sqlCon = Connection)
             {
@@ -237,10 +220,7 @@ namespace EHS.Server.DataAccess.Repository
                     },
                     commandType: CommandType.StoredProcedure
                     );
-
-
                 }
-
 
                 return 1;
             }

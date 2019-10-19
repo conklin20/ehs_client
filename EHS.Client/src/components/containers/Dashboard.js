@@ -130,7 +130,6 @@ const Dashboard = props => {
 		props.fetchSafteyIncidents(parseSearchFilters(searchFilters));
 		console.log(parseSearchFilters(searchFilters));
 		setShowSearchFilters(false); 
-		console.log('handleSearch called!')
 	}
 
 

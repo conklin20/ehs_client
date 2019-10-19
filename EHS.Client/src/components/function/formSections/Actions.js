@@ -109,7 +109,6 @@ const Actions = (props) => {
     };
     
     const handleCompleteAction = (completedAction) => e => {
-        console.log('handleCompleteActionCalled', completedAction)
         if(completedAction){
             //Update the completion date 
             completedAction.completionDate = new Date().toISOString();
@@ -155,10 +154,8 @@ const Actions = (props) => {
         if (type === 'pending'){
             setNewActionList(newActionList.filter(a => a.actionId !== id)) //remove the action from the array 
         } else {
-            console.log(`deleting assigned action number ${id}`) 
             props.removeAction(id, currentUser.user.userId) 
                 .then(res => {
-                    console.log(`deleted assigned action number ${res.actionId}`); 
                     setAssignedActions(assignedActions.filter(a => a.actionId !== res.actionId)) //remove the action from the array                     
                 });                        
         

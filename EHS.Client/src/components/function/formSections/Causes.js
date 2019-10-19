@@ -1,18 +1,24 @@
 import React, { useState, Fragment } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography, Grid, TextField, Divider, Checkbox, FormControlLabel  } from '@material-ui/core'; 
+// import AutoCompleteMulti from '../inputs/AutoCompleteMulti'; 
+// import { saveCauses } from '../../../store/actions/causes';
+
 
 const useStyles = makeStyles(theme => ({
-
+    paper: {
+      padding: theme.spacing(3, 2),
+      margin: theme.spacing(2), 
+    },
 }));
 
 const Causes = (props) => {
     const classes = useStyles();
-    // const handleChange = name => event => {
-    //     setValues({ ...values, [name]: event.target.value });
-    // };        
-
-    const {  } = props; 
+        
+    const { event } = props; 
+    
+    //building each lookup data object
+    const involvement = props.lookupData['logicalHierarchyAttributes'].filter(attr => attr.key === 'Employee Involvement');
 
 
     return (
@@ -24,4 +30,16 @@ const Causes = (props) => {
     );
 }	
 
-export default Causes; 
+// function mapStateToProps(state) {
+// 	// console.log(state)
+// 	return {
+// 			lookupData: state.lookupData,
+// 			currentUser: state.currentUser,
+// 	};
+// }
+
+// export default connect(mapStateToProps, { 
+//     saveCauses
+// })(Causes); 
+
+export default Causes

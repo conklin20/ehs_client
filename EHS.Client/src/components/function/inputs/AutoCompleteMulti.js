@@ -21,10 +21,10 @@ const useStyles = makeStyles(theme => ({
   },
   valueContainer: {
     display: 'flex',
-    flexWrap: 'wrap',
+    // flexWrap: 'wrap',
     flex: 1,
     alignItems: 'center',
-    overflow: 'hidden',
+    // overflow: 'hidden',
   },
   chip: {
     margin: theme.spacing(0.5, 0.25),
@@ -41,19 +41,19 @@ const useStyles = makeStyles(theme => ({
 //   singleValue: {
 //     fontSize: 16,
 //   },
-//   placeholder: {
-//     position: 'absolute',
-//     left: 2,
-//     bottom: 6,
-//     fontSize: 16,
-//   },
-//   paper: {
-//     position: 'absolute',
-//     zIndex: 1,
-//     marginTop: theme.spacing(1),
-//     left: 0,
-//     right: 0,
-//   },
+  placeholder: {
+    position: 'absolute',
+    left: 2,
+    bottom: 6,
+    fontSize: 16,
+  },
+  paper: {
+    position: 'absolute',
+    zIndex: 1,
+    marginTop: theme.spacing(1),
+    left: 0,
+    right: 0,
+  },
 }));
 
 function NoOptionsMessage(props) {
@@ -141,6 +141,8 @@ Control.propTypes = {
 };
 
 function Option(props) {
+  // Fix https://github.com/JedWatson/react-select/issues/3128#issuecomment-439207355
+  const { onMouseMove, onMouseOver, ...newInnerProps } = props.innerProps;
   return (
     <MenuItem
       ref={props.innerRef}
@@ -149,7 +151,7 @@ function Option(props) {
       style={{
         fontWeight: props.isSelected ? 500 : 400,
       }}
-      {...props.innerProps}
+      {...newInnerProps}
     >
       {props.children}
     </MenuItem>
@@ -295,7 +297,7 @@ const AutoCompleteMulti = (props) => {
   };
 
   const { label, placeholder, name, options, value, handleChange, className } = props; 
-  console.log(value)
+  // console.log(value)
   return (
     <div className={className}>
       <NoSsr>

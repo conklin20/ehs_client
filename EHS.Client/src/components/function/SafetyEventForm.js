@@ -317,30 +317,17 @@ const SafetyEventForm = props => {
             case 3: 
                 return <Actions  
                             useStyles={useStyles} 
-                            lookupData={lookupData}
-                            // values={actions}
-                            currentUser={currentUser}
-                            // handleChange={handleChange}
-                            // handleAutoCompleteChange={handleAutoCompleteChange}
-                            // eventId={eventId}
-                            // handleNewActionAssignment={handleNewActionAssignment}
-                            // handleCompleteAction={handleCompleteAction}
-                            // handleApproveAction={handleApproveAction}
-                            // eventType={parsedEventType}
-                            event={Object.assign(eventId, reportingInformation, hierarchySelections ,eventDetails)}
+                            event={eventId ? Object.assign(eventId, reportingInformation, hierarchySelections ,eventDetails) : null}
                         />        
             case 4: 
                 return <PeopleInvolved 
                             useStyles={useStyles} 
-                            lookupData={lookupData} 
-                            currentUser={currentUser}
-                            people={existingEventDetail ? existingEventDetail.peopleInvolved : null}
-                            event={Object.assign(eventId, reportingInformation, hierarchySelections ,eventDetails)}
+                            event={eventId ? Object.assign(eventId, reportingInformation, hierarchySelections ,eventDetails) : null}
                         />     
             case 5: 
                 return <Causes  
                             useStyles={useStyles} 
-                            lookupData={lookupData} 
+                            event={eventId ? Object.assign(eventId, reportingInformation, hierarchySelections ,eventDetails) : null}
                         />     
             case 6: 
                 return <Media  

@@ -1,9 +1,17 @@
 import React, { useState, Fragment } from 'react';
-import { Typography, Grid, Button, Divider, Paper  } from '@material-ui/core'; 
-import ActionItem from './ActionItem'
+import { Typography, Grid, Button, Divider, Paper  } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles'; 
+import ActionItem from './ActionItem';
+
+const useStyles = makeStyles(theme => ({
+    cardContainer: {
+        display: 'flex', 
+
+    },
+})); 
 
 const ActionList = (props) => {
-    const classes = props.useStyles(); 
+    const classes = useStyles(); 
     
     const { 
         employees, 
@@ -50,9 +58,9 @@ const ActionList = (props) => {
     })
     
     return (
-        <Fragment>  
+        <Fragment> 
             {/* IF There are no pending actions, dont display the pending actions section  */}
-            { pendingActions.length > 0 ? 
+            { pendingActions.length ? 
                 <Paper>
                     <Typography variant='h4' gutterBottom>
                         Pending Actions (Need Saved)
@@ -74,14 +82,14 @@ const ActionList = (props) => {
                 : null 
             }
 
-            {/* IF There are no assigned actions, dont display the pending actions section  */}
-            { assignedActions.length > 0 ? 
+            {/* IF There are no assigned actions, dont display the assigned actions section  */}
+            { assignedActions.length ? 
                 <Paper>
                     <Typography variant='h4' gutterBottom>
                         Actions Currently Assigned
                     </Typography>
                     <Grid container spacing={2}>
-                        {assignedActions}
+                        {assignedActions}  
                     </Grid>
                 </Paper>
                 : null 
