@@ -1,25 +1,26 @@
 import React, { useState, Fragment } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography, Grid, TextField, Divider, Checkbox, FormControlLabel  } from '@material-ui/core'; 
+import { Typography, Button, LinearProgress as Progress } from '@material-ui/core'; 
 
 const useStyles = makeStyles(theme => ({
 
 }));
 
+// Most of this code was pulled from here: https://github.com/krissnawat/simple-react-upload/blob/master/src/App.js
 const Media = (props) => {
     const classes = useStyles();
-    // const handleChange = name => event => {
-    //     setValues({ ...values, [name]: event.target.value });
-    // };        
-
+    
     const {  } = props; 
 
 
+    console.log(state); 
     return (
         <Fragment>  
             <Typography variant='h4' gutterBottom>
                 Media
             </Typography>
+
+
         </Fragment>
     );
 }	

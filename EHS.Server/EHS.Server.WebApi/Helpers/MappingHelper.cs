@@ -19,6 +19,7 @@ namespace EHS.Server.WebApi.Helpers
             CreateMap<HierarchyLevel, HierarchyLevelDto>().ReverseMap();
             CreateMap<Hierarchy, HierarchyDto>().ReverseMap();
             CreateMap<PeopleInvolved, PeopleInvolvedDto>().ReverseMap();
+            CreateMap<Cause, CauseDto>().ReverseMap(); 
             CreateMap<SafetyEvent, SafetyEventDto>().ReverseMap();
             CreateMap<Severity, SeverityDto>().ReverseMap();
             CreateMap<User, UserDto>().ReverseMap();

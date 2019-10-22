@@ -29,8 +29,6 @@ const Actions = (props) => {
         props.fetchActions(`?eventId=${event.eventId}`)
             .then(res => {
                 setAssignedActions(res)
-                // setApprovalsReceived(res)
-                // setApprovalsNeeded(res)
             })
             .catch(err => {
                 console.log(err)
@@ -94,7 +92,7 @@ const Actions = (props) => {
             delete a.actionId;
         });
         
-        if(newActionList.length > 0){       
+        if(newActionList.length){       
             props.addAction(newActionList)
                 .then(res => {
                     props.fetchActions(`?eventId=${event.eventId}`)
@@ -252,7 +250,7 @@ const Actions = (props) => {
                 </Grid>
             </form>  
             <Divider className={classes.divider}/>
-            {assignedActions.length > 0  
+            {assignedActions.length || newActionList.length  
                 ? 
                 <Grid container spacing={2}>
                     <ActionList

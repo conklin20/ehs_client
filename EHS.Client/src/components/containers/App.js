@@ -3,6 +3,7 @@ import {Provider} from 'react-redux';
 import {configureStore} from '../../store'; 
 import { BrowserRouter as Router } from 'react-router-dom';
 import Main from './Main';
+import Routes from '../app/Routes'; 
 import { setAuthorizationToken, setCurrentUser } from '../../store/actions/auth';
 import jwtDecode from 'jwt-decode'; 
 import { ThemeProvider } from '@material-ui/styles';
@@ -42,7 +43,8 @@ const App = () => (
   <Provider store={store}>
     <ThemeProvider theme={theme}>
 		<Router>
-			<Main />
+			{/* <Main /> */}
+			<Routes />
       	</Router>
     </ThemeProvider> 
   </Provider>

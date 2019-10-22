@@ -3,6 +3,9 @@
 	import { makeStyles } from '@material-ui/core/styles';
 	import TextField from '@material-ui/core/TextField';
 	import Notification from './Notification';
+	import { authUser } from '../../store/actions/auth';
+	import { withRouter } from 'react-router-dom';
+	import { connect } from 'react-redux';
 
 	const useStyles = makeStyles(theme => ({
 		container: {
@@ -99,4 +102,14 @@
 		);
 	}	
 
-	export default AuthForm; 
+	function mapStateToProps(state){
+		return {
+		}
+	}
+	
+	export default withRouter(
+		connect(mapStateToProps, 
+			{ 
+				authUser
+			})(AuthForm)
+	); 

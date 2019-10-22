@@ -35,9 +35,11 @@ namespace EHS.Server.DataAccess.Repository
                 string tsql = @"select e.*
 	                                  ,a.*
 	                                  ,p.*
+                                      ,c.*
                                 from SafetyEvents e
 	                                 left join Actions a on a.EventId = e.EventId 
 	                                 left join PeopleInvolved p on p.EventId = e.EventId
+                                     left join EventCauses c on c.EventId = e.EventId
                                 where e.EventId = @EventId";
 
                 //build param list 
@@ -48,38 +50,53 @@ namespace EHS.Server.DataAccess.Repository
 
                 var safetyEventDictionary = new Dictionary<int, SafetyEvent>();
 
-                var result = await sqlCon.QueryAsync<SafetyEvent, Action, PeopleInvolved, SafetyEvent>(
+                var result = await sqlCon.QueryAsync<SafetyEvent, Action, PeopleInvolved, Cause, SafetyEvent>(
                     tsql,
-                    (safetyEvent, action, personInvolved) =>
+                    (safetyEvent, action, personInvolved, cause) =>
                     {
                         if (!safetyEventDictionary.TryGetValue(safetyEvent.EventId, out SafetyEvent eventEntry))
                         {
                             eventEntry = safetyEvent;
-
                             eventEntry.Actions = new List<Action>();
                             eventEntry.PeopleInvolved = new List<PeopleInvolved>();
+                            eventEntry.Causes = new List<Cause>();
                             safetyEventDictionary.Add(eventEntry.EventId, eventEntry);
                         }
-
+                        
                         //check if this action has already been added to the event
-                        if(!eventEntry.Actions.Any(actionToAdd => actionToAdd.ActionId == action.ActionId))
+                        if (!eventEntry.Actions.Any(actionToAdd => actionToAdd.ActionId == action.ActionId))
                         {
-                            eventEntry.Actions.Add(action);
+                            if (action != null)
+                            {
+                                eventEntry.Actions.Add(action);
+                            }
                         }
 
                         //check if this person has already been added to the event
-                        if(!eventEntry.PeopleInvolved.Any(personToAdd => personToAdd.PeopleInvolvedId == personInvolved.PeopleInvolvedId))
+                        if (!eventEntry.PeopleInvolved.Any(personToAdd => personToAdd.PeopleInvolvedId == personInvolved.PeopleInvolvedId))
                         {
-                            eventEntry.PeopleInvolved.Add(personInvolved);
+                            if (personInvolved != null)
+                            {
+                                eventEntry.PeopleInvolved.Add(personInvolved);
+                            }
                         }
-                        
+
+                        //check if this cause has already been added to the event
+                        if (!eventEntry.Causes.Any(causeToAdd => causeToAdd.EventCauseId == cause.EventCauseId))
+                        {
+                            if (cause != null)
+                            {
+                                eventEntry.Causes.Add(cause);
+                            }
+                        }
+
                         return eventEntry;
                     },
                     p,
-                    splitOn: "ActionId, PeopleInvolvedId");
+                    splitOn: "ActionId, PeopleInvolvedId, EventCauseId");
 
 
-                return result.Distinct().AsList().FirstOrDefault();
+                return result.Distinct().FirstOrDefault();
             }
         }
 
@@ -91,9 +108,11 @@ namespace EHS.Server.DataAccess.Repository
                 string tsql = @"select e.*
 	                                  ,a.*
 	                                  ,p.*
+                                      ,c.*
                                 from SafetyEvents e
 	                                 left join Actions a on a.EventId = e.EventId 
 	                                 left join PeopleInvolved p on p.EventId = e.EventId 
+                                     left join EventCauses c on c.EventId = e.EventId
                                 where 1 = 1 ";
 
                 //build param list 
@@ -116,15 +135,16 @@ namespace EHS.Server.DataAccess.Repository
 
                 var safetyEventDictionary = new Dictionary<int, SafetyEvent>();
                 
-                var result = await sqlCon.QueryAsync<SafetyEvent, Action, PeopleInvolved, SafetyEvent>(
+                var result = await sqlCon.QueryAsync<SafetyEvent, Action, PeopleInvolved, Cause, SafetyEvent>(
                     tsql,
-                    (safetyEvent, action, personInvolved) =>
+                    (safetyEvent, action, personInvolved, cause) =>
                     {
                         if (!safetyEventDictionary.TryGetValue(safetyEvent.EventId, out SafetyEvent eventEntry))
                         {
                             eventEntry = safetyEvent;
                             eventEntry.Actions = new List<Action>();
                             eventEntry.PeopleInvolved = new List<PeopleInvolved>();
+                            eventEntry.Causes = new List<Cause>(); 
                             safetyEventDictionary.Add(eventEntry.EventId, eventEntry);
                         }
 
@@ -146,10 +166,19 @@ namespace EHS.Server.DataAccess.Repository
                             }
                         }
 
+                        //check if this cause has already been added to the event
+                        if (!eventEntry.Causes.Any(causeToAdd => causeToAdd.EventCauseId == cause.EventCauseId))
+                        {
+                            if (cause != null)
+                            {
+                                eventEntry.Causes.Add(cause);
+                            }
+                        }
+
                         return eventEntry;
                     },
                     paramList,
-                    splitOn: "ActionId, PeopleInvolvedId");
+                    splitOn: "ActionId, PeopleInvolvedId, EventCauseId");
 
 
                 return result.Distinct().AsList();

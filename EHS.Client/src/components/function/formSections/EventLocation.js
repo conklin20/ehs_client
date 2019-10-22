@@ -6,7 +6,7 @@ import AutoComplete from '../inputs/AutoComplete';
 const EventLocation = (props) => {
     const classes = props.useStyles();
 
-    const { lookupData, values, handleAutoCompleteChange, handleRefreshData } = props; 
+    const { lookupData, event, currentUser, handleAutoCompleteChange, handleRefreshData } = props; 
     
     // Essentially what was componentDidMount and componentDidUpdate before Hooks
 	useEffect(() => {
@@ -18,20 +18,19 @@ const EventLocation = (props) => {
 		}
 	}, []); //this 2nd arg is important, it tells what to look for changes in, and will re-run the hook when this changes 
 
-    
     //generate the list of options for the logical/dept dropwdown list
     //filtering on the highest level of hierarchies (Department and PlantArea)
     const logicalOptions = lookupData.logicalHierarchies.filter(h => h.hierarchyLevel.hierarchyLevelNumber === 600).map(hierarchy => ({
         value: hierarchy.hierarchyId, 
         label: hierarchy.hierarchyName, 
-        selected: hierarchy.hierarchyId === values.departmentId ? true : false  
+        selected: hierarchy.hierarchyId == event.departmentId ? true : false  
     }));
     const physicalOptions = lookupData.physicalHierarchies.filter(h => h.hierarchyLevel.hierarchyLevelNumber === 600).map(hierarchy => ({
         value: hierarchy.hierarchyId, 
         label: hierarchy.hierarchyName,
-        selected: hierarchy.hierarchyId === values.localeId ? true : false  
+        selected: hierarchy.hierarchyId == event.localeId ? true : false  
     }));
-    
+    console.log(event.departmentId, logicalOptions)
     return (
         <Fragment>  
             <Typography variant='h4' gutterBottom>

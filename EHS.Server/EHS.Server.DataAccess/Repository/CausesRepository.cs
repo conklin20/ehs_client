@@ -9,11 +9,11 @@ using Dapper;
 
 namespace EHS.Server.DataAccess.Repository
 {
-    public class PeopleInvolvedRepository : IPeopleInvolvedRepository
+    public class CauseRepository : ICausesRepository
     {
         private readonly IConfiguration _config;
 
-        public PeopleInvolvedRepository(IConfiguration config)
+        public CauseRepository(IConfiguration config)
         {
             _config = config;
         }
@@ -26,49 +26,47 @@ namespace EHS.Server.DataAccess.Repository
             }
         }
 
-        public async Task<int> SavePeopleInvolvedAsync(List<PeopleInvolved> peopleInvolved, string userId)
+        public async Task<int> SaveCausesAsync(List<Cause> causes, string userId)
         {
             DataTable dt = new DataTable();
-            dt.Columns.Add("RoleId", typeof(int));
             dt.Columns.Add("EventId", typeof(int));
-            dt.Columns.Add("EmployeeId", typeof(string));
+            dt.Columns.Add("CauseId", typeof(int));
             dt.Columns.Add("Comments", typeof(string));
 
-            DataRow row; 
-            foreach (PeopleInvolved pi in peopleInvolved)
+            DataRow row;
+            foreach (Cause c in causes)
             {
                 row = dt.NewRow();
-                row[0] = pi.RoleId;
-                row[1] = pi.EventId;
-                row[2] = pi.EmployeeId;
-                row[3] = pi.Comments; 
+                row[0] = c.EventId;
+                row[1] = c.CauseId;
+                row[2] = c.Comments;
                 dt.Rows.Add(row);
             }
-                       
+
             using (IDbConnection sqlCon = Connection)
             {
                 var result = await sqlCon.ExecuteAsync(
-                    "dbo.spPeopleInvolvedAddOrUpdate",
+                    "dbo.spEventCauseAddOrUpdate",
                     new
                     {
-                        PeopleInvolvedTable = dt, 
+                        CausesTable = dt,
                         UserId = userId
                     },
                     commandType: CommandType.StoredProcedure
-                );               
+                );
 
                 return 1;
             }
         }
-        
-        public async Task<List<PeopleInvolved>> GetPeopleByEventIdAsync(int eventId)
+
+        public async Task<List<Cause>> GetCausesByEventIdAsync(int eventId)
         {
             using (IDbConnection sqlCon = Connection)
             {
                 //build sql query 
-                string tsql = @"select p.*
-                                from PeopleInvolved p
-                                where p.eventId = @EventId";
+                string tsql = @"select c.*
+                                from EventCauses c
+                                where c.eventId = @EventId";
 
                 //build param list 
                 var p = new
@@ -76,7 +74,7 @@ namespace EHS.Server.DataAccess.Repository
                     EventId = eventId
                 };
 
-                var result = await sqlCon.QueryAsync<PeopleInvolved>(tsql, p);
+                var result = await sqlCon.QueryAsync<Cause>(tsql, p);
 
                 return result.AsList();
             }

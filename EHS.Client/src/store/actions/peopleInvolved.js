@@ -13,6 +13,16 @@ export const savePeopleInvolved = (peopleInvolved, currentUserId) => (dispatch, 
     })
 }
 
+export const fetchPeopleByEventId = (eventId) => (dispatch, getState) => {
+    return apiCall('get', `/peopleinvolved/${eventId}`)
+        .then(res => {
+            return res
+        })
+        .catch(err => {
+            console.log(err)
+            dispatch(addError(err));
+        }); 
+}
 
 // export const fetchActions = (query) => {
 // 	return dispatch => {

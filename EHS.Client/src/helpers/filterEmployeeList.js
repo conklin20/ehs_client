@@ -26,16 +26,3 @@ export default function filterEmployeeListById(employees, value, hierarchyId, ac
             selected: i === 0 ? true : false
         }));
 }
-
-// export default function filterEmployeeListByName(employees, value) {
-//     console.log(employees, value)
-//     //if this was an existing incident, grab the employee record, since they could be inactive now
-
-//     return employees
-//         .filter(e => e.Active === true)
-//         .map(e => ({
-//             value: e.fullName, 
-//             label: `${e.fullName} (${e.employeeId})`, 
-//             selected: e.value === value ? true : false
-//         }));
-// }

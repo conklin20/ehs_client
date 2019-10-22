@@ -135,18 +135,18 @@ const ActionItem = (props) => {
 
     //criteria and reasoning for the "Complete" button being disabled 
     const completeButtomCriteria = [];
-    if(action.completionDate) completeButtomCriteria.push(`${assignedTo} has already completed this action. `); 
+    if(event.eventStatus !== 'Open') completeButtomCriteria.push('This event is not in an "Open" status. '); 
     if(typeof(action.actionId) !== 'number') completeButtomCriteria.push('This action is still pending. '); 
     if(action.assignedTo !== currentUser.user.userId) completeButtomCriteria.push('This action is not assigned to you. '); 
-    if(event.eventStatus !== 'Open') completeButtomCriteria.push('This event is not in an "Open" status. '); 
+    if(action.completionDate) completeButtomCriteria.push(`${assignedTo} has already completed this action. `); 
 
     //criteria and reasoning for the "Approve" button being disabled 
     const approveButtonCriteria = []; 
+    if(event.eventStatus !== 'Open') approveButtonCriteria.push('This event is not in an "Open" status. ');
+    if(typeof(action.actionId) !== 'number') approveButtonCriteria.push('This action is still pending. ');
     if(!action.completionDate) approveButtonCriteria.push(`This action hasn't been completed by ${assignedTo} yet. `);
     if(action.approvalDate) approveButtonCriteria.push(`This action has already been approved. `);
-    if(typeof(action.actionId) !== 'number') approveButtonCriteria.push('This action is still pending. ');
-    if(event.eventStatus !== 'Open') approveButtonCriteria.push('This event is not in an "Open" status. ');
-    if(action.assignedTo === currentUser.user.userId) approveButtonCriteria.push(`This action was assigned to you, you can't approve your own action. `);
+    if(action.assignedTo === currentUser.user.userId) approveButtonCriteria.push(`This action is assigned to you, you can't approve your own action. `);
     if(action.approvals.filter(ar => ar.approvalLevelId == currentUser.user.approvalLevel).length) {
         approveButtonCriteria.push(`This action has already received
             ${action.approvals.filter(ar => ar.approvalLevelId == currentUser.user.approvalLevel)[0].approvalLevel.approvalLevelName}. `);        

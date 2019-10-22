@@ -6,8 +6,15 @@ import {
 	fetchLogicalHierarchyTree, 
 	fetchPhysicalHierarchyTree, 
 	fetchLogicalHierarchyAttributes, 
-    fetchPhysicalHierarchyAttributes } from '../../store/actions/lookupData'; 
-import { postNewSafetyIncident } from '../../store/actions/safetyIncidents'; 
+    fetchPhysicalHierarchyAttributes, 
+    fetchEmployees, 
+ } from '../../store/actions/lookupData'; 
+import { 
+    postNewSafetyIncident, 
+    fetchEvent
+} from '../../store/actions/safetyIncidents'; 
+import { fetchPeopleByEventId } from '../../store/actions/peopleInvolved'; 
+import { fetchCausesByEventId } from '../../store/actions/causes'; 
 import { addError } from '../../store/actions/errors';
 import ReportingInformation from './formSections/ReportingInformation'; 
 import EventLocation from './formSections/EventLocation'; 
@@ -16,7 +23,8 @@ import Actions from './formSections/Actions';
 import Causes from './formSections/Causes'; 
 import PeopleInvolved from './formSections/PeopleInvolved'; 
 import Notification from '../function/Notification';
-import Media from './formSections/Media'; 
+import Media from './formSections/Media';
+import Review from './formSections/Review'
 import { 
 	Button, 
 	Dialog,
@@ -29,19 +37,21 @@ import {
     StepButton,
 	Typography,
 } from '@material-ui/core';
+import Icon from '@material-ui/core/Icon';
 
 const useStyles = makeStyles(theme => ({
 	root: {
         flexGrow: 1,
-	},
+    },
+    dialogTitle: {
+        display: 'flex', 
+        justifyContent: 'space-between', 
+
+    },
 	container: {
         display: 'flex',
         flexWrap: 'wrap',
 	},
-	// textField: {
-    //     marginLeft: theme.spacing(1),
-    //     marginRight: theme.spacing(1),
-    // },
     label: {
         margin: theme.spacing(1),
     },
@@ -104,131 +114,93 @@ const getSteps = () => {
         'Actions', 
         'People Involved', 
         'Causes',
-        'Media'
+        'Media', 
+        'Review'
     ]
 }
 
 // All of the State related to an event needs to live here
 const SafetyEventForm = props => {
-	const classes = useStyles();
-    const [activeStep, setActiveStep] = useState(0);
+    const classes = useStyles();
+    
+    const [activeStep, setActiveStep] = useState(props.match.params.stepNo - 1 || 0);
     const [completed, setCompleted] = useState(new Set());
     const steps = getSteps();
 
-    const { showSafetyEventForm, handleShowSafetyEventForm, existingEventDetail, currentUser, lookupData, isNew, newEventType, errors, removeError  } = props
-
-    //for this parsing to work, the event type must come in as string-string (safety-incident, safety-observation etc)
-    const parsedEventType = newEventType 
-                            ? newEventType
-                                .split('-')
-                                .map(word => word[0].toUpperCase() + word.substring(1))
-                                .join(' ')
-                            : existingEventDetail.eventType
-
-    const [timestampUtc, setTimestampUtc] = useState( new Date().toISOString() )
-
-    //Event State by section 
-    const [eventId, setEventId] = useState( !isNew ? { eventId: existingEventDetail.eventId } : null )
-    const [reportingInformation, setReportingInformation] = useState({
-                                                              //currentUser from redux (mapStateToProps)
-        reportedBy: !isNew ? lookupData.employees.filter(e => e.employeeId === existingEventDetail.reportedBy)[0].fullName 
-                           : lookupData.employees.filter(e => e.employeeId === currentUser.user.userId)[0].fullName,
-        reportedOn: !isNew ? existingEventDetail.reportedOn : timestampUtc,
-        createdBy: isNew ? currentUser.user.userId : null,
-        modifiedBy: currentUser.user.userId,
-        eventStatus: !isNew ? existingEventDetail.eventStatus : 'Draft'
-    });
-    const [hierarchySelections, setHierarchySelections] = useState({
-        departmentId: !isNew ? existingEventDetail.departmentId : currentUser.user.logicalHierarchyId,
-        localeId:     !isNew ? existingEventDetail.localeId : currentUser.user.physicalHierarchyId,
-    });
-    const [eventDetails, setEventDetails] = useState({
-        eventType:              !isNew ? existingEventDetail.eventType : parsedEventType,
-        eventDate:              !isNew ? existingEventDetail.eventDate : timestampUtc,
-        hoursWorkedPrior:       !isNew ? existingEventDetail.hoursWorkedPrior : .5,
-        ...existingEventDetail,  
-    });
-
-    const [actions, setActions] = useState(existingEventDetail ? existingEventDetail.actions : null);
-
+    const { currentUser, lookupData, errors, removeError  } = props
+    
     // Essentially what was componentDidMount and componentDidUpdate before Hooks
 	useEffect(() => {
-        //if we're not dealing with a new form/event, refresh the lookup data based on what the current values are.
-        //the lookup data coming into the form is inlcusive of everything within the hierarchy from the parent form
-        if(!isNew) {
-            handleRefreshData(); 
-        }
 
+        fetchData(); 
+    
 		return () => {
 			console.log('Cleanup function (ComponentDidUnmount)')
 		}
-	}, []); //this 2nd arg is important, it tells what to look for changes in, and will re-run the hook when this changes 
+	}, [lookupData.employees]); //this 2nd arg is important, it tells what to look for changes in, and will re-run the hook when this changes 
     
-    // Handle field change 
-    const handleChange = (section, input) => e => {
-        switch (section) {
-            case 'eventLocation':
-                break; 
-            case 'eventDetails':
-                //if its a bool/checkbox, we need to use the checked property as opposed to value property
-                return setEventDetails({ ...eventDetails, [input]: e.target.checked ? e.target.checked : e.target.value });
-            case 'actions':
-                //if its a bool/checkbox, we need to use the checked property as opposed to value property 
-                // return setNewAction({ ...newAction, [input]: e.target.checked ? new Date().toISOString() : e.target.value });
-            default:
-                addError('Invalid section');
+    
+    const [event, setEvent] = useState({})
+
+	const fetchData = async () => {
+        //if existing event, get event detail from api
+        if(props.match.params.eventId) setEvent(await props.fetchEvent(props.match.params.eventId)) 
+                        
+        const timestamp = new Date().toISOString(); 
+        //if this is a new event form, and the lookup data has been loaded, set the initial values for the evnt 
+        if(props.match.path.includes('/events/si/new') && lookupData.employees){
+            setEvent({
+                eventType: 'Safety Incident', 
+                reportedBy: lookupData.employees.filter(e => e.employeeId === currentUser.user.userId)[0].fullName, 
+                reportedOn: timestamp, 
+                createdBy:  currentUser.user.userId, 
+                eventStatus: 'Draft',   
+                departmentId: currentUser.user.logicalHierarchyId, 
+                localeId: currentUser.user.physicalHierarchyId,
+                eventDate: timestamp, 
+                hoursWorkedPrior: .5, 
+
+                //defaulting an empty array for actions, people, and causes 
+                actions: [], 
+                peopleInvolved: [], 
+                causes: []
+            })
         }
+        
+        //fetch lookupData IF it doesnt already exist in redux
+		if(!lookupData.employees) props.fetchEmployees();
+		if(!lookupData.logicalHierarchies ) props.fetchLogicalHierarchyTree(4001);
+		if(!lookupData.physicalHierarchies) props.fetchPhysicalHierarchyTree(4000);
+		if(!lookupData.logicalHierarchyAttributes) props.fetchLogicalHierarchyAttributes(event.departmentId || props.currentUser.user.logicalHierarchyId, 'singlepath', '?enabled=true');
+        if(!lookupData.physicalHierarchyAttributes) props.fetchPhysicalHierarchyAttributes(event.localeId || props.currentUser.user.physicalHierarchyId, 'singlepath', '?enabled=true&excludeglobal=true');
+            
     }
-    //for the react-select (single) component
-    // const handleAutoCompleteChange = (data, action) => e => {
-    const handleAutoCompleteChange = (state, action)  => {
-        switch (action.name){
-            case 'departmentId':
-            case 'localeId':
-                return setHierarchySelections({ ...hierarchySelections, [action.name]: state.value });
-            case 'employeeId':
-            case 'supervisorId':
-            case 'shift':
-            case 'jobTitle':
-            case 'natureOfInjury':
-            case 'bodyPart':
-            case 'firstAidType':
-            case 'offPlantMedicalFacility':
-            case 'materialInvolved':
-            case 'equipmentInvolved':
-            case 'workEnvironment':
-            case 'initialCategory':
-            case 'resultingCategory':
-                return setEventDetails({ ...eventDetails, [action.name]: state.value });
-            case 'assignedTo':
-            case 'actionType':
-            case 'dueDate':
-            case 'completed':
-            case 'approved':
-            case 'actionToTake':
-                // console.log([action.name], state.value)
-                // return setNewAction({ ...newAction, [action.name]: state.value });
-            default:
-                console.log('Invalid Action: ' + action.name)
-                addError("Invalid Action:", action.name)
-                return
-        }
+    
+    //function to check if all data has been loaded/returned from the API. only then can the user navigate around the form 
+    const dataIsLoading = () =>  {
+        return Object.keys(lookupData).length < 5 ? true : false
     }
 
-    //for the react-select (multi) component
-    const handleAutoCompleteMultiChange = (data, action) => e => {
-        console.log(data, Actions, e) ; 
-        // handleAutoCompleteChange={(data, action) => dispatch({ type: action.name, value: data })}
+    // const [actions, setActions] = useState(event ? event.actions : null);
+
+    // Handle field change 
+    const handleChange = (section, input) => e => {
+        setEvent({ ...event, [input]: e.target.checked ? e.target.checked : e.target.value})
+    }
+
+    //for the react-select (single) component
+    const handleAutoCompleteChange = (state, action)  => {
+        setEvent({ ...event, [action.name]: state.value });
     }
 
     const handleSliderChange = (e, value) => {
-        // console.log(e, value)
-        return setEventDetails({ ...eventDetails, ['hoursWorkedPrior']: value })
+        setEvent({ ...event, ['hoursWorkedPrior']: value })
     }
 
     const handleRefreshData = () => {
-        props.fetchLogicalHierarchyAttributes(hierarchySelections.departmentId, 'singlepath', '?enabled=true');
-        props.fetchPhysicalHierarchyAttributes(hierarchySelections.localeId, 'singlepath', '?enabled=true&excludeglobal=true');
+        props.fetchLogicalHierarchyAttributes(event.departmentId, 'singlepath', '?enabled=true');
+        props.fetchPhysicalHierarchyAttributes(event.localeId, 'singlepath', '?enabled=true&excludeglobal=true');
+
     }
 
     //Code copied from material-ui for the stepping functionality   
@@ -293,13 +265,14 @@ const SafetyEventForm = props => {
                 return <ReportingInformation 
                             useStyles={useStyles} 
                             currentUser={currentUser}
-                            values={reportingInformation}
+                            event={event}
                         />
             case 1: 
                 return <EventLocation 
                             useStyles={useStyles} 
                             lookupData={lookupData} 
-                            values={hierarchySelections}
+                            currentUser={currentUser}
+                            event={event}
                             handleAutoCompleteChange={handleAutoCompleteChange}
                             handleRefreshData={handleRefreshData}
                         />        
@@ -307,189 +280,246 @@ const SafetyEventForm = props => {
                 return <SIEventDetails 
                             useStyles={useStyles} 
                             lookupData={lookupData} 
-                            values={eventDetails}
+                            event={event}
                             currentUser={currentUser}
                             handleChange={handleChange}
                             handleAutoCompleteChange={handleAutoCompleteChange}
                             handleSliderChange={handleSliderChange}
-                            handleSave={reportingInformation.eventStatus === "Draft" ? handleSaveDraft : handleSubmit}
+                            // handleSave={event.eventStatus === "Draft" ? handleSaveDraft : handleSubmit}
                         />             
             case 3: 
                 return <Actions  
                             useStyles={useStyles} 
-                            event={eventId ? Object.assign(eventId, reportingInformation, hierarchySelections ,eventDetails) : null}
+                            event={event}
                         />        
             case 4: 
                 return <PeopleInvolved 
                             useStyles={useStyles} 
-                            event={eventId ? Object.assign(eventId, reportingInformation, hierarchySelections ,eventDetails) : null}
+                            event={event}
+                            refreshPeopleInvolved={refreshPeopleInvolved}
                         />     
             case 5: 
                 return <Causes  
                             useStyles={useStyles} 
-                            event={eventId ? Object.assign(eventId, reportingInformation, hierarchySelections ,eventDetails) : null}
+                            event={event}
+                            refreshCauses={refreshCauses}
                         />     
             case 6: 
                 return <Media  
                             useStyles={useStyles} 
                             lookupData={lookupData} 
+                            event={event}
+                        />     
+            case 7: 
+                return <Review 
+                            useStyles={useStyles}
+                            lookupData={lookupData} 
+                            event={event}
                         />     
             default:
                 addError('Unkown Step'); 
                 return 'Unknown Step';
         }
     }
+
+    const refreshPeopleInvolved = () => {
+        props.fetchPeopleByEventId(event.eventId)
+            .then(people => {
+                //update the peopleInvolved property since its changed 
+                console.log(people)
+                setEvent({ ...event, peopleInvolved: people});
+            })
+            .catch(err => {
+                console.log(err)
+            });
+    };
+
+    const refreshCauses = () => {
+        props.fetchCausesByEventId(event.eventId)
+            .then(causes => {
+                //update the cause list since its changed 
+                console.log(causes)
+                setEvent({ ...event, causes: causes});
+            })
+            .catch(err => {
+                console.log(err); 
+            });
+    };
     
     const handleSaveDraft = e => {
         e.preventDefault();
-
-        const draft = Object.assign(reportingInformation, hierarchySelections ,eventDetails);
-                    
-        if(!eventId) {
-            props.postNewSafetyIncident(draft)
+        console.log(event.hasOwnProperty('eventId'))
+        //if this event doesnt have an Id, it means its new and we need to post a new event 
+        if(!event.hasOwnProperty('eventId')) {
+            props.postNewSafetyIncident(event)
                 .then(res => {
-                    setEventId({eventId: res.eventId});
-                    // setReportingInformation(res);
-                    // setHierarchySelections(res); 
-                    // setEventDetails(res);
-                    // setImmediateAction(res);
+                    setEvent({ ...res, supervisorId: event.supervisorId}); 
                     handleComplete();
-                });                        
-            
+                });        
         } else {
-
+            //update event 
         }
-
     }
 
     const handleSubmit = e => {
         e.preventDefault();
     }
+
+    console.log(event) 
 	return (
 		<div className={classes.root}>
             {errors && errors.message && (							
 				<Notification
-				open={true} 
-				variant="error"
-				className={classes.margin}
-				message={errors.message}	
-				removeError={removeError}							
+                    open={true} 
+                    variant="error"
+                    className={classes.margin}
+                    message={errors.message}	
+                    removeError={removeError}							
 				/>		
             )}
-			<Dialog 
-				open={showSafetyEventForm} 
-				onClose={handleShowSafetyEventForm} 
-				aria-labelledby="form-dialog-title"
-				fullWidth={true}
-				maxWidth="lg"
-			>
-                <DialogTitle id="form-dialog-title">
-                    { eventId ? `${eventDetails.eventType} - ${eventId.eventId} - ${reportingInformation.eventStatus}` : `Event Form - New ${parsedEventType}` } 
-                </DialogTitle>
-				<DialogContent>		
-					<form className={classes.form} onSubmit={handleSubmit}>                        
-                        <Stepper alternativeLabel nonLinear activeStep={activeStep}>
-                            {steps.map((label, index) => {
-                                const stepProps = {};
-                                const buttonProps = {};
-                                return (
-                                    <Step key={label} {...stepProps}>
-                                    <StepButton
-                                        onClick={handleStep(index)}
-                                        completed={isStepComplete(index)}
-                                        {...buttonProps}
-                                    >
-                                        {label}
-                                    </StepButton>
-                                    </Step>
-                                );
-                            })}
-                        </Stepper>
-
-                        <Fragment>
-                            {allStepsCompleted() ? (
-                            <div>
-                                <Typography className={classes.instructions}>
-                                All steps completed - you&apos;re finished
-                                </Typography>
-                                {/* <Button onClick={handleReset}>Reset</Button> */}
-                                {/* <Button >Save Draft</Button> */}
-                                <Button color="primary" type="submit">Submit</Button>
-                            </div>
-                            ) : (
-                                <div className={classes.sectionBody}>
-                                    <div>
-                                        <Typography className={classes.instructions}>
-                                            { 
-                                                getStepContent(activeStep)
-                                            }
-                                        </Typography>
-                                    </div>
-                                    <div>
-                                        <Button disabled={activeStep === 0} onClick={handleBack} className={classes.button}>
-                                            Back
-                                        </Button>
-                                        <Button
-                                            variant="contained"
-                                            color="primary"
-                                            onClick={handleNext}
-                                            className={classes.button}
+            { (event && Object.keys(event).length) || (props.match.path.includes('/si/new'))  ?             
+                <Dialog 
+                    open={true} 
+                    aria-labelledby="form-dialog-title"
+                    fullWidth={true}
+                    maxWidth="lg"
+                >
+                    <DialogTitle id="form-dialog-title" >                       
+                        <div className={classes.dialogTitle} >
+                            { event.eventStatus ? `${event.eventType} - ${event.eventId || ' New '} - ${event.eventStatus}` : 'Loading Data...'} 
+                        
+                            <Link to='/dashboard'>
+                                <Icon color="secondary" fontSize="large">
+                                    cancel_circle
+                                </Icon>
+                            </Link>
+                        </div>
+                    </DialogTitle>
+                    <DialogContent>		
+                        <form className={classes.form} onSubmit={handleSubmit}>                        
+                            <Stepper alternativeLabel nonLinear activeStep={activeStep}>
+                                {steps.map((label, index) => {
+                                    const stepProps = {};
+                                    const buttonProps = {};
+                                    return (
+                                        <Step key={label} {...stepProps}>
+                                        <StepButton
+                                            onClick={handleStep(index)}
+                                            completed={isStepComplete(index)}
+                                            disabled={dataIsLoading()}
+                                            {...buttonProps}
                                         >
-                                            Next
-                                        </Button>
+                                            {label}
+                                        </StepButton>
+                                        </Step>
+                                    );
+                                })}
+                            </Stepper>
 
-                                        {activeStep !== steps.length &&
-                                            (completed.has(activeStep) ? (
-                                            <Typography variant="caption" className={classes.completed}>
-                                                Step {activeStep + 1} already completed
-                                            </Typography>
-                                            ) : (
-                                            <Button variant="contained" color="primary" onClick={handleComplete}>
-                                                {completedSteps() === totalSteps() - 1 ? 'Finish' : 'Complete Step'}
-                                            </Button>
-                                            ))}
-                                        
-                                        {activeStep > 1 && 
-                                            reportingInformation.eventStatus === 'Draft' ? (
-                                                <Button
-                                                    variant="contained"
-                                                    color="primary"
-                                                    onClick={handleSaveDraft}
-                                                    className={classes.button}
-                                                >
-                                                    Save Draft
-                                                </Button>
-                                            )
-                                            : null
-                                        }
-                                    </div>
+                            <Fragment>
+                                {allStepsCompleted() ? (
+                                <div>
+                                    <Typography className={classes.instructions}>
+                                    All steps completed - you&apos;re finished
+                                    </Typography>
+                                    {/* <Button onClick={handleReset}>Reset</Button> */}
+                                    {/* <Button >Save Draft</Button> */}
+                                    <Button color="primary" type="submit">Submit</Button>
                                 </div>
-                            )}
-                        </Fragment>
-					</form>				
-				</DialogContent>
-				<DialogActions>
-					{/* <Button onClick={close} color="primary">
-						Search!
-					</Button> */}
-				</DialogActions>
-			</Dialog>
+                                ) : (
+                                    <div className={classes.sectionBody}>
+                                        <div>
+                                            <Typography className={classes.instructions}>
+                                                { 
+                                                    getStepContent(activeStep)
+                                                }
+                                            </Typography>
+                                        </div>
+                                        <div>
+                                            <Button 
+                                                disabled={activeStep === 0 || dataIsLoading()} 
+                                                onClick={handleBack} 
+                                                className={classes.button}
+                                            >
+                                                Back
+                                            </Button>
+                                            {/* <Button
+                                                variant="contained"
+                                                color="primary"
+                                                onClick={handleNext}
+                                                className={classes.button}
+                                                disabled={dataIsLoading()}
+                                            >
+                                                Next
+                                            </Button> */}
+
+                                            {activeStep !== steps.length &&
+                                                (completed.has(activeStep) ? (
+                                                <Typography variant="caption" className={classes.completed}>
+                                                    Step {activeStep + 1} already completed
+                                                </Typography>
+                                                ) : (
+                                                <Button 
+                                                    variant="contained" 
+                                                    color="primary"
+                                                    onClick={handleComplete}
+                                                    disabled={dataIsLoading()}
+                                                >
+                                                    {completedSteps() === totalSteps() - 1 ? 'Finish' : 'Complete Step'}
+                                                </Button>
+                                            ))}
+                                            
+                                            {activeStep > 1 && 
+                                                event.eventStatus === 'Draft' ? (
+                                                    <Button
+                                                        variant="contained"
+                                                        color="primary"
+                                                        onClick={handleSaveDraft}
+                                                        className={classes.button}
+                                                    >
+                                                        Save Draft
+                                                    </Button>
+                                                )
+                                                : null
+                                            }                                            
+                                                
+                                            <Typography variant='h6'>
+                                                    { dataIsLoading() ? 'Background Data Still Loading...' : '' }
+                                            </Typography>
+                                        </div>
+                                    </div>
+                                )}
+                            </Fragment>
+                        </form>				
+                    </DialogContent>
+                    <DialogActions>
+                        {/* <Button onClick={close} color="primary">
+                            Search!
+                        </Button> */}
+                    </DialogActions>
+                </Dialog>
+            
+            : null}
 		</div>
 	);
 }
 
 function mapStateToProps(state) {
-	// console.log(state)
 	return {
 			lookupData: state.lookupData,
-			currentUser: state.currentUser,
+            currentUser: state.currentUser,
+            event: state.event, 
 	};
 }
 
 export default connect(mapStateToProps, { 
+    fetchEmployees,
     fetchLogicalHierarchyTree, 
     fetchPhysicalHierarchyTree, 
     fetchLogicalHierarchyAttributes, 
     fetchPhysicalHierarchyAttributes,
     postNewSafetyIncident,
+    fetchEvent,
+    fetchPeopleByEventId,
+    fetchCausesByEventId
 })(SafetyEventForm); 

@@ -215,7 +215,6 @@ namespace EHS.Server.DataAccess.Repository
                         ActionsToAdd[i].ActionType,
                         ActionsToAdd[i].DueDate,
                         ActionsToAdd[i].CompletionDate,
-                        //ActionToAdd.ApprovalDate,
                         userId = ActionsToAdd[i].CreatedBy
                     },
                     commandType: CommandType.StoredProcedure

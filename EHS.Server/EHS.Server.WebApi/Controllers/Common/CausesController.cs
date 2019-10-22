@@ -16,22 +16,22 @@ namespace EHS.Server.WebApi.Controllers.Common
     [Produces("application/json")]
     [Route("api/v{version:apiVersion}/[controller]")]
     [ApiController]
-    public class PeopleInvolvedController : ControllerBase
+    public class CausesController : ControllerBase
     {
-        private readonly ILogger<PeopleInvolvedController> _logger;
-        private readonly IPeopleInvolvedRepository _peopleInvolvedRepo;
+        private readonly ILogger<CausesController> _logger;
+        private readonly ICausesRepository _causesRepository;
         private readonly IMapper _mapper;
 
-        public PeopleInvolvedController(ILogger<PeopleInvolvedController> logger, IMapper mapper, IPeopleInvolvedRepository peopleInvolvedRepo)
+        public CausesController(ILogger<CausesController> logger, IMapper mapper, ICausesRepository causesRepository)
         {
             _logger = logger;
-            _peopleInvolvedRepo = peopleInvolvedRepo;
+            _causesRepository = causesRepository;
             _mapper = mapper;
         }
 
-        // POST: api/peopleinvolved
+        // POST: api/causes
         [HttpPost]
-        public async Task<ActionResult<PeopleInvolved>> Post([FromBody]List<PeopleInvolved> peopleInvolved, [FromQuery]string userId)
+        public async Task<ActionResult<Cause>> Post([FromBody]List<Cause> causes, [FromQuery]string userId)
         {
             try
             {
@@ -41,9 +41,9 @@ namespace EHS.Server.WebApi.Controllers.Common
                     return BadRequest();
                 }
 
-                var addedActions = await _peopleInvolvedRepo.SavePeopleInvolvedAsync(peopleInvolved, userId); 
+                var addedActions = await _causesRepository.SaveCausesAsync(causes, userId); 
 
-                return CreatedAtAction("Post", "PeopleInvolved");
+                return CreatedAtAction("Post", "Causes");
             }
             catch (Exception ex)
             {
@@ -52,22 +52,22 @@ namespace EHS.Server.WebApi.Controllers.Common
             }
         }
 
-        [HttpGet("{eventId}", Name = "GetEventPeople")]
-        public async Task<ActionResult<List<PeopleInvolved>>> GetByEventId([FromRoute]int eventId)
+        [HttpGet("{eventId}", Name = "GetEventCauses")]
+        public async Task<ActionResult<List<Cause>>> GetByEventId([FromRoute]int eventId)
         {
             try
             {
                 //get the action 
-                var peopleInvolved = await _peopleInvolvedRepo.GetPeopleByEventIdAsync(eventId); 
+                var causes = await _causesRepository.GetCausesByEventIdAsync(eventId); 
 
-                if (peopleInvolved == null)
+                if (causes == null)
                 {
-                    _logger.LogError("People for event {0} not found. {1}", eventId, NotFound().ToString());
+                    _logger.LogError("Causes for event {0} not found. {1}", eventId, NotFound().ToString());
                     return NotFound();
                 }
 
                 //map the action from the domain/database model object, to data transfer object to pass back to the client 
-                return Ok(peopleInvolved.Select(_mapper.Map<PeopleInvolved, PeopleInvolvedDto>).ToList());
+                return Ok(causes.Select(_mapper.Map<Cause, CauseDto>).ToList());
             }
             catch (Exception ex)
             {

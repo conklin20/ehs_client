@@ -101,6 +101,7 @@ namespace EHS.Server.DataAccess.DatabaseModels
 
         public ICollection<Action> Actions { get; set; }
         public ICollection<PeopleInvolved> PeopleInvolved { get; set; }
+        public ICollection<Cause> Causes { get; set; }
     }
 
 

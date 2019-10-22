@@ -6,6 +6,7 @@ namespace EHS.Server.DataAccess.Repository
 {
     public interface IPeopleInvolvedRepository
     {
-        Task<int> SavePeopleInvolved(List<PeopleInvolved> peopleInvolved, string userId);
+        Task<int> SavePeopleInvolvedAsync(List<PeopleInvolved> peopleInvolved, string userId);
+        Task<List<PeopleInvolved>> GetPeopleByEventIdAsync(int eventId);
     }
 }

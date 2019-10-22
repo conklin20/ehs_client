@@ -1,16 +1,12 @@
 import React, { useState, useEffect, useReducer, Fragment } from 'react'; 
 import { connect } from "react-redux";
-import { fetchSafteyIncidents } from '../../store/actions/safetyIncidents';
+import { fetchSafetyIncidents } from '../../store/actions/safetyIncidents';
 import { 
 	fetchLogicalHierarchyTree, 
 	fetchPhysicalHierarchyTree, 
 	fetchLogicalHierarchyAttributes, 
 	fetchPhysicalHierarchyAttributes, 
 	fetchEmployees } from '../../store/actions/lookupData'; 
-// import { fetchFullTree } from '../../store/actions/lookupData'; 
-// import { fetchSinglePath } from '../../store/actions/lookupData'; 
-// import { fetchLogicalHierarchyTree } from '../../store/actions'; 
-// import { fetchPhysicalHierarchyTree } from '../../store/actions'; 
 import { addError } from '../../store/actions/errors';
 import { makeStyles } from '@material-ui/core/styles';
 import { Paper, Grid, Hidden, Typography } from '@material-ui/core';
@@ -31,10 +27,14 @@ const useStyles = makeStyles(theme => ({
 		height: '94vh',
 		margin: '0', 
 		padding: '0',
+		
 	},
 	icon: {
 		margin: theme.spacing(0),
 		fontSize: 20,
+	},
+	loading: {
+		marginTop: theme.spacing(20), 
 	},
 }));
 
@@ -92,20 +92,24 @@ const Dashboard = props => {
 	
  	// Essentially what was componentDidMount and componentDidUpdate before Hooks
 	useEffect(() => {
-		// console.log('fetchSafteyIncidents called')
-		props.fetchSafteyIncidents(parseSearchFilters(searchFilters)); 	 	
 
-		//fetch lookup data, defaulting to everything (1000), will get narrowed down by the users selctions in various  pages 
-		props.fetchLogicalHierarchyTree(4001); //need to remove the hardcoded value for Lewiston eventually
-		props.fetchPhysicalHierarchyTree(4000);
-		props.fetchLogicalHierarchyAttributes(1000, 'fulltree', '?enabled=true');
-		props.fetchPhysicalHierarchyAttributes(1000, 'fulltree', '?enabled=true&excludeglobal=true');
-		props.fetchEmployees(); 
+		fetchData(); 
 
 		return () => {
 			console.log('Cleanup function (ComponentDidUnmount)')
 		}
 	}, [props.searchFilters]); //this 2nd arg is important, it tells what to look for changes in, and will re-run the hook when this changes 
+
+	const fetchData = async () => {
+		
+		if(!props.safetyIncidents.length) await props.fetchSafetyIncidents(parseSearchFilters(searchFilters)) ; 
+		
+		if(!props.lookupData.employees) await props.fetchEmployees();
+		if(!props.lookupData.logicalHierarchies ) await props.fetchLogicalHierarchyTree(4001);
+		if(!props.lookupData.physicalHierarchies) await props.fetchPhysicalHierarchyTree(4000);
+		if(!props.lookupData.logicalHierarchyAttributes) await props.fetchLogicalHierarchyAttributes(1000, 'fulltree', '?enabled=true');
+		if(!props.lookupData.physicalHierarchyAttributes) await  props.fetchPhysicalHierarchyAttributes(1000, 'fulltree', '?enabled=true&excludeglobal=true');
+	}
 
 	//handler for the search textbox
 	const handleSearchTextChange = e => {
@@ -128,7 +132,7 @@ const Dashboard = props => {
 	const handleSearch = e => {
 		// e.preventDefault(); 
 		props.fetchSafteyIncidents(parseSearchFilters(searchFilters));
-		console.log(parseSearchFilters(searchFilters));
+		// console.log(parseSearchFilters(searchFilters));
 		setShowSearchFilters(false); 
 	}
 
@@ -152,11 +156,12 @@ const Dashboard = props => {
 	}
 
 	const { errors, removeError } = props; 
+	console.log(props)
 
 	return (
 		<Fragment>
 			{/* display error if any are encountered  */}
-			{errors.message && (							
+			{errors ? errors.message && (							
 				<Notification
 					open={true} 
 					variant="error"
@@ -164,7 +169,7 @@ const Dashboard = props => {
 					message={errors.message}	
 					removeError={removeError}							
 				/>		
-				)}
+				) : null}
 				<Paper className={[classes.paper]}
 						square={true}
 						>                 
@@ -181,11 +186,18 @@ const Dashboard = props => {
 						lookupData={props.lookupData}
 						/>
 
-					<EventList 
-						currentUser={props.currentUser} 
-						safetyIncidents={filterSafetyIncidents()}
-						dense={dense}
-						/>
+					{ props.safetyIncidents.length				
+						? 	<EventList 
+								currentUser={props.currentUser} 
+								safetyIncidents={filterSafetyIncidents()}
+								dense={dense}
+							/>
+						: 	<div className={classes.loading}>
+								<Typography variant='h2' >
+									Loading Events...
+								</Typography>
+							</div>
+					}
 				</Paper>
 		</Fragment>
 	)     
@@ -197,12 +209,11 @@ function mapStateToProps(state) {
 		safetyIncidents: state.safetyIncidents, 
 		lookupData: state.lookupData,
 		currentUser: state.currentUser,
-		// isLoading: state.isLoading,
 	};
 }
 
 export default connect(mapStateToProps, { 
-	fetchSafteyIncidents,
+	fetchSafetyIncidents,
 	fetchLogicalHierarchyAttributes, 
 	fetchPhysicalHierarchyAttributes, 
 	fetchLogicalHierarchyTree, 

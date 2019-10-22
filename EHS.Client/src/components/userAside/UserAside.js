@@ -3,9 +3,19 @@ import { connect } from "react-redux";
 import { Hidden, Typography } from '@material-ui/core';
 import MyDrafts from './MyDrafts';
 import { fetchDrafts } from '../../store/actions/safetyIncidents';
+import { makeStyles } from '@material-ui/core/styles';
+
+
+const useStyles = makeStyles(theme => ({
+    userAside: {
+        flex: 1, 
+        // backgroundColor: theme.palette.secondary.main,
+        padding: theme.spacing(2),
+    }
+})); 
 
 const UserAside = props => {
-    const classes = props.classes;
+    const classes = useStyles(); 
     
     const [myDrafts, setMyDrafts] = useState([]);
 
@@ -23,8 +33,8 @@ const UserAside = props => {
 	}, []); //this 2nd arg is important, it tells what to look for changes in, and will re-run the hook when this changes 
 
     return (     
-        <Hidden smDown>
-            <div className={classes.rightAside}>
+        <Hidden mdDown>
+            <div className={classes.userAside}>
                 <Typography variant="h4" gutterBottom>User Aside</Typography>  
                 <Typography>
                     List of...

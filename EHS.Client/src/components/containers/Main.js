@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react'; 
+import React, { useEffect } from 'react'; 
 import { Switch, Route, withRouter, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import AppBar from './AppBar';
@@ -40,9 +40,9 @@ const useStyles = makeStyles(theme => ({
 })); 
 
 const Main = props => {    
-	const classes = useStyles();
+    const classes = useStyles();
 
-    const { authUser, logout, errors, removeError, currentUser } = props;
+    const { authUser, logout, errors, removeError, currentUser, lookupData } = props;
     return(
         <div className=''>
             <Switch>
@@ -104,10 +104,11 @@ const Main = props => {
                             </div>
                         )
                 }} />
+                
                 <Route 
                     exact
-                    path='/events/new/:type'
-                    render={({match}) => {
+                    path='/events/:id'
+                    render={({match}, props) => {
                         return (
                             <div>
                                 <AppBar 
@@ -120,12 +121,46 @@ const Main = props => {
                                     />
                                     <div className={classes.main}>
                                         <SafetyEventForm 
-                                            currentUser={currentUser}
                                             showSafetyEventForm={true}
-                                            isNew={true}
+                                            eventId={match.params.id}
+                                            errors={errors}
+                                            removeError={removeError}
+                                            {... props}
+                                        />
+                                    </div>
+                                    <UserAside 
+                                        classes={classes} 
+                                    />
+                                        
+                                </div>
+                            </div>
+                        )
+                    }
+                    }
+                />
+
+                <Route 
+                    exact
+                    path='/events/:type/new'
+                    render={({match}, props) => {
+                        return (
+                            <div>
+                                <AppBar 
+                                    currentUser={currentUser} 
+                                    onLogout={logout}
+                                />
+                                <div className={classes.body}>
+                                    <ReportAside 
+                                        classes={classes} 
+                                    />
+                                    <div className={classes.main}>
+                                        <SafetyEventForm 
+                                            showSafetyEventForm={true}
+                                            eventId={null}
                                             newEventType={match.params.type}
                                             errors={errors}
-                                            removeError={removeError}    
+                                            removeError={removeError}   
+                                            {... props} 
                                         />
                                     </div>
                                     <UserAside 
@@ -144,12 +179,19 @@ const Main = props => {
 }
 
 function mapStateToProps(state){
+    console.log(state); 
     return {
+        lookupData: state.lookupData,
         currentUser: state.currentUser,
-        errors: state.errors
+        errors: state.errors, 
     }
 }
 
 export default withRouter(
-    connect(mapStateToProps, { authUser, logout, removeError })(Main)
+    connect(mapStateToProps, 
+        { 
+            authUser,
+            logout,
+            removeError,
+        })(Main)
 ); 

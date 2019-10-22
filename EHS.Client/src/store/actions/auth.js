@@ -51,6 +51,7 @@ export function logout(){
 
 //"type" will be used for differentiating between login/signup when we get to the signup part
 export function authUser(type, userData) {
+  console.log('logging user in...')
   return dispatch => {
     // wrap our thunk in a promise so we can wait for the API call
     return new Promise((resolve, reject) => {

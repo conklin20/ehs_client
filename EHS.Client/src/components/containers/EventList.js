@@ -2,11 +2,10 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import { lighten, makeStyles } from '@material-ui/core/styles';
-import { Table, TableBody, TableCell, TableHead, TablePagination, TableRow, TableSortLabel, Typography, Paper, Box } from '@material-ui/core';
+import { Table, TableBody, TableCell, TableHead, TablePagination, TableRow, TableSortLabel, Paper } from '@material-ui/core';
 import Moment from 'react-moment'; 
-// import EventItem from '../function/EventItem'; 
 import SearchBar from '../function/SearchBar';
-import SafetyEventForm from '../function/SafetyEventForm'; 
+import { Link } from 'react-router-dom'; 
 
 
 function desc(a, b, orderBy) {
@@ -34,7 +33,7 @@ function getSorting(order, orderBy) {
 }
 
 const headerRows = [
-  { id: 'eventId', numeric: true, disablePadding: false, label: 'Id' ,  },
+  { id: 'eventId', numeric: true, disablePadding: false, label: 'Id' , render: ({ row }) => (<Link to={{ pathname: `/events/si/${row.id}`}}>{row.name}</Link>) },
   // { id: 'type', numeric: true, disablePadding: false, label: 'Event Type' }, (Safety, Env, Obs etc)
   { id: 'status', numeric: false, disablePadding: false, label: 'Status' ,  },
   { id: 'dateOccurred', numeric: false, disablePadding: false, label: 'Date' ,  },
@@ -88,13 +87,18 @@ EnhancedTableHead.propTypes = {
 };
 
 const useStyles = makeStyles(theme => ({
-  paper: {
-		width: '100%',
-    marginBottom: theme.spacing(2),
-  },
-  tableWrapper: {
-		overflowX: 'auto',
-  },
+    paper: {
+        width: '100%',
+        marginBottom: theme.spacing(2),
+    },
+    tableWrapper: {
+        overflowX: 'auto',
+    },
+    link: {
+        textDecoration: 'none', 
+        // textAlign: 'left',
+        // position: 'absolute',
+    },
 }));
 
 const EventList = props => {
@@ -104,7 +108,6 @@ const EventList = props => {
   const [selected, setSelected] = useState(-1);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [showSafetyEventForm, setShowSafetyEventForm] = useState(false); 
 
   function handleRequestSort(event, property) {
     const isDesc = orderBy === property && order === 'desc';
@@ -114,7 +117,6 @@ const EventList = props => {
 
   function handleClick(event, name) {
     setSelected(name);
-    setShowSafetyEventForm(true); 
   }
 
   function handleChangePage(event, newPage) {
@@ -126,27 +128,12 @@ const EventList = props => {
     setPage(0);
   }
 
-  const handleShowSafetyEventForm = () => {
-    setShowSafetyEventForm(!showSafetyEventForm); 
-  }
-
   const { safetyIncidents, currentUser, dense } = props;
 	
   const emptyRows = rowsPerPage - Math.min(rowsPerPage, safetyIncidents.length - page * rowsPerPage);
 
   return (
-    <div className={classes.root}>
-      {/* show Incident form if one is selected  */}
-      {showSafetyEventForm 
-        ? <SafetyEventForm 
-			      existingEventDetail={safetyIncidents.filter(e => e.eventId === selected)[0]}
-            handleShowSafetyEventForm={handleShowSafetyEventForm}
-            showSafetyEventForm={showSafetyEventForm}
-            currentUser={currentUser}
-            isNew={false}
-          />
-        : null
-      }
+    <div >
       <Paper className={classes.paper}>
           <Table
             className={classes.table}
@@ -168,36 +155,40 @@ const EventList = props => {
 
                   return (
                     <TableRow
-                      hover
-                      onClick={event => handleClick(event, row.eventId)}
-                      // aria-checked={isItemSelected}
-                      tabIndex={-1}
-                      key={row.eventId}
-                      selected={selected}
-                    >
-                      <TableCell component="th" id={labelId} scope="row"  padding="none" align="right">
-                        {row.eventId}
-                      </TableCell>
-                      <TableCell >{row.eventStatus}</TableCell>
-											<TableCell >
-												<Moment format={currentUser.user.dateFormat || 'YYYY/MM/DD'} add={{ hours: currentUser.user.timeZone}}>{row.eventDate}</Moment>	
-											</TableCell>
-											<TableCell >
-												<Moment format="LTS" add={{ hours: currentUser.user.timeZone}}>{row.eventDate}</Moment>	
-											</TableCell>
-                      <TableCell >{
-												row.initialCategory === row.resultingCategory 
-													? row.resultingCategory
-													: `${row.initialCategory}|${row.resultingCategory}`
-											}</TableCell>
-                      <TableCell >{row.employeeId}</TableCell>
-                      <TableCell >{row.jobTitle}</TableCell>
-                      <TableCell >{row.area}</TableCell>
-                      <TableCell >{row.department}</TableCell>
-                      <TableCell >{row.localePlant}</TableCell>
-                      {/* <TableCell >{row.localePlantArea}</TableCell> */}
-                      {/* <TableCell >{row.whatHappened.length > 100 ? row.whatHappened.substring(0, 100).concat('...') : row.whatHappened }</TableCell> */}
-                      <TableCell >{row.actions.filter(a => a.completionDate !== null).length}</TableCell>
+                        hover
+                        // onClick={event => handleClick(event, row.eventId)}
+                        // aria-checked={isItemSelected}
+                        tabIndex={-1}
+                        key={row.eventId}
+                        selected={selected}
+                        >
+                        {/* This link will display the safety event form for the given eventId (See Routes.js) */}
+                        {/* <Link to={`/events/si/${row.eventId}`} className={classes.link} > */}
+
+                            <TableCell component="th" id={labelId} scope="row"  padding="none" align="right">
+                                {row.eventId}
+                            </TableCell>
+                            <TableCell >{row.eventStatus}</TableCell>
+                                                    <TableCell >
+                                                        <Moment format={currentUser.user.dateFormat || 'YYYY/MM/DD'} add={{ hours: currentUser.user.timeZone}}>{row.eventDate}</Moment>	
+                                                    </TableCell>
+                                                    <TableCell >
+                                                        <Moment format="LTS" add={{ hours: currentUser.user.timeZone}}>{row.eventDate}</Moment>	
+                                                    </TableCell>
+                            <TableCell >{
+                                                        row.initialCategory === row.resultingCategory 
+                                                            ? row.resultingCategory
+                                                            : `${row.initialCategory}|${row.resultingCategory}`
+                                                    }</TableCell>
+                            <TableCell >{row.employeeId}</TableCell>
+                            <TableCell >{row.jobTitle}</TableCell>
+                            <TableCell >{row.area}</TableCell>
+                            <TableCell >{row.department}</TableCell>
+                            <TableCell >{row.localePlant}</TableCell>
+                            {/* <TableCell >{row.localePlantArea}</TableCell> */}
+                            {/* <TableCell >{row.whatHappened.length > 100 ? row.whatHappened.substring(0, 100).concat('...') : row.whatHappened }</TableCell> */}
+                            <TableCell >{row.actions.filter(a => a.completionDate !== null).length}</TableCell>
+                        {/* </Link> */}
                     </TableRow>
                   );
                 })}

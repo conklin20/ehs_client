@@ -17,7 +17,7 @@ const useStyles = makeStyles(theme => ({
 const PeopleInvolved = (props) => {
     const classes = useStyles();    
     
-    const { event } = props; 
+    const { event, refreshPeopleInvolved } = props; 
     
     //building each lookup data object
     const employees = filterEmployeeList(props.lookupData['employees'], null, 4001, true, false)
@@ -49,6 +49,7 @@ const PeopleInvolved = (props) => {
         if(peopleInvolved.length){       
             props.savePeopleInvolved(peopleInvolved, props.currentUser.user.userId)
                 .then(res => {
+                    refreshPeopleInvolved(); 
                     return res === 'PeopleInvolved' ?  handleClickOpen() : null
                 })
                 .catch(err => {
@@ -69,7 +70,7 @@ const PeopleInvolved = (props) => {
                     const newPerson = {
                         roleId: action.name, 
                         eventId: event.eventId, 
-                        employeeId: state[state.length-1].value,                
+                        employeeId: action.option.value,                
                     }
                     return setPeopleInvolved( [ ...peopleInvolved, { ...newPerson } ] );                    
                 default:
@@ -78,13 +79,13 @@ const PeopleInvolved = (props) => {
         }
 
         // Handle field change 
-        const handleChange = () => e => {
+        const handleChange = e => {
             peopleInvolved
                 .filter(pi => pi.roleId == e.target.name)
                 .map(p => {
                     p.comments = e.target.value
-                    setPeopleInvolved([ ...peopleInvolved ])
                 })            
+            setPeopleInvolved([ ...peopleInvolved ])
         }
 
         const values = peopleInvolved                                               //currently saved peopleInvolved records
@@ -122,7 +123,7 @@ const PeopleInvolved = (props) => {
                         placeholder={`${section.value} Comments...`}
                         variant='outlined'
                         className={classes.formControl}
-                        onChange={handleChange('comments')}
+                        onChange={handleChange}
                         value={
                             peopleInvolved.filter(pi => pi.roleId === section.hierarchyAttributeId).length 
                                 ? peopleInvolved.find(pi => pi.roleId === section.hierarchyAttributeId).comments 
@@ -168,6 +169,7 @@ const PeopleInvolved = (props) => {
                     variant='contained' 
                     color="secondary" 
                     className={classes.button}
+                    fullWidth
                 >
                     Save
                 </Button>

@@ -3,17 +3,17 @@ import { Typography, Grid,  Divider } from '@material-ui/core';
 import Moment from 'react-moment'; 
 
 
-const ReportingInformation = (props) => {
+const Review = (props) => {
     const classes = props.useStyles();    
-    const { event, currentUser } = props; 
+    const { event } = props; 
     	
     return (
         <Fragment>  
             <Typography variant='h4' gutterBottom>
-                Reporting Information
+                Review Event
             </Typography>
             <Typography className={classes.caption} variant="caption" display="block" gutterBottom>
-                Instructions: No input required, these fields will be defaulted 
+                Instructions: Review all event information for accuracy. If this is a Draft, you can submit it from here. 
             </Typography>       
             <Divider/>    						
             <Grid container spacing={2}>			
@@ -22,23 +22,7 @@ const ReportingInformation = (props) => {
                         <span>Reported By: </span>
                         {event.reportedBy}
                     </Typography>	
-                </Grid>       	
-                <Grid item xs={12}>		
-                    <Typography className={classes.label} variant="body1" gutterBottom>
-                        <span>Date Reported: </span>
-                        <Moment format={currentUser.user.dateFormat || 'MM/DD/YYYY'}>
-                            {event.reportedOn}
-                        </Moment> 
-                    </Typography>	
-                </Grid>       	
-                <Grid item xs={12}>		
-                    <Typography className={classes.label} variant="body1" gutterBottom>   
-                        <span>Time Reported: </span>
-                        <Moment format="LTS" add={{ hours: currentUser.user.timeZone}}>
-                            {event.reportedOn}
-                        </Moment>	
-                    </Typography>	
-                </Grid>      
+                </Grid>    
                 <Grid item xs={12}>		
                     <Typography className={classes.label} variant="body1" gutterBottom>   
                         <span>Event Status: </span>
@@ -50,4 +34,4 @@ const ReportingInformation = (props) => {
     );
 }	
 
-export default ReportingInformation; 
+export default Review; 

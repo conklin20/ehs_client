@@ -90,7 +90,7 @@ const EHSAppBar = (props) => {
 									open={Boolean(reportEventAnchorEl)}
 									onClose={() => setReportEventAnchorEl(null)}
 								>
-									<Link to="/events/new/safety-incident">
+									<Link to="/events/si/new">
 										<Button name='reportSafetyIncident' onClick={handleMenuClick}>Report Safety Incident
 										</Button> 
 									</Link>	
