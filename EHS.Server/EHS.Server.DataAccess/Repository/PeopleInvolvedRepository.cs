@@ -48,7 +48,7 @@ namespace EHS.Server.DataAccess.Repository
             using (IDbConnection sqlCon = Connection)
             {
                 var result = await sqlCon.ExecuteAsync(
-                    "dbo.spPeopleInvolvedAddOrUpdate",
+                    "dbo.spPeopleInvolvedMerge",
                     new
                     {
                         PeopleInvolvedTable = dt, 

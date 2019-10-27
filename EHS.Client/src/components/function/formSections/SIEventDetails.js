@@ -29,7 +29,7 @@ const SIEventDetails = (props) => {
 
     //grabbing the HierarchyAttributeId from the lookup list to be used below to populate the Supervisor field from the PeopleInvolved table
     const supervisorHierarchyAttributeId = filterLookupDataByKey(lookupData, 'logicalHierarchyAttributes', 'Employee Involvement', null, true).find(sup => sup.label === 'Supervisor').value;
-    console.log(event.supervisorId)
+    // console.log(event.supervisorId)
     return (
         // <Fragment>  
         //     { employees && supervisors && shifts && jobTitles && injuryNatures && bodyParts && firstAidTypes && offPlantMedicalFacilities 

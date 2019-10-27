@@ -36,7 +36,7 @@ const Causes = (props) => {
                                         causeId: c.causeId, 
                                         comments: c.comments
                                     }
-    });
+                                });
     
     //find which cause type is associated to each cause
     const currentRootCauses = event.causes
@@ -47,7 +47,7 @@ const Causes = (props) => {
                                         causeId: c.causeId, 
                                         comments: c.comments
                                     }
-    });
+                                });
     
     //find which cause type is associated to each cause
     const currentContributingFactors = event.causes
@@ -58,7 +58,7 @@ const Causes = (props) => {
                                         causeId: c.causeId, 
                                         comments: c.comments
                                     }
-    });
+                                });
     
     const [immediateCauses, setImmediateCauses] = useState(currentImmediateCauses);
     const [rootCauses, setRootCauses] = useState(currentRootCauses);

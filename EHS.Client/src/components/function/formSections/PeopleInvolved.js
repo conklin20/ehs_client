@@ -21,6 +21,7 @@ const PeopleInvolved = (props) => {
     
     //building each lookup data object
     const employees = filterEmployeeList(props.lookupData['employees'], null, 4001, true, false)
+    const supervisors = filterEmployeeList(props.lookupData['employees'], event['supervisorId'], 4001, true, true)
     const involvement = props.lookupData['logicalHierarchyAttributes'].filter(attr => attr.key === 'Employee Involvement');
 
     
@@ -94,7 +95,7 @@ const PeopleInvolved = (props) => {
                             .find(emp => emp.value === person.employeeId))          // extract out the value from the employees array 
         
         // values.map(v => v.selected = true); 
-                            
+        console.log(section)
         return (
             <Paper className={classes.paper}>
                 <Typography variant='h5' gutterBottom>
@@ -104,7 +105,7 @@ const PeopleInvolved = (props) => {
                     <AutoCompleteMulti
                         key={section.hierarchyAttributeId}
                         name={section.hierarchyAttributeId}
-                        options={employees}
+                        options={section.value.includes('Supervisor') ? supervisors : employees}
                         // label="Event Status"
                         placeholder="Type or select names..."
                         handleChange={handleAutoCompleteMultiChange}

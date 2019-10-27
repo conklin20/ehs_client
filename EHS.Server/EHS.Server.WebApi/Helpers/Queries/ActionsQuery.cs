@@ -10,5 +10,9 @@ namespace EHS.Server.WebApi.Helpers.Queries
     {
         [FromQuery(Name = "eventId")]
         public string EventId { get; set; }
+        [FromQuery(Name = "userId")]
+        public string UserId { get; set; }
+        [FromQuery(Name = "eventStatus")]
+        public string EventStatus { get; set; }
     }
 }

@@ -46,7 +46,7 @@ namespace EHS.Server.DataAccess.Repository
             using (IDbConnection sqlCon = Connection)
             {
                 var result = await sqlCon.ExecuteAsync(
-                    "dbo.spEventCauseAddOrUpdate",
+                    "dbo.spEventCauseMerge",
                     new
                     {
                         CausesTable = dt,

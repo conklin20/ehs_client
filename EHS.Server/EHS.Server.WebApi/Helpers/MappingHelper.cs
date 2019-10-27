@@ -24,6 +24,7 @@ namespace EHS.Server.WebApi.Helpers
             CreateMap<Severity, SeverityDto>().ReverseMap();
             CreateMap<User, UserDto>().ReverseMap();
             CreateMap<UserRole, UserRoleDto>().ReverseMap();
+            CreateMap<EventFile, EventFileDto>().ReverseMap(); 
             
             //now map the rest             
             CreateMap<ApprovalRouting, ApprovalRoutingDto>().ReverseMap();

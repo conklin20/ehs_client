@@ -53,5 +53,6 @@ namespace EHS.Server.DataAccess.Dtos
         public ICollection<ActionDto> Actions { get; set; }
         public ICollection<PeopleInvolvedDto> PeopleInvolved { get; set; }
         public ICollection<CauseDto> Causes { get; set; }
+        public ICollection<EventFileDto> Files { get; set; }
     }
 }

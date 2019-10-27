@@ -36,6 +36,7 @@ namespace EHS.Server.WebApi
                 .ConfigureKestrel((context, options) =>
                 {
                     // Set properties and call methods on options
+                    options.Limits.MaxRequestBodySize = 10500000; // ~10mb 
                 });
     }
 }

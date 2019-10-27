@@ -23,8 +23,40 @@ export function apiCall(method, path, data){
     return  new Promise((resolve, reject) => {
         return axios[method](path, data)
             .then(res => {
+                // console.log(res); 
+                return resolve(res)
+            })
+            .catch(err => {
+                console.log(err);
+                return reject({
+                    error: err, 
+                    response: err.response
+                }); 
+                // return reject(err.response.data.message); 
+            });
+    });
+}
+
+export function apiCallWithFiles(method, path, files, data){
+    
+    const formData = new FormData();
+    files.map(f => {
+        formData.append('file', f)
+    })
+    // formData.append('data', data)
+    const config = {
+        headers: {
+            'content-type': 'multipart/form-data'
+        }
+    }
+    
+    path = `/api/v${APIVERSION}${path}?eventId=${data.eventId}&userId=${data.userId}`;
+    
+    return  new Promise((resolve, reject) => {
+        return axios[method](path, formData, config)
+            .then(res => {
                 // console.log(res.data); 
-                return resolve(res.data)
+                return resolve(res)
             })
             .catch(err => {
                 console.log(err);

@@ -24,9 +24,9 @@ const useStyles = makeStyles(theme => ({
 		padding: theme.spacing(2),
 		textAlign: 'center',
 		color: theme.palette.text.secondary,
-		height: '94vh',
-		margin: '0', 
-		padding: '0',
+		minHeight: '94vh',
+		// marginTop: 0, 
+		// padding: '0',
 		
 	},
 	icon: {
@@ -156,8 +156,8 @@ const Dashboard = props => {
 	}
 
 	const { errors, removeError } = props; 
-	console.log(props)
 
+	// console.log(props)
 	return (
 		<Fragment>
 			{/* display error if any are encountered  */}
@@ -186,11 +186,12 @@ const Dashboard = props => {
 						lookupData={props.lookupData}
 						/>
 
-					{ props.safetyIncidents.length				
+					{ props.safetyIncidents.length	 && props.lookupData.employees			
 						? 	<EventList 
 								currentUser={props.currentUser} 
 								safetyIncidents={filterSafetyIncidents()}
 								dense={dense}
+								employees={props.lookupData.employees}
 							/>
 						: 	<div className={classes.loading}>
 								<Typography variant='h2' >

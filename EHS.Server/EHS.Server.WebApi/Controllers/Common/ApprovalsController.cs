@@ -32,12 +32,12 @@ namespace EHS.Server.WebApi.Controllers.Common
 
         // GET: api/Actions
         [HttpGet]
-        public async Task<ActionResult<List<Approval>>> Get()
+        public async Task<ActionResult<List<Approval>>> GetMyPendingApprovals([FromQuery]string userId)
         {
             try
             {
                 //get the list of approvals 
-                var approvals = await _approvalRepo.GetAllAsync();
+                var approvals = await _approvalRepo.GetMyPendingApprovals(userId);
 
                 if (approvals == null)
                 {

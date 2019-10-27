@@ -1,6 +1,6 @@
 import { apiCall } from '../../services/api'; 
 import { addError } from './errors'; 
-import { LOAD_SAFETY_INCIDENTS } from '../actionTypes'; 
+import { LOAD_SAFETY_INCIDENTS } from '../actionTypes'; //not including a REMOVE Action because the Drafts arent being stored in the redux store 
 
 export const loadSafetyIncidents = safetyIncidents => ({
 	type: LOAD_SAFETY_INCIDENTS, 
@@ -16,7 +16,7 @@ export const fetchSafetyIncidents = (query) => {
 	return dispatch => {
 		return apiCall('get', '/safetyincidents' + query)
 			.then(res => {
-				dispatch(loadSafetyIncidents(res));
+				dispatch(loadSafetyIncidents(res.data));
 			})
 			.catch(err => {	
 				console.log(err)
@@ -30,7 +30,7 @@ export const fetchEvent = (eventId) => {
 		return apiCall('get', `/safetyincidents/${eventId}` )
 			.then(res => {
 				// dispatch(loadEvent(res));
-				return res
+				return res.data
 			})
 			.catch(err => {
 				console.log(err)
@@ -44,7 +44,7 @@ export const fetchDrafts = (query) => {
 	return dispatch => {
 		return apiCall('get', '/safetyincidents' + query)
 			.then(res => {
-				return res; // <- just returning to the caller insetad of dispatching an action 
+				return res.data; // <- just returning to the caller insetad of dispatching an action 
 			})
 			.catch(err => {
 				console.log(err)
@@ -57,8 +57,8 @@ export const postNewSafetyIncident = (safetyEventToAdd) => (dispatch, getState) 
 	// console.log(getState())
 	return apiCall('post', '/safetyincidents', safetyEventToAdd )
 		.then(res => {
-			console.log(res)
-			return res
+			//success status = 201
+			return res.status
 			// dispatch(res);
 		})
 		.catch(err => {
@@ -67,3 +67,29 @@ export const postNewSafetyIncident = (safetyEventToAdd) => (dispatch, getState) 
 		})
 }
 
+export const putSafetyIncident = (safetyEventToUpdate, userId) => (dispatch, getState) => {
+	// console.log(getState())
+	return apiCall('put', `/safetyincidents/${safetyEventToUpdate.eventId}?userId=${userId}`, safetyEventToUpdate )
+		.then(res => {
+			//success status = 202
+			return res.status
+			// dispatch(res);
+		})
+		.catch(err => {
+			console.log(err)
+			dispatch(addError(err));
+		})
+}
+
+export const deleteSafetyIncident = (eventId, userId) => (dispatch, getState) => {
+	// console.log(getState())
+	return apiCall('delete', `/safetyincidents/${eventId}?userId=${userId}` )
+		.then(res => {
+			//success status = 202
+			return res.status
+		})
+		.catch(err => {
+			console.log(err)
+			dispatch(addError(err));
+		})
+}

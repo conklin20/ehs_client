@@ -4,7 +4,7 @@ const events = (state = [], action) => {
     
     switch(action.type){
         case LOAD_SAFETY_INCIDENTS: 
-            console.log(action)
+            // console.log(action)
             try{
                 return action.safetyIncidents.length === 1 
                     ? [action.safetyIncidents]

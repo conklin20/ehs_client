@@ -58,15 +58,23 @@ namespace EHS.Server.DataAccess.Repository
             }
         }
 
-        public async Task<List<Approval>> GetAllAsync()
+        public async Task<List<Approval>> GetMyPendingApprovals(string userId)
         {
             using (IDbConnection sqlCon = Connection)
             {
                 //build sql query 
-                string tsql = @"select ap.*, 
-	                                   ac.*
-                                from Approvals ap 
-	                                 join Actions ac on ac.ActionId = ap.ActionId";
+                string tsql = @"select ap.*
+	                                  ,ac.*
+                                from  dbo.SafetyEvents e 
+	                                 join dbo.Actions ac on ac.EventId = e.EventId 
+	                                 join ApprovalRoutings ar on ar.SeverityId = dbo.fnGetEventSeverity(isnull(e.InitialCategory, e.ResultingCategory))
+	                                 left join Approvals ap on ap.ActionId = ac.ActionId and ap.ApprovalLevelId = ar.ApprovalLevel
+	                                 join Users u on u.RoleId = ar.UserRoleId and u.UserId = 'caryc'
+                                where e.EventStatus = 'Open' 
+	                                and ap.ApprovedOn is null 
+	                                and ac.CompletionDate is not null
+	                                and ac.AssignedTo != 'caryc'
+                                order by ac.CompletionDate";
 
                 var result = await sqlCon.QueryAsync<Approval, Action, Approval>(
                     tsql,

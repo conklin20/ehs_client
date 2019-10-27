@@ -35,7 +35,7 @@ const Actions = (props) => {
             })
 
 		return () => {
-			console.log('Cleanup function (ComponentDidUnmount)')
+			console.log('Actions Form Unmounting')
 		}
 	}, []); //this 2nd arg is important, it tells what to look for changes in, and will re-run the hook when this changes 
 
@@ -100,6 +100,9 @@ const Actions = (props) => {
                             // console.log(res); 
                             setNewActionList([]);  //clear out the pending list 
                             setAssignedActions([...res]); //append the newly saved actions to the assigned actions state
+                        })
+                        .catch(err => {
+                            console.log(err); 
                         });
                 });                    
             

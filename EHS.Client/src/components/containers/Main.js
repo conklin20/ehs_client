@@ -179,7 +179,7 @@ const Main = props => {
 }
 
 function mapStateToProps(state){
-    console.log(state); 
+    // console.log(state); 
     return {
         lookupData: state.lookupData,
         currentUser: state.currentUser,

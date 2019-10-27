@@ -102,8 +102,8 @@ namespace EHS.Server.DataAccess.Repository
 	                                   ar.*,
 	                                   ap.*
                                 from Actions ac
-	                                 join SafetyEvents sev on sev.EventId = ac.EventId
-	                                 join ApprovalRoutings ar on ar.SeverityId = dbo.fnGetEventSeverity(isnull(sev.InitialCategory, sev.ResultingCategory))
+	                                 join SafetyEvents e on e.EventId = ac.EventId
+	                                 join ApprovalRoutings ar on ar.SeverityId = dbo.fnGetEventSeverity(isnull(e.InitialCategory, e.ResultingCategory))
 	                                 left join Approvals ap on ap.ActionId = ac.ActionId and ap.ApprovalLevelId = ar.ApprovalLevel
                                 where 1 = 1 ";
 
@@ -126,7 +126,7 @@ namespace EHS.Server.DataAccess.Repository
                     }
                 }
 
-                tsql += " order by ac.ActionId, ar.ApprovalLevel ";
+                tsql += " order by ac.DueDate desc, ac.CompletionDate desc, ar.ApprovalLevel ";
 
                 //var result = await sqlCon.QueryAsync<Action>(tsql, paramList);
 

@@ -16,7 +16,8 @@ export const loadActions = eventId => ({
 export const addAction = (actionsToAdd) => (dispatch, getState) => {    
 	return apiCall('post', '/actions', actionsToAdd )
     .then(res => {
-        return res
+        //success status = 201
+        return res.status
     })
     .catch(err => {
         console.log(err)
@@ -38,8 +39,8 @@ export const fetchActions = (query) => {
 	return dispatch => {
 		return apiCall('get', `/actions${query}`)
 			.then(res => {
-                console.log(res)
-                return res
+                // console.log(res)
+                return res.data
 				// dispatch(loadActions(res));
 			})
 			.catch(err => {
@@ -49,12 +50,24 @@ export const fetchActions = (query) => {
 	};
 };
 
+// WHERE I LEFT OFF 
+// export const fetchActionsByEventId = (eventId) => (dispatch, getState) => {
+//   return apiCall('get', `/actions/${eventId}`)
+//       .then(res => {
+//           return res;
+//       })
+//       .catch(err => {            
+//           console.log(err)
+//           dispatch(addError(err));
+//       }); 
+// }
+
 export const updateAction = (actionToUpdate) => (dispatch, getState) => {
   // console.log(actionToUpdate)
 	return apiCall('put', `/actions/${actionToUpdate.actionId}`, actionToUpdate )
     .then(res => {
         // console.log(res)
-        return res
+        return res.data
     })
     .catch(err => {
         console.log(err)

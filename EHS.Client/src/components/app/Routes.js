@@ -23,10 +23,20 @@ const useStyles = makeStyles(theme => ({
         margin: '0', 
         padding: '0',
     }, 
+    reportAside: {
+        flex: 1, 
+        // backgroundColor: 'blue',
+        padding: theme.spacing(2),
+    },     
     main: {
         flex: 4,
         // backgroundColor: 'green',
     },
+    userAside: {
+        flex: 1, 
+        // backgroundColor: theme.palette.secondary.main,
+        padding: theme.spacing(2),
+    }
 })); 
 
 const Routes = props => {
@@ -36,15 +46,19 @@ const Routes = props => {
         <Fragment>
             { props.currentUser.isAuthenticated ? <AppBar currentUser={props.currentUser} onLogout={props.logout} /> : null }
             <div id='body' className={classes.body}>
-                { props.currentUser.isAuthenticated ? <ReportAside /> : null }
+                { props.currentUser.isAuthenticated ? <div className={classes.reportAside}><ReportAside /> </div> : null }
                 <Switch>
                     <Route path='/' exact component={Homepage} ></Route>
-                    <Route path='/dashboard' component={Dashboard} ></Route>
+                    <Route path='/dashboard' render={(props) => <div className={classes.main}><Dashboard /> </div> } ></Route>
                     <Route path='/events/si/new' exact component={SafetyEventForm} ></Route>
                     <Route path='/events/si/:eventId' exact component={SafetyEventForm} ></Route>
                     <Route path='/events/si/:eventId/step/:stepNo' component={SafetyEventForm} ></Route>
+                    {/* /account */}
+                    {/* /manage/users */}
+                    {/* /manage/hierarchies */}
+                    {/* /manage/attributes */}
                 </Switch>
-                { props.currentUser.isAuthenticated ? <UserAside /> : null }
+                { props.currentUser.isAuthenticated ? <div className={classes.userAside}><UserAside /> </div> : null }
             </div>
         </Fragment>
     )

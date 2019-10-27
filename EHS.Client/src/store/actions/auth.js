@@ -56,7 +56,8 @@ export function authUser(type, userData) {
     // wrap our thunk in a promise so we can wait for the API call
     return new Promise((resolve, reject) => {
       return apiCall("post", `/users/login`, userData)
-        .then(({ token, ...user }) => {
+        .then(res => {
+          const { token, ...user } = res.data
           sessionStorage.setItem("jwtToken", token);
           setAuthorizationToken(token);
           dispatch(setCurrentUser(user));

@@ -36,10 +36,12 @@ namespace EHS.Server.DataAccess.Repository
 	                                  ,a.*
 	                                  ,p.*
                                       ,c.*
+                                      ,ef.*
                                 from SafetyEvents e
 	                                 left join Actions a on a.EventId = e.EventId 
 	                                 left join PeopleInvolved p on p.EventId = e.EventId
                                      left join EventCauses c on c.EventId = e.EventId
+                                     left join EventFiles ef on ef.EventId = e.EventId
                                 where e.EventId = @EventId";
 
                 //build param list 
@@ -50,9 +52,9 @@ namespace EHS.Server.DataAccess.Repository
 
                 var safetyEventDictionary = new Dictionary<int, SafetyEvent>();
 
-                var result = await sqlCon.QueryAsync<SafetyEvent, Action, PeopleInvolved, Cause, SafetyEvent>(
+                var result = await sqlCon.QueryAsync<SafetyEvent, Action, PeopleInvolved, Cause, EventFile, SafetyEvent>(
                     tsql,
-                    (safetyEvent, action, personInvolved, cause) =>
+                    (safetyEvent, action, personInvolved, cause, file) =>
                     {
                         if (!safetyEventDictionary.TryGetValue(safetyEvent.EventId, out SafetyEvent eventEntry))
                         {
@@ -60,6 +62,7 @@ namespace EHS.Server.DataAccess.Repository
                             eventEntry.Actions = new List<Action>();
                             eventEntry.PeopleInvolved = new List<PeopleInvolved>();
                             eventEntry.Causes = new List<Cause>();
+                            eventEntry.Files = new List<EventFile>();
                             safetyEventDictionary.Add(eventEntry.EventId, eventEntry);
                         }
                         
@@ -90,10 +93,19 @@ namespace EHS.Server.DataAccess.Repository
                             }
                         }
 
+                        //check if this file has already been added to the event
+                        if (!eventEntry.Files.Any(fileToAdd => fileToAdd.EventFileId == file.EventFileId))
+                        {
+                            if (file != null)
+                            {
+                                eventEntry.Files.Add(file);
+                            }
+                        }
+
                         return eventEntry;
                     },
                     p,
-                    splitOn: "ActionId, PeopleInvolvedId, EventCauseId");
+                    splitOn: "ActionId, PeopleInvolvedId, EventCauseId, EventFileId");
 
 
                 return result.Distinct().FirstOrDefault();
@@ -109,10 +121,12 @@ namespace EHS.Server.DataAccess.Repository
 	                                  ,a.*
 	                                  ,p.*
                                       ,c.*
+                                      ,ef.*
                                 from SafetyEvents e
 	                                 left join Actions a on a.EventId = e.EventId 
-	                                 left join PeopleInvolved p on p.EventId = e.EventId 
+	                                 left join PeopleInvolved p on p.EventId = e.EventId
                                      left join EventCauses c on c.EventId = e.EventId
+                                     left join EventFiles ef on ef.EventId = e.EventId
                                 where 1 = 1 ";
 
                 //build param list 
@@ -135,16 +149,17 @@ namespace EHS.Server.DataAccess.Repository
 
                 var safetyEventDictionary = new Dictionary<int, SafetyEvent>();
                 
-                var result = await sqlCon.QueryAsync<SafetyEvent, Action, PeopleInvolved, Cause, SafetyEvent>(
+                var result = await sqlCon.QueryAsync<SafetyEvent, Action, PeopleInvolved, Cause, EventFile, SafetyEvent>(
                     tsql,
-                    (safetyEvent, action, personInvolved, cause) =>
+                    (safetyEvent, action, personInvolved, cause, file) =>
                     {
                         if (!safetyEventDictionary.TryGetValue(safetyEvent.EventId, out SafetyEvent eventEntry))
                         {
                             eventEntry = safetyEvent;
                             eventEntry.Actions = new List<Action>();
                             eventEntry.PeopleInvolved = new List<PeopleInvolved>();
-                            eventEntry.Causes = new List<Cause>(); 
+                            eventEntry.Causes = new List<Cause>();
+                            eventEntry.Files = new List<EventFile>();
                             safetyEventDictionary.Add(eventEntry.EventId, eventEntry);
                         }
 
@@ -175,10 +190,19 @@ namespace EHS.Server.DataAccess.Repository
                             }
                         }
 
+                        //check if this file has already been added to the event
+                        if (!eventEntry.Files.Any(fileToAdd => fileToAdd.EventFileId == file.EventFileId))
+                        {
+                            if (file != null)
+                            {
+                                eventEntry.Files.Add(file);
+                            }
+                        }
+
                         return eventEntry;
                     },
                     paramList,
-                    splitOn: "ActionId, PeopleInvolvedId, EventCauseId");
+                    splitOn: "ActionId, PeopleInvolvedId, EventCauseId, EventFileId");
 
 
                 return result.Distinct().AsList();
@@ -228,99 +252,66 @@ namespace EHS.Server.DataAccess.Repository
                 var addedSafetyEvent = sqlCon.Execute(
                     "dbo.spSafetyEventAddOrUpdate",
                     parameters,
-                    //new
-                    //{
-                        //SafetyEventToAdd.EventType,
-                        //SafetyEventToAdd.EventStatus,
-                        //SafetyEventToAdd.ReportedBy,
-                        //SafetyEventToAdd.ReportedOn,
-                        //SafetyEventToAdd.EventDate,
-                        //SafetyEventToAdd.EmployeeId,
-                        //SafetyEventToAdd.JobTitle,
-                        //SafetyEventToAdd.Shift,
-                        //SafetyEventToAdd.WhatHappened,
-                        //SafetyEventToAdd.IsInjury,
-                        //SafetyEventToAdd.IsIllness,
-                        //SafetyEventToAdd.HoursWorkedPrior,
-                        //SafetyEventToAdd.InitialCategory,
-                        //SafetyEventToAdd.ResultingCategory,
-                        //SafetyEventToAdd.WorkEnvironment,
-                        //SafetyEventToAdd.NatureOfInjury,
-                        //SafetyEventToAdd.BodyPart,
-                        //SafetyEventToAdd.FirstAidType,
-                        //SafetyEventToAdd.OffPlantMedicalFacility,
-                        //SafetyEventToAdd.MaterialInvolved,
-                        //SafetyEventToAdd.EquipmentInvolved,
-                        //SafetyEventToAdd.LostTime,
-                        //SafetyEventToAdd.FirstAid,
-                        //SafetyEventToAdd.Transported,
-                        //SafetyEventToAdd.ER,
-                        //SafetyEventToAdd.RecordedOnVideo,
-                        //SafetyEventToAdd.CameraId,
-                        //SafetyEventToAdd.VideoStartRef,
-                        //SafetyEventToAdd.VideoEndRef,
-                        //SafetyEventToAdd.DepartmentId,
-                        //SafetyEventToAdd.LocaleId,
-                        //userId = SafetyEventToAdd.CreatedBy
-                    //},
                     commandType: CommandType.StoredProcedure
-                    );
+                );
 
                 int newId = parameters.Get<int>("@NewEventId");
                 return newId;
             }
         }
 
-        public async Task<SafetyEvent> UpdateAsync(SafetyEvent SafetyEventToUpdate, int id)
+        public async Task<int> UpdateAsync(SafetyEvent SafetyEventToUpdate, int id, string userId)
         {
             using (IDbConnection sqlCon = Connection)
             {
-                
-                var result = await sqlCon.ExecuteAsync(
+
+                DynamicParameters parameters = new DynamicParameters();
+
+                parameters.Add("@EventId", SafetyEventToUpdate.EventId, dbType: DbType.Int32);
+                parameters.Add("@EventType", SafetyEventToUpdate.EventType, dbType: DbType.String);
+                parameters.Add("@EventStatus", SafetyEventToUpdate.EventStatus, dbType: DbType.String);
+                parameters.Add("@ReportedBy", SafetyEventToUpdate.ReportedBy, dbType: DbType.String);
+                parameters.Add("@ReportedOn", SafetyEventToUpdate.ReportedOn, dbType: DbType.DateTime2);
+                parameters.Add("@EventDate", SafetyEventToUpdate.EventDate, dbType: DbType.Date);
+                parameters.Add("@EmployeeId", SafetyEventToUpdate.EmployeeId, dbType: DbType.String);
+                parameters.Add("@JobTitle", SafetyEventToUpdate.JobTitle, dbType: DbType.String);
+                parameters.Add("@Shift", SafetyEventToUpdate.Shift, dbType: DbType.String);
+                parameters.Add("@WhatHappened", SafetyEventToUpdate.WhatHappened, dbType: DbType.String);
+                parameters.Add("@IsInjury", SafetyEventToUpdate.IsInjury, dbType: DbType.Boolean);
+                parameters.Add("@IsIllness", SafetyEventToUpdate.IsIllness, dbType: DbType.Boolean);
+                parameters.Add("@HoursWorkedPrior", SafetyEventToUpdate.HoursWorkedPrior, dbType: DbType.Decimal);
+                parameters.Add("@InitialCategory", SafetyEventToUpdate.InitialCategory, dbType: DbType.String);
+                parameters.Add("@ResultingCategory", SafetyEventToUpdate.ResultingCategory, dbType: DbType.String);
+                parameters.Add("@WorkEnvironment", SafetyEventToUpdate.WorkEnvironment, dbType: DbType.String);
+                parameters.Add("@NatureOfInjury", SafetyEventToUpdate.NatureOfInjury, dbType: DbType.String);
+                parameters.Add("@BodyPart", SafetyEventToUpdate.BodyPart, dbType: DbType.String);
+                parameters.Add("@FirstAidType", SafetyEventToUpdate.FirstAidType, dbType: DbType.String);
+                parameters.Add("@OffPlantMedicalFacility", SafetyEventToUpdate.OffPlantMedicalFacility, dbType: DbType.String);
+                parameters.Add("@MaterialInvolved", SafetyEventToUpdate.MaterialInvolved, dbType: DbType.String);
+                parameters.Add("@EquipmentInvolved", SafetyEventToUpdate.EquipmentInvolved, dbType: DbType.String);
+                parameters.Add("@LostTime", SafetyEventToUpdate.LostTime, dbType: DbType.Boolean);
+                parameters.Add("@FirstAid", SafetyEventToUpdate.FirstAid, dbType: DbType.Boolean);
+                parameters.Add("@Transported", SafetyEventToUpdate.Transported, dbType: DbType.Boolean);
+                parameters.Add("@ER", SafetyEventToUpdate.ER, dbType: DbType.Boolean);
+                parameters.Add("@RecordedOnVideo", SafetyEventToUpdate.RecordedOnVideo, dbType: DbType.Boolean);
+                parameters.Add("@CameraId", SafetyEventToUpdate.CameraId, dbType: DbType.Int32);
+                parameters.Add("@VideoStartRef", SafetyEventToUpdate.VideoStartRef, dbType: DbType.DateTime2);
+                parameters.Add("@VideoEndRef", SafetyEventToUpdate.VideoEndRef, dbType: DbType.DateTime2);
+                parameters.Add("@DepartmentId", SafetyEventToUpdate.DepartmentId, dbType: DbType.Int32);
+                parameters.Add("@LocaleId", SafetyEventToUpdate.LocaleId, dbType: DbType.Int32);
+                parameters.Add("@UserId", userId, dbType: DbType.String);
+                parameters.Add("@NewEventId", dbType: DbType.Int32, direction: ParameterDirection.Output);
+
+                var success = sqlCon.Execute(
                     "dbo.spSafetyEventAddOrUpdate",
-                    new
-                    {
-                        SafetyEventId = id, 
-                        SafetyEventToUpdate.EventType,
-                        SafetyEventToUpdate.EventStatus,
-                        SafetyEventToUpdate.ReportedBy,
-                        SafetyEventToUpdate.ReportedOn,
-                        SafetyEventToUpdate.EventDate,
-                        SafetyEventToUpdate.EmployeeId,
-                        SafetyEventToUpdate.JobTitle,
-                        SafetyEventToUpdate.Shift,
-                        SafetyEventToUpdate.WhatHappened,
-                        SafetyEventToUpdate.IsInjury,
-                        SafetyEventToUpdate.IsIllness,
-                        SafetyEventToUpdate.HoursWorkedPrior,
-                        SafetyEventToUpdate.InitialCategory,
-                        SafetyEventToUpdate.ResultingCategory,
-                        SafetyEventToUpdate.WorkEnvironment,
-                        SafetyEventToUpdate.NatureOfInjury,
-                        SafetyEventToUpdate.BodyPart,
-                        SafetyEventToUpdate.FirstAidType,
-                        SafetyEventToUpdate.OffPlantMedicalFacility,
-                        SafetyEventToUpdate.MaterialInvolved,
-                        SafetyEventToUpdate.EquipmentInvolved,
-                        SafetyEventToUpdate.LostTime,
-                        SafetyEventToUpdate.FirstAid,
-                        SafetyEventToUpdate.Transported,
-                        SafetyEventToUpdate.ER,
-                        SafetyEventToUpdate.RecordedOnVideo,
-                        SafetyEventToUpdate.CameraId,
-                        SafetyEventToUpdate.VideoStartRef,
-                        SafetyEventToUpdate.VideoEndRef,
-                        SafetyEventToUpdate.DepartmentId,
-                        SafetyEventToUpdate.LocaleId,
-                        userId = SafetyEventToUpdate.ModifiedBy
-                    },
+                    parameters,
                     commandType: CommandType.StoredProcedure
-                    );
-                return SafetyEventToUpdate;
+                );
+                return success;
             }
         }
 
-        public async Task<int> DeleteAsync(int id)
+        public async Task<int> DeleteAsync(int eventId, string userId)
         {
             using (IDbConnection sqlCon = Connection)
             {
@@ -329,8 +320,8 @@ namespace EHS.Server.DataAccess.Repository
                     "dbo.spSafetyEventDelete",
                     new
                     {
-                        safetyEventId = id,
-                        userId = "Update later!!"
+                        safetyEventId = eventId,
+                        userId = userId
                     },
                     commandType: CommandType.StoredProcedure
                     );

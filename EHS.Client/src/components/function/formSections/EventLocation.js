@@ -30,7 +30,7 @@ const EventLocation = (props) => {
         label: hierarchy.hierarchyName,
         selected: hierarchy.hierarchyId == event.localeId ? true : false  
     }));
-    console.log(event.departmentId, logicalOptions)
+    // console.log(event.departmentId, logicalOptions)
     return (
         <Fragment>  
             <Typography variant='h4' gutterBottom>

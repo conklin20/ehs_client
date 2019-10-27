@@ -11,11 +11,13 @@ import {
  } from '../../store/actions/lookupData'; 
 import { 
     postNewSafetyIncident, 
+    putSafetyIncident,
     fetchEvent
 } from '../../store/actions/safetyIncidents'; 
 import { fetchPeopleByEventId } from '../../store/actions/peopleInvolved'; 
-import { fetchCausesByEventId } from '../../store/actions/causes'; 
-import { addError } from '../../store/actions/errors';
+import { fetchCausesByEventId } from '../../store/actions/causes';
+import { fetchFilesByEventId } from '../../store/actions/media';  
+import { addError } from '../../store/actions/errors'
 import ReportingInformation from './formSections/ReportingInformation'; 
 import EventLocation from './formSections/EventLocation'; 
 import SIEventDetails from './formSections/SIEventDetails'; 
@@ -47,6 +49,9 @@ const useStyles = makeStyles(theme => ({
         display: 'flex', 
         justifyContent: 'space-between', 
 
+    },
+    content: {
+        minHeight: '500px'
     },
 	container: {
         display: 'flex',
@@ -144,6 +149,7 @@ const SafetyEventForm = props => {
 
 	const fetchData = async () => {
         //if existing event, get event detail from api
+        console.log(props.match.params)
         if(props.match.params.eventId) setEvent(await props.fetchEvent(props.match.params.eventId)) 
                         
         const timestamp = new Date().toISOString(); 
@@ -151,7 +157,7 @@ const SafetyEventForm = props => {
         if(props.match.path.includes('/events/si/new') && lookupData.employees){
             setEvent({
                 eventType: 'Safety Incident', 
-                reportedBy: lookupData.employees.filter(e => e.employeeId === currentUser.user.userId)[0].fullName, 
+                reportedBy: currentUser.user.userId,
                 reportedOn: timestamp, 
                 createdBy:  currentUser.user.userId, 
                 eventStatus: 'Draft',   
@@ -160,10 +166,11 @@ const SafetyEventForm = props => {
                 eventDate: timestamp, 
                 hoursWorkedPrior: .5, 
 
-                //defaulting an empty array for actions, people, and causes 
+                //defaulting an empty array for actions, people, causes, and files
                 actions: [], 
                 peopleInvolved: [], 
-                causes: []
+                causes: [], 
+                files: []
             })
         }
         
@@ -265,6 +272,7 @@ const SafetyEventForm = props => {
                 return <ReportingInformation 
                             useStyles={useStyles} 
                             currentUser={currentUser}
+                            lookupData={lookupData} 
                             event={event}
                         />
             case 1: 
@@ -307,14 +315,15 @@ const SafetyEventForm = props => {
             case 6: 
                 return <Media  
                             useStyles={useStyles} 
-                            lookupData={lookupData} 
                             event={event}
+                            refreshEventFiles={refreshEventFiles}
                         />     
             case 7: 
                 return <Review 
                             useStyles={useStyles}
                             lookupData={lookupData} 
                             event={event}
+                            handleSubmit={handleSubmit}
                         />     
             default:
                 addError('Unkown Step'); 
@@ -345,6 +354,18 @@ const SafetyEventForm = props => {
                 console.log(err); 
             });
     };
+
+    const refreshEventFiles = () => {
+        props.fetchFilesByEventId(event.eventId)
+            .then(files => {
+                //update the file list since its changed 
+                console.log(files)
+                setEvent({ ...event, files: files});
+            })
+            .catch(err => {
+                console.log(err); 
+            });
+    };
     
     const handleSaveDraft = e => {
         e.preventDefault();
@@ -353,16 +374,44 @@ const SafetyEventForm = props => {
         if(!event.hasOwnProperty('eventId')) {
             props.postNewSafetyIncident(event)
                 .then(res => {
-                    setEvent({ ...res, supervisorId: event.supervisorId}); 
-                    handleComplete();
+                    setEvent({ ...res}); 
+                    // handleComplete();
                 });        
         } else {
             //update event 
+            props.putSafetyIncident(event, currentUser.user.userId)
+            .then(res => {
+                console.log(res)
+                 setEvent(props.fetchEvent(event.eventId))
+                     .then(res => {
+                         setEvent({...res})
+                     }) 
+            })
+            .catch(err => {
+                console.log(err) 
+            })
         }
     }
-
+    
     const handleSubmit = e => {
         e.preventDefault();
+
+        //shouldnt be able to Submit anything but a draft anyways, but this is a safeguard against that 
+        if(event.eventStatus === 'Draft' && event.actions.length && event.peopleInvolved.length && event.causes.length) {
+            // change status to Open
+            event.eventStatus = 'Open';
+            props.putSafetyIncident(event, currentUser.user.userId)
+            .then(res => {
+                console.log(res)
+                setEvent(props.fetchEvent(event.eventId))
+                    .then(res => {
+                        setEvent({...res})
+                    }) 
+            })
+            .catch(err => {
+                console.log(err) 
+            })
+        }
     }
 
     console.log(event) 
@@ -395,102 +444,105 @@ const SafetyEventForm = props => {
                             </Link>
                         </div>
                     </DialogTitle>
-                    <DialogContent>		
-                        <form className={classes.form} onSubmit={handleSubmit}>                        
-                            <Stepper alternativeLabel nonLinear activeStep={activeStep}>
-                                {steps.map((label, index) => {
-                                    const stepProps = {};
-                                    const buttonProps = {};
-                                    return (
-                                        <Step key={label} {...stepProps}>
-                                        <StepButton
-                                            onClick={handleStep(index)}
-                                            completed={isStepComplete(index)}
-                                            disabled={dataIsLoading()}
-                                            {...buttonProps}
-                                        >
-                                            {label}
-                                        </StepButton>
-                                        </Step>
-                                    );
-                                })}
-                            </Stepper>
-
-                            <Fragment>
-                                {allStepsCompleted() ? (
-                                <div>
-                                    <Typography className={classes.instructions}>
-                                    All steps completed - you&apos;re finished
-                                    </Typography>
-                                    {/* <Button onClick={handleReset}>Reset</Button> */}
-                                    {/* <Button >Save Draft</Button> */}
-                                    <Button color="primary" type="submit">Submit</Button>
-                                </div>
-                                ) : (
-                                    <div className={classes.sectionBody}>
-                                        <div>
-                                            <Typography className={classes.instructions}>
-                                                { 
-                                                    getStepContent(activeStep)
-                                                }
-                                            </Typography>
-                                        </div>
-                                        <div>
-                                            <Button 
-                                                disabled={activeStep === 0 || dataIsLoading()} 
-                                                onClick={handleBack} 
-                                                className={classes.button}
-                                            >
-                                                Back
-                                            </Button>
-                                            {/* <Button
-                                                variant="contained"
-                                                color="primary"
-                                                onClick={handleNext}
-                                                className={classes.button}
+                    <DialogContent className={classes.content}>	
+                    { dataIsLoading() ?                              
+                                
+                            <Typography variant='h6'>
+                                    Background Data Still Loading...
+                            </Typography>	
+                            :
+                            <form className={classes.form} onSubmit={handleSubmit}>                        
+                                <Stepper alternativeLabel nonLinear activeStep={activeStep}>
+                                    {steps.map((label, index) => {
+                                        const stepProps = {};
+                                        const buttonProps = {};
+                                        return (
+                                            <Step key={label} {...stepProps}>
+                                            <StepButton
+                                                onClick={handleStep(index)}
+                                                completed={isStepComplete(index)}
                                                 disabled={dataIsLoading()}
+                                                {...buttonProps}
                                             >
-                                                Next
-                                            </Button> */}
+                                                {label}
+                                            </StepButton>
+                                            </Step>
+                                        );
+                                    })}
+                                </Stepper>
 
-                                            {activeStep !== steps.length &&
-                                                (completed.has(activeStep) ? (
-                                                <Typography variant="caption" className={classes.completed}>
-                                                    Step {activeStep + 1} already completed
+                                <Fragment>
+                                    {allStepsCompleted() ? (
+                                    <div>
+                                        <Typography className={classes.instructions}>
+                                        All steps completed - you&apos;re finished
+                                        </Typography>
+                                        {/* <Button onClick={handleReset}>Reset</Button> */}
+                                        {/* <Button >Save Draft</Button> */}
+                                        <Button color="primary" type="submit">Submit</Button>
+                                    </div>
+                                    ) : (
+                                        <div className={classes.sectionBody}>
+                                            <div>
+                                                <Typography className={classes.instructions}>
+                                                    { 
+                                                        getStepContent(activeStep)
+                                                    }
                                                 </Typography>
-                                                ) : (
+                                            </div>
+                                            <div>
                                                 <Button 
-                                                    variant="contained" 
+                                                    disabled={activeStep === 0 || dataIsLoading()} 
+                                                    onClick={handleBack} 
+                                                    className={classes.button}
+                                                >
+                                                    Back
+                                                </Button>
+                                                <Button
+                                                    variant="contained"
                                                     color="primary"
-                                                    onClick={handleComplete}
+                                                    onClick={handleNext}
+                                                    className={classes.button}
                                                     disabled={dataIsLoading()}
                                                 >
-                                                    {completedSteps() === totalSteps() - 1 ? 'Finish' : 'Complete Step'}
+                                                    Next
                                                 </Button>
-                                            ))}
-                                            
-                                            {activeStep > 1 && 
-                                                event.eventStatus === 'Draft' ? (
-                                                    <Button
-                                                        variant="contained"
+
+                                                {activeStep !== steps.length &&
+                                                    (completed.has(activeStep) ? (
+                                                    <Typography variant="caption" className={classes.completed}>
+                                                        Step {activeStep + 1} already completed
+                                                    </Typography>
+                                                    ) : (
+                                                    <Button 
+                                                        variant="contained" 
                                                         color="primary"
-                                                        onClick={handleSaveDraft}
-                                                        className={classes.button}
+                                                        onClick={handleComplete}
+                                                        disabled={dataIsLoading()}
                                                     >
-                                                        Save Draft
+                                                        {completedSteps() === totalSteps() - 1 ? 'Finish' : 'Complete Step'}
                                                     </Button>
-                                                )
-                                                : null
-                                            }                                            
+                                                ))}
                                                 
-                                            <Typography variant='h6'>
-                                                    { dataIsLoading() ? 'Background Data Still Loading...' : '' }
-                                            </Typography>
+                                                {activeStep > 1 && 
+                                                    event.eventStatus === 'Draft' ? (
+                                                        <Button
+                                                            variant="contained"
+                                                            color="primary"
+                                                            onClick={handleSaveDraft}
+                                                            className={classes.button}
+                                                        >
+                                                            Save Draft
+                                                        </Button>
+                                                    )
+                                                    : null
+                                                }           
+                                            </div>
                                         </div>
-                                    </div>
-                                )}
-                            </Fragment>
-                        </form>				
+                                    )}
+                                </Fragment>
+                            </form>	
+                        }			
                     </DialogContent>
                     <DialogActions>
                         {/* <Button onClick={close} color="primary">
@@ -519,7 +571,9 @@ export default connect(mapStateToProps, {
     fetchLogicalHierarchyAttributes, 
     fetchPhysicalHierarchyAttributes,
     postNewSafetyIncident,
+    putSafetyIncident,
     fetchEvent,
     fetchPeopleByEventId,
-    fetchCausesByEventId
+    fetchCausesByEventId, 
+    fetchFilesByEventId
 })(SafetyEventForm); 

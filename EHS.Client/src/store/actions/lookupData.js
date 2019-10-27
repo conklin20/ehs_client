@@ -37,7 +37,7 @@ export const fetchLogicalHierarchyTree = (hierachyId) => {
     return dispatch => {
         return apiCall('get', '/hierarchies/fulltree/' + hierachyId)
             .then(res => {
-                dispatch(loadLogicalHierarchies(res)); 
+                dispatch(loadLogicalHierarchies(res.data)); 
             })
             .catch(err => {
                 console.log(err)
@@ -50,7 +50,7 @@ export const fetchPhysicalHierarchyTree = (hierachyId) => {
     return dispatch => {
         return apiCall('get', '/hierarchies/fulltree/' + hierachyId)
             .then(res => {
-                dispatch(loadPhysicalHierarchies(res)); 
+                dispatch(loadPhysicalHierarchies(res.data)); 
             })
             .catch(err => {
                 console.log(err)
@@ -64,7 +64,7 @@ export const fetchLogicalHierarchyAttributes = (hierarchyId, type, query) => {
     return dispatch => {
         return apiCall('get', `/hierarchyattributes/${type}/${hierarchyId}${query ? query : ''}`)
             .then(res => {
-                dispatch(loadLogicalHierarchyAttributes(res)); 
+                dispatch(loadLogicalHierarchyAttributes(res.data)); 
             })
             .catch(err => {
                 // console.log(err)
@@ -78,7 +78,7 @@ export const fetchPhysicalHierarchyAttributes = (hierarchyId, type, query) => {
     return dispatch => {
         return apiCall('get', `/hierarchyattributes/${type}/${hierarchyId}${query ? query : ''}`)
             .then(res => {
-                dispatch(loadPhysicalHierarchyAttributes(res)); 
+                dispatch(loadPhysicalHierarchyAttributes(res.data)); 
             })
             .catch(err => {
                 // console.log(err)
@@ -91,7 +91,7 @@ export const fetchEmployees = () => {
     return dispatch => {
         return apiCall('get', '/employees')
             .then(res => {
-                dispatch(loadEmployees(res));
+                dispatch(loadEmployees(res.data));
             })
             .catch(err => {
                 dispatch(addError(err || 'An unknown error has occured.'));

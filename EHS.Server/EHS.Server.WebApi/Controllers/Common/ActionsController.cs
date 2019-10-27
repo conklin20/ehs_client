@@ -44,6 +44,15 @@ namespace EHS.Server.WebApi.Controllers.Common
                 {
                     dynamicParamList.Add(new DynamicParam { TableAlias = "ac.", FieldName = "EventId", Operator = "=", ParamName = "@EventId", SingleValue = queryParams.EventId });
                 }
+                if (queryParams.UserId != null)
+                {
+                    dynamicParamList.Add(new DynamicParam { TableAlias = "ac.", FieldName = "AssignedTo", Operator = "=", ParamName = "@UserId", SingleValue = queryParams.UserId });
+                }
+                if (queryParams.EventStatus != null)
+                {
+                    dynamicParamList.Add(new DynamicParam { TableAlias = "e.", FieldName = "EventStatus", Operator = "=", ParamName = "@EventStatus", SingleValue = queryParams.EventStatus });
+                }
+
 
                 //get the list of actions 
                 var actions = await _actionRepo.GetAllAsync(dynamicParamList);
@@ -64,8 +73,8 @@ namespace EHS.Server.WebApi.Controllers.Common
             }
         }
 
-        [HttpGet("/event/{eventId}", Name = "GetEventActions")]
-        public async Task<ActionResult<List<DataAccess.DatabaseModels.Action>>> Get([FromRoute]int eventId)
+        [HttpGet("{eventId}", Name = "GetEventActions")]
+        public async Task<ActionResult<List<DataAccess.DatabaseModels.Action>>> GetByEventId([FromRoute]int eventId)
         {
             try
             {

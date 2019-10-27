@@ -40,6 +40,9 @@
 **/EHS.Server/EHS.Server.WebApi/appsettings.staging.json
 **/EHS.Server/EHS.Server.WebApi/appsettings.production.json
 
+# Testing Dir for event files 
+/EHS.Server/Event_Files_Test
+
 
 # Root files 
 **/temp
