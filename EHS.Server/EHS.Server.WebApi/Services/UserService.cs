@@ -84,9 +84,14 @@ namespace EHS.Server.WebApi.Services
                     new Claim(ClaimTypes.Role, user.RoleId.ToString()),
                     new Claim(ClaimTypes.UserData, user.TimeZone),
                     new Claim(ClaimTypes.UserData, user.DateFormat),
-                    new Claim(ClaimTypes.UserData, user.ApprovalLevel.ToString())
+                    new Claim(ClaimTypes.UserData, user.ApprovalLevel.ToString()),
+                    new Claim(ClaimTypes.UserData, user.ApprovalLevelName.ToString()),
+                    new Claim(ClaimTypes.UserData, user.RoleName.ToString()),
+                    new Claim(ClaimTypes.UserData, user.RoleCapabilities.ToString()),
+                    new Claim(ClaimTypes.UserData, user.RoleLevel.ToString())
                 }),
-                Expires = DateTime.UtcNow.AddDays(7),
+                //Expires = DateTime.UtcNow.AddDays(7),
+                Expires = DateTime.UtcNow.AddHours(1),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);

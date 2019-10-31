@@ -20,5 +20,13 @@ namespace EHS.Server.WebApi.Helpers.Queries
         public DateTime EndDate { get; set; }
         [FromQuery(Name = "categories")]
         public string Categories { get; set; }
+        [FromQuery(Name = "departmentId")]
+        public string DepartmentId { get; set; } //logicalHierarchyId
+        [FromQuery(Name = "site")]
+        public string Site { get; set; }
+        [FromQuery(Name = "area")]
+        public string Area { get; set; }
+        [FromQuery(Name = "department")]
+        public string Department { get; set; }
     }
 }

@@ -61,6 +61,22 @@ namespace EHS.Server.WebApi.Controllers.Common
                 {
                     dynamicParamList.Add(new DynamicParam { TableAlias = "e.", FieldName = "EventStatus", Operator = "in", ParamName = "@EventStatus", MultiValue = queryParams.Statuses.Split(",") });
                 }
+                if (queryParams.Site != null)
+                {
+                    dynamicParamList.Add(new DynamicParam { TableAlias = "e.", FieldName = "Site", Operator = "=", ParamName = "@Site", SingleValue = queryParams.Site });
+                }
+                if (queryParams.Area != null)
+                {
+                    dynamicParamList.Add(new DynamicParam { TableAlias = "e.", FieldName = "Area", Operator = "=", ParamName = "@Area", SingleValue = queryParams.Area });
+                }
+                if (queryParams.Department != null)
+                {
+                    dynamicParamList.Add(new DynamicParam { TableAlias = "e.", FieldName = "Department", Operator = "=", ParamName = "@Department", SingleValue = queryParams.Department });
+                }
+                if (queryParams.DepartmentId != null)
+                {
+                    dynamicParamList.Add(new DynamicParam { TableAlias = "e.", FieldName = "DepartmentId", Operator = "=", ParamName = "@DepartmentId", SingleValue = queryParams.DepartmentId });
+                }
                 //get the list of safetyEvents 
                 var safetyEvents = await _safetyEventsRepo.GetAllAsync(dynamicParamList);
 

@@ -2,10 +2,8 @@ import React, { useState, Fragment } from 'react';
 import { Link } from 'react-router-dom'; 
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import {AppBar, Toolbar, Typography, Button, IconButton, Avatar, Menu, MenuItem } from '@material-ui/core';
-import MenuIcon from '@material-ui/icons/Menu';
-import { deepOrange, blueGrey } from '@material-ui/core/colors';
+// import MenuIcon from '@material-ui/icons/Menu';
 import Logo  from '../../images/vista-outdoor-vector-logo.png';
-import SafetyEventForm from '../function/SafetyEventForm';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -25,7 +23,7 @@ const useStyles = makeStyles(theme => ({
   avatar: {
     marginLeft: 10, 
     color: '#fff',
-    backgroundColor: deepOrange[500],
+    backgroundColor: theme.palette.secondary.dark,
   },
   userAccount: {
     display: 'flex',
@@ -120,19 +118,19 @@ const EHSAppBar = (props) => {
 									vertical: 'top',
 									horizontal: 'right',
 									}}
-									keepMounted
-									transformOrigin={{
-									vertical: 'top',
-									horizontal: 'right',
+										keepMounted
+										transformOrigin={{
+										vertical: 'top',
+										horizontal: 'right',
 									}}
 									open={Boolean(userAnchorEl)}
 									onClose={() => setUserAnchorEl(null)}
 								>
 									<MenuItem onClick={() => setUserAnchorEl(null)}>
-										Account Settings
+										<Link to="/user/profile">Account Settings</Link>										
 									</MenuItem>
 									<MenuItem onClick={logout}>
-										<Link to="/">Log Out</Link>
+										<Link to="/logout">Log Out</Link>
 									</MenuItem>
 								</Menu>
 							</div>

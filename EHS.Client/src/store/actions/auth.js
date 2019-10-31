@@ -26,6 +26,10 @@ export function setCurrentUser(user){
       timeZone: userData[2],
       userId: user.nameid, 
       approvalLevel: userData[4], 
+      approvalLevelName: userData[5], 
+      roleName: userData[6], 
+      roleCapabilities: userData[7], 
+      roleLevel: userData[8], 
     }
   } else {
     newUserObj = user; 

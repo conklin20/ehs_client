@@ -116,7 +116,7 @@ namespace EHS.Server.WebApi.Controllers.Common
 
         // POST: api/Users
         [HttpPost]
-        public async Task<ActionResult<User>> Post([FromBody]User userToAdd)
+        public async Task<ActionResult<User>> Post([FromBody]User userToAdd, [FromQuery]string userId)
         {
             try
             {
@@ -128,11 +128,11 @@ namespace EHS.Server.WebApi.Controllers.Common
 
                 //map the new user from the incoming dto object to the domain/database model object so we can pass it to the Add() method
                 //var userToAdd = _mapper.Map<UserDto, User>(userToAddDto);
-                var addedUser = await _userRepo.AddAsync(userToAdd);
+                var addedUser = await _userRepo.AddOrUpdateAsync(userToAdd, userId);
 
                 //map back to dto, to pass back to client 
                 //return CreatedAtAction("Getuser", new { id = addeduser.userId }, addeduser); 
-                return CreatedAtAction("GetUser", new { id = addedUser.UserId }, _mapper.Map<User, UserDto>(addedUser));
+                return CreatedAtAction("Post", new { id = addedUser.UserId }, _mapper.Map<User, UserDto>(addedUser));
             }
             catch (Exception ex)
             {
@@ -143,7 +143,7 @@ namespace EHS.Server.WebApi.Controllers.Common
 
         // PUT: api/Users/5
         [HttpPut("{id}")]
-        public async Task<ActionResult<User>> Put([FromBody]User userToUpdate)
+        public async Task<ActionResult<User>> Put([FromBody]User userToUpdate, [FromQuery]string userId)
         {
             try
             {
@@ -155,7 +155,7 @@ namespace EHS.Server.WebApi.Controllers.Common
 
                 //map the user from the incoming dto object to the domain/database model object so we can pass it to the Update() method
                 //var userToUpdate = _mapper.Map<UserDto, User>(userToUpdateDto);
-                var updatedUser = await _userRepo.UpdateAsync(userToUpdate);
+                var updatedUser = await _userRepo.AddOrUpdateAsync(userToUpdate, userId);
 
                 //map back to dto, to pass back to client 
                 return Accepted(_mapper.Map<User, UserDto>(updatedUser));
@@ -169,7 +169,7 @@ namespace EHS.Server.WebApi.Controllers.Common
 
         // DELETE: api/ApiWithActions/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<User>> Delete([FromBody]User userToDelete)
+        public async Task<ActionResult<User>> Delete([FromRoute]string userIdToDelete, [FromQuery]string userId)
         {
             try
             {
@@ -181,10 +181,10 @@ namespace EHS.Server.WebApi.Controllers.Common
                 
                 //map the user from the incoming dto object to the domain/database model object so we can pass it to the Delete() method
                 //var userToDelete = _mapper.Map<UserDto, User>(userToDeleteDto);
-                var deletedUser = await _userRepo.DeleteAsync(userToDelete);
+                var deletedUserId = await _userRepo.DeleteAsync(userIdToDelete, userId);
 
                 //map back to dto, to pass back to client 
-                return Accepted(_mapper.Map<User, UserDto>(deletedUser));
+                return Accepted(deletedUserId);
             }
             catch (Exception ex)
             {

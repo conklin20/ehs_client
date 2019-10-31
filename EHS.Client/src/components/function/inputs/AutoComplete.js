@@ -89,7 +89,7 @@ function Control(props) {
 		innerRef,
 		selectProps: { classes, TextFieldProps },
   } = props;
-
+  // console.log(props); 
   return (
     <TextField
       fullWidth
@@ -280,8 +280,8 @@ const AutoComplete = (props) => {
     }),
   };
 
-  const { label, placeholder, name, options, value, handleChange, className, required } = props; 
-  // console.log(value)
+  const { label, placeholder, name, options, value, handleChange, className, required, error, helperText } = props; 
+  
   return (
     <div className={className}>
       <NoSsr>
@@ -292,6 +292,8 @@ const AutoComplete = (props) => {
           inputId="react-select-single"
           TextFieldProps={{            
             required,
+            error, 
+            helperText,
             label: label,
             InputLabelProps: {
               htmlFor: 'react-select-single',

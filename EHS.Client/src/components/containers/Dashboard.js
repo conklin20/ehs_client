@@ -63,9 +63,6 @@ const parseSearchFilters = filters => {
 	return parsedFilters.slice(0, -1); //removing  the last & char 
 }
 
-//defaulting the initial search to only return Events that are 'Open'
-const initialSearchFilterState = { eventStatuses: [ { value: "Open", label: "Open"} ] };
-
 const searchFilterReducer = (state, action) => {
 	switch (action.type) {
 		case 'eventId':
@@ -76,6 +73,14 @@ const searchFilterReducer = (state, action) => {
 			return { ...state, eventTime: action.value }
 		case 'eventStatuses':
 			return { ...state, eventStatuses: action.value }
+		case 'site':
+			return { ...state, site: action.value }
+		case 'area':
+			return { ...state, area: action.value }
+		case 'department':
+			return { ...state, department: action.value }
+		case 'departmentId':
+			return { ...state, departmentId: action.value }
 		default: 
 			addError("Invalid Action");
 			return state;
@@ -84,11 +89,19 @@ const searchFilterReducer = (state, action) => {
 
 const Dashboard = props => {    
 	const classes = useStyles();
+
+	const { currentUser, lookupData,  errors, removeError } = props;
+
+	//defaulting the initial search to only return Events that are 'Open'
+	const initialSearchFilterState = { 
+		eventStatuses: [ { value: "Open", label: "Open"} ],
+	};
+
 	const [searchFilters, dispatch] = useReducer(searchFilterReducer, initialSearchFilterState); 
+	console.log(searchFilters)
 
 	const [searchText, setSearchText] = useState(''); 
 	const [showSearchFilters, setShowSearchFilters] = useState(false); 
-	const [dense, setDense] = useState(true);
 	
  	// Essentially what was componentDidMount and componentDidUpdate before Hooks
 	useEffect(() => {
@@ -96,19 +109,29 @@ const Dashboard = props => {
 		fetchData(); 
 
 		return () => {
-			console.log('Cleanup function (ComponentDidUnmount)')
+			console.log('Dashboard Component Unmounting')
 		}
+
 	}, [props.searchFilters]); //this 2nd arg is important, it tells what to look for changes in, and will re-run the hook when this changes 
 
 	const fetchData = async () => {
-		
 		if(!props.safetyIncidents.length) await props.fetchSafetyIncidents(parseSearchFilters(searchFilters)) ; 
 		
-		if(!props.lookupData.employees) await props.fetchEmployees();
-		if(!props.lookupData.logicalHierarchies ) await props.fetchLogicalHierarchyTree(4001);
-		if(!props.lookupData.physicalHierarchies) await props.fetchPhysicalHierarchyTree(4000);
-		if(!props.lookupData.logicalHierarchyAttributes) await props.fetchLogicalHierarchyAttributes(1000, 'fulltree', '?enabled=true');
-		if(!props.lookupData.physicalHierarchyAttributes) await  props.fetchPhysicalHierarchyAttributes(1000, 'fulltree', '?enabled=true&excludeglobal=true');
+		if(!lookupData.employees) await props.fetchEmployees();
+		if(!lookupData.logicalHierarchies ) await props.fetchLogicalHierarchyTree(4001);
+		if(!lookupData.physicalHierarchies) await props.fetchPhysicalHierarchyTree(4000);
+		if(!lookupData.logicalHierarchyAttributes) await props.fetchLogicalHierarchyAttributes(1000, 'fulltree', '?enabled=true');
+		if(!lookupData.physicalHierarchyAttributes) await  props.fetchPhysicalHierarchyAttributes(1000, 'fulltree', '?enabled=true&excludeglobal=true');
+		
+	
+		//WOULD LIKE TO USE THIS TO RETURN ONLY THE USERS PERTINENT EVENTS (Their Site, Area's or Depts...) 
+		//Not working though as the component mounts before having this data 
+		if(lookupData.logicalHierarchies && currentUser.user){
+			dispatch( { 
+				type: lookupData.logicalHierarchies.find(h => h.hierarchyId == currentUser.user.logicalHierarchyId).hierarchyLevel.hierarchyLevelName, 
+				value: lookupData.logicalHierarchies.find(h => h.hierarchyId == currentUser.user.logicalHierarchyId).hierarchyName
+			})
+		}
 	}
 
 	//handler for the search textbox
@@ -120,12 +143,6 @@ const Dashboard = props => {
 	//handler for the show search filters button
 	const handleShowSearchFilters = () => {
 		setShowSearchFilters(!showSearchFilters)
-	}
-
-	//handler for the dense padding
-	const handleDensePadding = () => {
-		setDense(!dense); 
-		// console.log(dense)
 	}
 
 	//handler for the search button
@@ -155,8 +172,6 @@ const Dashboard = props => {
 		return filteredSafetyIncidents; 
 	}
 
-	const { errors, removeError } = props; 
-
 	// console.log(props)
 	return (
 		<Fragment>
@@ -178,11 +193,9 @@ const Dashboard = props => {
 						handleShowSearchFilters={handleShowSearchFilters}
 						handleSearchFiltersChange={(e) => dispatch( { type: e.target.name, value: e.target.value })}
 						handleAutoCompleteChange={(data, action) => dispatch({ type: action.name, value: data })}
-						handleDensePadding={handleDensePadding}
 						handleSearch={handleSearch}
 						showSearchFilters={showSearchFilters}
 						searchFilters={searchFilters}
-						dense={dense}
 						lookupData={props.lookupData}
 						/>
 
@@ -190,7 +203,6 @@ const Dashboard = props => {
 						? 	<EventList 
 								currentUser={props.currentUser} 
 								safetyIncidents={filterSafetyIncidents()}
-								dense={dense}
 								employees={props.lookupData.employees}
 							/>
 						: 	<div className={classes.loading}>

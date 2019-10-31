@@ -30,10 +30,17 @@ namespace EHS.Server.DataAccess.DatabaseModels
         public string TimeZone { get; set; }
         [MaxLength(50)]
         public string DateFormat { get; set; }
+        public bool Enabled { get; set; }
+
+        //Passed back to client, not saved in DB
         public int ApprovalLevel { get; set; }
+        public string ApprovalLevelName { get; set; } 
+        public string RoleName { get; set; } 
+        public string RoleCapabilities { get; set; } 
+        public byte RoleLevel { get; set; } 
 
         //not storing in db
-        [Required]
+        //[Required]
         public string Password { get; set; }
         public string Token { get; set; } 
     }

@@ -6,6 +6,7 @@ import {
     LOAD_LOGICAL_HIERARCHY_ATTRIBUTES, 
     LOAD_PHYSICAL_HIERARCHY_ATTRIBUTES, 
     LOAD_EMPLOYEES,
+    LOAD_USER_ROLES, 
 } from '../actionTypes'; 
 
 export const loadLogicalHierarchies = logicalHierarchies => ({
@@ -31,6 +32,11 @@ export const loadPhysicalHierarchyAttributes = physicalHierarchyAttributes => ({
 export const loadEmployees = employees => ({
     type: LOAD_EMPLOYEES,
     employees
+});
+
+export const loadUserRoles = roles => ({
+    type: LOAD_USER_ROLES,
+    roles
 });
 
 export const fetchLogicalHierarchyTree = (hierachyId) => {
@@ -87,6 +93,19 @@ export const fetchPhysicalHierarchyAttributes = (hierarchyId, type, query) => {
     }
 }
 
+export const fetchUserRoles = () => {
+    return dispatch => {
+        return apiCall('get', '/userroles')
+            .then(res => {
+                dispatch(loadUserRoles(res.data)); 
+            })
+            .catch(err => {
+                // console.log(err)
+                dispatch(addError(err || 'An unknown error has occured.')); 
+            });
+    }
+}
+
 export const fetchEmployees = () => {
     return dispatch => {
         return apiCall('get', '/employees')
@@ -95,6 +114,29 @@ export const fetchEmployees = () => {
             })
             .catch(err => {
                 dispatch(addError(err || 'An unknown error has occured.'));
+            })
+    }
+}
+
+export const fetchEmployee = (employeeId) => /*(dispatch, getState) =>*/ {
+    return dispatch => {
+        return apiCall('get', `/employees/${employeeId}`)
+            .then(res => {
+                return res;
+            })
+            .catch(res => {
+                console.log(res.error.toJSON());
+                console.log(res); 
+                return res; 
+                // switch(res.status){
+                //     case 404:
+                //         dispatch('Employee Not Found');
+                //         return res; 
+                //     default:
+                //         dispatch('An unknown error has occured.');
+                //         return res; 
+
+                // }
             })
     }
 }

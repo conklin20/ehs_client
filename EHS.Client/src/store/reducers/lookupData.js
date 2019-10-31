@@ -4,6 +4,7 @@ import {
     LOAD_LOGICAL_HIERARCHY_ATTRIBUTES, 
     LOAD_PHYSICAL_HIERARCHY_ATTRIBUTES, 
     LOAD_EMPLOYEES,
+    LOAD_USER_ROLES, 
 } from '../actionTypes'; 
 
 const lookupData = (state = {}, action) => {
@@ -23,6 +24,8 @@ const lookupData = (state = {}, action) => {
         case LOAD_EMPLOYEES: 
             // console.log(action)
             return {...state, employees: action.employees}
+        case LOAD_USER_ROLES: 
+            return {...state, userRoles: action.roles}
         default: 
             return state;
     }

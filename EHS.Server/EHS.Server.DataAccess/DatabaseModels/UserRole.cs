@@ -15,6 +15,7 @@ namespace EHS.Server.DataAccess.DatabaseModels
         public string RoleName { get; set; }
         [Required, MaxLength(255)]
         public string RoleCapabilities { get; set; }
+        public byte RoleLevel { get; set; }
 
         public ICollection<ApprovalRouting> ApprovalRoutings { get; set; }
     }

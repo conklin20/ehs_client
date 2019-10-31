@@ -1,13 +1,10 @@
 import React, { Fragment } from 'react'
 import {
     useTable,
-    useGroupBy,
-    useFilters,
     useSortBy,
-    useExpanded,
     usePagination,
   } from 'react-table';
-import { Typography, Select, MenuItem, TextField, Table as MaUTable, TableBody, TableCell, TableHead, TableRow } from '@material-ui/core';
+import { Typography, Select, MenuItem, Table as MaUTable, TableBody, TableCell, TableHead, TableRow } from '@material-ui/core';
 import ArrowDropDownIcon  from '@material-ui/icons/ArrowDropDown';  
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp';
 import FirstPageIcon from '@material-ui/icons/FirstPage';
@@ -17,7 +14,7 @@ import ChevronLeftRight from '@material-ui/icons/ChevronRight';
 
 function Table({ ...props }) {
 
-    const { columns, data } = props; 
+    const { columns, data, route } = props; 
 
     // Use the state and functions returned from useTable to build your UI
     const {
@@ -125,7 +122,7 @@ function Table({ ...props }) {
                         prepareRow(row) || (
                         <TableRow 
                             {...row.getRowProps()}
-                            onClick={() => props.history.push(`/events/si/${row.values.eventId}`)}
+                            onClick={() => props.history.push(route + row.values.id)} //must pass in the id of the row as 'id' (not eventId etc..)
                         >   
                             {row.cells.map(cell => {
                                 return (

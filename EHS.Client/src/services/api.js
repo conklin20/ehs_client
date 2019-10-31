@@ -1,4 +1,5 @@
-import axios from "axios"; //lib for making ajax requests 
+import axios from "axios"; //lib for making ajax requests
+import history from './history'; 
 
 const APIVERSION = 1;
 const AUTHORIZATION_HEADER = 'Authorization';
@@ -27,7 +28,13 @@ export function apiCall(method, path, data){
                 return resolve(res)
             })
             .catch(err => {
-                console.log(err);
+                console.log(err.response);
+                //if the reqs are returning 401, the user is no longer authenticated (could mean their token expired). Log the user out 
+                if(err.response.status === 401) { //unauthorized 
+                    console.log('logging user out...')
+                    history.push('/logout')
+                }
+
                 return reject({
                     error: err, 
                     response: err.response

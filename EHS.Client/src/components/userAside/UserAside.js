@@ -19,20 +19,19 @@ const UserAside = props => {
         //get users open actions 
         props.fetchActions(`?userId=${props.currentUser.user.userId}&eventStatus=Open`)
             .then(res => {
-                // console.log(res); 
-                setMyActions(res.filter(a => !a.completionDate)); 
+                if(res) setMyActions(res.filter(a => !a.completionDate)); 
             })
 
         //get users pending approvals 
         props.fetchMyPendingApprovals(props.currentUser.user.userId)
             .then(res => {
-                setMyPendingApprovals(res)
+                if(res) setMyPendingApprovals(res)
             })
 
         //get users drafts
         props.fetchDrafts('?eventStatuses=Draft')
             .then(res => {
-                setMyDrafts(res); 
+                if(res) setMyDrafts(res); 
             })
         
         
@@ -60,17 +59,26 @@ const UserAside = props => {
                 <Fragment>
                     {/* <Typography variant="h4" gutterBottom>User Aside</Typography>   */}
                     <Typography>
-                        <MyActions 
-                            actions={myActions}
-                        />
-                        <MyApprovals
-                            pendingApprovals={myPendingApprovals}
-                        />
-                        <MyDrafts 
-                            drafts={myDrafts}
-                            handleDelete={handleDelete}
-                            employees={props.employees}
-                        />
+                        {myActions.length ? 
+                            <MyActions 
+                                actions={myActions}
+                            />
+                            : null
+                        }
+                        {myPendingApprovals.length ? 
+                            <MyApprovals
+                                pendingApprovals={myPendingApprovals}
+                            />
+                            : null
+                        }
+                        {myDrafts.length ?                         
+                            <MyDrafts 
+                                drafts={myDrafts}
+                                handleDelete={handleDelete}
+                                employees={props.employees}
+                            />
+                            : null
+                        }
                     </Typography>
                 </Fragment>
             : null

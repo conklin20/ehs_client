@@ -52,32 +52,21 @@ const EventList = props => {
             columns: [        
                 {
                     Header: 'Event #', 
-                    accessor: 'eventId', 
+                    accessor: 'id', 
                 },
                 {
                     Header: 'Status', 
                     accessor: 'status',             
                 },
                 {
-                    Header: 'Date', 
-                    // accessor: 'eventDate',    
+                    Header: 'Date',    
                     accessor: d => {
                       return moment(d.eventDate)
                         .add(props.currentUser.user.timeZone, 'hours')
                         .format('YYYY-MM-DD hh:mm a')
-                        // return <Moment 
-                        //             // format={props.currentUser.user.dateFormat || 'YYYY/MM/DD'} 
-                        //             // add={{ hours: props.currentUser.user.timeZone}}
-                        //         >
-                        //             {d.eventDate}
-                        //         </Moment>	
                                                     
                     }
                 },
-                // {
-                //     Header: 'Time', 
-                //     accessor: 'timeOccurred',             
-                // },
                 {
                     Header: 'Category', 
                     accessor: 'category',             
@@ -129,7 +118,7 @@ const EventList = props => {
     
     const siData = safetyIncidents.map(si => {
         return {
-            eventId: si.eventId, 
+            id: si.eventId, 
             status: si.eventStatus, 
             eventDate: si.eventDate, 
             category: si.resultingCategory ? si.resultingCategory : si.initialCategory, 
@@ -148,7 +137,7 @@ const EventList = props => {
     return (
         <Fragment>
             <Styles>            
-                <Table columns={columns} data={siData} {...props} />
+                <Table columns={columns} data={siData} route='/events/si/' {...props} />
             </Styles>
             <Typography variant="caption" display="block" gutterBottom>
                 *Hint - Click anywhere on the row of an event to navigate to the details of the event

@@ -32,10 +32,29 @@ namespace EHS.Server.DataAccess.Repository
         {
             using (IDbConnection sqlCon = Connection)
             {
-                string tsql = @"select distinct u.UserId, u.FirstName, u.LastName, u.LogicalHierarchyId, u.PhysicalHierarchyId, u.Email, u.Phone, u.RoleId, u.TimeZone, u.DateFormat, u.CreatedBy, u.CreatedOn, u.ModifiedBy, u.ModifiedOn
-                                    , ar.ApprovalLevel
+                string tsql = @"select distinct	 u.UserId
+					                        , u.FirstName
+					                        , u.LastName
+					                        , u.LogicalHierarchyId
+					                        , u.PhysicalHierarchyId
+					                        , u.Email
+					                        , isnull(u.Phone, '') as Phone
+					                        , u.RoleId
+					                        , isnull(u.TimeZone, '') as TimeZone
+					                        , isnull(u.DateFormat, '') as DateFormat
+                                            , u.enabled
+					                        , u.CreatedBy
+					                        , u.CreatedOn
+					                        , u.ModifiedBy
+					                        , u.ModifiedOn
+                                            , isnull(ar.ApprovalLevel, 0) as ApprovalLevel
+					                        , isnull(ar.ApprovalLevelName, '*Non Approval Role') as ApprovalLevelName
+	                                        , ur.RoleName
+					                        , ur.RoleCapabilities
+					                        , ur.RoleLevel
                                 from Users u 
-	                                 join ApprovalRoutings ar on ar.UserRoleId = u.RoleId
+	                                    left join ApprovalRoutings ar on ar.UserRoleId = u.RoleId
+		                                join UserRoles ur on ur.UserRoleId = u.RoleId
                                 where u.UserId = @UserId";
                 
                 var result = await sqlCon.QueryAsync<User>(tsql, new { userId = id });
@@ -47,15 +66,36 @@ namespace EHS.Server.DataAccess.Repository
         {
             using (IDbConnection sqlCon = Connection)
             {
-                string tsql = @"select u.UserId, u.FirstName, u.LastName, u.LogicalHierarchyId, u.PhysicalHierarchyId, u.Email, u.Phone, u.RoleId, u.TimeZone, u.DateFormat, u.CreatedBy, u.CreatedOn, u.ModifiedBy, u.ModifiedOn
-                                from Users u ";
+                string tsql = @"select distinct	u.UserId
+					                        , u.FirstName
+					                        , u.LastName
+					                        , u.LogicalHierarchyId
+					                        , u.PhysicalHierarchyId
+					                        , u.Email
+					                        , isnull(u.Phone, '') as Phone
+					                        , u.RoleId
+					                        , isnull(u.TimeZone, '') as TimeZone
+					                        , isnull(u.DateFormat, '') as DateFormat
+                                            , u.enabled
+					                        , u.CreatedBy
+					                        , u.CreatedOn
+					                        , u.ModifiedBy
+					                        , u.ModifiedOn
+                                            , isnull(ar.ApprovalLevel, 0) as ApprovalLevel
+					                        , isnull(ar.ApprovalLevelName, '*Non Approval Role') as ApprovalLevelName
+	                                        , ur.RoleName
+					                        , ur.RoleCapabilities
+					                        , ur.RoleLevel
+                                from Users u 
+	                                    left join ApprovalRoutings ar on ar.UserRoleId = u.RoleId
+		                                join UserRoles ur on ur.UserRoleId = u.RoleId ";
                 
                 var result = await sqlCon.QueryAsync<User>(tsql);
                 return result.AsList();
             }
         }
 
-        public async Task<User> AddAsync(User userToAdd)
+        public async Task<User> AddOrUpdateAsync(User userToAddOrUpdate, string userId)
         {
             using (IDbConnection sqlCon = Connection)
             {
@@ -64,51 +104,52 @@ namespace EHS.Server.DataAccess.Repository
                     "dbo.spUserAddOrUpdate",
                     new
                     {
-                        userToAdd.UserId,
-                        userToAdd.Email, 
-                        userToAdd.FirstName,
-                        userToAdd.LastName,
-                        userToAdd.Phone, 
-                        userToAdd.RoleId, 
-                        userToAdd.TimeZone, 
-                        userToAdd.DateFormat, 
-                        userToAdd.CreatedBy, 
-                        userToAdd.ModifiedBy                        
+                        userToAddOrUpdate.UserId,
+                        userToAddOrUpdate.Email,
+                        userToAddOrUpdate.FirstName,
+                        userToAddOrUpdate.LastName,
+                        userToAddOrUpdate.LogicalHierarchyId, 
+                        userToAddOrUpdate.PhysicalHierarchyId,
+                        userToAddOrUpdate.Phone,
+                        userToAddOrUpdate.RoleId,
+                        userToAddOrUpdate.TimeZone,
+                        userToAddOrUpdate.DateFormat, 
+                        userToAddOrUpdate.Enabled, 
+                        ModifiedBy = userId                   
                     },
                     commandType: CommandType.StoredProcedure
                     );
-                return userToAdd;
+                return userToAddOrUpdate;
             }
         }
 
 
-        public async Task<User> UpdateAsync(User userToUpdate)
-        {
-            using (IDbConnection sqlCon = Connection)
-            {
+        //public async Task<User> UpdateAsync(User userToUpdate)
+        //{
+        //    using (IDbConnection sqlCon = Connection)
+        //    {
                 
-                var result = await sqlCon.ExecuteAsync(
-                    "dbo.spUserAddOrUpdate",
-                    new
-                    {
-                        userToUpdate.UserId,
-                        userToUpdate.Email,
-                        userToUpdate.FirstName,
-                        userToUpdate.LastName,
-                        userToUpdate.Phone,
-                        userToUpdate.RoleId,
-                        userToUpdate.TimeZone,
-                        userToUpdate.DateFormat,
-                        userToUpdate.CreatedBy,
-                        userToUpdate.ModifiedBy
-                    },
-                    commandType: CommandType.StoredProcedure
-                    );
-                return userToUpdate;
-            }
-        }
+        //        var result = await sqlCon.ExecuteAsync(
+        //            "dbo.spUserAddOrUpdate",
+        //            new
+        //            {
+        //                userToUpdate.UserId,
+        //                userToUpdate.Email,
+        //                userToUpdate.FirstName,
+        //                userToUpdate.LastName,
+        //                userToUpdate.Phone,
+        //                userToUpdate.RoleId,
+        //                userToUpdate.TimeZone,
+        //                userToUpdate.DateFormat,
+        //                userToUpdate.ModifiedBy
+        //            },
+        //            commandType: CommandType.StoredProcedure
+        //            );
+        //        return userToUpdate;
+        //    }
+        //}
 
-        public async Task<User> DeleteAsync(User userToDelete)
+        public async Task<string> DeleteAsync(string userIdToDelete, string userId)
         {
             using (IDbConnection sqlCon = Connection)
             {
@@ -117,16 +158,16 @@ namespace EHS.Server.DataAccess.Repository
                     "dbo.spUserDelete",
                     new
                     {
-                        userToDelete.UserId, 
-                        userToDelete.ModifiedBy
+                        UserId = userIdToDelete,
+                        ModifiedBy = userId
                     },
                     commandType: CommandType.StoredProcedure
                     );
-                return userToDelete;
+                return userIdToDelete;
             }
         }
 
-        public async Task<User> ReactivateAsync(User userToDelete)
+        public async Task<string> ReactivateAsync(string userIdToReactivate, string userId)
         {
             using (IDbConnection sqlCon = Connection)
             {
@@ -135,12 +176,12 @@ namespace EHS.Server.DataAccess.Repository
                     "dbo.spUserReactivate",
                     new
                     {
-                        userToDelete.UserId,
-                        userToDelete.ModifiedBy
+                        UserId = userIdToReactivate,
+                        ModifiedBy = userId
                     },
                     commandType: CommandType.StoredProcedure
                     );
-                return userToDelete;
+                return userIdToReactivate;
             }
         }
     }

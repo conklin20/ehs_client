@@ -50,7 +50,7 @@ const MyDrafts = props => {
                     aria-labelledby='confirm-dialog-title'
                     aria-describedby='confirm-dialog-description'
                 >
-                    <DialogTitle id='confirm-dialog-title'>{"Are you sure you want to delete this action?"}</DialogTitle>
+                    <DialogTitle id='confirm-dialog-title'>{"Are you sure you want to delete this draft?"}</DialogTitle>
                     <DialogContent>
                         <DialogContentText id='confirm-dialog-description'>
                             {`Are you sure you want to delete draft ${d.eventId}? You will not be able to undo this action.`}

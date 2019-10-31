@@ -192,7 +192,7 @@ const SafetyEventForm = props => {
 
     // Handle field change 
     const handleChange = (section, input) => e => {
-        setEvent({ ...event, [input]: e.target.checked ? e.target.checked : e.target.value})
+        setEvent({ ...event, [input]: e.target.type === 'checkbox' ? e.target.checked : e.target.value})
     }
 
     //for the react-select (single) component

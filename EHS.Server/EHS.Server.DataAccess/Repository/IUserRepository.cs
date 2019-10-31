@@ -8,9 +8,9 @@ namespace EHS.Server.DataAccess.Repository
     {
         Task<User> GetByIdAsync(string username);
         Task<List<User>> GetAllAsync();
-        Task<User> AddAsync(User userToAdd);
-        Task<User> UpdateAsync(User userToUpdate);
-        Task<User> DeleteAsync(User userToDelete);
-        Task<User> ReactivateAsync(User userToReactivate);
+        Task<User> AddOrUpdateAsync(User userToAddOrUpdate, string userId);
+        //Task<User> UpdateAsync(User userToUpdate);
+        Task<string> DeleteAsync(string userIdToDelete, string userId);
+        Task<string> ReactivateAsync(string userIdToReactivate, string userId);
     }
 }

@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { 
     Typography,
     Button,
-    LinearProgress as Progress, 
+    // LinearProgress as Progress, 
     Dialog, 
     DialogActions, 
     DialogContent, 
@@ -17,7 +17,7 @@ import {
     IconButton,
     ListItemAvatar, 
     ListItemSecondaryAction,
-    Paper
+    // Paper
 } from '@material-ui/core'; 
 import { DropzoneArea } from 'material-ui-dropzone'
 import { saveFiles, removeFile } from '../../../store/actions/media';
