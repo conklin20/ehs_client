@@ -57,8 +57,9 @@ const Media = (props) => {
         if(files.length){
             props.saveFiles(files, { eventId: event.eventId, userId: props.currentUser.user.userId} )
                 .then(res => {
-                    // console.log(res);
-                    if(res.length === files.length){
+                    console.log(res);
+                    if(res === 200){
+                        // console.log('File uploaded successfully')
                         refreshEventFiles()
                         handleClickOpen()
                         setFiles([])

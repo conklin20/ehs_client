@@ -1,7 +1,6 @@
 import React from 'react';
-import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
-import { FormControlLabel, TextField } from '@material-ui/core';
+import { TextField } from '@material-ui/core';
 import Filter from '@material-ui/icons/FilterList';
 import SearchFilters from './SearchFilters'; 
 

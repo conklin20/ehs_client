@@ -1,10 +1,10 @@
 import React, { useState, useEffect, Fragment } from 'react';
 import { Typography, Grid, TextField, Divider, Checkbox, FormControlLabel, Button  } from '@material-ui/core'; 
-import AutoComplete from '../inputs/AutoComplete'; 
+import AutoComplete from '../../shared/AutoComplete'; 
 import filterLookupDataByKey from '../../../helpers/filterLookupDataByKey'; 
 import filterEmployeeList from '../../../helpers/filterEmployeeList'; 
 import formatDate from '../../../helpers/formatDate'; 
-import ActionList from '../ActionList';
+import ActionList from './ActionList';
 import { addError } from '../../../store/actions/errors';
 import { removeAction, addAction, fetchActions, updateAction } from '../../../store/actions/actions';
 import { addApproval } from '../../../store/actions/approvals';

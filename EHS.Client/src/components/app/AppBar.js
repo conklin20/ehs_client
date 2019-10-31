@@ -1,6 +1,6 @@
 import React, { useState, Fragment } from 'react';
 import { Link } from 'react-router-dom'; 
-import { makeStyles, useTheme } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import {AppBar, Toolbar, Typography, Button, IconButton, Avatar, Menu, MenuItem } from '@material-ui/core';
 // import MenuIcon from '@material-ui/icons/Menu';
 import Logo  from '../../images/vista-outdoor-vector-logo.png';
@@ -38,12 +38,9 @@ const useStyles = makeStyles(theme => ({
 
 const EHSAppBar = (props) => {
 	const classes = useStyles();
-	const theme = useTheme(); 
 
 	const [userAnchorEl, setUserAnchorEl] = useState(null);
 	const [reportEventAnchorEl, setReportEventAnchorEl] = useState(null);
-	// const [anchorEl, setAnchorEl] = useState(null);
-	const [showSafetyEventForm, setShowSafetyEventForm] = useState(false); 
 
 	const { currentUser } = props; 
 

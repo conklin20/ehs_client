@@ -1,14 +1,14 @@
-import React, { useEffect, Fragment } from 'react'; 
-import { Switch, Route, withRouter, Redirect } from 'react-router-dom';
+import React, { Fragment } from 'react'; 
+import { Switch, Route, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { logout } from '../../store/actions/auth';
 import { removeError } from '../../store/actions/errors'; 
 //components
-import AppBar from '../containers/AppBar';
-import Homepage from '../function/Homepage';
-import Dashboard from '../containers/Dashboard'; 
-import SafetyEventForm from '../function/SafetyEventForm'; 
+import AppBar from './AppBar';
+import Homepage from './Homepage';
+import Dashboard from '../events/shared/Dashboard'; 
+import SafetyEventForm from '../events/safety/incidents/SafetyEventForm'; 
 import UserAside from '../userAside/UserAside';
 import ReportAside from '../reportAside/ReportAside';
 import UserProfile from '../user/UserProfile';
@@ -27,17 +27,26 @@ const useStyles = makeStyles(theme => ({
         padding: '0',
     }, 
     reportAside: {
+        display: 'flex', 
+        flexDirection: 'column',
         flex: 1, 
-        // backgroundColor: 'blue',
+        justifyItems: 'space-between',
+        backgroundColor: theme.palette.primary.light,
+        color: 'white',
         padding: theme.spacing(2),
     },     
     main: {
+        // display: 'flex', 
         flex: 4,
         // backgroundColor: 'green',
     },
     userAside: {
+        display: 'flex', 
+        flexDirection: 'column',
         flex: 1, 
-        // backgroundColor: theme.palette.secondary.main,
+        justifyItems: 'space-between',
+        backgroundColor: theme.palette.primary.light,
+        color: 'white',
         padding: theme.spacing(2),
     }
 })); 
@@ -60,7 +69,6 @@ const Routes = props => {
                     <Route path='/user/profile' render={(props) => <div className={classes.main}><UserProfile /> </div> }  ></Route>
                     <Route path='/manage/users' exact render={(props) => <div className={classes.main}><UserManagement /> </div> }  ></Route>
                     <Route path='/manage/users/:userId' exact render={(props) => <div className={classes.main}><UserManagement /> </div> }  ></Route>
-                    {/* /manage/users */}
                     {/* /manage/hierarchies */}
                     {/* /manage/attributes */}
                     {/* /reports */}

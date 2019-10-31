@@ -1,9 +1,9 @@
 import React, { useState, Fragment } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography, Grid, TextField, Divider, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Paper } from '@material-ui/core'; 
-import filterLookupDataByKey from '../../../helpers/filterLookupDataByKey'; 
+// import filterLookupDataByKey from '../../../helpers/filterLookupDataByKey'; 
 import filterEmployeeList from '../../../helpers/filterEmployeeList'; 
-import AutoCompleteMulti from '../inputs/AutoCompleteMulti'; 
+import AutoCompleteMulti from '../../shared/AutoCompleteMulti'; 
 import { savePeopleInvolved } from '../../../store/actions/peopleInvolved';
 import { connect } from "react-redux";
 
@@ -50,7 +50,8 @@ const PeopleInvolved = (props) => {
         if(peopleInvolved.length){       
             props.savePeopleInvolved(peopleInvolved, props.currentUser.user.userId)
                 .then(res => {
-                    refreshPeopleInvolved(); 
+                    refreshPeopleInvolved();
+                    // eslint-disable-next-line
                     return res === 'PeopleInvolved' ?  handleClickOpen() : null
                 })
                 .catch(err => {
@@ -82,9 +83,10 @@ const PeopleInvolved = (props) => {
         // Handle field change 
         const handleChange = e => {
             peopleInvolved
-                .filter(pi => pi.roleId == e.target.name)
+                // eslint-disable-next-line
+                .filter(pi => pi.roleId == e.target.name) //cant use === due to type difference. Need coercion  
                 .map(p => {
-                    p.comments = e.target.value
+                   return  p.comments = e.target.value
                 })            
             setPeopleInvolved([ ...peopleInvolved ])
         }

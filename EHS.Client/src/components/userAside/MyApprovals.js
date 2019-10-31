@@ -1,6 +1,6 @@
-import React, { useState, Fragment } from 'react'; 
+import React, { Fragment } from 'react'; 
 import { makeStyles } from '@material-ui/core/styles';
-import { Hidden, Divider, Typography, List, ListItem, ListItemText, ListItemSecondaryAction, IconButton, Badge } from '@material-ui/core';
+import { Hidden, Divider, Typography, List, ListItem, ListItemText, Badge } from '@material-ui/core';
 import { Link } from 'react-router-dom';
 
 const useStyles = makeStyles(theme => ({

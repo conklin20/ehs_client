@@ -1,7 +1,7 @@
-import React, { Fragment, Component, useEffect } from 'react'; 
-import Table from '../../function/Table'
-import moment from 'moment'; 
-import { Typography, Checkbox } from '@material-ui/core'; 
+import React, { Fragment } from 'react'; 
+import Table from '../../shared/Table';
+// import moment from 'moment'; 
+import { Typography } from '@material-ui/core'; 
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import styled from 'styled-components'
@@ -74,13 +74,13 @@ const UserList = props => {
         {
             Header: 'Logical Hierarchy', 
             accessor: h => {
-              return lookupData.logicalHierarchies.find(l => l.hierarchyId == h.logicalHierarchyId).hierarchyName
+              return lookupData.logicalHierarchies.find(l => l.hierarchyId === h.logicalHierarchyId).hierarchyName
             }
         }, 
         {
             Header: 'Physical Hierarchy', 
             accessor: h => {
-              return lookupData.physicalHierarchies.find(l => l.hierarchyId == h.physicalHierarchyId).hierarchyName
+              return lookupData.physicalHierarchies.find(l => l.hierarchyId === h.physicalHierarchyId).hierarchyName
             }
         }, 
         {

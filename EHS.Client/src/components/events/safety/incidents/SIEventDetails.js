@@ -1,16 +1,16 @@
-import React, { useState, Fragment } from 'react';
+import React, { Fragment } from 'react';
 import { Typography, Grid, TextField, Divider, Checkbox, FormControlLabel  } from '@material-ui/core'; 
-import AutoComplete from '../inputs/AutoComplete'; 
-import CustomSlider from '../inputs/Slider'; 
-import filterLookupDataByKey from '../../../helpers/filterLookupDataByKey'; 
-import filterEmployeeList from '../../../helpers/filterEmployeeList'; 
-import formatDate from '../../../helpers/formatDate'; 
+import AutoComplete from '../../../shared/AutoComplete'; 
+import CustomSlider from '../../../shared/Slider'; 
+import filterLookupDataByKey from '../../../../helpers/filterLookupDataByKey'; 
+import filterEmployeeList from '../../../../helpers/filterEmployeeList'; 
+import formatDate from '../../../../helpers/formatDate'; 
 
 //Safety Incident Event Details
 const SIEventDetails = (props) => {
     const classes = props.useStyles();
 
-    const { event, lookupData, handleChange, handleAutoCompleteChange, handleSliderChange, currentUser } = props; 
+    const { event, lookupData, handleChange, handleAutoCompleteChange, handleSliderChange } = props; 
 
     //building each lookup data object
     const employees = filterEmployeeList(lookupData['employees'], event['employeeId'], 4001, true, false)
@@ -29,7 +29,8 @@ const SIEventDetails = (props) => {
 
     //grabbing the HierarchyAttributeId from the lookup list to be used below to populate the Supervisor field from the PeopleInvolved table
     const supervisorHierarchyAttributeId = filterLookupDataByKey(lookupData, 'logicalHierarchyAttributes', 'Employee Involvement', null, true).find(sup => sup.label === 'Supervisor').value;
-    // console.log(event.supervisorId)
+    console.log(supervisorHierarchyAttributeId)
+    console.log(event)
     return (
         // <Fragment>  
         //     { employees && supervisors && shifts && jobTitles && injuryNatures && bodyParts && firstAidTypes && offPlantMedicalFacilities 

@@ -1,4 +1,4 @@
-import React, { useState, useReducer, useEffect, Fragment } from 'react';
+import React, { useState, useEffect, Fragment } from 'react';
 import { connect } from "react-redux";
 import { Link } from 'react-router-dom'; 
 import { makeStyles } from '@material-ui/core/styles';
@@ -8,31 +8,31 @@ import {
 	fetchLogicalHierarchyAttributes, 
     fetchPhysicalHierarchyAttributes, 
     fetchEmployees, 
- } from '../../store/actions/lookupData'; 
+ } from '../../../../store/actions/lookupData'; 
 import { 
     postNewSafetyIncident, 
     putSafetyIncident,
     fetchEvent
-} from '../../store/actions/safetyIncidents'; 
-import { fetchPeopleByEventId } from '../../store/actions/peopleInvolved'; 
-import { fetchCausesByEventId } from '../../store/actions/causes';
-import { fetchFilesByEventId } from '../../store/actions/media';  
-import { addError } from '../../store/actions/errors'
-import ReportingInformation from './formSections/ReportingInformation'; 
-import EventLocation from './formSections/EventLocation'; 
-import SIEventDetails from './formSections/SIEventDetails'; 
-import Actions from './formSections/Actions'; 
-import Causes from './formSections/Causes'; 
-import PeopleInvolved from './formSections/PeopleInvolved'; 
-import Notification from '../function/Notification';
-import Media from './formSections/Media';
-import Review from './formSections/Review'
+} from '../../../../store/actions/safetyIncidents'; 
+import { fetchPeopleByEventId } from '../../../../store/actions/peopleInvolved'; 
+import { fetchCausesByEventId } from '../../../../store/actions/causes';
+import { fetchFilesByEventId } from '../../../../store/actions/media';  
+import { addError } from '../../../../store/actions/errors'
+import ReportingInformation from '../../shared/ReportingInformation'; 
+import EventLocation from '../../shared/EventLocation'; 
+import SIEventDetails from './SIEventDetails'; 
+import Actions from '../../shared/Actions'; 
+import Causes from '../../shared/Causes'; 
+import PeopleInvolved from '../../shared/PeopleInvolved'; 
+import Notification from '../../../app/Notification';
+import Media from '../../shared/Media';
+import Review from '../../shared/Review'
 import { 
 	Button, 
 	Dialog,
 	DialogActions, 
 	DialogContent, 
-	DialogContentText, 
+	// DialogContentText, 
 	DialogTitle, 
     Step,
     Stepper, 
@@ -192,6 +192,8 @@ const SafetyEventForm = props => {
 
     // Handle field change 
     const handleChange = (section, input) => e => {
+        console.log(event)
+        console.log(e.target.type)
         setEvent({ ...event, [input]: e.target.type === 'checkbox' ? e.target.checked : e.target.value})
     }
 
@@ -201,7 +203,7 @@ const SafetyEventForm = props => {
     }
 
     const handleSliderChange = (e, value) => {
-        setEvent({ ...event, ['hoursWorkedPrior']: value })
+        setEvent({ ...event, hoursWorkedPrior: value })
     }
 
     const handleRefreshData = () => {
@@ -256,11 +258,11 @@ const SafetyEventForm = props => {
         }
     }
 
-    const handleReset = () => {
-        setActiveStep(0);
-        setCompleted(new Set());
-        // setSkipped(new Set());
-    }    
+    // const handleReset = () => {
+    //     setActiveStep(0);
+    //     setCompleted(new Set());
+    //     // setSkipped(new Set());
+    // }    
     
     const isStepComplete = (step) => {
         return completed.has(step);
@@ -356,6 +358,7 @@ const SafetyEventForm = props => {
     };
 
     const refreshEventFiles = () => {
+        console.log(event.eventId); 
         props.fetchFilesByEventId(event.eventId)
             .then(files => {
                 //update the file list since its changed 
@@ -369,12 +372,15 @@ const SafetyEventForm = props => {
     
     const handleSaveDraft = e => {
         e.preventDefault();
-        console.log(event.hasOwnProperty('eventId'))
         //if this event doesnt have an Id, it means its new and we need to post a new event 
         if(!event.hasOwnProperty('eventId')) {
             props.postNewSafetyIncident(event)
                 .then(res => {
-                    setEvent({ ...res}); 
+                    // console.log(res)
+                    //201, Created
+                    res.status === 201 
+                    ? setEvent({ ...res.data}) 
+                    : console.log(`Create Event Failed with status code: ${res.status}`)
                     // handleComplete();
                 });        
         } else {

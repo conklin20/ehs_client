@@ -1,9 +1,9 @@
 import React, { useState, useEffect, Fragment } from 'react'
 import { Grid, Typography, FormControl, FormControlLabel, Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, DialogContentText, TextField, Button, List, ListItem, ListItemText } from '@material-ui/core';
-import AutoComplete from '../../function/inputs/AutoComplete';
+import AutoComplete from '../../shared/AutoComplete';
 import { makeStyles } from '@material-ui/core/styles';
 import { fetchEmployee } from '../../../store/actions/lookupData';
-import { postNewUser, updateUser, deleteUser } from '../../../store/actions/users'; 
+import { postNewUser, updateUser } from '../../../store/actions/users'; 
 
 const useStyles = makeStyles(theme => ({
 // 	container: {
@@ -39,7 +39,7 @@ const UserForm = props => {
     
 
     const [validationErrors, setValidationErrors] = useState([])
-    const [serverValidationErrors, setServerValidationErrors] = useState([]); //not currently using 
+    // const [serverValidationErrors, setServerValidationErrors] = useState([]); //not currently using 
     const [openDialog, setOpenDialog] = useState(false); 
     
  	// Essentially what was componentDidMount and componentDidUpdate before Hooks
@@ -51,7 +51,7 @@ const UserForm = props => {
 			console.log('UserForm Component Unmounting')
 		}
 
-	}, [props.searchFilters]); //this 2nd arg is important, it tells what to look for changes in, and will re-run the hook when this changes 
+	}, []); //this 2nd arg is important, it tells what to look for changes in, and will re-run the hook when this changes 
     
     const handleClickOpen = () => {
         setOpenDialog(true); 
@@ -207,7 +207,7 @@ const UserForm = props => {
                 .then(res => {
                     if(res.data && res.data.errors) {
                         console.log(res.data.errors); 
-                        setServerValidationErrors(res.data.errors)
+                        // setServerValidationErrors(res.data.errors)
                     } else {
                         refreshUsers()
                         return res.userId ? handleClickOpen() : null

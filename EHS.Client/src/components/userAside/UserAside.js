@@ -1,6 +1,6 @@
 import React, { useState, useEffect, Fragment } from 'react'; 
 import { connect } from "react-redux";
-import { Hidden, Typography, Divider,  } from '@material-ui/core';
+import { Hidden, Typography, } from '@material-ui/core';
 import MyActions from './MyActions'; 
 import MyApprovals from './MyApprovals';
 import MyDrafts from './MyDrafts';
@@ -14,36 +14,37 @@ const UserAside = props => {
     const [myPendingApprovals, setMyPendingApprovals] = useState([]);
     const [myDrafts, setMyDrafts] = useState([]);
 
+    const { fetchActions, fetchMyPendingApprovals, fetchDrafts, currentUser, employees } = props; 
+
     // Essentially what was componentDidMount and componentDidUpdate before Hooks
 	useEffect(() => {
         //get users open actions 
-        props.fetchActions(`?userId=${props.currentUser.user.userId}&eventStatus=Open`)
+        fetchActions(`?userId=${currentUser.user.userId}&eventStatus=Open`)
             .then(res => {
                 if(res) setMyActions(res.filter(a => !a.completionDate)); 
             })
 
         //get users pending approvals 
-        props.fetchMyPendingApprovals(props.currentUser.user.userId)
+        fetchMyPendingApprovals(currentUser.user.userId)
             .then(res => {
                 if(res) setMyPendingApprovals(res)
             })
 
         //get users drafts
-        props.fetchDrafts('?eventStatuses=Draft')
+        fetchDrafts('?eventStatuses=Draft')
             .then(res => {
                 if(res) setMyDrafts(res); 
             })
-        
-        
+                
 		return () => {
 			console.log('UserAside Unmounting')
 		}
-	}, []); //this 2nd arg is important, it tells what to look for changes in, and will re-run the hook when this changes 
+	}, [props.safetyIncidents]); //this 2nd arg is important, it tells what to look for changes in, and will re-run the hook when this changes 
 
     //deleting a draft
     const handleDelete = (eventId) => {
         // console.log(`Deleting EventId: ${eventId}`); 
-        props.deleteSafetyIncident(eventId, props.currentUser.user.userId)
+        props.deleteSafetyIncident(eventId, currentUser.user.userId)
             .then(res => {
                 setMyDrafts(myDrafts.filter(d => d.eventId !== eventId))
             })
@@ -55,7 +56,7 @@ const UserAside = props => {
     // console.log(props.employees)
     return (     
         <Hidden mdDown>
-            {props.employees && props.employees.length ? 
+            {employees && employees.length ? 
                 <Fragment>
                     {/* <Typography variant="h4" gutterBottom>User Aside</Typography>   */}
                     <Typography>
@@ -75,7 +76,7 @@ const UserAside = props => {
                             <MyDrafts 
                                 drafts={myDrafts}
                                 handleDelete={handleDelete}
-                                employees={props.employees}
+                                employees={employees}
                             />
                             : null
                         }
@@ -90,10 +91,11 @@ const UserAside = props => {
 
 
 function mapStateToProps(state) {
-    // console.log(state)
+    console.log(state)
     return {
         currentUser: state.currentUser,
-        employees: state.lookupData.employees
+        employees: state.lookupData.employees, 
+        safetyIncidents: state.safetyIncidents, 
     };
 }
 

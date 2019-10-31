@@ -3,7 +3,7 @@ import {Provider} from 'react-redux';
 import {configureStore} from '../../store'; 
 import { BrowserRouter as Router } from 'react-router-dom';
 import history from '../../services/history'; 
-import Routes from '../app/Routes'; 
+import Routes from './Routes'; 
 import { setAuthorizationToken, setCurrentUser } from '../../store/actions/auth';
 import jwtDecode from 'jwt-decode'; 
 import { ThemeProvider } from '@material-ui/styles';

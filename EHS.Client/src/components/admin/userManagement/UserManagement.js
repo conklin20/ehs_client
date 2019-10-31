@@ -19,7 +19,7 @@ const useStyles = makeStyles(theme => ({
 	},
 	paper: {
 		padding: theme.spacing(2),
-		textAlign: 'left',
+		textAlign: 'center',
 		color: theme.palette.text.secondary,
         minHeight: '94vh',		
 	},
@@ -101,38 +101,38 @@ const UserManagement = props => {
 
     // console.log(props); 
     return (
-        <Paper className={classes.paper} square={true} >   
-            {users.length ? 
-                <Fragment>
-                    {showUserForm && Object.keys(lookupData).length === 3 ?
-                        <UserForm 
-                            showUserForm={showUserForm}
-                            handleShowUserForm={handleShowUserForm}
-                            userIdToEdit={match.params.userId}
-                            lookupData={lookupData}
-                            currentUser={currentUser}
-                            refreshUsers={refreshUsers}
-                            users={users} //to check if the user they're trying to create already exists 
-                        />
-                        : null
-                    }
-                    <UserSearch 
+        <Paper className={classes.paper} square={true} >  
+            <Fragment>
+                {showUserForm && Object.keys(lookupData).length === 3 ?
+                    <UserForm 
+                        showUserForm={showUserForm}
                         handleShowUserForm={handleShowUserForm}
-                        handleSearchTextChange={handleSearchTextChange}
+                        userIdToEdit={match.params.userId}
+                        lookupData={lookupData}
+                        currentUser={currentUser}
+                        refreshUsers={refreshUsers}
+                        users={users} //to check if the user they're trying to create already exists 
                     />
-                    {Object.keys(lookupData).length === 3 ?
-                        <UserList 
-                            // users={users}
-                            users={filterUsers()}
-                            lookupData={lookupData}
-                        />
-                        : null
-                    }
-                </Fragment>
-            : 
-            <Typography variant='h4'>
-                Loading Users...
-            </Typography>}
+                    : null
+                }
+                <UserSearch 
+                    handleShowUserForm={handleShowUserForm}
+                    handleSearchTextChange={handleSearchTextChange}
+                />
+                {Object.keys(lookupData).length === 3 ?
+                    <UserList 
+                        // users={users}
+                        users={filterUsers()}
+                        lookupData={lookupData}
+                    />
+                    : 
+                    <div className={classes.loading}>
+                            <Typography variant='h2' >
+                                Loading Users...
+                            </Typography>
+                    </div>
+                }
+            </Fragment>
         </Paper>
     )
 }

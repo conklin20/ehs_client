@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import clsx from 'clsx';
+// import clsx from 'clsx';
 import Select from 'react-select';
-import { emphasize, makeStyles, useTheme } from '@material-ui/core/styles';
+import { makeStyles, useTheme } from '@material-ui/core/styles';
 import { Typography, NoSsr, TextField, Paper, MenuItem } from '@material-ui/core';
 
 // this code essentially comes from https://material-ui.com/components/autocomplete/

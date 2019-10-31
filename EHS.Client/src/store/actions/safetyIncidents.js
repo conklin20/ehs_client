@@ -59,7 +59,7 @@ export const postNewSafetyIncident = (safetyEventToAdd) => (dispatch, getState) 
 	return apiCall('post', '/safetyincidents', safetyEventToAdd )
 		.then(res => {
 			//success status = 201
-			return res.status
+			return res
 			// dispatch(res);
 		})
 		.catch(err => {

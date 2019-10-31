@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react';
-import { Typography, Grid,  Divider, Paper, Button } from '@material-ui/core'; 
+import { Typography, Grid,  Divider, Button } from '@material-ui/core'; 
 import Moment from 'react-moment'; 
 import { connect } from "react-redux";
 import { makeStyles } from '@material-ui/core/styles';
@@ -102,7 +102,7 @@ const Review = (props) => {
     const immediateCauseList = filterLookupDataByKey(props.lookupData, 'logicalHierarchyAttributes', 'Immediate Causes', null, true)
     const rootCauseList = filterLookupDataByKey(props.lookupData, 'logicalHierarchyAttributes', 'Root Causes', null, true)
     const contributingFactorList = filterLookupDataByKey(props.lookupData, 'logicalHierarchyAttributes', 'Contributing Factors', null, true)
-    const causes = ['Immediate Causes','Root Causes','Contributing Factors'].map(causeType => {                  
+    const causes = ['Immediate Causes','Root Causes','Contributing Factors'].map(causeType => {                
         switch(causeType){
             case 'Immediate Causes':
                 return (
@@ -111,8 +111,8 @@ const Review = (props) => {
                             <span className={classes.span}> {`${causeType}: `} </span>
                             {`
                                 ${event.causes
-                                .filter(c => immediateCauseList.some(icl => icl.value == c.causeId))
-                                .map(ic => ' ' + immediateCauseList.find(icl => icl.value == ic.causeId).label)}
+                                .filter(c => immediateCauseList.some(icl => icl.value === c.causeId))
+                                .map(ic => ' ' + immediateCauseList.find(icl => icl.value === ic.causeId).label)}
                             `}
                         </Typography>	
                     </Grid>  
@@ -124,8 +124,8 @@ const Review = (props) => {
                             <span className={classes.span}> {`${causeType}: `} </span>
                             {`
                                 ${event.causes
-                                .filter(c => rootCauseList.some(rcl => rcl.value == c.causeId))
-                                .map(rc => ' ' + rootCauseList.find(rcl => rcl.value == rc.causeId).label)}
+                                .filter(c => rootCauseList.some(rcl => rcl.value === c.causeId))
+                                .map(rc => ' ' + rootCauseList.find(rcl => rcl.value === rc.causeId).label)}
                             `}
                         </Typography>	
                     </Grid>  
@@ -137,14 +137,15 @@ const Review = (props) => {
                             <span className={classes.span}> {`${causeType}: `} </span>
                             {`
                                 ${event.causes
-                                .filter(c => contributingFactorList.some(cfl => cfl.value == c.causeId))
-                                .map(cf => ' ' + contributingFactorList.find(cfl => cfl.value == cf.causeId).label)}
+                                .filter(c => contributingFactorList.some(cfl => cfl.value === c.causeId))
+                                .map(cf => ' ' + contributingFactorList.find(cfl => cfl.value === cf.causeId).label)}
                             `}
                         </Typography>	
                     </Grid>  
                 );
             default: 
-                console.log('Invalid Type')
+                console.log(`Invalid Type: ${causeType}`)
+                return causeType
         }
     })
 

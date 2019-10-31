@@ -1,8 +1,8 @@
 import React, { useState, useEffect, Fragment } from 'react'
 import { connect } from "react-redux";
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography, Paper, Grid, Button, Divider , TextField, FormControl, InputLabel } from '@material-ui/core'
-import AutoComplete from '../function/inputs/AutoComplete'; 
+import { Typography, Paper, Grid, Divider , TextField, FormControl } from '@material-ui/core'
+import AutoComplete from '../shared/AutoComplete'; 
 import { 
 	fetchLogicalHierarchyTree, 
 	fetchPhysicalHierarchyTree, 
@@ -45,7 +45,7 @@ const UserProfile = props => {
 		return () => {
 			console.log('UserProfile Component Unmounting')
 		}
-	}, [props.searchFilters]); //this 2nd arg is important, it tells what to look for changes in, and will re-run the hook when this changes 
+	}, []); //this 2nd arg is important, it tells what to look for changes in, and will re-run the hook when this changes 
 
 	const fetchData = async () => {
 		
@@ -64,6 +64,7 @@ const UserProfile = props => {
     */
    
     const userLogicalHierarchyLevel = lookupData.logicalHierarchies ? 
+        // eslint-disable-next-line
         lookupData.logicalHierarchies.find(h => h.hierarchyId == userData.logicalHierarchyId).hierarchyLevel.hierarchyLevelNumber
         : null 
     const logicalOptions = lookupData.logicalHierarchies ? 
@@ -71,8 +72,8 @@ const UserProfile = props => {
             value: hierarchy.hierarchyId, 
             label: hierarchy.hierarchyName, 
     })) : null ;
-    
     const userPhsyicalHierarchyLevel = lookupData.physicalHierarchies ? 
+        // eslint-disable-next-line
         lookupData.physicalHierarchies.find(h => h.hierarchyId == userData.physicalHierarchyId).hierarchyLevel.hierarchyLevelNumber
         : null 
     const physicalOptions = lookupData.physicalHierarchies ? 
@@ -141,7 +142,8 @@ const UserProfile = props => {
                                         label="Logical Hierarchy"                        
                                         placeholder="Select Department"
                                         handleChange={handleAutoCompleteChange}
-                                        value={logicalOptions.find(o => o.value == userData.logicalHierarchyId)}
+                                        // eslint-disable-next-line
+                                        value={logicalOptions.find(o => o.value == userData.logicalHierarchyId)} //cant use === 
                                         className={classes.formControl}
                                     >
                                     </AutoComplete> 
@@ -155,7 +157,8 @@ const UserProfile = props => {
                                         label="Physical Hierarchy"                        
                                         placeholder="Select Location"
                                         handleChange={handleAutoCompleteChange}
-                                        value={physicalOptions.find(o => o.value == userData.physicalHierarchyId)}
+                                        // eslint-disable-next-line
+                                        value={physicalOptions.find(o => o.value == userData.physicalHierarchyId)} //cant use === 
                                         className={classes.formControl}
                                     >
                                     </AutoComplete> 

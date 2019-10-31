@@ -12,6 +12,7 @@ const events = (state = [], action) => {
             } catch(err){
                 console.log(err)
             }
+            break;
         // case LOAD_EVENT:
         //     console.log(state) 
         //     console.log(action)

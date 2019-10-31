@@ -1,20 +1,18 @@
 import React, { useState, useEffect, useReducer, Fragment } from 'react'; 
 import { connect } from "react-redux";
-import { fetchSafetyIncidents } from '../../store/actions/safetyIncidents';
+import { fetchSafetyIncidents } from '../../../store/actions/safetyIncidents';
 import { 
 	fetchLogicalHierarchyTree, 
 	fetchPhysicalHierarchyTree, 
 	fetchLogicalHierarchyAttributes, 
 	fetchPhysicalHierarchyAttributes, 
-	fetchEmployees } from '../../store/actions/lookupData'; 
-import { addError } from '../../store/actions/errors';
+	fetchEmployees } from '../../../store/actions/lookupData'; 
+import { addError } from '../../../store/actions/errors';
 import { makeStyles } from '@material-ui/core/styles';
-import { Paper, Grid, Hidden, Typography } from '@material-ui/core';
+import { Paper, Typography } from '@material-ui/core';
 import EventList from './EventList';
-import EventSearch from '../function/EventSearch';
-import ReportAside from '../reportAside/ReportAside'; 
-import UserAside from '../userAside/UserAside'; 
-import Notification from '../function/Notification';
+import EventSearch from './EventSearch';
+import Notification from '../../app/Notification';
 
 const useStyles = makeStyles(theme => ({
 	root: {
@@ -127,8 +125,10 @@ const Dashboard = props => {
 		//WOULD LIKE TO USE THIS TO RETURN ONLY THE USERS PERTINENT EVENTS (Their Site, Area's or Depts...) 
 		//Not working though as the component mounts before having this data 
 		if(lookupData.logicalHierarchies && currentUser.user){
-			dispatch( { 
+			dispatch( { 				
+				// eslint-disable-next-line
 				type: lookupData.logicalHierarchies.find(h => h.hierarchyId == currentUser.user.logicalHierarchyId).hierarchyLevel.hierarchyLevelName, 
+				// eslint-disable-next-line
 				value: lookupData.logicalHierarchies.find(h => h.hierarchyId == currentUser.user.logicalHierarchyId).hierarchyName
 			})
 		}
@@ -199,7 +199,7 @@ const Dashboard = props => {
 						lookupData={props.lookupData}
 						/>
 
-					{ props.safetyIncidents.length	 && props.lookupData.employees			
+					{ props.safetyIncidents.length && props.lookupData.employees			
 						? 	<EventList 
 								currentUser={props.currentUser} 
 								safetyIncidents={filterSafetyIncidents()}

@@ -1,6 +1,6 @@
 // Took this directly from Material-UI with a few mods - https://material-ui.com/components/snackbars/
 import React, { useState } from 'react';
-import PropTypes from 'prop-types';
+// import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import ErrorIcon from '@material-ui/icons/Error';

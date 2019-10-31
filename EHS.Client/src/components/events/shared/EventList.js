@@ -1,6 +1,6 @@
-import React, { Fragment, Component } from 'react'; 
-import Table from '../function/Table'
-import Moment from 'react-moment';
+import React, { Fragment } from 'react'; 
+import Table from '../../shared/Table';
+// import Moment from 'react-moment';
 import moment from 'moment'; 
 import { Typography } from '@material-ui/core'; 
 import { withRouter } from 'react-router-dom';

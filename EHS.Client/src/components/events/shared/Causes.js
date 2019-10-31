@@ -2,7 +2,7 @@ import React, { useState, Fragment } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography, Grid, TextField, Divider, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Paper } from '@material-ui/core'; 
 import filterLookupDataByKey from '../../../helpers/filterLookupDataByKey'; 
-import AutoCompleteMulti from '../inputs/AutoCompleteMulti'; 
+import AutoCompleteMulti from '../../shared/AutoCompleteMulti'; 
 import { saveCauses } from '../../../store/actions/causes';
 import { connect } from "react-redux";
 
@@ -13,9 +13,9 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
-function removeDups(value, index, self) { 
-    return self.indexOf(value) === index;
-}
+// function removeDups(value, index, self) { 
+//     return self.indexOf(value) === index;
+// }
 
 const Causes = (props) => {
     const classes = useStyles();
@@ -29,7 +29,7 @@ const Causes = (props) => {
         
     //find which cause type is associated to each cause
     const currentImmediateCauses = event.causes
-                                    .filter(c => immediateCauseList.some(icl => icl.value == c.causeId))
+                                    .filter(c => immediateCauseList.some(icl => icl.value === c.causeId))
                                     .map(c => {
                                     return {
                                         eventId: c.eventId, 
@@ -40,7 +40,7 @@ const Causes = (props) => {
     
     //find which cause type is associated to each cause
     const currentRootCauses = event.causes
-                                    .filter(c => rootCauseList.some(rcl => rcl.value == c.causeId))
+                                    .filter(c => rootCauseList.some(rcl => rcl.value === c.causeId))
                                     .map(c => {
                                     return {
                                         eventId: c.eventId, 
@@ -51,7 +51,7 @@ const Causes = (props) => {
     
     //find which cause type is associated to each cause
     const currentContributingFactors = event.causes
-                                    .filter(c => contributingFactorList.some(cfl => cfl.value == c.causeId))
+                                    .filter(c => contributingFactorList.some(cfl => cfl.value === c.causeId))
                                     .map(c => {
                                     return {
                                         eventId: c.eventId, 
@@ -151,19 +151,19 @@ const Causes = (props) => {
             switch(type){
                 case 'Immediate Causes':
                     immediateCauses.map(ic => {
-                        ic.comments = e.target.value
+                        return ic.comments = e.target.value
                     })
                     setImmediateCauses([ ...immediateCauses ])
                     return 
                 case 'Root Causes':
                     rootCauses.map(rc => {
-                        rc.comments = e.target.value
+                        return rc.comments = e.target.value
                     })
                     setRootCauses([ ...rootCauses ])
                     return 
                 case 'Contributing Factors':
                     contributingFactors.map(cf => {
-                        cf.comments = e.target.value
+                        return cf.comments = e.target.value
                     })
                     setContributingFactors([ ...contributingFactors ])
                     return
@@ -176,11 +176,11 @@ const Causes = (props) => {
         const values = () => {            
             switch(type){
                 case 'Immediate Causes':
-                    return immediateCauses.map(ic => immediateCauseList.find(icl => icl.value == ic.causeId));
+                    return immediateCauses.map(ic => immediateCauseList.find(icl => icl.value === ic.causeId));
                 case 'Root Causes':
-                    return rootCauses.map(rc => rootCauseList.find(rcl => rcl.value == rc.causeId));
+                    return rootCauses.map(rc => rootCauseList.find(rcl => rcl.value === rc.causeId));
                 case 'Contributing Factors':
-                    return contributingFactors.map(cf => contributingFactorList.find(cfl => cfl.value == cf.causeId));
+                    return contributingFactors.map(cf => contributingFactorList.find(cfl => cfl.value === cf.causeId));
                 default: 
                     console.log('Invalid Type')
             }

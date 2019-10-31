@@ -1,6 +1,6 @@
 import React, { useEffect, Fragment } from 'react';
 import { Typography, Grid, Divider } from '@material-ui/core'; 
-import AutoComplete from '../inputs/AutoComplete'; 
+import AutoComplete from '../../shared/AutoComplete'; 
 // import { fetchFullTree } from '../../../store/actions/hierarchyData'; 
 
 const EventLocation = (props) => {
@@ -23,14 +23,12 @@ const EventLocation = (props) => {
     const logicalOptions = lookupData.logicalHierarchies.filter(h => h.hierarchyLevel.hierarchyLevelNumber === 600).map(hierarchy => ({
         value: hierarchy.hierarchyId, 
         label: hierarchy.hierarchyName, 
-        selected: hierarchy.hierarchyId == event.departmentId ? true : false  
     }));
     const physicalOptions = lookupData.physicalHierarchies.filter(h => h.hierarchyLevel.hierarchyLevelNumber === 600).map(hierarchy => ({
         value: hierarchy.hierarchyId, 
         label: hierarchy.hierarchyName,
-        selected: hierarchy.hierarchyId == event.localeId ? true : false  
     }));
-    // console.log(event.departmentId, logicalOptions)
+    console.log(event.departmentId, logicalOptions)
     return (
         <Fragment>  
             <Typography variant='h4' gutterBottom>
@@ -49,7 +47,7 @@ const EventLocation = (props) => {
                         label="Logical Hierarchy"                        
                         placeholder="Select Department"
                         handleChange={handleAutoCompleteChange}
-                        value={logicalOptions.filter(o => o.selected === true)}
+                        value={logicalOptions.find(o => o.value === event.departmentId)}
                         className={classes.formControl}
                     >
                     </AutoComplete> 
@@ -61,7 +59,7 @@ const EventLocation = (props) => {
                         label="Physical Hierarchy"
                         placeholder="Select Location"
                         handleChange={handleAutoCompleteChange}
-                        value={physicalOptions.filter(o => o.selected === true)}
+                        value={physicalOptions.find(o => o.value === event.localeId)}
                         className={classes.formControl}
                     >
                     </AutoComplete> 

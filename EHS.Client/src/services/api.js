@@ -48,7 +48,7 @@ export function apiCallWithFiles(method, path, files, data){
     
     const formData = new FormData();
     files.map(f => {
-        formData.append('file', f)
+        return formData.append('file', f)
     })
     // formData.append('data', data)
     const config = {

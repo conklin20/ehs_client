@@ -19,9 +19,9 @@ function Table({ ...props }) {
     // Use the state and functions returned from useTable to build your UI
     const {
         getTableProps,
-        getTableBodyProps,
+        // getTableBodyProps,
         headerGroups,
-        rows,
+        // rows,
         prepareRow,
         page, // Instead of using 'rows', we'll use page, which has only the rows for the active page
         canPreviousPage,

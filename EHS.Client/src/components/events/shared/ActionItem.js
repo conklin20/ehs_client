@@ -1,4 +1,4 @@
-import React, { useState, Fragment } from 'react';
+import React, { useState } from 'react';
 import DeleteIcon from '@material-ui/icons/Delete';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography
@@ -10,8 +10,8 @@ import { Typography
         , Grid
         , List
         , ListItem
-        , ListItemText
-        , ListSubheader
+        // , ListItemText
+        // , ListSubheader
         , Badge
         , Divider
         , Chip
@@ -22,7 +22,7 @@ import { Typography
         , DialogContentText
         , DialogTitle
     } from '@material-ui/core';
-import MomentDate from '../containers/MomentDate';
+// import MomentDate from '../../shared/MomentDate';
 
 const useStyles = makeStyles(theme => ({
     card: {
@@ -99,10 +99,8 @@ const ActionItem = (props) => {
     
     const assignedTo = employees.filter(e => e.employeeId === action.assignedTo)[0].fullName;
 
-    const dateFormat = currentUser.user.dateFormat || 'MM/DD/YYYY'; 
-    const utcOffset = currentUser.user.timeZone; 
-    // console.log(new Date(action.dueDate).toISOString())
-    // console.log(<MomentDate date={ new Date('2019-10-10T05:00:00.000Z' )}/>)
+    // const dateFormat = currentUser.user.dateFormat || 'MM/DD/YYYY'; 
+    // const utcOffset = currentUser.user.timeZone; 
     
     const approvalsReceived = action.approvals
         .map(ar => {
@@ -147,9 +145,9 @@ const ActionItem = (props) => {
     if(!action.completionDate) approveButtonCriteria.push(`This action hasn't been completed by ${assignedTo} yet. `);
     if(action.approvalDate) approveButtonCriteria.push(`This action has already been approved. `);
     if(action.assignedTo === currentUser.user.userId) approveButtonCriteria.push(`This action is assigned to you, you can't approve your own action. `);
-    if(action.approvals.filter(ar => ar.approvalLevelId == currentUser.user.approvalLevel).length) {
+    if(action.approvals.filter(ar => ar.approvalLevelId === currentUser.user.approvalLevel).length) {
         approveButtonCriteria.push(`This action has already received
-            ${action.approvals.filter(ar => ar.approvalLevelId == currentUser.user.approvalLevel)[0].approvalLevel.approvalLevelName}. `);        
+            ${action.approvals.find(ar => ar.approvalLevelId === currentUser.user.approvalLevel).approvalLevel.approvalLevelName}. `);        
     }    
     
     return (
