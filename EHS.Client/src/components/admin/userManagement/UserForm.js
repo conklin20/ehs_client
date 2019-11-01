@@ -1,15 +1,14 @@
 import React, { useState, useEffect, Fragment } from 'react'
-import { Grid, Typography, FormControl, FormControlLabel, Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, DialogContentText, TextField, Button, List, ListItem, ListItemText } from '@material-ui/core';
+import { connect } from 'react-redux';
+import { Grid, Typography, FormControl, FormControlLabel, Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, TextField, Button, List, ListItem, ListItemText } from '@material-ui/core';
 import AutoComplete from '../../shared/AutoComplete';
 import { makeStyles } from '@material-ui/core/styles';
 import { fetchEmployee } from '../../../store/actions/lookupData';
 import { postNewUser, updateUser } from '../../../store/actions/users'; 
+import Notification from '../../shared/Notification'; 
+import { addNotification, removeNotification } from '../../../store/actions/notifications'; 
 
 const useStyles = makeStyles(theme => ({
-// 	container: {
-// 		display: 'flex',
-// 		flexWrap: 'wrap',
-// 	},
     formControl: {
 		margin: theme.spacing(2),
 		width: '90%',
@@ -24,69 +23,46 @@ const useStyles = makeStyles(theme => ({
 const UserForm = props => {
     const classes = useStyles(); 
 
-    const { showUserForm, handleShowUserForm, userIdToEdit, lookupData, currentUser, refreshUsers, users } = props;
+    const { showUserForm, handleShowUserForm, userIdToEdit, lookupData, currentUser, refreshUsers, users, dispatch } = props;
 
     const [user, setUser] = useState({
         userId: userIdToEdit, 
         firstName: '', 
         lastName: '', 
         email: '', 
+        phone: '',
         enabled: false,
         validUserId: userIdToEdit ? true : false,
         isExisting: userIdToEdit ? true : false 
-
-    })
-    
+    })    
 
     const [validationErrors, setValidationErrors] = useState([])
     // const [serverValidationErrors, setServerValidationErrors] = useState([]); //not currently using 
-    const [openDialog, setOpenDialog] = useState(false); 
+    const [hasChange, setHasChange] = useState(false)
     
  	// Essentially what was componentDidMount and componentDidUpdate before Hooks
 	useEffect(() => {
-
         if(userIdToEdit) handleGetEmployee(); 
 
 		return () => {
 			console.log('UserForm Component Unmounting')
 		}
 
-	}, []); //this 2nd arg is important, it tells what to look for changes in, and will re-run the hook when this changes 
-    
-    const handleClickOpen = () => {
-        setOpenDialog(true); 
-    }; 
-
-    const handleClose = (e) => {
-        setOpenDialog(false);
-        //reset the form 
-        setUser({
-            userId: '', 
-            firstName: '', 
-            lastName: '', 
-            email: '', 
-            // logicalHierarchyId: 0, 
-            // physicalHierarchyId: 0, 
-            // roleId: 0, 
-            enabled: false,
-            validUserId: false
-        })
-    }
-    
+	}, []); //this 2nd arg is important, it tells what to look for changes in, and will re-run the hook when this changes   
      
     //filtering on the highest level of hierarchies (Department and PlantArea)
     const logicalOptions = lookupData.logicalHierarchies
         .sort((a, b) => a.hierarchyLevel.hierarchyLevelNumber - b.hierarchyLevel.hierarchyLevelNumber)
         .map(h => ({
             value: h.hierarchyId, 
-            label: `${h.hierarchyName} (${h.hierarchyLevel.hierarchyLevelName})`, 
+            label: `${h.hierarchyName} (${h.hierarchyLevel.hierarchyLevelAlias || h.hierarchyLevel.hierarchyLevelName})`, 
     }));
 
     const physicalOptions = lookupData.physicalHierarchies
         .sort((a, b) => a.hierarchyLevel.hierarchyLevelNumber - b.hierarchyLevel.hierarchyLevelNumber)
         .map(h => ({
             value: h.hierarchyId, 
-            label: `${h.hierarchyName} (${h.hierarchyLevel.hierarchyLevelName})`, 
+            label: `${h.hierarchyName} (${h.hierarchyLevel.hierarchyLevelAlias || h.hierarchyLevel.hierarchyLevelName})`, 
     }));
     
     // console.log(currentUser.user.roleLevel)
@@ -100,12 +76,13 @@ const UserForm = props => {
     
     // Handle field change 
     const handleChange = () => e => {
+        setHasChange(true); 
         setUser({ ...user, [e.target.name]: e.target.type === 'checkbox' ? e.target.checked : e.target.value === '' ? null : e.target.value})
-
     }
     
     //for the react-select (single) component
     const handleAutoCompleteChange = (state, action)  => {
+        setHasChange(true); 
         setUser({ ...user, [action.name]: state.value });
         
         //remove error 
@@ -205,21 +182,25 @@ const UserForm = props => {
             ? 
             updateUser(user, currentUser.user.userId)()
                 .then(res => {
-                    if(res.data && res.data.errors) {
-                        console.log(res.data.errors); 
-                        // setServerValidationErrors(res.data.errors)
-                    } else {
+                    if(res.status === 202) {
                         refreshUsers()
-                        return res.userId ? handleClickOpen() : null
-                    }
-                    
+                        dispatch(addNotification(`Successfully updated user ${user.userId}`, 'success')); 
+                    } else {
+                        console.log(res); 
+                        dispatch(addNotification(`Failed to update user. Error: ${res.data.errors}`, 'error')); 
+                        // setServerValidationErrors(res.data.errors)
+                    }                    
                 })
             :
             postNewUser(user, currentUser.user.userId)()
                 .then(res => {
-                    console.log(res)
-                    refreshUsers()
-                    return res.userId ? handleClickOpen() : null
+                    if(res.status === 201){
+                        refreshUsers()
+                        dispatch(addNotification(`Successfully created user ${user.userId}`, 'success')); 
+                    } else {
+                        console.log(res); 
+                        dispatch(addNotification(`Error creating user ${user.userId}. Error: ${res.error.message}`, 'error')); 
+                    }
                 })
         }
     }
@@ -227,6 +208,15 @@ const UserForm = props => {
     // console.log(user); 
     return (
         <Fragment>
+            {props.notifications.message && (							
+                <Notification
+                    open={true} 
+                    variant={props.notifications.variant}
+                    className={classes.margin}
+                    message={props.notifications.message}	
+                    removeNotification={dispatch(removeNotification)}							
+                />		
+            )}
 			<Dialog 
                 open={showUserForm} 
                 onClose={handleShowUserForm} 
@@ -237,23 +227,7 @@ const UserForm = props => {
                 <DialogTitle id="form-dialog-title">
                     { userIdToEdit ? 'Edit User' : 'New User' }
                 </DialogTitle>
-                <DialogContent>		     
-                    <Dialog 
-                        open={openDialog}
-                        onClose={handleClose}
-                        aria-labelledby='confirm-dialog-title'
-                        aria-describedby='confirm-dialog-description'
-                    >
-                        <DialogTitle id='confirm-dialog-title'>{"Saved Successfully!"}</DialogTitle>
-                        <DialogContent>
-                            <DialogContentText id='confirm-dialog-description'>
-                                {user.isExisting ? `User ${user.userId} has been updated successfully!` : `User ${user.userId} has been created successfully! `}
-                            </DialogContentText>
-                        </DialogContent>
-                        <DialogActions>
-                            <Button id='success' onClick={handleClose} color='primary' autofocus>OK</Button>
-                        </DialogActions>
-                    </Dialog>
+                <DialogContent>		  
                     <form className={classes.form} >						
                         <Grid container spacing={2}>
                             <Grid item xs={12} md={4}>			
@@ -476,7 +450,7 @@ const UserForm = props => {
                         color="primary"
                         variant="contained"
                         className={classes.button}
-
+                        disabled={!hasChange}
                     >
                         { user.isExisting ? 'Update User' : 'Save New User' }
                     </Button>
@@ -488,4 +462,11 @@ const UserForm = props => {
     )
 }
 
-export default UserForm;
+function mapStateToProps(state) {
+    // console.log(state); 
+	return {
+        notifications: state.notifications
+	};
+}
+
+export default connect(mapStateToProps, null)(UserForm); 

@@ -2,7 +2,7 @@
 	import { Button } from '@material-ui/core';
 	import { makeStyles } from '@material-ui/core/styles';
 	import TextField from '@material-ui/core/TextField';
-	import Notification from './Notification';
+	import Notification from '../shared/Notification';
 	import { authUser } from '../../store/actions/auth';
 	import { withRouter } from 'react-router-dom';
 	import { connect } from 'react-redux';

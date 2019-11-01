@@ -12,7 +12,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Paper, Typography } from '@material-ui/core';
 import EventList from './EventList';
 import EventSearch from './EventSearch';
-import Notification from '../../app/Notification';
+import Notification from '../../shared/Notification';
 
 const useStyles = makeStyles(theme => ({
 	root: {
@@ -96,7 +96,7 @@ const Dashboard = props => {
 	};
 
 	const [searchFilters, dispatch] = useReducer(searchFilterReducer, initialSearchFilterState); 
-	console.log(searchFilters)
+	// console.log(searchFilters)
 
 	const [searchText, setSearchText] = useState(''); 
 	const [showSearchFilters, setShowSearchFilters] = useState(false); 

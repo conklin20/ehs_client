@@ -17,14 +17,24 @@ import Logout from '../user/Logout';
 
 
 const useStyles = makeStyles(theme => ({
+    index: {
+        display: 'flex',
+        flexDirection: 'column',
+        margin: 0, 
+        padding: 0, 
+    },
+    appBar: {
+        backgroundColor: theme.palette.primary.light,
+    },
     body: {
         display: 'flex',
         // padding: theme.spacing(2),
         textAlign: 'center',
         color: theme.palette.text.secondary,
-        height: '94vh',
-        margin: '0', 
-        padding: '0',
+        // height: '80vh',
+        // // overflowY: 'scroll',
+        // margin: '0', 
+        // padding: '0',
     }, 
     reportAside: {
         display: 'flex', 
@@ -36,7 +46,6 @@ const useStyles = makeStyles(theme => ({
         padding: theme.spacing(2),
     },     
     main: {
-        // display: 'flex', 
         flex: 4,
         // backgroundColor: 'green',
     },
@@ -55,8 +64,10 @@ const Routes = props => {
     const classes = useStyles(); 
 
     return (
-        <Fragment>
-            { props.currentUser.isAuthenticated ? <AppBar currentUser={props.currentUser} onLogout={props.logout} /> : null }
+        <div className={classes.index}>
+            <div className={classes.appBar}>
+                { props.currentUser.isAuthenticated ? <AppBar currentUser={props.currentUser} onLogout={props.logout} /> : null }
+            </div>
             <div id='body' className={classes.body}>
                 { props.currentUser.isAuthenticated ? <div className={classes.reportAside}><ReportAside /> </div> : null }
                 <Switch>
@@ -75,7 +86,7 @@ const Routes = props => {
                 </Switch>
                 { props.currentUser.isAuthenticated ? <div className={classes.userAside}><UserAside /> </div> : null }
             </div>
-        </Fragment>
+        </div>
     )
 }
 

@@ -91,7 +91,7 @@ const UserAside = props => {
 
 
 function mapStateToProps(state) {
-    console.log(state)
+    // console.log(state)
     return {
         currentUser: state.currentUser,
         employees: state.lookupData.employees, 

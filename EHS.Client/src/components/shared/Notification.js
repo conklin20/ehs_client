@@ -1,6 +1,6 @@
 // Took this directly from Material-UI with a few mods - https://material-ui.com/components/snackbars/
 import React, { useState } from 'react';
-// import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import clsx from 'clsx';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import ErrorIcon from '@material-ui/icons/Error';
@@ -50,6 +50,7 @@ function MySnackbarContentWrapper(props) {
   const classes = useStyles();
   const { className, message, onClose, variant, ...other } = props;
   const Icon = variantIcon[variant];
+  
   console.log(props)
   return (
     <SnackbarContent
@@ -58,7 +59,7 @@ function MySnackbarContentWrapper(props) {
       message={
         <span id="client-snackbar" className={classes.message}>
           <Icon className={clsx(classes.icon, classes.iconVariant)} />
-          {message.response.data.message || 'An unknown error has occured.'}
+          {message || 'An unknown error has occured.'}
         </span>
       }
       action={[
@@ -73,14 +74,16 @@ function MySnackbarContentWrapper(props) {
 
 const Notification = ( props ) => {
   const [open, setOpen] = useState(true);
-  const {variant, autoHideDuration, message, removeError } = props;
+  const {variant, autoHideDuration, message, removeNotification } = props;
+
+  console.log(props); 
 
   function handleClose(event, reason) {
     if (reason === 'clickaway') {
       return;
     }    
     
-    removeError(); 
+    props.dispatch(removeNotification); 
     setOpen(false);
   }
 
@@ -103,4 +106,4 @@ const Notification = ( props ) => {
   )
 }
 
-export default Notification;
+export default connect(null, null)(Notification);

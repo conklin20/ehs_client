@@ -2,20 +2,16 @@ import React, { useState, Fragment } from 'react';
 import { Link } from 'react-router-dom'; 
 import { makeStyles } from '@material-ui/core/styles';
 import {AppBar, Toolbar, Typography, Button, IconButton, Avatar, Menu, MenuItem } from '@material-ui/core';
-// import MenuIcon from '@material-ui/icons/Menu';
+import { MIN_ADMIN_ROLE_LEVEL } from '../admin/adminRoleLevel';
 import Logo  from '../../images/vista-outdoor-vector-logo.png';
 
 const useStyles = makeStyles(theme => ({
-  root: {
-    flexGrow: 1,
-	height: '60',
-  },
   toolbar: {
 	display: 'flex',
 	justifyContent: 'space-between',
   },
   menuButton: {
-    marginRight: theme.spacing(2)
+	  color: 'white',
   },
   title: {
     flexGrow: 1,
@@ -33,6 +29,11 @@ const useStyles = makeStyles(theme => ({
 	  height: '4em',
 	//   backgroundColor: 'red',
 	  margin: theme.spacing(1),
+  }, 
+  link: {
+    textDecoration: 'inherit',
+    color: 'inherit',
+    cursor: 'pointer',
   }
 }));
 
@@ -41,6 +42,7 @@ const EHSAppBar = (props) => {
 
 	const [userAnchorEl, setUserAnchorEl] = useState(null);
 	const [reportEventAnchorEl, setReportEventAnchorEl] = useState(null);
+	const [mangeUsersAnchorEl, setMangeUsersAnchorEl] = useState(null);
 
 	const { currentUser } = props; 
 
@@ -57,86 +59,127 @@ const EHSAppBar = (props) => {
 			case 'userMenu':
 				return setUserAnchorEl(event.currentTarget);
 				// return setAnchorUserEl(event.currentTarget);
+			case 'systemManagement':
+				return setMangeUsersAnchorEl(event.currentTarget)
 			default:
 				return 'Invalid target'	
 		}
 	}
 
 	return (
-		<div className={classes.root}>
-		{currentUser.isAuthenticated ? (
-			<Fragment>
-				<AppBar position="static" >
-					<Toolbar variant="dense" className={classes.toolbar}>
-						<div>
-							<Link to="/dashboard" >
-								<img className={classes.brand} src={Logo} alt="Home" />
-							</Link>         
-						</div>		
-						<div>
-							<Typography variant="h6" className={classes.title}>
-								<Button aria-controls="event-menu" aria-haspopup='true' name='eventMenu' onClick={handleMenuClick}>
-									Report Event
-								</Button>
-								<Menu 
-									id='event-menu'
-									anchorEl={reportEventAnchorEl}
-									keepMounted
-									open={Boolean(reportEventAnchorEl)}
-									onClose={() => setReportEventAnchorEl(null)}
-								>
-									<Link to="/events/si/new">
-										<Button name='reportSafetyIncident' onClick={handleMenuClick}>Report Safety Incident
-										</Button> 
-									</Link>	
-								</Menu>
-							</Typography> 
-						</div>		
-						<div>
-							<div className={classes.userAccount}>
-								<Typography variant="h6">
-									{`Welcome, ${currentUser.user.firstName}!`}
-								</Typography>
-								<IconButton
-									aria-label="account of current user"
-									aria-controls="menu-appbar"
-									aria-haspopup="true"
-									name="userMenu"
-									onClick={handleMenuClick}
-									color="inherit"
-								>
-									<Avatar className={classes.avatar}>{currentUser.user.firstName[0] + currentUser.user.lastName[0]}</Avatar>  
-									{/* <AccountCircle /> */}
-								</IconButton>
-								<Menu
-									id="menu-appbar"
-									anchorEl={userAnchorEl}
-									anchorOrigin={{
-									vertical: 'top',
-									horizontal: 'right',
-									}}
+		<Fragment>
+			{currentUser.isAuthenticated ? (
+				<Fragment>
+					<AppBar position="static" >
+						<Toolbar variant="dense" className={classes.toolbar}>
+							<div>
+								<Link to="/dashboard" >
+									<img className={classes.brand} src={Logo} alt="Home" />
+								</Link>         
+							</div>		
+							<div>
+								<Typography variant="h6" className={classes.title}>
+									<Button 
+										name='eventMenu' 
+										className={classes.menuButton}
+										onClick={handleMenuClick}
+										size="large" 
+									>
+										Report Event
+									</Button>
+									<Menu 
+										id='event-menu'
+										anchorEl={reportEventAnchorEl}
 										keepMounted
-										transformOrigin={{
+										open={Boolean(reportEventAnchorEl)}
+										onClose={() => setReportEventAnchorEl(null)}
+									>
+										<Link className={classes.link} to="/events/si/new">
+											<Button 
+												name='reportSafetyIncident' 
+												onClick={handleMenuClick}
+											>
+												Report Safety Incident
+											</Button> 
+										</Link>	
+									</Menu>
+									{ currentUser.user.roleLevel >= MIN_ADMIN_ROLE_LEVEL
+										?
+										<Fragment>
+											<Button 
+												name='systemManagement' 
+												className={classes.menuButton}
+												onClick={handleMenuClick}
+												size="large" 
+											>
+												System Management
+											</Button>
+											<Menu 
+												id='system-mangement-menu'
+												anchorEl={mangeUsersAnchorEl}
+												keepMounted
+												open={Boolean(mangeUsersAnchorEl)}
+												onClose={() => setMangeUsersAnchorEl(null)}
+											>
+												<Link className={classes.link} to="/manage/users">
+													<Button 
+														name='manageUsers' 
+														onClick={handleMenuClick}
+													>
+														Manage Users
+													</Button> 
+												</Link>	
+											</Menu>
+										</Fragment>
+										: null 
+									}
+								</Typography> 
+							</div>		
+							<div>
+								<div className={classes.userAccount}>
+									<Typography variant="h6">
+										{`Welcome, ${currentUser.user.firstName}!`}
+									</Typography>
+									<IconButton
+										aria-label="account of current user"
+										aria-controls="menu-appbar"
+										aria-haspopup="true"
+										name="userMenu"
+										onClick={handleMenuClick}
+										color="inherit"
+									>
+										<Avatar className={classes.avatar}>{currentUser.user.firstName[0] + currentUser.user.lastName[0]}</Avatar>  
+										{/* <AccountCircle /> */}
+									</IconButton>
+									<Menu
+										id="menu-appbar"
+										anchorEl={userAnchorEl}
+										anchorOrigin={{
 										vertical: 'top',
 										horizontal: 'right',
-									}}
-									open={Boolean(userAnchorEl)}
-									onClose={() => setUserAnchorEl(null)}
-								>
-									<MenuItem onClick={() => setUserAnchorEl(null)}>
-										<Link to="/user/profile">Account Settings</Link>										
-									</MenuItem>
-									<MenuItem onClick={logout}>
-										<Link to="/logout">Log Out</Link>
-									</MenuItem>
-								</Menu>
-							</div>
-						</div>							
-					</Toolbar>
-				</AppBar>				
-			</Fragment>
-		) : null}
-		</div>
+										}}
+											keepMounted
+											transformOrigin={{
+											vertical: 'top',
+											horizontal: 'right',
+										}}
+										open={Boolean(userAnchorEl)}
+										onClose={() => setUserAnchorEl(null)}
+									>
+										<MenuItem onClick={() => setUserAnchorEl(null)}>
+											<Link className={classes.link} to="/user/profile">Account Settings</Link>										
+										</MenuItem>
+										<MenuItem onClick={logout}>
+											<Link className={classes.link} to="/logout">Log Out</Link>
+										</MenuItem>
+									</Menu>
+								</div>
+							</div>							
+						</Toolbar>
+					</AppBar>				
+				</Fragment>
+			) : null}
+		</Fragment>
 	);
 }
 

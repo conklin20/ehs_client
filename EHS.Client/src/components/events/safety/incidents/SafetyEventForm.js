@@ -24,7 +24,7 @@ import SIEventDetails from './SIEventDetails';
 import Actions from '../../shared/Actions'; 
 import Causes from '../../shared/Causes'; 
 import PeopleInvolved from '../../shared/PeopleInvolved'; 
-import Notification from '../../../app/Notification';
+import Notification from '../../../shared/Notification';
 import Media from '../../shared/Media';
 import Review from '../../shared/Review'
 import { 
