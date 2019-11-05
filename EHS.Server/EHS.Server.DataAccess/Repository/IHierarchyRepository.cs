@@ -10,8 +10,9 @@ namespace EHS.Server.DataAccess.Repository
         Task<List<Hierarchy>> GetAllAsync();
         Task<List<Hierarchy>> GetFullTreeAsync(int id);
         Task<List<Hierarchy>> GetLeafNodesAsync(string levelName);
-        Task<Hierarchy> AddAsync(Hierarchy hierarchy);
+        Task<List<Hierarchy>> GetFullTreeWithDepthAsync(int id);
+        Task<Hierarchy> AddAsync(List<Hierarchy> hierarchies, bool firstChild, string userId);
         Task<Hierarchy> UpdateAsync(Hierarchy hierarchyToUpdate, string userId);
-        Task<Hierarchy> DeleteAsync(Hierarchy hierarchyToDelete, string userId);
+        Task<int> DeleteAsync(int hierarchyId, string userId);
     }
 }

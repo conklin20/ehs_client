@@ -42,7 +42,7 @@ const EHSAppBar = (props) => {
 
 	const [userAnchorEl, setUserAnchorEl] = useState(null);
 	const [reportEventAnchorEl, setReportEventAnchorEl] = useState(null);
-	const [mangeUsersAnchorEl, setMangeUsersAnchorEl] = useState(null);
+	const [sysManagementAnchorEl, setSysManagementAnchorEl] = useState(null);
 
 	const { currentUser } = props; 
 
@@ -59,8 +59,8 @@ const EHSAppBar = (props) => {
 			case 'userMenu':
 				return setUserAnchorEl(event.currentTarget);
 				// return setAnchorUserEl(event.currentTarget);
-			case 'systemManagement':
-				return setMangeUsersAnchorEl(event.currentTarget)
+			case 'systemManagementMenu':
+				return setSysManagementAnchorEl(event.currentTarget)
 			default:
 				return 'Invalid target'	
 		}
@@ -94,20 +94,22 @@ const EHSAppBar = (props) => {
 										open={Boolean(reportEventAnchorEl)}
 										onClose={() => setReportEventAnchorEl(null)}
 									>
-										<Link className={classes.link} to="/events/si/new">
-											<Button 
-												name='reportSafetyIncident' 
-												onClick={handleMenuClick}
-											>
-												Report Safety Incident
-											</Button> 
-										</Link>	
+										<MenuItem>
+											<Link className={classes.link} to="/events/si/new">
+												<Button 
+													name='reportSafetyIncident' 
+													onClick={handleMenuClick}
+												>
+													Report Safety Incident
+												</Button> 
+											</Link>	
+										</MenuItem>
 									</Menu>
 									{ currentUser.user.roleLevel >= MIN_ADMIN_ROLE_LEVEL
 										?
 										<Fragment>
 											<Button 
-												name='systemManagement' 
+												name='systemManagementMenu' 
 												className={classes.menuButton}
 												onClick={handleMenuClick}
 												size="large" 
@@ -116,19 +118,31 @@ const EHSAppBar = (props) => {
 											</Button>
 											<Menu 
 												id='system-mangement-menu'
-												anchorEl={mangeUsersAnchorEl}
+												anchorEl={sysManagementAnchorEl}
 												keepMounted
-												open={Boolean(mangeUsersAnchorEl)}
-												onClose={() => setMangeUsersAnchorEl(null)}
+												open={Boolean(sysManagementAnchorEl)}
+												onClose={() => setSysManagementAnchorEl(null)}
 											>
-												<Link className={classes.link} to="/manage/users">
-													<Button 
-														name='manageUsers' 
-														onClick={handleMenuClick}
-													>
-														Manage Users
-													</Button> 
-												</Link>	
+												<MenuItem>
+													<Link className={classes.link} to="/manage/users">
+														<Button 
+															name='manageUsers' 
+															onClick={handleMenuClick}
+														>
+															Manage Users
+														</Button> 
+													</Link>	
+												</MenuItem>
+												<MenuItem>
+													<Link className={classes.link} to="/manage/hierarchies">
+														<Button 
+															name='manageHierarchies' 
+															onClick={handleMenuClick}
+														>
+															Manage Hierarchies
+														</Button> 
+													</Link>	
+												</MenuItem>
 											</Menu>
 										</Fragment>
 										: null 

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Linq;
 using EHS.Server.DataAccess.DatabaseModels; 
 using Dapper;
+using System;
 
 namespace EHS.Server.DataAccess.Repository
 {
@@ -67,6 +68,52 @@ namespace EHS.Server.DataAccess.Repository
             }
         }
 
+        public async Task<List<Hierarchy>> GetFullTreeWithDepthAsync(int id)
+        {
+            using (IDbConnection sqlCon = Connection)
+            {
+                string tsql = @"--Finding the depth
+                                IF OBJECT_ID('tempdb..#fulltree') IS NOT NULL DROP TABLE #fulltree
+
+                                select * 
+                                into #fulltree
+                                from dbo.fnGetHierarchyFullTree(@HierarchyId)
+
+                                IF OBJECT_ID('tempdb..#fulltreedepth') IS NOT NULL DROP TABLE #fulltreedepth
+
+                                SELECT node.HierarchyId, (COUNT(parent.HierarchyId) - 1) AS depth
+                                into #fulltreedepth
+                                FROM #fulltree AS node,
+                                        #fulltree AS parent
+                                WHERE node.Lft BETWEEN parent.Lft AND parent.Rgt 
+                                GROUP BY node.HierarchyId, node.Lft
+                                ORDER BY node.Lft;
+
+                                select h.*
+	                                  ,l.HierarchyLevelId, l.HierarchyLevelName, d.depth as HierarchyLevelNumber, l.HierarchyLevelAlias
+                                from #fulltreedepth d
+	                                 join Hierarchies h on h.HierarchyId = d.HierarchyId
+	                                 join HierarchyLevels l on l.HierarchyLevelId = h.HierarchyLevelId";
+
+                DynamicParameters paramList = new DynamicParameters();
+                //add param from route (hierarchyId)
+                paramList.Add("@HierarchyId", id);
+
+                //var result = await sqlCon.QueryAsync<Hierarchy>(tsql, p);
+                var result = await sqlCon.QueryAsync<Hierarchy, HierarchyLevel, Hierarchy>(
+                    tsql,
+                    (hierarchy, hierarchyLevel) =>
+                    {
+                        hierarchy.HierarchyLevel = hierarchyLevel;
+                        return hierarchy;
+                    },
+                    paramList,
+                    splitOn: "HierarchyLevelId");
+                return result.AsList();
+            }
+        }
+
+
         public async Task<List<Hierarchy>> GetLeafNodesAsync(string levelName)
         {
             using (IDbConnection sqlCon = Connection)
@@ -98,8 +145,45 @@ namespace EHS.Server.DataAccess.Repository
             }
         }
 
-        public async Task<Hierarchy> AddAsync(Hierarchy hierarchyToAdd)
+        public async Task<Hierarchy> AddAsync(List<Hierarchy> hierarchies, bool firstChild, string userId)
         {
+            //use linq to get new and left hierarchies 
+            Hierarchy newHierarchy = hierarchies.Find(h => h.Lft < 0);
+            Hierarchy leftHierarchy = hierarchies.Find(h => h.Lft > 0);
+
+            DataTable newHierarchyDt = new DataTable();
+            newHierarchyDt.Columns.Add("HierarchyId", typeof(int));
+            newHierarchyDt.Columns.Add("HierarchyName", typeof(string));
+            newHierarchyDt.Columns.Add("Lft", typeof(int));
+            newHierarchyDt.Columns.Add("Rgt", typeof(int));
+            newHierarchyDt.Columns.Add("HierarchyLevelId", typeof(int));
+
+            DataRow row;
+            row = newHierarchyDt.NewRow();
+            row[0] = DBNull.Value;
+            row[1] = newHierarchy.HierarchyName;
+            row[2] = -1;
+            row[3] = -1;
+            row[4] = newHierarchy.HierarchyLevelId;
+            newHierarchyDt.Rows.Add(row); 
+
+
+            DataTable leftHierarchyDt = new DataTable();
+            leftHierarchyDt.Columns.Add("HierarchyId", typeof(int));
+            leftHierarchyDt.Columns.Add("HierarchyName", typeof(string));
+            leftHierarchyDt.Columns.Add("Lft", typeof(int));
+            leftHierarchyDt.Columns.Add("Rgt", typeof(int));
+            leftHierarchyDt.Columns.Add("HierarchyLevelId", typeof(int));
+
+            DataRow leftRow;
+            leftRow = leftHierarchyDt.NewRow();
+            leftRow[0] = leftHierarchy.HierarchyId;
+            leftRow[1] = leftHierarchy.HierarchyName;
+            leftRow[2] = leftHierarchy.Lft;
+            leftRow[3] = leftHierarchy.Rgt;
+            leftRow[4] = leftHierarchy.HierarchyLevelId;
+            leftHierarchyDt.Rows.Add(leftRow);
+                
             using (IDbConnection sqlCon = Connection)
             {
                 
@@ -107,32 +191,62 @@ namespace EHS.Server.DataAccess.Repository
                     "dbo.spHierarchyAddOrUpdate",
                     new
                     {
-                        hierarchyName = hierarchyToAdd.HierarchyName,
-                        lft = hierarchyToAdd.Lft,
-                        rgt = hierarchyToAdd.Rgt,
-                        hierarchyLevelId = hierarchyToAdd.HierarchyLevelId,
-                        userId = hierarchyToAdd.CreatedBy
+                        hierarchy = newHierarchyDt,
+                        leftHierarchy = leftHierarchyDt,
+                        firstChild,
+                        userId
                     },
                     commandType: CommandType.StoredProcedure
                     );
-                return hierarchyToAdd;
+                return newHierarchy;
             }
         }
 
         public async Task<Hierarchy> UpdateAsync(Hierarchy hierarchyToUpdate, string userId)
         {
+            DataTable hierarchyToUpdateDt = new DataTable();
+            hierarchyToUpdateDt.Columns.Add("HierarchyId", typeof(int));
+            hierarchyToUpdateDt.Columns.Add("HierarchyName", typeof(string));
+            hierarchyToUpdateDt.Columns.Add("Lft", typeof(int));
+            hierarchyToUpdateDt.Columns.Add("Rgt", typeof(int));
+            hierarchyToUpdateDt.Columns.Add("HierarchyLevelId", typeof(int));
+
+            DataRow row;
+            row = hierarchyToUpdateDt.NewRow();
+            row[0] = hierarchyToUpdate.HierarchyId;
+            row[1] = hierarchyToUpdate.HierarchyName; // Name should be the only thing changing as of now
+            row[2] = hierarchyToUpdate.Lft;
+            row[3] = hierarchyToUpdate.Rgt;
+            row[4] = hierarchyToUpdate.HierarchyLevelId;
+            hierarchyToUpdateDt.Rows.Add(row);
+
+
+            DataTable leftHierarchyDt = new DataTable();
+            leftHierarchyDt.Columns.Add("HierarchyId", typeof(int));
+            leftHierarchyDt.Columns.Add("HierarchyName", typeof(string));
+            leftHierarchyDt.Columns.Add("Lft", typeof(int));
+            leftHierarchyDt.Columns.Add("Rgt", typeof(int));
+            leftHierarchyDt.Columns.Add("HierarchyLevelId", typeof(int));
+
+            DataRow leftRow;
+            leftRow = leftHierarchyDt.NewRow();
+            leftRow[0] = DBNull.Value;
+            leftRow[1] = "No Value";
+            leftRow[2] = -1;
+            leftRow[3] = -1;
+            leftRow[4] = -1;
+            leftHierarchyDt.Rows.Add(leftRow);
+
             using (IDbConnection sqlCon = Connection)
-            {     
-                
+            {
+
                 var result = await sqlCon.ExecuteAsync(
                     "dbo.spHierarchyAddOrUpdate",
                     new
                     {
-                        hierarchyId = hierarchyToUpdate.HierarchyId,
-                        hierarchyName = hierarchyToUpdate.HierarchyName,
-                        lft = hierarchyToUpdate.Lft,
-                        rgt = hierarchyToUpdate.Rgt,
-                        hierarchyLevelId = hierarchyToUpdate.HierarchyLevelId,
+                        hierarchy = hierarchyToUpdateDt,
+                        leftHierarchy = leftHierarchyDt,
+                        firstChild = false,
                         userId
                     },
                     commandType: CommandType.StoredProcedure
@@ -141,7 +255,7 @@ namespace EHS.Server.DataAccess.Repository
             }
         }
 
-        public async Task<Hierarchy> DeleteAsync(Hierarchy hierarchyToDelete, string userId)
+        public async Task<int> DeleteAsync(int hierarchyId, string userId)
         {
             using (IDbConnection sqlCon = Connection)
             {
@@ -150,14 +264,12 @@ namespace EHS.Server.DataAccess.Repository
                     "dbo.spHierarchyDelete",
                     new
                     {
-                        hierarchyId = hierarchyToDelete.HierarchyId,
-                        lft = hierarchyToDelete.Lft,
-                        rgt = hierarchyToDelete.Rgt,
+                        hierarchyId,
                         userId
                     },
                     commandType: CommandType.StoredProcedure
                     );
-                return hierarchyToDelete;
+                return hierarchyId;
             }
         }
     }

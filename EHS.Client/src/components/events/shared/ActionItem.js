@@ -97,7 +97,7 @@ const ActionItem = (props) => {
         setOpenDialog(false);
     }
     
-    const assignedTo = employees.filter(e => e.employeeId === action.assignedTo)[0].fullName;
+    const assignedTo = action.assignedTo === 'N/A' ? 'N/A' : employees.find(e => e.employeeId === action.assignedTo).fullName;
 
     // const dateFormat = currentUser.user.dateFormat || 'MM/DD/YYYY'; 
     // const utcOffset = currentUser.user.timeZone; 
@@ -106,7 +106,7 @@ const ActionItem = (props) => {
         .map(ar => {
             return (
                 <ListItem>
-                    <Tooltip title={`${employees.filter(e => e.employeeId === ar.approvedBy)[0].fullName} - ${ar.approvedOn}`} >
+                    <Tooltip title={`${ar.approvedBy === 'N/A' ? 'N/A' : employees.find(e => e.employeeId === ar.approvedBy).fullName} - ${ar.approvedOn}`} >
                         <Chip label={ar.approvalLevel.approvalLevelName.replace('Approval', '')} />
                     </Tooltip>
                 </ListItem>

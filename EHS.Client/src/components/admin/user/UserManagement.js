@@ -117,6 +117,9 @@ const UserManagement = props => {
     // console.log(props); 
     return (
         <Paper className={classes.paper} square={true} >  
+            <Typography variant='h4' >
+                Manage System Users 
+            </Typography>
             { currentUser.user.roleLevel >= MIN_ADMIN_ROLE_LEVEL 
                 ?
                 <Fragment>

@@ -79,6 +79,30 @@ namespace EHS.Server.WebApi.Controllers.Common
             }
         }
 
+        [HttpGet("fulltreedepth/{id}", Name = "GetFullTreeWithDepth")]
+        public async Task<ActionResult<List<Hierarchy>>> GetFullTreeWithDepth([FromRoute] int id)
+        {
+            try
+            {
+                //get the list of hierarchies 
+                var hierarchies = await _hierarchyRepo.GetFullTreeWithDepthAsync(id);
+
+                if (hierarchies == null)
+                {
+                    _logger.LogError("No Hierarchies found. {0}", NotFound().ToString());
+                    return NotFound();
+                }
+
+                //map the list from the domain/database model objects, to data transfer objects to pass back to the client 
+                return Ok(hierarchies.Select(_mapper.Map<Hierarchy, HierarchyDto>).ToList());
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return BadRequest();
+            }
+        }
+
         [HttpGet("leafnodes/{levelName}", Name = "GetLeafNodes")]
         public async Task<ActionResult<List<Hierarchy>>> GetLeafNodes([FromRoute] string levelName)
         {
@@ -130,7 +154,7 @@ namespace EHS.Server.WebApi.Controllers.Common
 
         // POST: api/Hierarchies
         [HttpPost]
-        public async Task<ActionResult<Hierarchy>> Post([FromBody]Hierarchy hierarchyToAdd)
+        public async Task<ActionResult<Hierarchy>> Post([FromBody]List<Hierarchy> hierarchies, [FromQuery]bool firstChild, [FromQuery]string userId )
         {
             try
             {
@@ -141,12 +165,11 @@ namespace EHS.Server.WebApi.Controllers.Common
                 }
 
                 //map the new hierarchy from the incoming dto object to the domain/database model object so we can pass it to the Add() method
-                //var hierarchyToAdd = _mapper.Map<HierarchyDto, Hierarchy>(hierarchyToAddDto);
-                var addedHierarchy = await _hierarchyRepo.AddAsync(hierarchyToAdd);
+                var addedHierarchy = await _hierarchyRepo.AddAsync(hierarchies, firstChild, userId);
 
                 //map back to dto, to pass back to client 
                 //return CreatedAtAction("GetHierarchy", new { id = addedHierarchy.HierarchyId }, addedHierarchy); 
-                return CreatedAtAction("GetHierarchy", new { id = addedHierarchy.HierarchyId }, _mapper.Map<Hierarchy, HierarchyDto>(addedHierarchy));
+                return CreatedAtAction("Post", _mapper.Map<Hierarchy, HierarchyDto>(addedHierarchy));
                 //return _mapper.Map<Hierarchy, HierarchyDto>(addedHierarchy);
             }
             catch (Exception ex)
@@ -158,7 +181,7 @@ namespace EHS.Server.WebApi.Controllers.Common
 
         // PUT: api/Hierarchies/5
         [HttpPut("{id}")]
-        public async Task<ActionResult<Hierarchy>> Put([FromBody]Hierarchy hierarchyToUpdate, [FromHeader]string userId)
+        public async Task<ActionResult<Hierarchy>> Put([FromBody]Hierarchy hierarchy, [FromQuery]string userId)
         {
             try
             {
@@ -170,10 +193,10 @@ namespace EHS.Server.WebApi.Controllers.Common
 
                 //map the hierarchy from the incoming dto object to the domain/database model object so we can pass it to the Update() method
                 //var hierarchyToUpdate = _mapper.Map<HierarchyDto, Hierarchy>(hierarchyToUpdateDto);
-                var updatedHierarchy = await _hierarchyRepo.UpdateAsync(hierarchyToUpdate, userId);
+                var updatedHierarchy = await _hierarchyRepo.UpdateAsync(hierarchy, userId);
 
                 //map back to dto, to pass back to client 
-                return Accepted(_mapper.Map<Hierarchy, HierarchyDto>(updatedHierarchy));
+                return AcceptedAtAction("Put", _mapper.Map<Hierarchy, HierarchyDto>(updatedHierarchy));
             }
             catch (Exception ex)
             {
@@ -183,8 +206,8 @@ namespace EHS.Server.WebApi.Controllers.Common
         }
 
         // DELETE: api/ApiWithActions/5
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<Hierarchy>> Delete([FromBody]Hierarchy hierarchyToDelete, [FromHeader]string userId)
+        [HttpDelete("{hierarchyId}")]
+        public async Task<ActionResult<Hierarchy>> Delete([FromRoute]int hierarchyId, [FromQuery]string userId)
         {
             try
             {
@@ -196,10 +219,10 @@ namespace EHS.Server.WebApi.Controllers.Common
 
                 //map the hierarchy from the incoming dto object to the domain/database model object so we can pass it to the Delete() method
                 //var hierarchyToDelete = _mapper.Map<HierarchyDto, Hierarchy>(hierarchyToDeleteDto);
-                var deletedHierarchy =  await _hierarchyRepo.DeleteAsync(hierarchyToDelete, userId);
+                var deletedHierarchy = await _hierarchyRepo.DeleteAsync(hierarchyId, userId);
 
                 //map back to dto, to pass back to client 
-                return Accepted(_mapper.Map<Hierarchy, HierarchyDto>(deletedHierarchy)); 
+                return AcceptedAtAction("Delete", hierarchyId); 
             }
             catch (Exception ex)
             {

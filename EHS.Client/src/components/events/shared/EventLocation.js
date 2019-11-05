@@ -20,11 +20,11 @@ const EventLocation = (props) => {
 
     //generate the list of options for the logical/dept dropwdown list
     //filtering on the highest level of hierarchies (Department and PlantArea)
-    const logicalOptions = lookupData.logicalHierarchies.filter(h => h.hierarchyLevel.hierarchyLevelNumber === 600).map(hierarchy => ({
+    const logicalOptions = lookupData.logicalHierarchies.filter(h => h.hierarchyLevel.hierarchyLevelNumber === 5).map(hierarchy => ({
         value: hierarchy.hierarchyId, 
         label: hierarchy.hierarchyName, 
     }));
-    const physicalOptions = lookupData.physicalHierarchies.filter(h => h.hierarchyLevel.hierarchyLevelNumber === 600).map(hierarchy => ({
+    const physicalOptions = lookupData.physicalHierarchies.filter(h => h.hierarchyLevel.hierarchyLevelNumber === 5).map(hierarchy => ({
         value: hierarchy.hierarchyId, 
         label: hierarchy.hierarchyName,
     }));

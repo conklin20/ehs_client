@@ -12,7 +12,8 @@ import SafetyEventForm from '../events/safety/incidents/SafetyEventForm';
 import UserAside from '../userAside/UserAside';
 import ReportAside from '../reportAside/ReportAside';
 import UserProfile from '../user/UserProfile';
-import UserManagement from '../admin/userManagement/UserManagement'; 
+import UserManagement from '../admin/user/UserManagement'; 
+import HierarchyManagement from '../admin/hierarchy/HierarchyManagement'; 
 import Logout from '../user/Logout'; 
 
 
@@ -80,6 +81,7 @@ const Routes = props => {
                     <Route path='/user/profile' render={(props) => <div className={classes.main}><UserProfile /> </div> }  ></Route>
                     <Route path='/manage/users' exact render={(props) => <div className={classes.main}><UserManagement /> </div> }  ></Route>
                     <Route path='/manage/users/:userId' exact render={(props) => <div className={classes.main}><UserManagement /> </div> }  ></Route>
+                    <Route path='/manage/hierarchies' exact render={(props) => <div className={classes.main}><HierarchyManagement /> </div> }  ></Route>
                     {/* /manage/hierarchies */}
                     {/* /manage/attributes */}
                     {/* /reports */}
