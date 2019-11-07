@@ -19,16 +19,35 @@ const EventLocation = (props) => {
 	}, []); //this 2nd arg is important, it tells what to look for changes in, and will re-run the hook when this changes 
 
     //generate the list of options for the logical/dept dropwdown list
-    //filtering on the highest level of hierarchies (Department and PlantArea)
-    const logicalOptions = lookupData.logicalHierarchies.filter(h => h.hierarchyLevel.hierarchyLevelNumber === 5).map(hierarchy => ({
-        value: hierarchy.hierarchyId, 
-        label: hierarchy.hierarchyName, 
+    //filtering on the highest level of hierarchies (Department and Plant Area)
+    const logicalOptions = lookupData.logicalHierarchies
+        .filter(h => h.hierarchyLevel.hierarchyLevelNumber === 5)
+        .map(hierarchy => ({
+            value: hierarchy.hierarchyId, 
+            label: hierarchy.hierarchyName, 
     }));
-    const physicalOptions = lookupData.physicalHierarchies.filter(h => h.hierarchyLevel.hierarchyLevelNumber === 5).map(hierarchy => ({
-        value: hierarchy.hierarchyId, 
-        label: hierarchy.hierarchyName,
+    //add current hierarchy if it doesnt already exists (an old, unused hierarchy)
+    if(!logicalOptions.find(currentVal => currentVal.value === event.departmentId) && event.department) {
+        logicalOptions.unshift({
+            value: event.departmentId, 
+            label: event.department
+        });
+    }
+    
+    const physicalOptions = lookupData.physicalHierarchies
+        .filter(h => h.hierarchyLevel.hierarchyLevelNumber === 5)
+        .map(hierarchy => ({
+            value: hierarchy.hierarchyId, 
+            label: hierarchy.hierarchyName,
     }));
-    console.log(event.departmentId, logicalOptions)
+    //add current hierarchy if it doesnt already exists (an old, unused hierarchy)
+    if(!physicalOptions.find(currentVal => currentVal.value === event.localeId) && event.localePlantArea) {
+        physicalOptions.unshift({
+            value: event.localeId, 
+            label: event.localePlantArea
+        });
+    }
+    // console.log(event.departmentId, logicalOptions)
     return (
         <Fragment>  
             <Typography variant='h4' gutterBottom>

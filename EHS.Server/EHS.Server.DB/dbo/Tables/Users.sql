@@ -21,3 +21,95 @@
 
 
 
+
+
+
+GO
+
+
+-- =============================================
+-- Author:		CC
+-- Create date: 10/19/2019
+-- Description:	Inserts record into app.AuditLog
+-- =============================================
+CREATE TRIGGER [dbo].[UsersAudit]
+   ON  [dbo].[Users]
+   AFTER DELETE , INSERT, UPDATE
+AS 
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+	
+	--UPDATE
+	if exists(select * from inserted) and exists(select * from deleted) 
+	begin
+		insert into app.AuditLog
+		--( TimestampUtc, EventType, TableRef, RecordId, Record, UserId ) 	 
+		select GETUTCDATE()
+				, 'UPDATE'
+				, 'dbo.Users'
+				, -1 --UserId is an nvarchar, cant insert it here
+				, concat('UserId: ',cast(i.UserId as nvarchar),'|',
+						'Email: ',cast(i.Email as nvarchar),'|',
+						'FirstName: ',cast(i.FirstName as nvarchar),'|',
+						'LastName: ', i.LastName,'|',
+						'LogicalHierarchyId: ', i.LogicalHierarchyId,'|',
+						'PhysicalHierarchyId: ', i.PhysicalHierarchyId,'|',
+						'Phone: ', i.Phone,'|',
+						'RoleId: ', i.RoleId,'|',
+						'TimeZone: ', i.TimeZone,'|',
+						'DateFormat: ', i.DateFormat,'|',
+						'Enabled: ', i.Enabled)
+				, dbo.fnGetUserContext()
+		from inserted i
+	end
+
+	--INSERT
+	if exists(select * from inserted) and not exists(select * from deleted) 
+	begin
+		insert into app.AuditLog
+		--( TimestampUtc, EventType, TableRef, RecordId, Record, UserId ) 	 
+		select GETUTCDATE()
+				, 'INSERT'
+				, 'dbo.Users'
+				, -1
+				, concat('UserId: ',cast(i.UserId as nvarchar),'|',
+						'Email: ',cast(i.Email as nvarchar),'|',
+						'FirstName: ',cast(i.FirstName as nvarchar),'|',
+						'LastName: ', i.LastName,'|',
+						'LogicalHierarchyId: ', i.LogicalHierarchyId,'|',
+						'PhysicalHierarchyId: ', i.PhysicalHierarchyId,'|',
+						'Phone: ', i.Phone,'|',
+						'RoleId: ', i.RoleId,'|',
+						'TimeZone: ', i.TimeZone,'|',
+						'DateFormat: ', i.DateFormat,'|',
+						'Enabled: ', i.Enabled)
+				, dbo.fnGetUserContext()
+		from inserted i
+	end
+	--DELETE
+	if exists(select * from deleted) and not exists(select * from inserted) 
+	begin
+		insert into app.AuditLog
+		--( TimestampUtc, EventType, TableRef, RecordId, Record, UserId ) 	 
+		select GETUTCDATE()
+				, 'DELETE'
+				, 'dbo.Users'
+				, -1
+				, concat('UserId: ',cast(d.UserId as nvarchar),'|',
+						'Email: ',cast(d.Email as nvarchar),'|',
+						'FirstName: ',cast(d.FirstName as nvarchar),'|',
+						'LastName: ', d.LastName,'|',
+						'LogicalHierarchyId: ', d.LogicalHierarchyId,'|',
+						'PhysicalHierarchyId: ', d.PhysicalHierarchyId,'|',
+						'Phone: ', d.Phone,'|',
+						'RoleId: ', d.RoleId,'|',
+						'TimeZone: ', d.TimeZone,'|',
+						'DateFormat: ', d.DateFormat,'|',
+						'Enabled: ', d.Enabled)
+				, dbo.fnGetUserContext()
+		from deleted d
+	end
+	
+END

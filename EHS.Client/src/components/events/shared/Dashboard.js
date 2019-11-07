@@ -115,9 +115,10 @@ const Dashboard = props => {
 	const fetchData = async () => {
 		if(!props.safetyIncidents.length) await props.fetchSafetyIncidents(parseSearchFilters(searchFilters)) ; 
 		
+		// console.log(currentUser.user.logicalHierarchyPath.split('|')[currentUser.user.logicalHierarchyPath.split('|').length-1])
 		if(!lookupData.employees) await props.fetchEmployees();
-		if(!lookupData.logicalHierarchies ) await props.fetchLogicalHierarchyTree(4001);
-		if(!lookupData.physicalHierarchies) await props.fetchPhysicalHierarchyTree(4000);
+		if(!lookupData.logicalHierarchies ) await props.fetchLogicalHierarchyTree(currentUser.user.logicalHierarchyPath.split('|')[currentUser.user.logicalHierarchyPath.split('|').length-1]);
+		if(!lookupData.physicalHierarchies) await props.fetchPhysicalHierarchyTree(currentUser.user.physicalHierarchyPath.split('|')[currentUser.user.physicalHierarchyPath.split('|').length-1]);
 		if(!lookupData.logicalHierarchyAttributes) await props.fetchLogicalHierarchyAttributes(1000, 'fulltree', '?enabled=true');
 		if(!lookupData.physicalHierarchyAttributes) await  props.fetchPhysicalHierarchyAttributes(1000, 'fulltree', '?enabled=true&excludeglobal=true');
 		
@@ -148,7 +149,7 @@ const Dashboard = props => {
 	//handler for the search button
 	const handleSearch = e => {
 		// e.preventDefault(); 
-		props.fetchSafteyIncidents(parseSearchFilters(searchFilters));
+		props.fetchSafetyIncidents(parseSearchFilters(searchFilters));
 		// console.log(parseSearchFilters(searchFilters));
 		setShowSearchFilters(false); 
 	}

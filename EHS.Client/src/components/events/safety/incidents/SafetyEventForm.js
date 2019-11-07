@@ -11,7 +11,7 @@ import {
  } from '../../../../store/actions/lookupData'; 
 import { 
     postNewSafetyIncident, 
-    putSafetyIncident,
+    updateSafetyIncident,
     fetchEvent
 } from '../../../../store/actions/safetyIncidents'; 
 import { fetchPeopleByEventId } from '../../../../store/actions/peopleInvolved'; 
@@ -149,7 +149,7 @@ const SafetyEventForm = props => {
 
 	const fetchData = async () => {
         //if existing event, get event detail from api
-        console.log(props.match.params)
+        // console.log(props.match.params)
         if(props.match.params.eventId) setEvent(await props.fetchEvent(props.match.params.eventId)) 
                         
         const timestamp = new Date().toISOString(); 
@@ -176,8 +176,8 @@ const SafetyEventForm = props => {
         
         //fetch lookupData IF it doesnt already exist in redux
 		if(!lookupData.employees) props.fetchEmployees();
-		if(!lookupData.logicalHierarchies ) props.fetchLogicalHierarchyTree(4001);
-		if(!lookupData.physicalHierarchies) props.fetchPhysicalHierarchyTree(4000);
+		if(!lookupData.logicalHierarchies ) props.fetchLogicalHierarchyTree(currentUser.user.logicalHierarchyPath.split('|')[currentUser.user.logicalHierarchyPath.split('|').length-1]);
+		if(!lookupData.physicalHierarchies) props.fetchPhysicalHierarchyTree(currentUser.user.physicalHierarchyPath.split('|')[currentUser.user.physicalHierarchyPath.split('|').length-1]);
 		if(!lookupData.logicalHierarchyAttributes) props.fetchLogicalHierarchyAttributes(event.departmentId || props.currentUser.user.logicalHierarchyId, 'singlepath', '?enabled=true');
         if(!lookupData.physicalHierarchyAttributes) props.fetchPhysicalHierarchyAttributes(event.localeId || props.currentUser.user.physicalHierarchyId, 'singlepath', '?enabled=true&excludeglobal=true');
             
@@ -192,8 +192,8 @@ const SafetyEventForm = props => {
 
     // Handle field change 
     const handleChange = (section, input) => e => {
-        console.log(event)
-        console.log(e.target.type)
+        // console.log(event)
+        // console.log(e.target.type)
         setEvent({ ...event, [input]: e.target.type === 'checkbox' ? e.target.checked : e.target.value})
     }
 
@@ -371,31 +371,34 @@ const SafetyEventForm = props => {
     };
     
     const handleSaveDraft = e => {
-        e.preventDefault();
+        // e.preventDefault();
         //if this event doesnt have an Id, it means its new and we need to post a new event 
         if(!event.hasOwnProperty('eventId')) {
             props.postNewSafetyIncident(event)
                 .then(res => {
                     // console.log(res)
                     //201, Created
-                    res.status === 201 
-                    ? setEvent({ ...res.data}) 
-                    : console.log(`Create Event Failed with status code: ${res.status}`)
-                    // handleComplete();
+                    if(res.status === 201){
+                        setEvent( { ...event, ...res.data} ) 
+                        handleComplete();
+                    } else {
+                        console.log(res); 
+                        console.log(`Failed to save draft: ${res.status}`)
+                    }
                 });        
         } else {
             //update event 
-            props.putSafetyIncident(event, currentUser.user.userId)
-            .then(res => {
-                console.log(res)
-                 setEvent(props.fetchEvent(event.eventId))
-                     .then(res => {
-                         setEvent({...res})
-                     }) 
-            })
-            .catch(err => {
-                console.log(err) 
-            })
+            props.updateSafetyIncident(event, currentUser.user.userId)
+                .then(res => {
+                    if(res.status === 202) {
+                        console.log(res); 
+                        setEvent( { ...event, ...res.data } )
+                        handleComplete();
+                    } else {
+                        console.log(res); 
+                        console.log(`Failed to update draft: ${res.status}`)
+                    }
+                })
         }
     }
     
@@ -406,21 +409,18 @@ const SafetyEventForm = props => {
         if(event.eventStatus === 'Draft' && event.actions.length && event.peopleInvolved.length && event.causes.length) {
             // change status to Open
             event.eventStatus = 'Open';
-            props.putSafetyIncident(event, currentUser.user.userId)
+            props.updateSafetyIncident(event, currentUser.user.userId)
             .then(res => {
                 console.log(res)
                 setEvent(props.fetchEvent(event.eventId))
                     .then(res => {
-                        setEvent({...res})
+                        setEvent({ ...event, ...res})
                     }) 
-            })
-            .catch(err => {
-                console.log(err) 
             })
         }
     }
 
-    console.log(event) 
+    // console.log(event) 
 	return (
 		<div className={classes.root}>
             {errors && errors.message && (							
@@ -504,45 +504,46 @@ const SafetyEventForm = props => {
                                                 >
                                                     Back
                                                 </Button>
-                                                <Button
-                                                    variant="contained"
-                                                    color="primary"
-                                                    onClick={handleNext}
-                                                    className={classes.button}
-                                                    disabled={dataIsLoading()}
-                                                >
-                                                    Next
-                                                </Button>
-
-                                                {activeStep !== steps.length &&
-                                                    (completed.has(activeStep) ? (
-                                                    <Typography variant="caption" className={classes.completed}>
-                                                        Step {activeStep + 1} already completed
-                                                    </Typography>
-                                                    ) : (
-                                                    <Button 
-                                                        variant="contained" 
-                                                        color="primary"
-                                                        onClick={handleComplete}
-                                                        disabled={dataIsLoading()}
-                                                    >
-                                                        {completedSteps() === totalSteps() - 1 ? 'Finish' : 'Complete Step'}
-                                                    </Button>
-                                                ))}
-                                                
-                                                {activeStep > 1 && 
-                                                    event.eventStatus === 'Draft' ? (
+                                                {event.eventStatus === 'Draft'
+                                                    ?
+                                                        activeStep > 1 
+                                                            ?                                                             
+                                                                <Button
+                                                                    variant="contained"
+                                                                    color="primary"
+                                                                    onClick={handleSaveDraft}
+                                                                    className={classes.button}
+                                                                >
+                                                                {event.eventId ? 'Save Changes' : 'Save Draft' }
+                                                            </Button>
+                                                            :
+                                                                activeStep !== steps.length &&
+                                                                    (completed.has(activeStep) ? (
+                                                                    <Typography variant="caption" className={classes.completed}>
+                                                                        Step {activeStep + 1} already completed
+                                                                    </Typography>
+                                                                    ) : (
+                                                                    <Button 
+                                                                        variant="contained" 
+                                                                        color="primary"
+                                                                        onClick={handleComplete}
+                                                                        disabled={dataIsLoading()}
+                                                                    >
+                                                                        {completedSteps() === totalSteps() - 1 ? 'Finish' : 'Complete Step'}
+                                                                    </Button>
+                                                                ))
+                                                    :
                                                         <Button
                                                             variant="contained"
                                                             color="primary"
-                                                            onClick={handleSaveDraft}
+                                                            onClick={handleNext}
                                                             className={classes.button}
+                                                            disabled={dataIsLoading()}
                                                         >
-                                                            Save Draft
+                                                            Next
                                                         </Button>
-                                                    )
-                                                    : null
-                                                }           
+                                                }
+                                                        
                                             </div>
                                         </div>
                                     )}
@@ -577,7 +578,7 @@ export default connect(mapStateToProps, {
     fetchLogicalHierarchyAttributes, 
     fetchPhysicalHierarchyAttributes,
     postNewSafetyIncident,
-    putSafetyIncident,
+    updateSafetyIncident,
     fetchEvent,
     fetchPeopleByEventId,
     fetchCausesByEventId, 

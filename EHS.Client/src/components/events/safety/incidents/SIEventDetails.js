@@ -10,7 +10,7 @@ import formatDate from '../../../../helpers/formatDate';
 const SIEventDetails = (props) => {
     const classes = props.useStyles();
 
-    const { event, lookupData, handleChange, handleAutoCompleteChange, handleSliderChange } = props; 
+    const { event, lookupData, handleChange, handleAutoCompleteChange, handleSliderChange, currentUser } = props; 
 
     //building each lookup data object
     const employees = filterEmployeeList(lookupData['employees'], event['employeeId'], 4001, true, false)
@@ -23,7 +23,7 @@ const SIEventDetails = (props) => {
     const offPlantMedicalFacilities = filterLookupDataByKey(lookupData, 'physicalHierarchyAttributes', 'Off Plant Medical Facility', event['offPlantMedicalFacility']);
     const workEnvironments = filterLookupDataByKey(lookupData, 'logicalHierarchyAttributes', 'Work Environment', event['workEnvironment']);
     const materials = filterLookupDataByKey(lookupData, 'logicalHierarchyAttributes', 'Materials', event['materialInvolved']);
-    const equipment = filterLookupDataByKey(lookupData, 'logicalHierarchyAttributes', 'Equipment', event['equipmentInvolved']);
+    const equipment = filterLookupDataByKey(lookupData, 'physicalHierarchyAttributes', 'Equipment', event['equipmentInvolved']);
     const initialCategories = filterLookupDataByKey(lookupData, 'logicalHierarchyAttributes', 'Initial Category', event['initialCategory']);
     const resultingCategories = filterLookupDataByKey(lookupData, 'logicalHierarchyAttributes', 'Resulting Category', event['resultingCategory']);
 
@@ -352,17 +352,32 @@ const SIEventDetails = (props) => {
                         >
                         </AutoComplete> 
                     </Grid>
-                    <Grid item xs={12} md={3}>							
-                        <AutoComplete
-                            name="resultingCategory" //must match the key name for the state to update correctly
-                            options={resultingCategories}
-                            label="Resulting Category"                        
-                            placeholder="Select Category"
-                            handleChange={handleAutoCompleteChange}
-                            value={resultingCategories.filter(o => o.selected === true)}
-                            className={classes.formControl}
-                        >
-                        </AutoComplete> 
+                    <Grid item xs={12}>
+                        {currentUser.user.roleLevel === 5 //Safety Admin and Health
+                            ?
+                                <Fragment>
+                                    <Divider gutterBottom/>
+                                    <Typography variant='h6' >
+                                        Safety Only
+                                    </Typography>
+                                    <Typography variant='subtitle2' >
+                                        If the result of the incident changed (Ex. a First Aid incident turned into a Recordable), you can change it here. 
+                                    </Typography>
+                                    <Grid item xs={12} md={3}>							
+                                        <AutoComplete
+                                            name="resultingCategory" //must match the key name for the state to update correctly
+                                            options={resultingCategories}
+                                            label="Resulting Category"                        
+                                            placeholder="Select Category"
+                                            handleChange={handleAutoCompleteChange}
+                                            value={resultingCategories.filter(o => o.selected === true)}
+                                            className={classes.formControl}
+                                        >
+                                        </AutoComplete> 
+                                    </Grid>
+                                </Fragment>
+                            : null 
+                        }
                     </Grid>
                 </Grid>
                 <Divider className={classes.divider}/>    		

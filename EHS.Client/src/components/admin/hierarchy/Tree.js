@@ -52,6 +52,7 @@ const StyledTreeItem = withStyles(theme => ({
       '& .close': {
         opacity: 0.3,
       },
+      justifyContent: 'flex-start'
     },
     group: {
       marginLeft: 12,
@@ -75,7 +76,7 @@ const StyledTreeItem = withStyles(theme => ({
     const [isMouseInside, setIsMouseInside] = useState(false); 
     
     return (
-        <div
+        <span
             onMouseEnter={() => setIsMouseInside(true)}
             onMouseLeave={() => setIsMouseInside(false)}
             className={props.classes.treeItem}
@@ -96,7 +97,7 @@ const StyledTreeItem = withStyles(theme => ({
                 </span>
                 : <Fragment/>
             }
-        </div>
+        </span>
     )
   });
   
@@ -127,7 +128,7 @@ const Tree = props => {
     const [items, setItems] = useState();
 
     const { hierarchies, hierarchyLevels, handleChange, handleSubmit, handleEdit } = props;
-    
+    // console.log(newHierarchy)
  	// Essentially what was componentDidMount and componentDidUpdate before Hooks
 	useEffect(() => {
         
@@ -146,7 +147,7 @@ const Tree = props => {
         const level3 = hierarchyLevels.find(l => l.hierarchyLevelNumber === 3);
         const level4 = hierarchyLevels.find(l => l.hierarchyLevelNumber === 4);
         const level5 = hierarchyLevels.find(l => l.hierarchyLevelNumber === 5);
-        
+
         // console.log(hierarchyLevels)
         setItems((() => {
             const rootHierarchy = hierarchies.find(root => root.hierarchyLevel.hierarchyLevelNumber + 1 === 1) //hierarchyLevelNumber here is 0 based, adding 1 for clarity so it aligns with hierarchyLevels
@@ -229,6 +230,11 @@ const Tree = props => {
                                                                                                         hierarchies
                                                                                                             .filter(level4 => level4.hierarchyLevel.hierarchyLevelNumber === 4
                                                                                                                 && level4.lft > h3.lft && level4.rgt < h3.rgt)
+                                                                                                            .sort((a, z) => {
+                                                                                                                if(a.hierarchyName < z.hierarchyName) { return -1; }
+                                                                                                                if(a.hierarchyName > z.hierarchyName) { return 1; }
+                                                                                                                return 0
+                                                                                                            })
                                                                                                             .map((h4, i, arr) => {
                                                                                                                 return (
                                                                                                                     <Fragment>
@@ -249,12 +255,14 @@ const Tree = props => {
                                                                                                                                     <form className={classes.newHierarchyForm} onSubmit={handleSubmit(h4, false, level5.hierarchyLevelId)}>
                                                                                                                                         <TextField
                                                                                                                                             id={h4.hierarchyId}
-                                                                                                                                            name='newHierarchy'
+                                                                                                                                            name='newLevel5'
                                                                                                                                             placeholder={`New ${level5.hierarchyLevelAlias || level5.hierarchyLevelName} under ${h3.hierarchyName}...`}
                                                                                                                                             className={classes.textField}
                                                                                                                                             label={`New ${level5.hierarchyLevelAlias || level5.hierarchyLevelName} under ${h3.hierarchyName}...`}
                                                                                                                                             margin="normal"
                                                                                                                                             onChange={handleChange}
+                                                                                                                                            // value={newHierarchy['newLevel5']}
+                                                                                                                                            fullWidth
                                                                                                                                         />
                                                                                                                                         <IconButton 
                                                                                                                                             type='submit'
@@ -273,12 +281,14 @@ const Tree = props => {
                                                                                                             <form className={classes.newHierarchyForm} onSubmit={handleSubmit(h3, true, level5.hierarchyLevelId)}>
                                                                                                                 <TextField
                                                                                                                     id={h3.hierarchyId}
-                                                                                                                    name='newHierarchy'
+                                                                                                                    name='newLevel5'
                                                                                                                     placeholder={`New ${level5.hierarchyLevelAlias || level5.hierarchyLevelName} under ${h3.hierarchyName}...`}
                                                                                                                     className={classes.textField}
                                                                                                                     label={`New ${level5.hierarchyLevelAlias || level5.hierarchyLevelName} under ${h3.hierarchyName}...`}
                                                                                                                     margin="normal"
                                                                                                                     onChange={handleChange}
+                                                                                                                    // value={newHierarchy['newLevel5']}
+                                                                                                                    fullWidth
                                                                                                                 />
                                                                                                                 <IconButton 
                                                                                                                     type='submit'
@@ -297,12 +307,13 @@ const Tree = props => {
                                                                                                         <form className={classes.newHierarchyForm} onSubmit={handleSubmit(h3, false, level4.hierarchyLevelId)}>
                                                                                                             <TextField
                                                                                                                 id={h3.hierarchyId}
-                                                                                                                name='newHierarchy'
+                                                                                                                name='newLevel4'
                                                                                                                 placeholder={`New ${level4.hierarchyLevelAlias || level4.hierarchyLevelName} under ${h2.hierarchyName}...`}
                                                                                                                 className={classes.textField}
                                                                                                                 label={`New ${level4.hierarchyLevelAlias || level4.hierarchyLevelName} under ${h2.hierarchyName}...`}
                                                                                                                 margin="normal"
                                                                                                                 onChange={handleChange}
+                                                                                                                fullWidth
                                                                                                             />
                                                                                                             <IconButton 
                                                                                                                 type='submit'
@@ -321,12 +332,13 @@ const Tree = props => {
                                                                                     <form className={classes.newHierarchyForm} onSubmit={handleSubmit(h2, true, level4.hierarchyLevelId)}>
                                                                                         <TextField
                                                                                             id={h2.hierarchyId}
-                                                                                            name='newHierarchy'
+                                                                                            name='newLevel4'
                                                                                             placeholder={`New ${level4.hierarchyLevelAlias || level4.hierarchyLevelName} under ${h2.hierarchyName}...`}
                                                                                             className={classes.textField}
                                                                                             label={`New ${level4.hierarchyLevelAlias || level4.hierarchyLevelName} under ${h2.hierarchyName}...`}
                                                                                             margin="normal"
                                                                                             onChange={handleChange}
+                                                                                            fullWidth
                                                                                         />
                                                                                         <IconButton 
                                                                                             type='submit'
@@ -345,12 +357,13 @@ const Tree = props => {
                                                                                 <form className={classes.newHierarchyForm} onSubmit={handleSubmit(h2, false, level3.hierarchyLevelId)}>
                                                                                     <TextField
                                                                                         id={h2.hierarchyId}
-                                                                                        name='newHierarchy'
+                                                                                        name='newLevel3'
                                                                                         placeholder={`New ${level3.hierarchyLevelAlias || level3.hierarchyLevelName} under ${h1.hierarchyName}...`}
                                                                                         className={classes.textField}
                                                                                         label={`New ${level3.hierarchyLevelAlias || level3.hierarchyLevelName} under ${h1.hierarchyName}...`}
                                                                                         margin="normal"
                                                                                         onChange={handleChange}
+                                                                                        fullWidth
                                                                                     />
                                                                                     <IconButton 
                                                                                         type='submit'
@@ -369,12 +382,13 @@ const Tree = props => {
                                                         <form className={classes.newHierarchyForm} onSubmit={handleSubmit(h1, true, level3.hierarchyLevelId)}>
                                                             <TextField
                                                                 id={h1.hierarchyId}
-                                                                name='newHierarchy'
+                                                                name='newLevel3'
                                                                 placeholder={`New ${level3.hierarchyLevelAlias || level3.hierarchyLevelName} under ${h1.hierarchyName}...`}
                                                                 className={classes.textField}
                                                                 label={`New ${level3.hierarchyLevelAlias || level3.hierarchyLevelName} under ${h1.hierarchyName}...`}
                                                                 margin="normal"
                                                                 onChange={handleChange}
+                                                                fullWidth
                                                             />
                                                             <IconButton 
                                                                 type='submit'
@@ -393,12 +407,13 @@ const Tree = props => {
                                                         <form className={classes.newHierarchyForm} onSubmit={handleSubmit(h1, false, level2.hierarchyLevelId)}>
                                                             <TextField
                                                                 id={h1.hierarchyId}
-                                                                name='newHierarchy'
+                                                                name='newLevel2'
                                                                 placeholder={`New ${level2.hierarchyLevelAlias || level2.hierarchyLevelName} under ${rootHierarchy.hierarchyName}...`}
                                                                 className={classes.textField}
                                                                 label={`New ${level2.hierarchyLevelAlias || level2.hierarchyLevelName} under ${rootHierarchy.hierarchyName}...`}
                                                                 margin="normal"
                                                                 onChange={handleChange}
+                                                                fullWidth
                                                             />
                                                             <IconButton 
                                                                 type='submit'
@@ -417,12 +432,13 @@ const Tree = props => {
                             <form className={classes.newHierarchyForm} onSubmit={handleSubmit(rootHierarchy, true, level2.hierarchyLevelId)}>
                                 <TextField
                                     id={rootHierarchy.hierarchyId}
-                                    name='newHierarchy'
+                                    name='newLevel2'
                                     placeholder={`New ${level2.hierarchyLevelAlias || level2.hierarchyLevelName} under ${rootHierarchy.hierarchyName}...`}
                                     className={classes.textField}
                                     label={`New ${level2.hierarchyLevelAlias || level2.hierarchyLevelName} under ${rootHierarchy.hierarchyName}...`}
                                     margin="normal"
                                     onChange={handleChange}
+                                    fullWidth
                                 />
                                 <IconButton 
                                     type='submit'

@@ -1,6 +1,6 @@
 import React, { useState, Fragment } from 'react'; 
 import { makeStyles } from '@material-ui/core/styles';
-import { Hidden, Divider, Typography, List, ListItem, ListItemText, ListItemSecondaryAction, IconButton
+import { Divider, Typography, List, ListItem, ListItemText, ListItemSecondaryAction, IconButton
 , Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, Badge } from '@material-ui/core';
 import DeleteIcon from '@material-ui/icons/Delete';
 import { Link } from 'react-router-dom';
@@ -86,18 +86,16 @@ const MyDrafts = props => {
     })
 
     return (     
-        <Hidden smDown>
-            <Fragment>
-                <Badge color="primary" badgeContent={drafts.length} className={classes.margin}>
-                    <Typography variant='h6' className={classes.padding} >
-                       My Drafts
-                    </Typography>
-                </Badge>
-                <List className={classes.root}>
-                    {drafts}
-                </List>
-            </Fragment>
-        </Hidden>
+        <Fragment>
+            <Badge color="primary" badgeContent={drafts.length} className={classes.margin}>
+                <Typography variant='h6' className={classes.padding} >
+                    My Drafts
+                </Typography>
+            </Badge>
+            <List className={classes.root}>
+                {drafts}
+            </List>
+        </Fragment>
     )
     
 }

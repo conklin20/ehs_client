@@ -12,7 +12,9 @@ namespace EHS.Server.DataAccess.Dtos
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public int LogicalHierarchyId { get; set; }
+        public string LogicalHierarchyPath { get; set; }
         public int PhysicalHierarchyId { get; set; }
+        public string PhysicalHierarchyPath { get; set; }
         public string Phone { get; set; }
         public int RoleId { get; set; }
         public string TimeZone { get; set; }

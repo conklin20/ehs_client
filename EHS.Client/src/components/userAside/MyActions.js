@@ -1,7 +1,8 @@
 import React, { Fragment } from 'react'; 
 import { makeStyles } from '@material-ui/core/styles';
-import { Hidden, Divider, Typography, List, ListItem, ListItemText, Badge } from '@material-ui/core';
+import { Divider, Typography, List, ListItem, ListItemText, Badge } from '@material-ui/core';
 import { Link } from 'react-router-dom';
+import moment from 'moment'
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -33,7 +34,9 @@ const MyActions = props => {
                 <ListItem>
                     <Link to={`/events/si/${a.eventId}/step/4`} className={classes.link} >
                         <ListItemText
-                            primary={`${a.eventId} - ${a.dueDate}`}
+                            primary={`${a.eventId} - ${moment(a.dueDate)
+                                                        .add(props.currentUser.user.timeZone, 'hours')
+                                                        .format(props.currentUser.user.dateFormat || 'YYYY-MM-DD')}`}
                             secondary={a.actionToTake}
                             />
                     </Link>
@@ -44,18 +47,16 @@ const MyActions = props => {
     })
 
     return (     
-        <Hidden smDown>
-            <Fragment>
-                <Badge color="primary" badgeContent={actions.length} className={classes.margin}>
-                    <Typography variant='h6' className={classes.padding} >
-                        My Actions
-                    </Typography>
-                </Badge>
-                <List className={classes.root}>
-                    {actions}
-                </List>
-            </Fragment>
-        </Hidden>
+        <Fragment>
+            <Badge color="primary" badgeContent={actions.length} className={classes.margin}>
+                <Typography variant='h6' className={classes.padding} >
+                    My Actions
+                </Typography>
+            </Badge>
+            <List className={classes.root}>
+                {actions}
+            </List>
+        </Fragment>
     )
     
 }

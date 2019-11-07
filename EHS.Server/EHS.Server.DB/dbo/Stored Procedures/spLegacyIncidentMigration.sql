@@ -10,24 +10,93 @@ BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
+		
+	--set Context_Info for the user passed into the proc so the Audit triggers can capture who's making the change 
+	exec dbo.spSetUserContext 'sysmigration'
 
-	declare @utcoffset int = 7 --converting any dates in the legacy system to UTC
+	declare @utcoffset int = -8 --converting any dates in the legacy system to UTC
 
 	if(@TruncateTable = 1)
 	begin 
+		--create temp tables for non-legacy data
+		if(object_id('tempdb..#data_migration_events') is not null) drop table #data_migration_events
+		if(object_id('tempdb..#data_migration_people') is not null) drop table #data_migration_people
+		if(object_id('tempdb..#data_migration_actions') is not null) drop table #data_migration_actions
+		if(object_id('tempdb..#data_migration_approvals') is not null) drop table #data_migration_approvals
+		if(object_id('tempdb..#data_migration_files') is not null) drop table #data_migration_files
+
+		select * 
+		into #data_migration_events 
+		from SafetyEvents
+		where LegacyIncidentId is null
+
+		select p.*
+		into #data_migration_people
+		from PeopleInvolved p 
+			 join #data_migration_events e on e.EventId = p.EventId
+			 
+		select a.*
+		into #data_migration_actions
+		from Actions a
+			 join #data_migration_events e on e.EventId = a.EventId
+			 
+		select a.*
+		into #data_migration_approvals
+		from Approvals a
+			 join #data_migration_actions ac on ac.ActionId = a.ActionId
+			 
+		select ef.*
+		into #data_migration_files
+		from EventFiles ef
+			 join #data_migration_events e on e.EventId = ef.EventId
+		
+		
 		truncate table SafetyEvents
 		truncate table PeopleInvolved
 		truncate table Actions
 		truncate table Approvals
+		truncate table EventFiles
+
+		--RE-insert data 
+		set identity_insert SafetyEvents on 
+		insert into SafetyEvents(EventId, EventType,EventStatus,ReportedBy,ReportedOn,EventDate,EmployeeId,JobTitle,Shift,WhatHappened,IsInjury,IsIllness,HoursWorkedPrior,InitialCategory,ResultingCategory,Division,Site,Area,Department,LocaleRegion,LocaleSite,LocalePlant,LocalePlantArea,WorkEnvironment,NatureOfInjury,BodyPart,FirstAidType,OffPlantMedicalFacility,MaterialInvolved,EquipmentInvolved,LostTime,FirstAid,Transported,ER,PassedPOET,RecordedOnVideo,CameraId,VideoStartRef,VideoEndRef,DepartmentId,LocaleId,CreatedOn,CreatedBy,ModifiedOn,ModifiedBy,LegacyIncidentId)
+		select EventId, EventType,EventStatus,ReportedBy,ReportedOn,EventDate,EmployeeId,JobTitle,Shift,WhatHappened,IsInjury,IsIllness,HoursWorkedPrior,InitialCategory,ResultingCategory,Division,Site,Area,Department,LocaleRegion,LocaleSite,LocalePlant,LocalePlantArea,WorkEnvironment,NatureOfInjury,BodyPart,FirstAidType,OffPlantMedicalFacility,MaterialInvolved,EquipmentInvolved,LostTime,FirstAid,Transported,ER,PassedPOET,RecordedOnVideo,CameraId,VideoStartRef,VideoEndRef,DepartmentId,LocaleId,CreatedOn,CreatedBy,ModifiedOn,ModifiedBy,LegacyIncidentId
+		from #data_migration_events
+		set identity_insert SafetyEvents off
+		
+		set identity_insert PeopleInvolved on 
+		insert into PeopleInvolved(PeopleInvolvedId,RoleId,EventId,EmployeeId,Comments)
+		select PeopleInvolvedId,RoleId,EventId,EmployeeId,Comments
+		from #data_migration_people
+		set identity_insert PeopleInvolved off
+		
+		set identity_insert Actions on 
+		insert into Actions(ActionId,EventId,EventType,AssignedTo,ActionToTake,ActionType,DueDate,CompletionDate,ApprovalDate,CreatedOn,CreatedBy,ModifiedOn,ModifiedBy)
+		select ActionId,EventId,EventType,AssignedTo,ActionToTake,ActionType,DueDate,CompletionDate,ApprovalDate,CreatedOn,CreatedBy,ModifiedOn,ModifiedBy
+		from #data_migration_actions
+		set identity_insert Actions off
+		
+		set identity_insert Approvals on 
+		insert into Approvals(ApprovalId,ActionId,ApprovalLevelId,ApprovedBy,ApprovedOn,Notes)
+		select ApprovalId,ActionId,ApprovalLevelId,ApprovedBy,ApprovedOn,Notes
+		from #data_migration_approvals
+		set identity_insert Approvals off
+		
+		set identity_insert EventFiles on 
+		insert into EventFiles(EventFileId,EventId,UserId,ServerFileName,UserFileName,CreatedOn)
+		select EventFileId,EventId,UserId,ServerFileName,UserFileName,CreatedOn
+		from #data_migration_files
+		set identity_insert EventFiles off
 	end
+	   
 	--incidents
 	insert into SafetyEvents 
 	select 
 		'Safety Incident'
 		,case when legi.Completed = 1 then 'Closed' else 'Open' end as EventStatus
 		,case when legi.SubmittedBy = 0 then 'N/A' else cast(legi.SubmittedBy as varchar) end as ReportedBy
-		,dateadd(hour, @utcoffset, legi.SubmittedDate) as ReportedOn
-		,dateadd(hour, @utcoffset, legi.IncidentDate) as EventDate
+		,dateadd(hour, @utcoffset, cast(legi.SubmittedDate as datetime2)) as ReportedOn
+		,dateadd(hour, @utcoffset, cast(legi.IncidentDate as datetime2)) as EventDate
 		,legi.eNumber as EmployeeId
 		,legj.JobDescription as JobTitle
 		,legi.IncidentShift as Shift
@@ -38,7 +107,7 @@ BEGIN
 		,legc.CategoryDesc as InitialCategory
 		,legc.CategoryDesc as ResultingCategory
 		,'Ammo' as Divison
-		,'CCI/Speer' as Site
+		,'Lewiston (CCI/Speer)' as Site
 		,newha.HierarchyName as Area
 		,newhd.HierarchyName as Department
 		,'PNW' as LocaleRegion
@@ -62,7 +131,7 @@ BEGIN
 		,null as VideoStartRef
 		,null as VideoEndRef
 		,newhd.HierarchyId as DepartmentId
-		,4000 as LocaleId
+		,dbo.fnGetHierarchyIdByName('Lewiston') as LocaleId
 		,GETUTCDATE() as CreatedOn
 		,'sysmigration' as CreatedBy
 		,GETUTCDATE() as ModifiedOn
@@ -102,7 +171,7 @@ BEGIN
 		join SafetyEvents se on se.LegacyIncidentId = legip.IncidentID
 
 	--actions 
-	declare @eventId int, @assignedTo nvarchar(50), @actionToTake nvarchar(50), @actionType nvarchar(50), @dueDate datetime, @completionDate datetime, @approvalDate datetime, @deptApr bit, @deptAprOn datetime, @areaApr bit, @areaAprOn datetime, @safetyApr bit, @safetyAprOn datetime
+	declare @eventId int, @assignedTo nvarchar(50), @actionToTake nvarchar(max), @actionType nvarchar(50), @dueDate datetime, @completionDate datetime, @approvalDate datetime, @deptApr bit, @deptAprOn datetime, @areaApr bit, @areaAprOn datetime, @safetyApr bit, @safetyAprOn datetime
 	declare @newId int
 	declare action_cursor CURSOR FOR 
 
@@ -111,8 +180,8 @@ BEGIN
 			,legad.Enumber as AssignedTo
 			,legad.Action as ActionToTake
 			,legat.ActionTypeDesc as ActionType
-			,dateadd(hour, @utcoffset, legad.ActionDate) as DueDate
-			,dateadd(hour, @utcoffset, legad.CompletionDate) as CompletionDate
+			,dateadd(hour, @utcoffset, cast(legad.ActionDate as datetime2)) as DueDate
+			,dateadd(hour, @utcoffset, cast(legad.CompletionDate as datetime2)) as CompletionDate
 			,case when legad.Safety_ApprovalDate is not null then dateadd(hour, @utcoffset, legad.Safety_ApprovalDate)
 				  when legad.Area_ApprovalDate is not null then dateadd(hour, @utcoffset, legad.Area_ApprovalDate)
 				  when legad.Dept_ApprovalDate is not null then dateadd(hour, @utcoffset, legad.Dept_ApprovalDate)
@@ -179,7 +248,7 @@ BEGIN
 			insert into Approvals
 			select 
 				@newId
-				,3
+				,5
 				,'N/A'
 				,isnull(@safetyAprOn, cast(getutcdate() as date))
 				,'Legacy Apprroval Migration'
@@ -220,5 +289,13 @@ BEGIN
 		 join HierarchyAttributes ha on ha.Value = legad.Description
 	where legad.TypeID = 12	--Immediate Cause
 		 and ha.[Key] = 'Immediate Causes'
+
+	--files - this will only be a refrence to the file name, we're not actually migrating files over for legacy incidents 
+	insert into EventFiles (EventId, UserId, ServerFileName, UserFileName, CreatedOn)
+	select se.EventId, 'sysmigration', legid.Filepath, legid.DocName, getutcdate()
+	from Incident.dbo.IncidentDocs legid
+		 join SafetyEvents se on se.LegacyIncidentId = legid.IncidentID
+
+
 
 END

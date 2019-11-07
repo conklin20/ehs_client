@@ -68,12 +68,12 @@ export const postNewSafetyIncident = (safetyEventToAdd) => (dispatch, getState) 
 		})
 }
 
-export const putSafetyIncident = (safetyEventToUpdate, userId) => (dispatch, getState) => {
+export const updateSafetyIncident = (safetyEventToUpdate, userId) => (dispatch, getState) => {
 	// console.log(getState())
 	return apiCall('put', `/safetyincidents/${safetyEventToUpdate.eventId}?userId=${userId}`, safetyEventToUpdate )
 		.then(res => {
 			//success status = 202
-			return res.status
+			return res
 			// dispatch(res);
 		})
 		.catch(err => {

@@ -1,7 +1,8 @@
 import React, { Fragment } from 'react'; 
 import { makeStyles } from '@material-ui/core/styles';
-import { Hidden, Divider, Typography, List, ListItem, ListItemText, Badge } from '@material-ui/core';
+import { Divider, Typography, List, ListItem, ListItemText, Badge } from '@material-ui/core';
 import { Link } from 'react-router-dom';
+import moment from 'moment'; 
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -26,7 +27,7 @@ const useStyles = makeStyles(theme => ({
 const MyApprovals = props => {
     const classes = useStyles();
 
-    // console.log(props); 
+    // console.log(props.pendingApprovals); 
     const pendingApprovals = props.pendingApprovals.map(a => {
         // console.log(a.action)
         return (
@@ -34,7 +35,9 @@ const MyApprovals = props => {
                 <ListItem>
                     <Link to={`/events/si/${a.action.eventId}/step/4`} className={classes.link} >
                         <ListItemText
-                            primary={`${a.action.eventId} - ${a.action.completionDate}`}
+                            primary={`${a.action.eventId} - ${moment(a.action.completionDate)
+                                                                .add(props.currentUser.user.timeZone, 'hours')
+                                                                .format(props.currentUser.user.dateFormat || 'YYYY-MM-DD')}`}
                             secondary={a.action.actionToTake}
                             />
                     </Link>
@@ -45,18 +48,16 @@ const MyApprovals = props => {
     })
 
     return (     
-        <Hidden smDown>
-            <Fragment>
-                <Badge color="primary" badgeContent={pendingApprovals.length} className={classes.margin}>
-                    <Typography variant='h6' className={classes.padding} >
-                        My Pending Approvals
-                    </Typography>
-                </Badge>
-                <List className={classes.root}>
-                    {pendingApprovals}
-                </List>
-            </Fragment>
-        </Hidden>
+        <Fragment>
+            <Badge color="primary" badgeContent={pendingApprovals.length} className={classes.margin}>
+                <Typography variant='h6' className={classes.padding} >
+                    My Pending Approvals
+                </Typography>
+            </Badge>
+            <List className={classes.root}>
+                {pendingApprovals}
+            </List>
+        </Fragment>
     )
     
 }

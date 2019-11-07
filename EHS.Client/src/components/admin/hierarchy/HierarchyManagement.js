@@ -11,11 +11,6 @@ import { addNotification, removeNotification } from '../../../store/actions/noti
 import { MIN_ADMIN_ROLE_LEVEL } from '../adminRoleLevel';
 
 const useStyles = makeStyles(theme => ({
-    // root: {
-    //   height: 264,
-    //   flexGrow: 1,
-    //   maxWidth: 400,
-    // },
 	paper: {
 		padding: theme.spacing(2),
 		textAlign: 'center',
@@ -58,22 +53,26 @@ const HierarchyManagement = props => {
     const [openDialog, setOpenDialog] = useState(false);
     const [openConfirmDeleteDialog, setOpenConfirmDeleteDialog] = useState(false)
     const [hierarchy, setHierarchy] = useState({})
-    const [confirmDeleteHierarchy, setConfirmDeleteHierarchy] = useState('');
-    
+    const [confirmDeleteHierarchy, setConfirmDeleteHierarchy] = useState('');    
+    //For whatever reason, the useState hook is not working with newHierarchy. But just using a local variable is. cannot for the life of me figure out why 
+    // const [newHierarchy, setNewHierarchy] = useState({
+    //     newLevel2: '',
+    //     newLevel3: '',
+    //     newLevel4: '',
+    //     newLevel5: '', 
+    // })
+    let newHierarchyName = '';
+
     const handleClose = () => {
         setOpenDialog(false);
         setOpenConfirmDeleteDialog(false);
     };
 
-    //For whatever reason, the useState hook is not working with this component. But just using a local variable is 
-    // const [newHierarchy, setNewHierarchy] = useState(new  Date);
-    let newHierarchyName = '';
 
     const { currentUser, match, dispatch } = props;
     
  	// Essentially what was componentDidMount and componentDidUpdate before Hooks
 	useEffect(() => {
-
         fetchData();         
 
 		return () => {
@@ -134,6 +133,7 @@ const HierarchyManagement = props => {
                     dispatch(addNotification(`Successfully created hierarchy: ${newHierarchyName}`, 'success')); 
                     newHierarchyName = '';
                     setHierarchy({});
+                    fetchData(); 
                 } else {
                     console.log(res.data)
                     dispatch(addNotification(`Error creating hierarchy: ${newHierarchyName}`, 'error')); 
@@ -141,6 +141,7 @@ const HierarchyManagement = props => {
             })
     }
 
+    // const handleChange = (input) => e => {
     const handleChange = e => {
         newHierarchyName = e.target.value
     }
@@ -189,6 +190,7 @@ const HierarchyManagement = props => {
         setOpenDialog(false); 
     }
 
+    console.log(`Re-rendering! Logical: ${logicalHierarchies.length}. Physical: ${physicalHierarchies.length}. Levels: ${hierarchyLevels.length}.`)
     return (
         <Paper className={classes.paper} square={true} >
         {props.notifications.message && (							

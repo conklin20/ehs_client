@@ -15,7 +15,8 @@ export const addApproval = (approval) => (dispatch, getState) => {
 }
 
 export const fetchMyPendingApprovals = (userId) => (dispatch, getState) => {
-    return apiCall('get', `/approvals?userId?${userId}`)
+    // console.log(userId); 
+    return apiCall('get', `/approvals?userId=${userId}`)
         .then(res => {
             return res.data
         })

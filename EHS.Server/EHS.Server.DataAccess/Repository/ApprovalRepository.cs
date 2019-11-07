@@ -66,15 +66,28 @@ namespace EHS.Server.DataAccess.Repository
                 string tsql = @"select ap.*
 	                                  ,ac.*
                                 from  dbo.SafetyEvents e 
-	                                 join dbo.Actions ac on ac.EventId = e.EventId 
-	                                 join ApprovalRoutings ar on ar.SeverityId = dbo.fnGetEventSeverity(isnull(e.InitialCategory, e.ResultingCategory))
-	                                 left join Approvals ap on ap.ActionId = ac.ActionId and ap.ApprovalLevelId = ar.ApprovalLevel
-	                                 join Users u on u.RoleId = ar.UserRoleId and u.UserId = 'caryc'
+	                                    join dbo.Actions ac on ac.EventId = e.EventId 
+	                                    join ApprovalRoutings ar on ar.SeverityId = dbo.fnGetEventSeverity(isnull(e.InitialCategory, e.ResultingCategory))
+	                                    left join Approvals ap on ap.ActionId = ac.ActionId and ap.ApprovalLevelId = ar.ApprovalLevel
+	                                    join Users u on u.RoleId = ar.UserRoleId and u.UserId = @UserId
+		                                join UserRoles ur on ur.UserRoleId = u.RoleId
                                 where e.EventStatus = 'Open' 
 	                                and ap.ApprovedOn is null 
 	                                and ac.CompletionDate is not null
-	                                and ac.AssignedTo != 'caryc'
+	                                and ac.AssignedTo != @UserId
+	                                --If DEPT (2) level approval, only return actions awaiting this users departments apporovals
+	                                and e.Department = case when ur.RoleLevel = 2 then dbo.fnGetHierarchyNameById(u.LogicalHierarchyId) else e.Department end 
+	                                --If AREA (3) level approval, only return actions awaiting this users areas apporovals
+	                                and e.Area = case when ur.RoleLevel = 3 then dbo.fnGetHierarchyNameById(u.LogicalHierarchyId) else e.Area end
+	                                --If SITE (4) level approval, only return actions awaiting this users site apporovals
+	                                and e.Site = case when ur.RoleLevel = 4 then dbo.fnGetHierarchyNameById(u.LogicalHierarchyId) else e.Site end
                                 order by ac.CompletionDate";
+
+                //build param list 
+                var p = new
+                {
+                    UserId = userId
+                };
 
                 var result = await sqlCon.QueryAsync<Approval, Action, Approval>(
                     tsql,
@@ -83,6 +96,7 @@ namespace EHS.Server.DataAccess.Repository
                         approvals.Action = actions;
                         return approvals;
                     },
+                    p,
                     splitOn: "ActionId");
 
                 return result.AsList();

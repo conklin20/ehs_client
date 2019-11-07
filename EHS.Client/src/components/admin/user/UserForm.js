@@ -71,7 +71,7 @@ const UserForm = props => {
         .sort((a, b) => a.roleLevel - b.roleLevel)
         .map(r => ({
             value: r.userRoleId, 
-            label: `${r.roleName} (Level=${r.roleLevel})`,
+            label: `${r.roleName} (Level ${r.roleLevel})`,
     }))
     
     // Handle field change 

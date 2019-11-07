@@ -32,11 +32,20 @@ namespace EHS.Server.DataAccess.Repository
         {
             using (IDbConnection sqlCon = Connection)
             {
+                //STRING_AGG might not be a function on the version we're using. If not, we'll have to build a custom function.
                 string tsql = @"select distinct	 u.UserId
 					                        , u.FirstName
 					                        , u.LastName
 					                        , u.LogicalHierarchyId
 					                        , u.PhysicalHierarchyId
+											, (
+												select STRING_AGG(HierarchyId, '|')
+												from dbo.fnGetHierarchySinglePath(u.LogicalHierarchyId)
+										      ) LogicalHierarchyPath
+											, (
+												select STRING_AGG(HierarchyId, '|')
+												from dbo.fnGetHierarchySinglePath(u.PhysicalHierarchyId)
+										      ) PhysicalHierarchyPath
 					                        , u.Email
 					                        , isnull(u.Phone, '') as Phone
 					                        , u.RoleId
@@ -71,6 +80,14 @@ namespace EHS.Server.DataAccess.Repository
 					                        , u.LastName
 					                        , u.LogicalHierarchyId
 					                        , u.PhysicalHierarchyId
+											, (
+												select STRING_AGG(HierarchyId, '|')
+												from dbo.fnGetHierarchySinglePath(u.LogicalHierarchyId)
+										      ) LogicalHierarchyPath
+											, (
+												select STRING_AGG(HierarchyId, '|')
+												from dbo.fnGetHierarchySinglePath(u.PhysicalHierarchyId)
+										      ) PhysicalHierarchyPath
 					                        , u.Email
 					                        , isnull(u.Phone, '') as Phone
 					                        , u.RoleId

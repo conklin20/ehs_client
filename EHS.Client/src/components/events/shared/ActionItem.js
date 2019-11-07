@@ -23,6 +23,7 @@ import { Typography
         , DialogTitle
     } from '@material-ui/core';
 // import MomentDate from '../../shared/MomentDate';
+import { MIN_ADMIN_ROLE_LEVEL } from '../../admin/adminRoleLevel';
 
 const useStyles = makeStyles(theme => ({
     card: {
@@ -122,14 +123,8 @@ const ActionItem = (props) => {
             )
     }); 
 
-    /*
-    User Role Id's that have permission to delete actions 
-    UserRoleId	RoleName
-    1	        SysAdmin
-    2	        TenantAdmin
-    3	        SafetyAdmin  */
-    const adminRoles = ['1','2','3']; //using strings for now because I plan to bring in the RoleName eventually 
-    const isAdmin = adminRoles.includes(currentUser.user.roleId)
+    
+    const isAdmin = currentUser.user.roleLevel >= MIN_ADMIN_ROLE_LEVEL ? true : false
 
     //criteria and reasoning for the "Complete" button being disabled 
     const completeButtomCriteria = [];

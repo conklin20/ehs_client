@@ -14,6 +14,9 @@ BEGIN
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 	
-    print 'Delete action' 
-	delete from Actions where ActionId = @ActionId 
+	--set Context_Info for the user passed into the proc so the Audit triggers can capture who's making the change 
+	exec dbo.spSetUserContext @UserId
+
+	delete from Actions where ActionId = @ActionId
+
 END

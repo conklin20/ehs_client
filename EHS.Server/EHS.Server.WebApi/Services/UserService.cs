@@ -1,21 +1,15 @@
-﻿using AutoMapper;
-using EHS.Server.DataAccess.DatabaseModels;
-using EHS.Server.DataAccess.Dtos;
+﻿using EHS.Server.DataAccess.DatabaseModels;
 using EHS.Server.DataAccess.Repository;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Options;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Text;
 using EHS.Server.WebApi.Helpers;
 using System.Security.Claims;
 using System.DirectoryServices.AccountManagement;
-using System.Threading;
 
 namespace EHS.Server.WebApi.Services
 {
@@ -54,15 +48,15 @@ namespace EHS.Server.WebApi.Services
 
             //check password against AD 
             bool success = false;
-            //using (PrincipalContext pc = new PrincipalContext(ContextType.Domain, "VSTO"))
-            //{
-            //    success = pc.ValidateCredentials(loginCredentials.Username, loginCredentials.Password); 
-            //}
-            //Using local machine for testing
-            using (PrincipalContext pc = new PrincipalContext(ContextType.Machine, null))
+            using (PrincipalContext pc = new PrincipalContext(ContextType.Domain, "vsto"))
             {
                 success = pc.ValidateCredentials(username, password);
             }
+            //Using local machine for testing
+            //using (PrincipalContext pc = new PrincipalContext(ContextType.Machine, null))
+            //{
+            //    success = pc.ValidateCredentials(username, password);
+            //}
             if (!success)
                 return null;
 
@@ -88,10 +82,12 @@ namespace EHS.Server.WebApi.Services
                     new Claim(ClaimTypes.UserData, user.ApprovalLevelName.ToString()),
                     new Claim(ClaimTypes.UserData, user.RoleName.ToString()),
                     new Claim(ClaimTypes.UserData, user.RoleCapabilities.ToString()),
-                    new Claim(ClaimTypes.UserData, user.RoleLevel.ToString())
+                    new Claim(ClaimTypes.UserData, user.RoleLevel.ToString()),
+                    new Claim(ClaimTypes.UserData, user.LogicalHierarchyPath),
+                    new Claim(ClaimTypes.UserData, user.PhysicalHierarchyPath)
                 }),
-                //Expires = DateTime.UtcNow.AddDays(7),
-                Expires = DateTime.UtcNow.AddHours(1),
+                Expires = DateTime.UtcNow.AddDays(7),
+                //Expires = DateTime.UtcNow.AddHours(1),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);

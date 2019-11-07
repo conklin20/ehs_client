@@ -7,7 +7,7 @@
 -- Select * from dbo.SafetyEvents
 -- =============================================
 CREATE PROCEDURE [dbo].[spSafetyEventAddOrUpdate] 
-	@SafetyEventId	int = null,
+	@EventId	int = null,
 	@EventType	nvarchar(50),
 	@EventStatus	nvarchar(50),
 	@ReportedBy	nvarchar(50),
@@ -20,17 +20,9 @@ CREATE PROCEDURE [dbo].[spSafetyEventAddOrUpdate]
 	@WhatHappened	nvarchar(max),
 	@IsInjury	bit,
 	@IsIllness	bit,
-	@HoursWorkedPrior	tinyint,
+	@HoursWorkedPrior	decimal(3,1),
 	@InitialCategory	nvarchar(50),
 	@ResultingCategory	nvarchar(50),
-	@Division	nvarchar(50),
-	@Site	nvarchar(50),
-	@Area	nvarchar(50),
-	@Department	nvarchar(50),
-	@LocaleRegion	nvarchar(50),
-	@LocaleSite	nvarchar(50),
-	@LocalePlant	nvarchar(50),
-	@LocalePlantArea	nvarchar(50),
 	@WorkEnvironment	nvarchar(50),
 	@NatureOfInjury	nvarchar(50),
 	@BodyPart	nvarchar(50),
@@ -42,25 +34,38 @@ CREATE PROCEDURE [dbo].[spSafetyEventAddOrUpdate]
 	@FirstAid	bit,
 	@Transported	bit,
 	@ER	bit,
-	@PassedPOET	bit,
 	@RecordedOnVideo	bit,
 	@CameraId	int,
 	@VideoStartRef	datetime2,
 	@VideoEndRef	datetime2,
 	@DepartmentId	int,
 	@LocaleId	int,
-	@UserId nvarchar(50) 
+	@UserId nvarchar(50),
+	@NewEventId int output 
 
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
+	
+	--set Context_Info for the user passed into the proc so the Audit triggers can capture who's making the change 
+	exec dbo.spSetUserContext @UserId
 
-    if(@SafetyEventId is null) 
+	declare
+		@Division nvarchar(50)			= (select h.HierarchyName from dbo.fnGetHierarchySinglePath(@DepartmentId) h join HierarchyLevels l on h.HierarchyLevelId = l.HierarchyLevelId where l.HierarchyLevel = 2),
+		@Site nvarchar(50)				= (select h.HierarchyName from dbo.fnGetHierarchySinglePath(@DepartmentId) h join HierarchyLevels l on h.HierarchyLevelId = l.HierarchyLevelId where l.HierarchyLevel = 3),
+		@Area nvarchar(50)				= (select h.HierarchyName from dbo.fnGetHierarchySinglePath(@DepartmentId) h join HierarchyLevels l on h.HierarchyLevelId = l.HierarchyLevelId where l.HierarchyLevel = 4),
+		@Department	nvarchar(50)		= (select h.HierarchyName from dbo.fnGetHierarchySinglePath(@DepartmentId) h join HierarchyLevels l on h.HierarchyLevelId = l.HierarchyLevelId where l.HierarchyLevel = 5),
+		@LocaleRegion nvarchar(50)		= (select h.HierarchyName from dbo.fnGetHierarchySinglePath(@LocaleId) h join HierarchyLevels l on h.HierarchyLevelId = l.HierarchyLevelId where l.HierarchyLevel = 2),
+		@LocaleSite	nvarchar(50)		= (select h.HierarchyName from dbo.fnGetHierarchySinglePath(@LocaleId) h join HierarchyLevels l on h.HierarchyLevelId = l.HierarchyLevelId where l.HierarchyLevel = 3),
+		@LocalePlant nvarchar(50)		= (select h.HierarchyName from dbo.fnGetHierarchySinglePath(@LocaleId) h join HierarchyLevels l on h.HierarchyLevelId = l.HierarchyLevelId where l.HierarchyLevel = 4),
+		@LocalePlantArea nvarchar(50)	= (select h.HierarchyName from dbo.fnGetHierarchySinglePath(@LocaleId) h join HierarchyLevels l on h.HierarchyLevelId = l.HierarchyLevelId where l.HierarchyLevel = 5)
+
+    if(@EventId is null) 
 	begin 
 		print 'Insert new safety event'
-		INSERT INTO [dbo].[SafetyEvents]
+		insert into [dbo].[SafetyEvents]
            ([EventType]
            ,[EventStatus]
            ,[ReportedBy]
@@ -95,7 +100,6 @@ BEGIN
            ,[FirstAid]
            ,[Transported]
            ,[ER]
-           ,[PassedPOET]
            ,[RecordedOnVideo]
            ,[CameraId]
            ,[VideoStartRef]
@@ -106,7 +110,7 @@ BEGIN
            ,[CreatedBy]
            ,[ModifiedOn]
            ,[ModifiedBy])
-     VALUES
+     values
            (@EventType,
 			@EventStatus,
 			@ReportedBy,
@@ -141,7 +145,6 @@ BEGIN
 			@FirstAid,
 			@Transported,
 			@ER,
-			@PassedPOET,
 			@RecordedOnVideo,
 			@CameraId,
 			@VideoStartRef,
@@ -152,6 +155,9 @@ BEGIN
             @UserId,
             GETUTCDATE(),
             @UserId)
+
+			set @NewEventId = SCOPE_IDENTITY()
+			return @NewEventId
 	end
 	else 
 	begin 
@@ -191,7 +197,6 @@ BEGIN
 			FirstAid = @FirstAid,
 			Transported = @Transported,
 			ER = @ER,
-			PassedPOET = @PassedPOET,
 			RecordedOnVideo = @RecordedOnVideo,
 			CameraId = @CameraId,
 			VideoStartRef = @VideoStartRef,
@@ -200,6 +205,6 @@ BEGIN
 			LocaleId = @LocaleId,
 			ModifiedOn = GETUTCDATE(),
 			ModifiedBy = @UserId
-		where EventId = @SafetyEventId
+		where EventId = @EventId
 	end
 END

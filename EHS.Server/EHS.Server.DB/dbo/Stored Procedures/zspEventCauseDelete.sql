@@ -1,11 +1,11 @@
 ﻿-- =============================================
 -- Author:		CC
 -- Create date: 8/2/2019
--- Description:	Delete operations for the PeopleInvolved table
--- select * from dbo.PeopleInvolved
+-- Description:	Delete operations for the EventCauses table
+-- select * from dbo.EventCauses
 -- =============================================
-CREATE PROCEDURE dbo.spPeopleInvolvedDelete
-	@PeopleInvolvedId int
+CREATE PROCEDURE dbo.[zspEventCauseDelete]
+	@EventCauseId int
 	
 AS
 BEGIN
@@ -13,6 +13,6 @@ BEGIN
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 	
-    delete from PeopleInvolved where PeopleInvolvedId = @PeopleInvolvedId 
+    delete from EventCauses where EventCauseId = @EventCauseId 
 
 END

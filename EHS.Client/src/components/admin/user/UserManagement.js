@@ -67,8 +67,10 @@ const UserManagement = props => {
 	const fetchData = async () => {
         if(!users.length) refreshUsers();
         
-		if(!lookupData.logicalHierarchies ) await props.fetchLogicalHierarchyTree(4001);
-        if(!lookupData.physicalHierarchies) await props.fetchPhysicalHierarchyTree(4000);
+        // console.log(currentUser.user.logicalHierarchyPath.split('|'))
+        // console.log(currentUser.user.physicalHierarchyPath.split('|'))
+		if(!lookupData.logicalHierarchies ) await props.fetchLogicalHierarchyTree(currentUser.user.logicalHierarchyPath.split('|')[currentUser.user.logicalHierarchyPath.split('|').length-1]);
+        if(!lookupData.physicalHierarchies) await props.fetchPhysicalHierarchyTree(currentUser.user.physicalHierarchyPath.split('|')[currentUser.user.physicalHierarchyPath.split('|').length-1]);
         if(!lookupData.userRoles) await props.fetchUserRoles();         
     }
     
@@ -114,7 +116,6 @@ const UserManagement = props => {
 		return filteredUsers; 
 	}
 
-    // console.log(props); 
     return (
         <Paper className={classes.paper} square={true} >  
             <Typography variant='h4' >
@@ -123,7 +124,7 @@ const UserManagement = props => {
             { currentUser.user.roleLevel >= MIN_ADMIN_ROLE_LEVEL 
                 ?
                 <Fragment>
-                    {showUserForm && Object.keys(lookupData).length === 3 ?
+                    {showUserForm && Object.keys(lookupData).length >= 3 ?
                         <UserForm 
                             showUserForm={showUserForm}
                             handleShowUserForm={handleShowUserForm}

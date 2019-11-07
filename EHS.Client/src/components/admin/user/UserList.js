@@ -74,13 +74,17 @@ const UserList = props => {
         {
             Header: 'Logical Hierarchy', 
             accessor: h => {
-              return lookupData.logicalHierarchies.find(l => l.hierarchyId === h.logicalHierarchyId).hierarchyName
+              return lookupData.logicalHierarchies.find(l => l.hierarchyId === h.logicalHierarchyId)
+                ? lookupData.logicalHierarchies.find(l => l.hierarchyId === h.logicalHierarchyId).hierarchyName
+                : `**Inavlid - Please Update**`
             }
         }, 
         {
             Header: 'Physical Hierarchy', 
             accessor: h => {
-              return lookupData.physicalHierarchies.find(l => l.hierarchyId === h.physicalHierarchyId).hierarchyName
+              return lookupData.physicalHierarchies.find(l => l.hierarchyId === h.physicalHierarchyId)
+                ? lookupData.physicalHierarchies.find(l => l.hierarchyId === h.physicalHierarchyId).hierarchyName
+                : `**Inavlid - Please Update**` 
             }
         }, 
         {

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, Fragment } from 'react'; 
 import { connect } from "react-redux";
-import { Hidden, Typography, } from '@material-ui/core';
+import { Typography, } from '@material-ui/core';
 import MyActions from './MyActions'; 
 import MyApprovals from './MyApprovals';
 import MyDrafts from './MyDrafts';
@@ -27,6 +27,7 @@ const UserAside = props => {
         //get users pending approvals 
         fetchMyPendingApprovals(currentUser.user.userId)
             .then(res => {
+                // console.log(res)
                 if(res) setMyPendingApprovals(res)
             })
 
@@ -55,7 +56,7 @@ const UserAside = props => {
 
     // console.log(props.employees)
     return (     
-        <Hidden mdDown>
+        <Fragment mdDown>
             {employees && employees.length ? 
                 <Fragment>
                     {/* <Typography variant="h4" gutterBottom>User Aside</Typography>   */}
@@ -63,12 +64,14 @@ const UserAside = props => {
                         {myActions.length ? 
                             <MyActions 
                                 actions={myActions}
+                                currentUser={currentUser}
                             />
                             : null
                         }
                         {myPendingApprovals.length ? 
                             <MyApprovals
                                 pendingApprovals={myPendingApprovals}
+                                currentUser={currentUser}
                             />
                             : null
                         }
@@ -77,6 +80,7 @@ const UserAside = props => {
                                 drafts={myDrafts}
                                 handleDelete={handleDelete}
                                 employees={employees}
+                                currentUser={currentUser}
                             />
                             : null
                         }
@@ -84,7 +88,7 @@ const UserAside = props => {
                 </Fragment>
             : null
             }
-        </Hidden>
+        </Fragment>
     )
     
 }

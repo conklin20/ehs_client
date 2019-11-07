@@ -21,8 +21,10 @@ namespace EHS.Server.DataAccess.DatabaseModels
         public string LastName { get; set; }
         [Required]
         public int LogicalHierarchyId { get; set; }
+        public string LogicalHierarchyPath { get; set; }
         [Required]
         public int PhysicalHierarchyId { get; set; }
+        public string PhysicalHierarchyPath { get; set; }
         [Phone]
         public string Phone { get; set; }
         public int RoleId { get; set; }

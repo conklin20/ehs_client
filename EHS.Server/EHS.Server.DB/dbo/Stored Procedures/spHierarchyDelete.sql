@@ -4,9 +4,8 @@
 -- Description:	Delete operation for the Hierachy Table
 -- =============================================
 CREATE PROCEDURE [dbo].[spHierarchyDelete]
-	@HierarchyId int,	
-	@Lft int, 
-	@Rgt int, 
+	--@HierarchyToDelete dbo.HierarchyTableType READONLY, 
+	@HierarchyId int, 
 	@UserId nvarchar(50)
 
 AS
@@ -15,30 +14,25 @@ BEGIN
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 	
-    print 'Delete hierarchy, adjust existinig hierarchies to account for the delete (new lft and rgt values)' 
-	select 1 from Hierarchies
-	--INSERT INTO [app].[AppLog]
- --          ([AppId]
- --          ,[Level]
- --          ,[Logger]
- --          ,[UserName]
- --          ,[MachineName]
- --          ,[LoggedOn]
- --          ,[Thread]
- --          ,[Message]
- --          ,[CallSite]
- --          ,[Exception]
- --          ,[StackTrace])
- --    VALUES
- --          (1
- --          ,'Debug'
- --          ,'SQL'
- --          ,'caryc'
- --          ,@@SERVERNAME
- --          ,GETUTCDATE()
- --          ,0
- --          ,'spHierarchyDelete Stored proc was successfully called via Dapper!'
- --          ,''
- --          ,''
- --          ,'')
+	--set Context_Info for the user passed into the proc so the Audit triggers can capture who's making the change 
+	exec dbo.spSetUserContext @UserId
+	
+	declare @myLeft int, @myRight int, @myWidth int 
+	select @myLeft = Lft, @myRight = Rgt, @myWidth = Rgt - Lft + 1
+	from Hierarchies h 
+	where h.HierarchyId = @HierarchyId
+	--select @myLeft, @myRight, @myWidth
+
+	--Not actually going to delete, just remove these from any hierarchy 
+	update Hierarchies 
+	set Lft = -1, 
+		Rgt = -1
+	where Lft between @myLeft and @myRight 
+	--DELETE 
+	--FROM Hierarchies
+	--WHERE Lft BETWEEN @myLeft AND @myRight;
+
+	--update the remaining affected hierarchies 
+	update Hierarchies set rgt = rgt - @myWidth where rgt > @myRight;
+	update Hierarchies set lft = lft - @myWidth where lft > @myRight;
 END

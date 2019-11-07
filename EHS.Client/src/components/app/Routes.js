@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { logout } from '../../store/actions/auth';
 import { removeError } from '../../store/actions/errors'; 
+import { Hidden } from '@material-ui/core'; 
 //components
 import AppBar from './AppBar';
 import Homepage from './Homepage';
@@ -70,7 +71,7 @@ const Routes = props => {
                 { props.currentUser.isAuthenticated ? <AppBar currentUser={props.currentUser} onLogout={props.logout} /> : null }
             </div>
             <div id='body' className={classes.body}>
-                { props.currentUser.isAuthenticated ? <div className={classes.reportAside}><ReportAside /> </div> : null }
+                { props.currentUser.isAuthenticated ? <Hidden smDown><div className={classes.reportAside}><ReportAside /> </div></Hidden> : null }
                 <Switch>
                     <Route path='/' exact component={Homepage} ></Route>
                     <Route path='/logout' component={Logout} ></Route>

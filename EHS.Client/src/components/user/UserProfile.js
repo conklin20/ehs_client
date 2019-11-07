@@ -49,8 +49,8 @@ const UserProfile = props => {
 
 	const fetchData = async () => {
 		
-		if(!lookupData.logicalHierarchies ) await props.fetchLogicalHierarchyTree(4001);
-		if(!lookupData.physicalHierarchies) await props.fetchPhysicalHierarchyTree(4000);
+		if(!lookupData.logicalHierarchies ) await props.fetchLogicalHierarchyTree(currentUser.user.logicalHierarchyPath.split('|')[currentUser.user.logicalHierarchyPath.split('|').length-1]);
+		if(!lookupData.physicalHierarchies) await props.fetchPhysicalHierarchyTree(currentUser.user.physicalHierarchyPath.split('|')[currentUser.user.physicalHierarchyPath.split('|').length-1]);
 		// if(!props.lookupData.logicalHierarchyAttributes) await props.fetchLogicalHierarchyAttributes(1000, 'fulltree', '?enabled=true');
 		// if(!props.lookupData.physicalHierarchyAttributes) await  props.fetchPhysicalHierarchyAttributes(1000, 'fulltree', '?enabled=true&excludeglobal=true');
 	}
