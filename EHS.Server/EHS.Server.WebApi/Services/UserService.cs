@@ -48,15 +48,15 @@ namespace EHS.Server.WebApi.Services
 
             //check password against AD 
             bool success = false;
-            using (PrincipalContext pc = new PrincipalContext(ContextType.Domain, "vsto"))
-            {
-                success = pc.ValidateCredentials(username, password);
-            }
-            //Using local machine for testing
-            //using (PrincipalContext pc = new PrincipalContext(ContextType.Machine, null))
+            //using (PrincipalContext pc = new PrincipalContext(ContextType.Domain, "vsto"))
             //{
             //    success = pc.ValidateCredentials(username, password);
             //}
+            //Using local machine for testing
+            using (PrincipalContext pc = new PrincipalContext(ContextType.Machine, null))
+            {
+                success = pc.ValidateCredentials(username, password);
+            }
             if (!success)
                 return null;
 

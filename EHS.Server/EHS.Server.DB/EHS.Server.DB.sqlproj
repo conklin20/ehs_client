@@ -74,7 +74,6 @@
     <Build Include="dbo\Tables\ResultSeverities.sql" />
     <Build Include="dbo\Tables\ApprovalRoutings.sql" />
     <Build Include="dbo\Tables\UserRoles.sql" />
-    <Build Include="dbo\Tables\__EFMigrationsHistory.sql" />
     <Build Include="dbo\Tables\Attributes.sql" />
     <Build Include="dbo\Tables\Hierarchies.sql" />
     <Build Include="dbo\Tables\HierarchyAttributes.sql" />
@@ -114,8 +113,6 @@
     <Build Include="dbo\Functions\fnGetHierarchySinglePath.sql" />
     <Build Include="dbo\Functions\fnGetHierarchyLeafNodes.sql" />
     <Build Include="dbo\Functions\fnGetHierarchyFullTree.sql" />
-    <Build Include="dbo\Stored Procedures\zspPeopleInvolvedDelete.sql" />
-    <Build Include="dbo\Stored Procedures\zspEventCauseDelete.sql" />
     <Build Include="dbo\Stored Procedures\spSetUserContext.sql" />
     <Build Include="dbo\Stored Procedures\spSeedDraftsForTesting.sql" />
     <Build Include="dbo\Stored Procedures\spPeopleInvolvedMerge.sql" />
