@@ -38,7 +38,6 @@ namespace EHS.Server.WebApi.Services
         {
             //check if user exists in db 
             var user = await _userRepo.GetByIdAsync(username);
-            _logger.LogDebug($"User {user.UserId} found in the db");
 
             if (user == null)
             {
@@ -48,15 +47,25 @@ namespace EHS.Server.WebApi.Services
 
             //check password against AD 
             bool success = false;
-            //using (PrincipalContext pc = new PrincipalContext(ContextType.Domain, "vsto"))
+            using (PrincipalContext pc = new PrincipalContext(ContextType.Domain, "VSTO.VistaOutdoor.com"))
+            {
+                try
+                {
+                    _logger.LogDebug($"{username} logging in...");
+                    success = pc.ValidateCredentials(username, password);
+                    _logger.LogDebug($"Log In Result: {success.ToString()}");
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, $"Error authenticating user: {ex.Message}");
+                }
+    
+            }
+            //Using local machine for testing
+            //using (PrincipalContext pc = new PrincipalContext(ContextType.Machine, null))
             //{
             //    success = pc.ValidateCredentials(username, password);
             //}
-            //Using local machine for testing
-            using (PrincipalContext pc = new PrincipalContext(ContextType.Machine, null))
-            {
-                success = pc.ValidateCredentials(username, password);
-            }
             if (!success)
                 return null;
 

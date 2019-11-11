@@ -121,21 +121,31 @@ namespace EHS.Server.WebApi
             loggerFactory.AddNLog();
             //app.UseStatusCodePages(); //helps with debugging
 
-
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-            else
+            if (env.IsProduction())
             {
                 app.UseHsts();
                 //write custom global exception handler here 
+                //app.UseExceptionHandler("/Error");
             }
+            else if (env.IsEnvironment("Test"))
+            {
 
+            }
+            else if (env.IsDevelopment())
+            {
+                //app.UseDeveloperExceptionPage();
+            }
+            
             app.UseCors("CorsPolicy"); //important to be able to make API Calls from the client
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
+            app.UseStaticFiles();
             app.UseAuthentication(); 
-            app.UseMvc();
+            app.UseMvc(routes =>
+            {
+                    //routes.MapRoute(
+                    //    name: "default",
+                    //    template: "{controller=Index}/{action=Index}");
+            });
         }
     }
 }

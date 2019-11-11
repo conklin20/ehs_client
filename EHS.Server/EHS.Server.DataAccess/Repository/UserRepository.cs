@@ -38,7 +38,8 @@ namespace EHS.Server.DataAccess.Repository
 					                        , u.LastName
 					                        , u.LogicalHierarchyId
 					                        , u.PhysicalHierarchyId
-											, (
+											/*
+, (
 												select STRING_AGG(HierarchyId, '|')
 												from dbo.fnGetHierarchySinglePath(u.LogicalHierarchyId)
 										      ) LogicalHierarchyPath
@@ -46,6 +47,7 @@ namespace EHS.Server.DataAccess.Repository
 												select STRING_AGG(HierarchyId, '|')
 												from dbo.fnGetHierarchySinglePath(u.PhysicalHierarchyId)
 										      ) PhysicalHierarchyPath
+                                             */
 					                        , u.Email
 					                        , isnull(u.Phone, '') as Phone
 					                        , u.RoleId
@@ -80,6 +82,7 @@ namespace EHS.Server.DataAccess.Repository
 					                        , u.LastName
 					                        , u.LogicalHierarchyId
 					                        , u.PhysicalHierarchyId
+                                            /*
 											, (
 												select STRING_AGG(HierarchyId, '|')
 												from dbo.fnGetHierarchySinglePath(u.LogicalHierarchyId)
@@ -88,6 +91,7 @@ namespace EHS.Server.DataAccess.Repository
 												select STRING_AGG(HierarchyId, '|')
 												from dbo.fnGetHierarchySinglePath(u.PhysicalHierarchyId)
 										      ) PhysicalHierarchyPath
+                                            */
 					                        , u.Email
 					                        , isnull(u.Phone, '') as Phone
 					                        , u.RoleId
