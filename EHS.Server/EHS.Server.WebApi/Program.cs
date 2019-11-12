@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using System.IO;
 
 namespace EHS.Server.WebApi
 {
@@ -16,10 +17,9 @@ namespace EHS.Server.WebApi
             //    .UseStartup<Startup>()
             //    .ConfigureKestrel((context, options) =>
             //    {
-            //            // Set properties and call methods on options
-            //        })
+            //        // Set properties and call methods on options
+            //    })
             //    .Build();
-
             //host.Run();
         }
 

@@ -32,7 +32,8 @@
 		const [values, setValues] = useState({
 			username: '',
 			password: '',
-		});	
+		});
+		// const [signingIn, setSigningIn] = useState(false); 
 
 		const handleChange = name => e => {
 			setValues({ ...values, [name]: e.target.value });
@@ -40,6 +41,7 @@
 			
 		const handleSubmit = e => {
 			e.preventDefault(); 
+
 			const authType = props.signUp ? "signup" : "signin";
 			props.onAuth(authType, values)
 				.then( () => {

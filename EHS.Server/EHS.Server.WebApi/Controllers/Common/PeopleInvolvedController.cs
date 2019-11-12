@@ -47,7 +47,7 @@ namespace EHS.Server.WebApi.Controllers.Common
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message);
+                _logger.LogError(ex.InnerException, ex.Message);
                 return BadRequest();
             }
         }
@@ -71,7 +71,7 @@ namespace EHS.Server.WebApi.Controllers.Common
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message);
+                _logger.LogError(ex.InnerException, ex.Message);
                 return BadRequest();
             }
         }

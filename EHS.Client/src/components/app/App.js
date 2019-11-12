@@ -1,7 +1,8 @@
 import React from 'react';
 import {Provider} from 'react-redux'; 
 import {configureStore} from '../../store'; 
-import { BrowserRouter as Router } from 'react-router-dom';
+// import { BrowserRouter as Router } from 'react-router-dom';
+import { HashRouter as Router } from 'react-router-dom';
 import history from '../../services/history'; 
 import Routes from './Routes'; 
 import { setAuthorizationToken, setCurrentUser } from '../../store/actions/auth';

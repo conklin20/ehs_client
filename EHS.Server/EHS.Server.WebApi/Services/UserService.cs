@@ -47,25 +47,30 @@ namespace EHS.Server.WebApi.Services
 
             //check password against AD 
             bool success = false;
-            using (PrincipalContext pc = new PrincipalContext(ContextType.Domain, "VSTO.VistaOutdoor.com"))
+            if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
             {
-                try
+                //Using local machine for testing
+                using (PrincipalContext pc = new PrincipalContext(ContextType.Machine, null))
                 {
-                    _logger.LogDebug($"{username} logging in...");
                     success = pc.ValidateCredentials(username, password);
-                    _logger.LogDebug($"Log In Result: {success.ToString()}");
                 }
-                catch (Exception ex)
+            } else
+            {
+                using (PrincipalContext pc = new PrincipalContext(ContextType.Domain, "VSTO.VistaOutdoor.com"))
                 {
-                    _logger.LogError(ex, $"Error authenticating user: {ex.Message}");
+                    try
+                    {
+                        _logger.LogDebug($"{username} logging in...");
+                        success = pc.ValidateCredentials(username, password);
+                        _logger.LogDebug($"Log In Result: {success.ToString()}");
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex.InnerException, $"Error authenticating user: {ex.Message}");
+                    }
+
                 }
-    
             }
-            //Using local machine for testing
-            //using (PrincipalContext pc = new PrincipalContext(ContextType.Machine, null))
-            //{
-            //    success = pc.ValidateCredentials(username, password);
-            //}
             if (!success)
                 return null;
 

@@ -38,16 +38,16 @@ namespace EHS.Server.DataAccess.Repository
 					                        , u.LastName
 					                        , u.LogicalHierarchyId
 					                        , u.PhysicalHierarchyId
-											/*
-, (
-												select STRING_AGG(HierarchyId, '|')
-												from dbo.fnGetHierarchySinglePath(u.LogicalHierarchyId)
-										      ) LogicalHierarchyPath
-											, (
-												select STRING_AGG(HierarchyId, '|')
-												from dbo.fnGetHierarchySinglePath(u.PhysicalHierarchyId)
-										      ) PhysicalHierarchyPath
-                                             */
+											, dbo.fnGetHierarchyPath(u.LogicalHierarchyId, '|') LogicalHierarchyPath
+											--, (
+											--	select STRING_AGG(HierarchyId, '|')
+											--	from dbo.fnGetHierarchySinglePath(u.LogicalHierarchyId)
+										 --     ) LogicalHierarchyPath
+											, dbo.fnGetHierarchyPath(u.PhysicalHierarchyId, '|') PhysicalHierarchyPath
+											--, (
+											--	select STRING_AGG(HierarchyId, '|')
+											--	from dbo.fnGetHierarchySinglePath(u.PhysicalHierarchyId)
+										 --     ) PhysicalHierarchyPath                                             
 					                        , u.Email
 					                        , isnull(u.Phone, '') as Phone
 					                        , u.RoleId

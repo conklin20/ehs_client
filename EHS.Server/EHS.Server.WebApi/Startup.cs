@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.AspNetCore.Server.IISIntegration; 
+using Microsoft.AspNetCore.Server.IISIntegration;
 using NLog;
 using NLog.Web;
 using NLog.Extensions.Logging;
@@ -34,15 +34,15 @@ namespace EHS.Server.WebApi
         {
             Configuration = configuration;
         }
-        
+
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             //from the ServiceExtensions class 
             services.ConfigureCors();
             services.ConfigureIISIntegration();
-            services.ConfigureApiVersioning(); 
-
+            services.ConfigureApiVersioning();
+            
             var connectinString = Configuration["connectionStrings:EHSConnectionString"];
             services.AddDbContext<EhsDbContext>(o => o.UseSqlServer(connectinString));
 
@@ -86,27 +86,27 @@ namespace EHS.Server.WebApi
             services.AddTransient<IHierarchyLevelRepository, HierarchyLevelRepository>();
             services.AddTransient<IHierarchyRepository, HierarchyRepository>();
             services.AddTransient<ISafetyEventRepository, SafetyEventRepository>();
-            services.AddTransient<ISeverityRepository, SeverityRepository>(); 
+            services.AddTransient<ISeverityRepository, SeverityRepository>();
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<IEmployeeRepository, EmployeeRepository>();
             services.AddTransient<IPeopleInvolvedRepository, PeopleInvolvedRepository>();
             services.AddTransient<ICausesRepository, CauseRepository>();
             services.AddTransient<IEventFileRepository, EventFileRepository>();
-            services.AddTransient<IUserRoleRepository, UserRoleRepository>(); 
+            services.AddTransient<IUserRoleRepository, UserRoleRepository>();
 
             // Utility for mapping DTO's to Models 
             var config = new AutoMapper.MapperConfiguration(cfg =>
             {
                 cfg.AddProfile(new MappingHelper());
             });
-            config.AssertConfigurationIsValid(); 
+            config.AssertConfigurationIsValid();
             var mapper = config.CreateMapper();
-            services.AddSingleton(mapper); 
+            services.AddSingleton(mapper);
 
-           
+
             services.AddMvc(o =>
             {
-                
+
             })
             .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
@@ -121,31 +121,24 @@ namespace EHS.Server.WebApi
             loggerFactory.AddNLog();
             //app.UseStatusCodePages(); //helps with debugging
 
-            if (env.IsProduction())
+
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
+            else
             {
                 app.UseHsts();
                 //write custom global exception handler here 
-                //app.UseExceptionHandler("/Error");
+                app.UseDefaultFiles();
+                app.UseStaticFiles(); //serves files in the wwwroot folder, where our compiled client app should be 
             }
-            else if (env.IsEnvironment("Test"))
-            {
 
-            }
-            else if (env.IsDevelopment())
-            {
-                //app.UseDeveloperExceptionPage();
-            }
-            
+
             app.UseCors("CorsPolicy"); //important to be able to make API Calls from the client
             //app.UseHttpsRedirection();
-            app.UseStaticFiles();
-            app.UseAuthentication(); 
-            app.UseMvc(routes =>
-            {
-                    //routes.MapRoute(
-                    //    name: "default",
-                    //    template: "{controller=Index}/{action=Index}");
-            });
+            app.UseAuthentication();
+            app.UseMvc();
         }
     }
 }

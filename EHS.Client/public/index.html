@@ -2,7 +2,6 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico" />
     <meta
       name="viewport"
       content="minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no"
@@ -26,8 +25,9 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
     <!-- react-table css -->
-    <link rel="stylesheet" href="https://unpkg.com/react-table@latest/react-table.css"
-      />
+    <link rel="stylesheet" href="https://unpkg.com/react-table@latest/react-table.css" />
+
+    <!-- <base href="/src/app/App.js"> -->
     <title>EHS</title>
   </head>
   <body>
@@ -45,6 +45,8 @@
     -->
 
     <!-- react-table js -->
-    <script src="https://unpkg.com/react-table@latest/react-table.min.js"></script>
+    <!-- the minified version was throwing an error when built (could be a Webpack issue). Trying the non-minified version -->
+    <!-- <script src="https://unpkg.com/react-table@latest/react-table.min.js"></script> -->
+    <script src="https://unpkg.com/react-table@latest/react-table.js"></script>
   </body>
 </html>
