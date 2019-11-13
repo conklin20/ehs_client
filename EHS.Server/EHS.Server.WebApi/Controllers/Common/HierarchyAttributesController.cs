@@ -17,7 +17,8 @@ namespace EHS.Server.WebApi.Controllers.Common
 {
     [Authorize]
     [Produces("application/json")]
-    [Route("api/v{version:apiVersion}/[controller]")]
+    //[Route("api/v{version:apiVersion}/[controller]")]
+    [Route("api/v1/[controller]")]
     [ApiController]
     public class HierarchyAttributesController : ControllerBase
     {

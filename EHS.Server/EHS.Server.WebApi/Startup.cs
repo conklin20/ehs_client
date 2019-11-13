@@ -1,28 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Hosting; 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.AspNetCore.Server.IISIntegration;
-using NLog;
-using NLog.Web;
-using NLog.Extensions.Logging;
-using Microsoft.Extensions.Logging;
-using Microsoft.EntityFrameworkCore;
 using EHS.Server.DataAccess.DatabaseModels;
 using EHS.Server.DataAccess.Repository;
 using EHS.Server.WebApi.Extensions;
 using EHS.Server.WebApi.Helpers;
 using System.Text;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
 using EHS.Server.WebApi.Services;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 
 namespace EHS.Server.WebApi
 {
@@ -41,13 +31,14 @@ namespace EHS.Server.WebApi
             //from the ServiceExtensions class 
             services.ConfigureCors();
             services.ConfigureIISIntegration();
-            services.ConfigureApiVersioning();
-            
-            var connectinString = Configuration["connectionStrings:EHSConnectionString"];
-            services.AddDbContext<EhsDbContext>(o => o.UseSqlServer(connectinString));
+            //services.ConfigureApiVersioning();
+
+
+            var connectionString = Configuration["connectionStrings:EHSConnectionString"];
+            services.AddDbContext<EhsDbContext>(o => o.UseSqlServer(connectionString));
 
             //services.AddSingleton<IConfiguration>(Configuration); believe this is called by the framework by default
-
+            
             // configure strongly typed settings objects
             var appSettingsSection = Configuration.GetSection("AppSettings");
             services.Configure<AuthSettings>(appSettingsSection);
@@ -77,7 +68,7 @@ namespace EHS.Server.WebApi
             services.AddScoped<IUserService, UserService>();
             //services.AddTransient<IUserService, UserService>();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-
+            
             // add Repos 
             services.AddTransient<IActionRepository, ActionRepository>();
             services.AddTransient<IApprovalRepository, ApprovalRepository>();
@@ -103,25 +94,21 @@ namespace EHS.Server.WebApi
             var mapper = config.CreateMapper();
             services.AddSingleton(mapper);
 
+            //new with 3.0
+            services.AddControllers(o =>
+            {
+            });
 
             services.AddMvc(o =>
             {
 
-            })
-            .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            });
+            //.SetCompatibilityVersion(CompatibilityVersion.Version_2_2); OBSOLETE with 3.0
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env )
         {
-            env.ConfigureNLog("nlog.config");
-            GlobalDiagnosticsContext.Set("nLogConnectionString", Configuration.GetConnectionString("EHSConnectionString")); //grab the db connection from the appsettings.json so we dont have to maintain it in the nlog.config file as well
-
-            //nlog middleware 
-            loggerFactory.AddNLog();
-            //app.UseStatusCodePages(); //helps with debugging
-
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -130,15 +117,24 @@ namespace EHS.Server.WebApi
             {
                 app.UseHsts();
                 //write custom global exception handler here 
-                app.UseDefaultFiles();
-                app.UseStaticFiles(); //serves files in the wwwroot folder, where our compiled client app should be 
             }
 
+            app.UseDefaultFiles();
+            app.UseStaticFiles(); //serves files in the wwwroot folder, where our compiled client app should be 
+
+            app.UseRouting();
 
             app.UseCors("CorsPolicy"); //important to be able to make API Calls from the client
             //app.UseHttpsRedirection();
-            app.UseAuthentication();
-            app.UseMvc();
+            app.UseAuthentication(); //must come AFTER UseCors and UseRouting but BEFORE UseEndpoints
+            app.UseAuthorization(); 
+            
+            app.UseEndpoints(endpoints => {
+                endpoints.MapControllers();
+
+                //endpoints.MapControllerRoute(
+                //    "default", "{controller=Index}/{action=Index}"); 
+            });
         }
     }
 }

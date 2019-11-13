@@ -10,8 +10,10 @@ using Microsoft.Extensions.Logging;
 
 namespace EHS.Server.WebApi.Controllers.Common
 {
-    [Route("api/v{version:apiVersion}/[controller]")]
+    //[Route("api/v{version:apiVersion}/[controller]")]
+    [Route("api/v1/[controller]")]
     [ApiController]
+    [AllowAnonymous]
     public class IndexController : ControllerBase
     {
         private readonly ILogger<IndexController> _logger;
@@ -29,6 +31,7 @@ namespace EHS.Server.WebApi.Controllers.Common
         public ActionResult<IEnumerable<string>> Get()
         {
             _logger.LogInformation($"Web API Is Running! Environment: {environment}");
+            _logger.LogWarning("Warning, logging to a database is slow as...");
             return new string[] 
             { 
                 "Web API Is Running!", 
