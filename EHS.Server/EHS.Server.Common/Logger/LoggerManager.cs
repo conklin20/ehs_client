@@ -10,6 +10,7 @@ namespace EHS.Server.Common
 
         public LoggerManager()
         {
+
         }
 
         public void LogDebug(string message)

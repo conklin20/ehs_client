@@ -16,7 +16,8 @@ using AutoMapper;
 namespace EHS.Server.WebApi.Controllers.Common
 {
     [Authorize]
-    [Route("api/v{version:apiVersion}/[controller]")]
+    //[Route("api/v{version:apiVersion}/[controller]")]
+    [Route("api/v1/[controller]")]
     [ApiController]
     public class UserRolesController : ControllerBase
     {

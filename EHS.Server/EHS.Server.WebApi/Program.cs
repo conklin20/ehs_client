@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
-using System.IO;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using NLog.Extensions.Logging;
 
 namespace EHS.Server.WebApi
 {
@@ -8,28 +11,32 @@ namespace EHS.Server.WebApi
     {
         public static void Main(string[] args)
         {
-            CreateWebHostBuilder(args).Build().Run();
+            //CreateWebHostBuilder(args).Build().Run();
+            CreateHostBuilder(args).Build().Run();
 
-            //var host = new WebHostBuilder()
-            //    .UseContentRoot(Directory.GetCurrentDirectory())
-            //    .UseKestrel()
-            //    .UseIISIntegration()
-            //    .UseStartup<Startup>()
-            //    .ConfigureKestrel((context, options) =>
-            //    {
-            //        // Set properties and call methods on options
-            //    })
-            //    .Build();
-            //host.Run();
         }
 
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
-                .UseStartup<Startup>()
-                .ConfigureKestrel((context, options) =>
+        public static IHostBuilder CreateHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args)
+                .ConfigureLogging((context, logging) =>
                 {
-                    // Set properties and call methods on options
-                    options.Limits.MaxRequestBodySize = 10500000; // ~10mb 
+                    logging.ClearProviders(); // clears the .net core default providers 
+                    logging.AddConfiguration(context.Configuration.GetSection("Logging"));
+                    if (context.HostingEnvironment.IsDevelopment())
+                    {
+                        logging.AddConsole();
+                    }
+                    logging.AddNLog($"nlog.{context.HostingEnvironment.EnvironmentName}.config");
+                    //logging.AddNLog($"nlog.Development.config"); //forcing to use Dev config for testing something 
+                })
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder.ConfigureKestrel(serverOptions =>
+                    {
+                        // Set properties and call methods on options
+                        serverOptions.Limits.MaxRequestBodySize = 10500000; // ~10mb
+                    })
+                    .UseStartup<Startup>();
                 });
     }
 }

@@ -50,25 +50,20 @@ namespace EHS.Server.WebApi.Services
             if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
             {
                 //Using local machine for testing
-                using (PrincipalContext pc = new PrincipalContext(ContextType.Machine, null))
-                {
-                    success = pc.ValidateCredentials(username, password);
-                }
+                using PrincipalContext pc = new PrincipalContext(ContextType.Machine, null);
+                success = pc.ValidateCredentials(username, password);
             } else
             {
-                using (PrincipalContext pc = new PrincipalContext(ContextType.Domain, "VSTO.VistaOutdoor.com"))
+                using PrincipalContext pc = new PrincipalContext(ContextType.Domain, "VSTO.VistaOutdoor.com");
+                try
                 {
-                    try
-                    {
-                        _logger.LogDebug($"{username} logging in...");
-                        success = pc.ValidateCredentials(username, password);
-                        _logger.LogDebug($"Log In Result: {success.ToString()}");
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogError(ex.InnerException, $"Error authenticating user: {ex.Message}");
-                    }
-
+                    _logger.LogDebug($"{username} logging in...");
+                    success = pc.ValidateCredentials(username, password);
+                    _logger.LogDebug($"Log In Result: {success.ToString()}");
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex.InnerException, $"Error authenticating user: {ex.Message}");
                 }
             }
             if (!success)
