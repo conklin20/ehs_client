@@ -16,8 +16,8 @@
     <None Include="wwwroot\static\css\main.abfb5c91.chunk.css.map" />
     <None Include="wwwroot\static\js\2.87da98a8.chunk.js" />
     <None Include="wwwroot\static\js\2.87da98a8.chunk.js.map" />
-    <None Include="wwwroot\static\js\main.59d17691.chunk.js" />
-    <None Include="wwwroot\static\js\main.59d17691.chunk.js.map" />
+    <None Include="wwwroot\static\js\main.d3789d8b.chunk.js" />
+    <None Include="wwwroot\static\js\main.d3789d8b.chunk.js.map" />
     <None Include="wwwroot\static\js\runtime~main.a8a9905a.js" />
     <None Include="wwwroot\static\js\runtime~main.a8a9905a.js.map" />
   </ItemGroup>
