@@ -4,10 +4,10 @@
     <TargetFramework>netcoreapp3.0</TargetFramework>
   </PropertyGroup>
   
-  <!--For NLog Support with .net core 3.0--> 
+  <!--For NLog Support with .net core 3.0--><!-- 
   <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.0' ">
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
-  </ItemGroup>
+  </ItemGroup>-->
   
   <ItemGroup>
     <Content Remove="nlog.config" />
