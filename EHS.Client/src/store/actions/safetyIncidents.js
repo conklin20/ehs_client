@@ -13,7 +13,7 @@ export const loadSafetyIncidents = safetyIncidents => ({
 // })
 
 export const fetchSafetyIncidents = (query) => {
-	console.log(query)
+	// console.log(query)
 	return dispatch => {
 		return apiCall('get', '/safetyincidents' + query)
 			.then(res => {

@@ -53,6 +53,8 @@ const EHSAppBar = (props) => {
 	const handleMenuClick = (event) => {
 		// console.log(event.currentTarget.name); 
 		switch(event.currentTarget.name){
+			case 'dashboard':
+				return props.history.push('/dashboard');
 			case 'eventMenu':
 				return setReportEventAnchorEl(event.currentTarget);
 				// return setAnchorReportEventEl(event.currentTarget);
@@ -79,6 +81,14 @@ const EHSAppBar = (props) => {
 							</div>		
 							<div>
 								<Typography variant="h6" className={classes.title}>
+									<Button 
+										name='dashboard' 
+										className={classes.menuButton}
+										onClick={handleMenuClick}
+										size="large" 
+									>
+										Dashboard
+									</Button>
 									<Button 
 										name='eventMenu' 
 										className={classes.menuButton}

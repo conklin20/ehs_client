@@ -172,7 +172,6 @@ const Dashboard = props => {
 		
 		return filteredSafetyIncidents; 
 	}
-
 	// console.log(props)
 	return (
 		<Fragment>

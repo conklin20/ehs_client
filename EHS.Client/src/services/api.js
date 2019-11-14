@@ -20,7 +20,7 @@ export function setTokenHeader(token){
  */
 export function apiCall(method, path, data){
     path = `/api/v${APIVERSION}${path}`;
-    console.log(method, path, data); 
+    // console.log(method, path, data); 
     return  new Promise((resolve, reject) => {
         return axios[method](path, data)
             .then(res => {

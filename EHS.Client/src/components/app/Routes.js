@@ -64,11 +64,10 @@ const useStyles = makeStyles(theme => ({
 
 const Routes = props => {
     const classes = useStyles(); 
-
     return (
         <div className={classes.index}>
             <div className={classes.appBar}>
-                { props.currentUser.isAuthenticated ? <AppBar currentUser={props.currentUser} onLogout={props.logout} /> : null }
+                { props.currentUser.isAuthenticated ? <AppBar onLogout={props.logout} { ...props } /> : null }
             </div>
             <div id='body' className={classes.body}>
                 { props.currentUser.isAuthenticated ? <Hidden smDown><div className={classes.reportAside}><ReportAside /> </div></Hidden> : null }
