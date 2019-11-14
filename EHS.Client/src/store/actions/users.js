@@ -1,5 +1,4 @@
 import { apiCall } from '../../services/api'; 
-// import { addError } from './errors'; 
 
 export const fetchUsers = () => {
     return dispatch => {

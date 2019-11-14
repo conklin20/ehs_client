@@ -5,7 +5,8 @@ import CopyrightIcon from '@material-ui/icons/Copyright';
 import { Redirect, withRouter } from 'react-router-dom';
 import AuthForm from './AuthForm';
 import { authUser } from '../../store/actions/auth';
-import { removeError } from '../../store/actions/errors'; 
+// import { removeError } from '../../store/actions/errors';
+import { removeNotification } from '../../store/actions/notifications';
 import coverImage from '../../images/mfg-plant.jpg';
 import { connect } from 'react-redux';
 
@@ -41,9 +42,9 @@ const useStyles = makeStyles(theme => ({
 
 const Homepage = (props) => {
     const classes = useStyles();
-    const { authUser, errors, removeError, currentUser } = props;
+    const { authUser, errors, removeNotification, currentUser } = props;
 
-    // console.log(props)
+    console.log(removeNotification)
     //if user is not logged in, route them to the main landing page 
     return (
       <Fragment>
@@ -66,7 +67,7 @@ const Homepage = (props) => {
                     <Typography variant="h3" gutterBottom>Welcome to the new Incident Investigation System!</Typography>
                         <AuthForm 
                             errors={errors}
-                            removeError={removeError}
+                            removeNotification={removeNotification}
                             onAuth={authUser}
                             buttonText='Log In!'
                             heading='Log In Here'
@@ -100,6 +101,6 @@ export default withRouter(
     connect(mapStateToProps, 
         { 
             authUser,
-            removeError,
+            removeNotification,
         })(Homepage)
 ); 

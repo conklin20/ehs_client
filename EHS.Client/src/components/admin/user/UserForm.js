@@ -5,8 +5,7 @@ import AutoComplete from '../../shared/AutoComplete';
 import { makeStyles } from '@material-ui/core/styles';
 import { fetchEmployee } from '../../../store/actions/lookupData';
 import { postNewUser, updateUser } from '../../../store/actions/users'; 
-import Notification from '../../shared/Notification'; 
-import { addNotification, removeNotification } from '../../../store/actions/notifications'; 
+import { addNotification } from '../../../store/actions/notifications'; 
 
 const useStyles = makeStyles(theme => ({
     formControl: {
@@ -208,15 +207,6 @@ const UserForm = props => {
     // console.log(user); 
     return (
         <Fragment>
-            {props.notifications.message && (							
-                <Notification
-                    open={true} 
-                    variant={props.notifications.variant}
-                    className={classes.margin}
-                    message={props.notifications.message}	
-                    removeNotification={dispatch(removeNotification)}							
-                />		
-            )}
 			<Dialog 
                 open={showUserForm} 
                 onClose={handleShowUserForm} 
@@ -462,11 +452,4 @@ const UserForm = props => {
     )
 }
 
-function mapStateToProps(state) {
-    // console.log(state); 
-	return {
-        notifications: state.notifications
-	};
-}
-
-export default connect(mapStateToProps, null)(UserForm); 
+export default connect(null, null)(UserForm); 

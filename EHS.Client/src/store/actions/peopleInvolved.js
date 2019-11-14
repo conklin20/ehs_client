@@ -1,5 +1,5 @@
 import { apiCall } from "../../services/api";
-import { addError } from "./errors";
+import { addNotification } from "./notifications";
   
 export const savePeopleInvolved = (peopleInvolved, currentUserId) => (dispatch, getState) => {    
 	return apiCall('post', `/peopleinvolved?userId=${currentUserId}`, peopleInvolved )
@@ -7,9 +7,9 @@ export const savePeopleInvolved = (peopleInvolved, currentUserId) => (dispatch, 
         //success status = 201
         return res.status
     })
-    .catch(err => {
-        console.log(err)
-        dispatch(addError(err));
+    .catch(res => {	
+        console.log(res)
+        dispatch(addNotification(`TODO: Customize Error Message. ${res.status}`, 'error'));
     })
 }
 
@@ -18,9 +18,9 @@ export const fetchPeopleByEventId = (eventId) => (dispatch, getState) => {
         .then(res => {
             return res.data
         })
-        .catch(err => {
-            console.log(err)
-            dispatch(addError(err));
+        .catch(res => {	
+            console.log(res)
+            dispatch(addNotification(`TODO: Customize Error Message. ${res.status}`, 'error'));
         }); 
 }
 
@@ -34,7 +34,6 @@ export const fetchPeopleByEventId = (eventId) => (dispatch, getState) => {
 // 			})
 // 			.catch(err => {
 // 				console.log(err)
-// 				dispatch(addError(err));
 // 		});
 // 	};
 // };

@@ -6,9 +6,9 @@ export const fetchHierarchyTreeWithDepth = (type, hierachyId) => {
             .then(res => {
                 return { type: type, res: res}
             })
-            .catch(err => {
-                console.log(err)
-                // dispatch(addError(err || 'An unknown error has occured.')); 
+            .catch(res => {	
+                console.log(res)
+                //dispatch(addNotification(`TODO: Customize Error Message. ${res.status}`, 'error'));
             });
     
 }
@@ -19,9 +19,9 @@ export const fetchHierarchyLevels = () => {
             .then(res => {
                 return res;
             })
-            .catch(err => {
-                console.log(err)
-                // dispatch(addError(err || 'An unknown error has occured.')); 
+            .catch(res => {	
+                console.log(res)
+                // dispatch(addNotification(`TODO: Customize Error Message. ${res.status}`, 'error'));
             });
     
 }
@@ -33,8 +33,9 @@ export const postNewHierarchy = (hierarchies, firstChild = false, userId) => {
                 //success response = 201
                 return res;
             })
-            .catch(err => {
-                return err; 
+            .catch(res => {	
+                console.log(res)
+                // dispatch(addNotification(`TODO: Customize Error Message. ${res.status}`, 'error'));
             })
     // }    
 }
@@ -47,8 +48,9 @@ export const updateHierarchy = (hierarchy, userId) => {
                 //success response = 202
                 return res;
             })
-            .catch(err => {
-                return err; 
+            .catch(res => {	
+                console.log(res)
+                // dispatch(addNotification(`TODO: Customize Error Message. ${res.status}`, 'error'));
             })
     // }
 }
@@ -60,8 +62,9 @@ export const deleteHierarchy = (hierarchyId, userId) => {
                 //success response = 202
                 return res;
             })
-            .catch(err => {
-                return err; 
+            .catch(res => {	
+                console.log(res)
+                // dispatch(addNotification(`TODO: Customize Error Message. ${res.status}`, 'error'));
             })
     // }
 }

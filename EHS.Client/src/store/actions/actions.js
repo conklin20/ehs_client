@@ -1,5 +1,5 @@
 import { apiCall } from "../../services/api";
-import { addError } from "./errors";
+import { addNotification } from "./notifications";
 import { REMOVE_ACTION, LOAD_ACTIONS } from "../actionTypes";
 
 export const remove = actionId => ({
@@ -19,9 +19,9 @@ export const addAction = (actionsToAdd) => (dispatch, getState) => {
         //success status = 201
         return res.status
     })
-    .catch(err => {
-        console.log(err)
-        dispatch(addError(err));
+    .catch(res => {	
+        console.log(res)
+        dispatch(addNotification(`TODO: Customize Error Message. ${res.status}`, 'error'));
     })
 }
 
@@ -29,8 +29,9 @@ export const removeAction = (actionId, userId) => {
     return dispatch => {
       return apiCall('delete', `/actions/${actionId}?userId=${userId}`)
         .then(() => dispatch(remove(actionId)))
-        .catch(err => {
-          addError(err.message);
+        .catch(res => {	
+            console.log(res)
+            dispatch(addNotification(`TODO: Customize Error Message. ${res.status}`, 'error'));
         });
     };
   };
@@ -43,9 +44,9 @@ export const fetchActions = (query) => {
                 return res.data
 				// dispatch(loadActions(res));
 			})
-			.catch(err => {
-				console.log(err)
-				dispatch(addError(err));
+      .catch(res => {	
+          console.log(res)
+          dispatch(addNotification(`TODO: Customize Error Message. ${res.status}`, 'error'));
 		});
 	};
 };
@@ -58,7 +59,6 @@ export const fetchActions = (query) => {
 //       })
 //       .catch(err => {            
 //           console.log(err)
-//           dispatch(addError(err));
 //       }); 
 // }
 
@@ -69,8 +69,8 @@ export const updateAction = (actionToUpdate) => (dispatch, getState) => {
         // console.log(res)
         return res.data
     })
-    .catch(err => {
-        console.log(err)
-        dispatch(addError(err));
+    .catch(res => {	
+        console.log(res)
+        dispatch(addNotification(`TODO: Customize Error Message. ${res.status}`, 'error'));
     })
 }

@@ -25,7 +25,7 @@ const ReportAside = props => {
                     <ListItem className={classes.done}>
                         Filter User Aside Approvals to current users approval level and Site/Area/Dept
                     </ListItem>
-                    <ListItem>
+                    <ListItem className={classes.done}>
                         Replace AddError code with AddNotification
                     </ListItem>
                     <ListItem>
