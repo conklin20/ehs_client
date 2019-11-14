@@ -1,5 +1,5 @@
 import { apiCall } from '../../services/api'; 
-import { addError } from './errors'; 
+import { addNotification } from './notifications'; 
 import { LOAD_SAFETY_INCIDENTS } from '../actionTypes'; //not including a REMOVE Action because the Drafts arent being stored in the redux store 
 
 export const loadSafetyIncidents = safetyIncidents => ({
@@ -19,9 +19,9 @@ export const fetchSafetyIncidents = (query) => {
 			.then(res => {
 				dispatch(loadSafetyIncidents(res.data));
 			})
-			.catch(err => {	
-				console.log(err)
-				dispatch(addError(err));
+			.catch(res => {	
+				console.log(res)
+				dispatch(addNotification(`TODO: Customize Error Message. ${res.status}`, 'error'));
 		});
 	};
 };
@@ -33,9 +33,9 @@ export const fetchEvent = (eventId) => {
 				// dispatch(loadEvent(res));
 				return res.data
 			})
-			.catch(err => {
-				console.log(err)
-				dispatch(addError(err));
+			.catch(res => {	
+				console.log(res)
+				dispatch(addNotification(`TODO: Customize Error Message. ${res.status}`, 'error'));
 		});
 	};
 };
@@ -47,9 +47,9 @@ export const fetchDrafts = (query) => {
 			.then(res => {
 				return res.data; // <- just returning to the caller insetad of dispatching an action 
 			})
-			.catch(err => {
-				console.log(err)
-				dispatch(addError(err));
+			.catch(res => {	
+				console.log(res)
+				dispatch(addNotification(`TODO: Customize Error Message. ${res.status}`, 'error'));
 		});
 	};
 };
@@ -62,9 +62,9 @@ export const postNewSafetyIncident = (safetyEventToAdd) => (dispatch, getState) 
 			return res
 			// dispatch(res);
 		})
-		.catch(err => {
-			console.log(err)
-			dispatch(addError(err));
+        .catch(res => {	
+            console.log(res)
+            dispatch(addNotification(`TODO: Customize Error Message. ${res.status}`, 'error'));
 		})
 }
 
@@ -76,9 +76,9 @@ export const updateSafetyIncident = (safetyEventToUpdate, userId) => (dispatch, 
 			return res
 			// dispatch(res);
 		})
-		.catch(err => {
-			console.log(err)
-			dispatch(addError(err));
+        .catch(res => {	
+            console.log(res)
+            dispatch(addNotification(`TODO: Customize Error Message. ${res.status}`, 'error'));
 		})
 }
 
@@ -89,8 +89,8 @@ export const deleteSafetyIncident = (eventId, userId) => (dispatch, getState) =>
 			//success status = 202
 			return res.status
 		})
-		.catch(err => {
-			console.log(err)
-			dispatch(addError(err));
+        .catch(res => {	
+            console.log(res)
+            dispatch(addNotification(`TODO: Customize Error Message. ${res.status}`, 'error'));
 		})
 }

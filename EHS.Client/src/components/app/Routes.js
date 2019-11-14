@@ -1,9 +1,9 @@
-import React, { Fragment } from 'react'; 
+import React, { useEffect } from 'react'; 
 import { Switch, Route, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { logout } from '../../store/actions/auth';
-import { removeError } from '../../store/actions/errors'; 
+import { removeNotification } from '../../store/actions/notifications'; 
 import { Hidden } from '@material-ui/core'; 
 //components
 import AppBar from './AppBar';
@@ -16,6 +16,7 @@ import UserProfile from '../user/UserProfile';
 import UserManagement from '../admin/user/UserManagement'; 
 import HierarchyManagement from '../admin/hierarchy/HierarchyManagement'; 
 import Logout from '../user/Logout'; 
+import Notification from '../shared/Notification';
 
 
 const useStyles = makeStyles(theme => ({
@@ -37,6 +38,7 @@ const useStyles = makeStyles(theme => ({
         // // overflowY: 'scroll',
         // margin: '0', 
         // padding: '0',
+        minWidth: '80vw',
     }, 
     reportAside: {
         display: 'flex', 
@@ -49,7 +51,6 @@ const useStyles = makeStyles(theme => ({
     },     
     main: {
         flex: 4,
-        // backgroundColor: 'green',
     },
     userAside: {
         display: 'flex', 
@@ -64,8 +65,33 @@ const useStyles = makeStyles(theme => ({
 
 const Routes = props => {
     const classes = useStyles(); 
+
+    const { notifications } = props; 
+
+ 	// Essentially what was componentDidMount and componentDidUpdate before Hooks
+	useEffect(() => {
+		return () => {
+			console.log('Routes Component Unmounting')
+		}
+    }, [notifications]); //this 2nd arg is important, it tells what to look for changes in, and will re-run the hook when this changes 
+
     return (
         <div className={classes.index}>
+            {/* 
+            THIS FIRST PART IS TO DISPLAY BRIEF NOTIFICATIONS THE USER IN THE LOWER LEFT PART OF THE SCREEN 
+            */}
+            {notifications && notifications.message && (					
+                <Notification
+                    open={true} 
+                    className={classes.margin}
+                    variant={notifications.variant}
+                    message={notifications.message}	
+                    removeNotification={props.removeNotification}							
+                />		
+            )}
+            {/* 
+            APP BODY STARTS HERE 
+             */}
             <div className={classes.appBar}>
                 { props.currentUser.isAuthenticated ? <AppBar onLogout={props.logout} { ...props } /> : null }
             </div>
@@ -82,7 +108,7 @@ const Routes = props => {
                     <Route path='/manage/users' exact render={(props) => <div className={classes.main}><UserManagement /> </div> }  ></Route>
                     <Route path='/manage/users/:userId' exact render={(props) => <div className={classes.main}><UserManagement /> </div> }  ></Route>
                     <Route path='/manage/hierarchies' exact render={(props) => <div className={classes.main}><HierarchyManagement /> </div> }  ></Route>
-                    {/* /manage/hierarchies */}
+                    
                     {/* /manage/attributes */}
                     {/* /reports */}
                 </Switch>
@@ -96,14 +122,12 @@ function mapStateToProps(state){
     return {
         // lookupData: state.lookupData,
         currentUser: state.currentUser,
-        errors: state.errors, 
+        notifications: state.notifications, 
     }
 }
 
 export default withRouter(
-    connect(mapStateToProps, 
-        { 
-            logout,
-            removeError,
-        })(Routes)
-); 
+    connect(mapStateToProps,  { 
+        logout,
+        removeNotification,
+})(Routes)); 

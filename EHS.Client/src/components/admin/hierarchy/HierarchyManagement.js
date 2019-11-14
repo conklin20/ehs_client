@@ -6,8 +6,7 @@ import { Paper, Typography, Dialog, DialogActions, DialogContent, DialogContentT
 import LogicalTree from './LogicalTree';
 import { fetchHierarchyTreeWithDepth, fetchHierarchyLevels, postNewHierarchy, updateHierarchy, deleteHierarchy } from '../../../store/actions/hierarchies';
 import PhysicalTree from './PhysicalTree';
-import Notification from '../../shared/Notification'; 
-import { addNotification, removeNotification } from '../../../store/actions/notifications'; 
+import { addNotification } from '../../../store/actions/notifications'; 
 import { MIN_ADMIN_ROLE_LEVEL } from '../adminRoleLevel';
 
 const useStyles = makeStyles(theme => ({
@@ -190,18 +189,9 @@ const HierarchyManagement = props => {
         setOpenDialog(false); 
     }
 
-    console.log(`Re-rendering! Logical: ${logicalHierarchies.length}. Physical: ${physicalHierarchies.length}. Levels: ${hierarchyLevels.length}.`)
+    // console.log(`Re-rendering! Logical: ${logicalHierarchies.length}. Physical: ${physicalHierarchies.length}. Levels: ${hierarchyLevels.length}.`)
     return (
         <Paper className={classes.paper} square={true} >
-        {props.notifications.message && (							
-            <Notification
-                open={true} 
-                variant={props.notifications.variant}
-                className={classes.margin}
-                message={props.notifications.message}	
-                removeNotification={dispatch(removeNotification)}							
-            />		
-        )}
             <Typography variant='h4' >
                 Manage Hierarchies
             </Typography>
@@ -347,12 +337,11 @@ function mapStateToProps(state) {
 	return {
         currentUser: state.currentUser,
         lookupData: state.lookupData, 
-        notifications: state.notifications
 	};
 }
 
 function mapDispatchToProps(dispatch, ownProps) {
-    console.log(ownProps)
+    // console.log(ownProps)
     return {
         fetchHierarchyTreeWithDepth,
         fetchHierarchyLevels,

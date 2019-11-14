@@ -1,6 +1,6 @@
 import { apiCall, setTokenHeader } from "../../services/api"; 
 import { SET_CURRENT_USER } from "../actionTypes";
-import { addError, removeError } from './errors'; 
+import { addNotification, removeNotification } from './notifications'; 
 
 export function setCurrentUser(user){
   let newUserObj = {}
@@ -67,11 +67,15 @@ export function authUser(type, userData) {
           sessionStorage.setItem("jwtToken", token);
           setAuthorizationToken(token);
           dispatch(setCurrentUser(user));
-          dispatch(removeError());
+          dispatch(removeNotification());
           resolve(); // indicate that the API call succeeded
         })
-        .catch(err => {
-          dispatch(addError(err));
+        .catch(res => {
+          console.log(res); 
+          const message = res && res.response && res.response.data && res.response.data.message ? res.response.data.message
+                          : `Unknown Error Occurred: ${res.response}`;
+
+          dispatch(addNotification(message , 'error'));
           reject(); // indicate the API call failed
         });
     });

@@ -1,5 +1,5 @@
 import { apiCall } from "../../services/api";
-import { addError } from "./errors";
+import { addNotification } from "./notifications";
 
   
 export const saveCauses = (causes, currentUserId) => (dispatch, getState) => {    
@@ -8,9 +8,9 @@ export const saveCauses = (causes, currentUserId) => (dispatch, getState) => {
             //success status = 201
             return res.status
         })
-        .catch(err => {
-            console.log(err)
-            dispatch(addError(err));
+        .catch(res => {	
+            console.log(res)
+            dispatch(addNotification(`TODO: Customize Error Message. ${res.status}`, 'error'));
         })
 }
 
@@ -19,8 +19,8 @@ export const fetchCausesByEventId = (eventId) => (dispatch, getState) => {
         .then(res => {
             return res.data;
         })
-        .catch(err => {            
-            console.log(err)
-            dispatch(addError(err));
+        .catch(res => {	
+            console.log(res)
+            dispatch(addNotification(`TODO: Customize Error Message. ${res.status}`, 'error'));
         }); 
 }

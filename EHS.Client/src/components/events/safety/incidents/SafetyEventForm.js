@@ -17,14 +17,13 @@ import {
 import { fetchPeopleByEventId } from '../../../../store/actions/peopleInvolved'; 
 import { fetchCausesByEventId } from '../../../../store/actions/causes';
 import { fetchFilesByEventId } from '../../../../store/actions/media';  
-import { addError } from '../../../../store/actions/errors'
+import { addNotification } from '../../../../store/actions/notifications'
 import ReportingInformation from '../../shared/ReportingInformation'; 
 import EventLocation from '../../shared/EventLocation'; 
 import SIEventDetails from './SIEventDetails'; 
 import Actions from '../../shared/Actions'; 
 import Causes from '../../shared/Causes'; 
 import PeopleInvolved from '../../shared/PeopleInvolved'; 
-import Notification from '../../../shared/Notification';
 import Media from '../../shared/Media';
 import Review from '../../shared/Review'
 import { 
@@ -328,7 +327,7 @@ const SafetyEventForm = props => {
                             handleSubmit={handleSubmit}
                         />     
             default:
-                addError('Unkown Step'); 
+                addNotification('Unkown Step', 'warning'); 
                 return 'Unknown Step';
         }
     }
@@ -423,15 +422,6 @@ const SafetyEventForm = props => {
     // console.log(event) 
 	return (
 		<div className={classes.root}>
-            {errors && errors.message && (							
-				<Notification
-                    open={true} 
-                    variant="error"
-                    className={classes.margin}
-                    message={errors.message}	
-                    removeError={removeError}							
-				/>		
-            )}
             { (event && Object.keys(event).length) || (props.match.path.includes('/si/new'))  ?             
                 <Dialog 
                     open={true} 

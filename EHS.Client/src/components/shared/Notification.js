@@ -51,7 +51,6 @@ function MySnackbarContentWrapper(props) {
   const { className, message, onClose, variant, ...other } = props;
   const Icon = variantIcon[variant];
   
-  console.log(`/shared/Notification ${message.error}`)
   return (
     <SnackbarContent
       className={clsx(classes[variant], className)}
@@ -60,7 +59,8 @@ function MySnackbarContentWrapper(props) {
         <span id="client-snackbar" className={classes.message}>
           <Icon className={clsx(classes.icon, classes.iconVariant)} />
           {/* { message || 'An unknown error has occured.'} */}
-          Error Occured. User Friendly Error Messages are still under development
+          {/* Error Occured. User Friendly Error Messages are still under development */}
+          {message}
         </span>
       }
       action={[
@@ -79,12 +79,19 @@ const Notification = ( props ) => {
 
   console.log(props); 
 
-  function handleClose(event, reason) {
+  const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
       return;
     }    
     
-    props.dispatch(removeNotification); 
+    console.log(removeNotification)
+    // if(typeof(removeNotification) === 'function') {
+    //   console.log('dispatching removeNotificaion')
+    //   props.dispatch(removeNotification)
+    // } else {
+    //   console.log('calling removeNotification()')
+    removeNotification(); 
+    // }
     setOpen(false);
   }
 
@@ -95,7 +102,7 @@ const Notification = ( props ) => {
       horizontal: 'left',
     }}
       open={open}
-      autoHideDuration={autoHideDuration || 6000}
+      autoHideDuration={autoHideDuration || 5000}
       onClose={handleClose}
     >
       <MySnackbarContentWrapper

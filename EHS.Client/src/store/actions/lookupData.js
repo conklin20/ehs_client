@@ -1,5 +1,5 @@
 import { apiCall } from '../../services/api'; 
-import { addError } from './errors'; 
+import { addNotification } from './notifications'; 
 import { 
     LOAD_LOGICAL_HIERARCHIES, 
     LOAD_PHYSICAL_HIERARCHIES,
@@ -45,9 +45,9 @@ export const fetchLogicalHierarchyTree = (hierachyId) => {
             .then(res => {
                 dispatch(loadLogicalHierarchies(res.data)); 
             })
-            .catch(err => {
-                console.log(err)
-                dispatch(addError(err || 'An unknown error has occured.')); 
+            .catch(res => {	
+                console.log(res)
+                dispatch(addNotification(`TODO: Customize Error Message. ${res.status}`, 'error'));
             });
     }
 }
@@ -58,9 +58,9 @@ export const fetchPhysicalHierarchyTree = (hierachyId) => {
             .then(res => {
                 dispatch(loadPhysicalHierarchies(res.data)); 
             })
-            .catch(err => {
-                console.log(err)
-                dispatch(addError(err || 'An unknown error has occured.')); 
+            .catch(res => {	
+                console.log(res)
+                dispatch(addNotification(`TODO: Customize Error Message. ${res.status}`, 'error'));
             });
     }
 }
@@ -72,9 +72,9 @@ export const fetchLogicalHierarchyAttributes = (hierarchyId, type, query) => {
             .then(res => {
                 dispatch(loadLogicalHierarchyAttributes(res.data)); 
             })
-            .catch(err => {
-                // console.log(err)
-                dispatch(addError(err || 'An unknown error has occured.')); 
+            .catch(res => {	
+                console.log(res)
+                dispatch(addNotification(`TODO: Customize Error Message. ${res.status}`, 'error'));
             });
     }
 }
@@ -86,9 +86,9 @@ export const fetchPhysicalHierarchyAttributes = (hierarchyId, type, query) => {
             .then(res => {
                 dispatch(loadPhysicalHierarchyAttributes(res.data)); 
             })
-            .catch(err => {
-                // console.log(err)
-                dispatch(addError(err || 'An unknown error has occured.')); 
+            .catch(res => {	
+                console.log(res)
+                dispatch(addNotification(`TODO: Customize Error Message. ${res.status}`, 'error'));
             });
     }
 }
@@ -99,9 +99,9 @@ export const fetchUserRoles = () => {
             .then(res => {
                 dispatch(loadUserRoles(res.data)); 
             })
-            .catch(err => {
-                // console.log(err)
-                dispatch(addError(err || 'An unknown error has occured.')); 
+            .catch(res => {	
+                console.log(res)
+                dispatch(addNotification(`TODO: Customize Error Message. ${res.status}`, 'error'));
             });
     }
 }
@@ -112,8 +112,9 @@ export const fetchEmployees = () => {
             .then(res => {
                 dispatch(loadEmployees(res.data));
             })
-            .catch(err => {
-                dispatch(addError(err || 'An unknown error has occured.'));
+            .catch(res => {	
+                console.log(res)
+                dispatch(addNotification(`TODO: Customize Error Message. ${res.status}`, 'error'));
             })
     }
 }

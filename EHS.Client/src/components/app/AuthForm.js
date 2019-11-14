@@ -1,8 +1,7 @@
-	import React, { useState } from 'react';
-	import { Button } from '@material-ui/core';
+	import React, { useState, Fragment } from 'react';
+	import { Button, Typography } from '@material-ui/core';
 	import { makeStyles } from '@material-ui/core/styles';
-	import TextField from '@material-ui/core/TextField';
-	import Notification from '../shared/Notification';
+	import { TextField, CircularProgress } from '@material-ui/core';
 	import { authUser } from '../../store/actions/auth';
 	import { withRouter } from 'react-router-dom';
 	import { connect } from 'react-redux';
@@ -25,6 +24,12 @@
 		menu: {
 			width: 200,
 		},
+		loggingIn: {
+			display: 'flex', 
+			flexDirection: 'column',
+			margin: theme.spacing(2),
+			alignItems: 'center'
+		}
 	}));
 
 	const AuthForm = (props) => {
@@ -33,13 +38,14 @@
 			username: '',
 			password: '',
 		});
-		// const [signingIn, setSigningIn] = useState(false); 
+		const [loggingIn, setLoggingIn] = useState(false); 
 
 		const handleChange = name => e => {
 			setValues({ ...values, [name]: e.target.value });
 		};
 			
 		const handleSubmit = e => {
+			setLoggingIn(true); 
 			e.preventDefault(); 
 
 			const authType = props.signUp ? "signup" : "signin";
@@ -48,33 +54,23 @@
 					//use react-router to redirect use to dashboard 
 					props.history.push("/dashboard");
 				})
-				.catch((err) => {
-					console.log(err);
-					return; 
-				})
+				.catch(err => {
+					console.log(err) 
+					setLoggingIn(false); 
+				}); 
 		}
 
-		const { heading, buttonText , domain, errors, history, removeError } = props; 
+		const { heading, buttonText , domain, history, removeNotification } = props; 
 
 		// this is react-router, listening for any changes in the route. If there is a change in the route, call removeError() to remove any errors from the page
 		history.listen(() => {
-			removeError(); 
+			removeNotification(); 
 		});
 
 		return (
 			<div className="row justify-content-md-center">
 				<div className="col-md-6">
 					<h2>{heading}</h2>
-					{/* How we show an alert with an error message returned from the API */}
-					{errors.message && (							
-						<Notification
-							open={true} 
-							variant="error"
-							className={classes.margin}
-							message={errors.message}	
-							removeError={removeError}							
-						/>		
-					)}
 					<form className={classes.container} noValidate autoComplete="off" onSubmit={handleSubmit}>
 						<TextField
 							id="standard-name"
@@ -95,22 +91,25 @@
 							margin="dense"
 							helperText={`Use your ${domain} credentials`}
 						/>
-						<Button variant="primary" type="submit">
+						<Button variant="contained" color="primary" type="submit" disabled={loggingIn}>
 								{buttonText}
 						</Button>
 					</form>
+					{loggingIn 
+						?  <div className={classes.loggingIn}>
+								<Typography variant="h6">
+									Logging in...
+								</Typography>
+								<CircularProgress /> 
+							</div>
+						: null }
 				</div>
 			</div>
 		);
 	}	
 
-	function mapStateToProps(state){
-		return {
-		}
-	}
-	
 	export default withRouter(
-		connect(mapStateToProps, 
+		connect(null, 
 			{ 
 				authUser
 			})(AuthForm)

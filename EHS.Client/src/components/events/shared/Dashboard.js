@@ -7,12 +7,11 @@ import {
 	fetchLogicalHierarchyAttributes, 
 	fetchPhysicalHierarchyAttributes, 
 	fetchEmployees } from '../../../store/actions/lookupData'; 
-import { addError } from '../../../store/actions/errors';
+import { addNotification } from '../../../store/actions/notifications';
 import { makeStyles } from '@material-ui/core/styles';
 import { Paper, Typography } from '@material-ui/core';
 import EventList from './EventList';
 import EventSearch from './EventSearch';
-import Notification from '../../shared/Notification';
 
 const useStyles = makeStyles(theme => ({
 	root: {
@@ -80,7 +79,7 @@ const searchFilterReducer = (state, action) => {
 		case 'departmentId':
 			return { ...state, departmentId: action.value }
 		default: 
-			addError("Invalid Action");
+			addNotification("Invalid Action", 'warning');
 			return state;
 	}
 }
@@ -88,7 +87,7 @@ const searchFilterReducer = (state, action) => {
 const Dashboard = props => {    
 	const classes = useStyles();
 
-	const { currentUser, lookupData,  errors, removeError } = props;
+	const { currentUser, lookupData } = props;
 
 	//defaulting the initial search to only return Events that are 'Open'
 	const initialSearchFilterState = { 
@@ -175,43 +174,33 @@ const Dashboard = props => {
 	// console.log(props)
 	return (
 		<Fragment>
-			{/* display error if any are encountered  */}
-			{errors ? errors.message && (							
-				<Notification
-					open={true} 
-					variant="error"
-					className={classes.margin}
-					message={errors.message}	
-					removeError={removeError}							
-				/>		
-				) : null}
-				<Paper className={[classes.paper]}
-						square={true}
-						>                 
-					<EventSearch 
-						handleSearchTextChange={handleSearchTextChange}
-						handleShowSearchFilters={handleShowSearchFilters}
-						handleSearchFiltersChange={(e) => dispatch( { type: e.target.name, value: e.target.value })}
-						handleAutoCompleteChange={(data, action) => dispatch({ type: action.name, value: data })}
-						handleSearch={handleSearch}
-						showSearchFilters={showSearchFilters}
-						searchFilters={searchFilters}
-						lookupData={props.lookupData}
-						/>
+			<Paper className={[classes.paper]}
+					square={true}
+					>                 
+				<EventSearch 
+					handleSearchTextChange={handleSearchTextChange}
+					handleShowSearchFilters={handleShowSearchFilters}
+					handleSearchFiltersChange={(e) => dispatch( { type: e.target.name, value: e.target.value })}
+					handleAutoCompleteChange={(data, action) => dispatch({ type: action.name, value: data })}
+					handleSearch={handleSearch}
+					showSearchFilters={showSearchFilters}
+					searchFilters={searchFilters}
+					lookupData={props.lookupData}
+					/>
 
-					{ props.safetyIncidents.length && props.lookupData.employees			
-						? 	<EventList 
-								currentUser={props.currentUser} 
-								safetyIncidents={filterSafetyIncidents()}
-								employees={props.lookupData.employees}
-							/>
-						: 	<div className={classes.loading}>
-								<Typography variant='h2' >
-									Loading Events...
-								</Typography>
-							</div>
-					}
-				</Paper>
+				{ props.safetyIncidents.length && props.lookupData.employees			
+					? 	<EventList 
+							currentUser={props.currentUser} 
+							safetyIncidents={filterSafetyIncidents()}
+							employees={props.lookupData.employees}
+						/>
+					: 	<div className={classes.loading}>
+							<Typography variant='h2' >
+								Loading Events...
+							</Typography>
+						</div>
+				}
+			</Paper>
 		</Fragment>
 	)     
 }
