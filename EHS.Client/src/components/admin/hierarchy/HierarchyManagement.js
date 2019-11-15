@@ -287,6 +287,7 @@ const HierarchyManagement = props => {
                                     handleChange={handleChange}
                                     handleSubmit={handleSubmit}
                                     handleEdit={handleEdit}
+                                    currentUser={currentUser}
                                 />
                             </div>
                             : 
@@ -307,6 +308,7 @@ const HierarchyManagement = props => {
                                     handleChange={handleChange}
                                     handleSubmit={handleSubmit}
                                     handleEdit={handleEdit}
+                                    currentUser={currentUser}
                                 />
                             </div>
                             : 

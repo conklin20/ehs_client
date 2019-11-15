@@ -161,9 +161,14 @@ const EHSAppBar = (props) => {
 							</div>		
 							<div>
 								<div className={classes.userAccount}>
-									<Typography variant="h6">
-										{`Welcome, ${currentUser.user.firstName}!`}
-									</Typography>
+									<div>
+										<Typography variant="h6">
+											{`Welcome, ${currentUser.user.firstName}!`}
+										</Typography>
+										<Typography variant="overline">
+											{`Role: ${currentUser.user.roleName}`}
+										</Typography>
+									</div>
 									<IconButton
 										aria-label="account of current user"
 										aria-controls="menu-appbar"

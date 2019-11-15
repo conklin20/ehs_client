@@ -47,7 +47,7 @@ const useStyles = makeStyles(theme => ({
         justifyItems: 'space-between',
         backgroundColor: theme.palette.primary.light,
         color: 'white',
-        padding: theme.spacing(2),
+        paddingTop: theme.spacing(2),
     },     
     main: {
         flex: 4,

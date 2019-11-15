@@ -5,7 +5,7 @@ import { TreeView, TreeItem } from '@material-ui/lab';
 import { useSpring, animated } from 'react-spring/web.cjs'; // web.cjs is required for IE 11 support
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import EditIcon from '@material-ui/icons/Edit';
-import DeleteIcon from '@material-ui/icons/Delete';
+import { GOD_ROLE_LEVEL } from '../adminRoleLevel';
 
 const MinusSquare = props => {
     return (
@@ -127,8 +127,8 @@ const Tree = props => {
 
     const [items, setItems] = useState();
 
-    const { hierarchies, hierarchyLevels, handleChange, handleSubmit, handleEdit } = props;
-    // console.log(newHierarchy)
+    const { hierarchies, hierarchyLevels, handleChange, handleSubmit, handleEdit, currentUser } = props;
+
  	// Essentially what was componentDidMount and componentDidUpdate before Hooks
 	useEffect(() => {
         
@@ -352,7 +352,7 @@ const Tree = props => {
                                                                     </StyledTreeItem> 
                                                                     {
                                                                         // Form for if this is NOT the first Child of the hierarchy - SITE/SITE
-                                                                        i === arr.length-1 //if last element, add text box for add new hierarchy
+                                                                        i === arr.length-1 && currentUser.user.roleLevel == GOD_ROLE_LEVEL//if last element, add text box for add new hierarchy
                                                                             ?
                                                                                 <form className={classes.newHierarchyForm} onSubmit={handleSubmit(h2, false, level3.hierarchyLevelId)}>
                                                                                     <TextField
@@ -378,6 +378,7 @@ const Tree = props => {
                                                             )
                                                         })
                                                         : 
+                                                        currentUser.user.roleLevel == GOD_ROLE_LEVEL ?
                                                         // Form for if this is the FIRST Child of the hierarchy - SITE/SITE
                                                         <form className={classes.newHierarchyForm} onSubmit={handleSubmit(h1, true, level3.hierarchyLevelId)}>
                                                             <TextField
@@ -397,12 +398,13 @@ const Tree = props => {
                                                                 <AddCircleOutlineIcon />
                                                             </IconButton>
                                                         </form> 
+                                                        : null
                                                 })()
                                             }
                                             </StyledTreeItem>
                                             {
                                                 // Form for if this is NOT the first Child of the hierarchy - REGION/DIVISION
-                                                i === arr.length-1 //if last element, add text box for add new hierarchy
+                                                i === arr.length-1 && currentUser.user.roleLevel == GOD_ROLE_LEVEL //if last element, add text box for add new hierarchy
                                                     ?
                                                         <form className={classes.newHierarchyForm} onSubmit={handleSubmit(h1, false, level2.hierarchyLevelId)}>
                                                             <TextField
@@ -428,6 +430,7 @@ const Tree = props => {
                                     )
                                 })
                             : 
+                            currentUser.user.roleLevel == GOD_ROLE_LEVEL ?
                             // Form for if this is the FIRST Child of the hierarchy - REGION/DIVISON
                             <form className={classes.newHierarchyForm} onSubmit={handleSubmit(rootHierarchy, true, level2.hierarchyLevelId)}>
                                 <TextField
@@ -447,6 +450,7 @@ const Tree = props => {
                                     <AddCircleOutlineIcon />
                                 </IconButton>
                             </form> 
+                            : null 
                     })()
                 }
                 </StyledTreeItem>  //root end 

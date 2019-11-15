@@ -21,7 +21,7 @@ const useStyles = makeStyles(theme => ({
 const LogicalTree = props => {
     const classes = useStyles(); 
 
-    const { logicalHierarchies, hierarchyLevels, handleChange, handleSubmit, handleEdit } = props;
+    const { logicalHierarchies, hierarchyLevels, handleChange, handleSubmit, handleEdit, currentUser } = props;
         
     const logicalHierarchyLevels = hierarchyLevels.filter(level => level.hierarchyLevelName.includes('Logical'));
     // console.log(logicalHierarchyLevels)
@@ -30,9 +30,7 @@ const LogicalTree = props => {
         <Tree
             hierarchies={logicalHierarchies}
             hierarchyLevels={logicalHierarchyLevels}
-            handleChange={handleChange}
-            handleSubmit={handleSubmit}
-            handleEdit={handleEdit}
+            {...props}
         />
     )
 }

@@ -22,7 +22,7 @@ const useStyles = makeStyles(theme => ({
 const PhysicalTree = props => {
     const classes = useStyles(); 
 
-    const { physicalHierarchies, hierarchyLevels, handleChange, handleSubmit, handleEdit } = props;
+    const { physicalHierarchies, hierarchyLevels, handleChange, handleSubmit, handleEdit, currentUser } = props;
       
     const physicalHierarchyLevels = hierarchyLevels.filter(level => level.hierarchyLevelName.includes('Physical'));
     // console.log(physicalHierarchyLevels)
@@ -31,9 +31,7 @@ const PhysicalTree = props => {
         <Tree
             hierarchies={physicalHierarchies}
             hierarchyLevels={physicalHierarchyLevels}
-            handleChange={handleChange}
-            handleSubmit={handleSubmit}
-            handleEdit={handleEdit}
+            {...props}
         />
     )
 }

@@ -29,7 +29,10 @@
 			flexDirection: 'column',
 			margin: theme.spacing(2),
 			alignItems: 'center'
-		}
+		}, 
+		button: {
+			marginTop: theme.spacing(2), 
+		},
 	}));
 
 	const AuthForm = (props) => {
@@ -91,7 +94,12 @@
 							margin="dense"
 							helperText={`Use your ${domain} credentials`}
 						/>
-						<Button variant="contained" color="primary" type="submit" disabled={loggingIn}>
+						<Button 
+							className={classes.button}
+							variant="contained" 
+							color="primary" 
+							type="submit" 
+							disabled={loggingIn}>
 								{buttonText}
 						</Button>
 					</form>
