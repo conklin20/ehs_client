@@ -17,6 +17,7 @@ export const addAction = (actionsToAdd) => (dispatch, getState) => {
 	return apiCall('post', '/actions', actionsToAdd )
     .then(res => {
         //success status = 201
+        dispatch(addNotification(`${actionsToAdd.length} action(s) saved successfully!`, 'success'));
         return res.status
     })
     .catch(res => {	
@@ -28,7 +29,10 @@ export const addAction = (actionsToAdd) => (dispatch, getState) => {
 export const removeAction = (actionId, userId) => {
     return dispatch => {
       return apiCall('delete', `/actions/${actionId}?userId=${userId}`)
-        .then(() => dispatch(remove(actionId)))
+        .then(res => {
+          dispatch(addNotification(`Action #${actionId} successfully deleted!`, 'success'));
+          dispatch(remove(actionId))
+        })
         .catch(res => {	
             console.log(res)
             dispatch(addNotification(`TODO: Customize Error Message. ${res.status}`, 'error'));
@@ -66,7 +70,7 @@ export const updateAction = (actionToUpdate) => (dispatch, getState) => {
   // console.log(actionToUpdate)
 	return apiCall('put', `/actions/${actionToUpdate.actionId}`, actionToUpdate )
     .then(res => {
-        // console.log(res)
+        dispatch(addNotification(`${actionToUpdate.actionId} updated successfully!`, 'success'));
         return res.data
     })
     .catch(res => {	

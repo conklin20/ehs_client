@@ -3,12 +3,6 @@ import { makeStyles } from '@material-ui/core/styles';
 import { 
     Typography,
     Button,
-    // LinearProgress as Progress, 
-    Dialog, 
-    DialogActions, 
-    DialogContent, 
-    DialogContentText, 
-    DialogTitle, 
     Grid, 
     List, 
     ListItem, 
@@ -37,32 +31,21 @@ const Media = (props) => {
     const { event, refreshEventFiles } = props; 
 
     const [files, setFiles] = useState([])
-    const [openDialog, setOpenDialog] = useState(false); 
     
-    const handleClickOpen = () => {
-        setOpenDialog(true); 
-    }; 
-
-    const handleClose = (e) => {
-        setOpenDialog(false);
-    }
-
     const handleChange = (files) => {
         setFiles(files);
     }
 
-    const handleSubmit = e => {
-        // console.log(files); 
+    const handleSubmitFiles = e => {
+        e.preventDefault();
         // upload files to server 
         if(files.length){
             props.saveFiles(files, { eventId: event.eventId, userId: props.currentUser.user.userId} )
                 .then(res => {
-                    console.log(res);
                     if(res === 200){
-                        // console.log('File uploaded successfully')
                         refreshEventFiles()
-                        handleClickOpen()
-                        setFiles([])
+                        
+                    } else {
                     }
                 })
                 .catch(err => {
@@ -106,32 +89,14 @@ const Media = (props) => {
         )
     })
 
-    console.log(event)
     return (
         <Fragment>  
-            <Dialog 
-                open={openDialog}
-                onClose={handleClose}
-                aria-labelledby='confirm-dialog-title'
-                aria-describedby='confirm-dialog-description'
-            >
-                <DialogTitle id='confirm-dialog-title'>{"Saved Successfully!"}</DialogTitle>
-                <DialogContent>
-                    <DialogContentText id='confirm-dialog-description'>
-                        {`Files have been successfully saved to the file server and database. `}
-                    </DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                    <Button id='success' onClick={handleClose} color='primary' autofocus>OK</Button>
-                </DialogActions>
-            </Dialog>
             <Typography variant='h4' gutterBottom>
                 Media
             </Typography>
             <Grid container spacing={2}>
                 <Grid item xs={12} md={7} >
-                    <form  enctype="multipart/form-data" onSubmit={handleSubmit}>
-
+                    <form  enctype="multipart/form-data" onSubmit={handleSubmitFiles}>
                         <DropzoneArea 
                             dropzoneText='Drag and Drop files here, or click anywhere on in the dropzone to select a file. '
                             filesLimit={5}
@@ -139,6 +104,8 @@ const Media = (props) => {
                             acceptedFiles={['image/*', 'video/*', 'application/*']}
                             maxFileSize={10500000}  //bytes (~10 mb)
                             showPreviews={false}
+                            getFileAddedMessage={() => `File(s) successfully queued for upload. ` }
+                            getFileRemovedMessage={() => `File successfuly removed from queue`}
                             showPreviewsInDropzone={true}
                             showFileNamesInPreview={true}
                         />
@@ -150,7 +117,7 @@ const Media = (props) => {
                             color='primary'
                             fullWidth
                             >
-                            Save Files
+                            Upload Files
                         </Button>
                     </form>
                 </Grid>
@@ -178,7 +145,7 @@ const Media = (props) => {
 
 function mapStateToProps(state) {
 	return {
-			currentUser: state.currentUser,
+        currentUser: state.currentUser,
 	};
 }
 

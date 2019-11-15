@@ -5,11 +5,12 @@ export const savePeopleInvolved = (peopleInvolved, currentUserId) => (dispatch, 
 	return apiCall('post', `/peopleinvolved?userId=${currentUserId}`, peopleInvolved )
     .then(res => {
         //success status = 201
+        dispatch(addNotification(`${peopleInvolved.length} people involved in the event saved successfully!`, 'success'));
         return res.status
     })
     .catch(res => {	
         console.log(res)
-        dispatch(addNotification(`TODO: Customize Error Message. ${res.status}`, 'error'));
+        dispatch(addNotification(`TODO: Customize Error Message (see console). ${res.status}`, 'error'));
     })
 }
 
@@ -20,20 +21,6 @@ export const fetchPeopleByEventId = (eventId) => (dispatch, getState) => {
         })
         .catch(res => {	
             console.log(res)
-            dispatch(addNotification(`TODO: Customize Error Message. ${res.status}`, 'error'));
+            dispatch(addNotification(`TODO: Customize Error Message (see console). ${res.status}`, 'error'));
         }); 
 }
-
-// export const fetchActions = (query) => {
-// 	return dispatch => {
-// 		return apiCall('get', `/actions${query}`)
-// 			.then(res => {
-//                 console.log(res)
-//                 return res
-// 				// dispatch(loadActions(res));
-// 			})
-// 			.catch(err => {
-// 				console.log(err)
-// 		});
-// 	};
-// };

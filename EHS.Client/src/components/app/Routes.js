@@ -73,7 +73,7 @@ const Routes = props => {
 		return () => {
 			console.log('Routes Component Unmounting')
 		}
-    }, [notifications]); //this 2nd arg is important, it tells what to look for changes in, and will re-run the hook when this changes 
+    }, []); //this 2nd arg is important, it tells what to look for changes in, and will re-run the hook when this changes 
 
     return (
         <div className={classes.index}>
