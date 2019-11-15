@@ -29,7 +29,7 @@ const UserForm = props => {
         firstName: '', 
         lastName: '', 
         email: '', 
-        phone: '',
+        phone: null,
         enabled: false,
         validUserId: userIdToEdit ? true : false,
         isExisting: userIdToEdit ? true : false 
@@ -72,6 +72,9 @@ const UserForm = props => {
             value: r.userRoleId, 
             label: `${r.roleName} (Level ${r.roleLevel})`,
     }))
+    //check if user's role level you're trying to edit is at or below your role level
+    // console.log(roleOptions.find(o => o.value == user.roleId))
+    const canEdit = roleOptions.find(o => o.value == user.roleId) || !userIdToEdit ? true : false; 
     
     // Handle field change 
     const handleChange = () => e => {
@@ -203,8 +206,7 @@ const UserForm = props => {
                 })
         }
     }
-    
-    // console.log(user); 
+
     return (
         <Fragment>
 			<Dialog 
@@ -218,220 +220,231 @@ const UserForm = props => {
                     { userIdToEdit ? 'Edit User' : 'New User' }
                 </DialogTitle>
                 <DialogContent>		  
-                    <form className={classes.form} >						
-                        <Grid container spacing={2}>
-                            <Grid item xs={12} md={4}>			
-                                <TextField
-                                    required
-                                    error={validationErrors.find(e => e.key === 'userId') ? true : false }
-                                    helperText={
-                                        validationErrors.find(e => e.key === 'userId') 
-                                        ? validationErrors.find(e => e.key === 'userId').value 
-                                        : 'Enter the users employeeId'
-                                    }
-                                    name="userId"
-                                    label="UserId"
-                                    placeholder="UserId"
-                                    value={user.userId}
-                                    onChange={handleChange()}
-                                    onBlur={handleGetEmployee}
-                                    className={classes.formControl}
-                                    margin="normal"
-                                    variant="outlined"
-                                    InputProps={{
-                                        readOnly: userIdToEdit ? true : false, //can only edit this if its a new user. Must setup a new account if someone needs to change their userId
-                                    }}
-                                    
-                                />
-                            </Grid>	
-                            <Grid item xs={12} md={4}>			
-                                <TextField
-                                    required
-                                    error={validationErrors.find(e => e.key === 'firstName') ? true : false }
-                                    helperText={
-                                        validationErrors.find(e => e.key === 'firstName') 
-                                        ? validationErrors.find(e => e.key === 'firstName').value 
-                                        : ''
-                                    }
-                                    name="firstName"
-                                    label="First Name"
-                                    placeholder="First Name"
-                                    value={user.firstName}
-                                    onChange={handleChange()}
-                                    className={classes.formControl}
-                                    margin="normal"
-                                    variant="outlined"                                
-                                />
-                            </Grid>
-                            <Grid item xs={12} md={4}>			
-                                <TextField
-                                    required
-                                    error={validationErrors.find(e => e.key === 'lastName') ? true : false }
-                                    helperText={
-                                        validationErrors.find(e => e.key === 'lastName') 
-                                        ? validationErrors.find(e => e.key === 'lastName').value 
-                                        : ''
-                                    }
-                                    name="lastName"
-                                    label="Last Name"
-                                    placeholder="Last Name"
-                                    value={user.lastName}
-                                    onChange={handleChange()}
-                                    className={classes.formControl}
-                                    margin="normal"
-                                    variant="outlined"                                
-                                />
-                            </Grid>
-                            <Grid item xs={12} md={5}>			
-                                <TextField
-                                    required
-                                    error={validationErrors.find(e => e.key === 'email') ? true : false }
-                                    helperText={
-                                        validationErrors.find(e => e.key === 'email') 
-                                        ? validationErrors.find(e => e.key === 'email').value 
-                                        : 'Enter the users email address'
-                                    }
-                                    name="email"
-                                    label="Email"
-                                    placeholder="Email"
-                                    type="email"
-                                    value={user.email}
-                                    onChange={handleChange()}
-                                    onBlur={(e) => {
-                                        //inline validation.
-                                        /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e.target.value)
-                                            ? setValidationErrors(validationErrors.filter(err => err.key !== e.target.name))
-                                            : setValidationErrors([...validationErrors, { key: e.target.name, value: 'Invalid email address' }])}
-                                    }
-                                    className={classes.formControl}
-                                    margin="normal"
-                                    variant="outlined"                                
-                                />
-                            </Grid>
-                            <Grid item xs={12} md={4}>			
-                                <TextField
-                                    error={validationErrors.find(e => e.key === 'phone') ? true : false }
-                                    helperText={
-                                        validationErrors.find(e => e.key === 'phone') 
-                                        ? validationErrors.find(e => e.key === 'phone').value 
-                                        : 'Enter the users phone number'
-                                    }
-                                    name="phone"
-                                    label="Phone"
-                                    placeholder="(555) 553-1234"
-                                    value={user.phone}
-                                    onChange={handleChange()}
-                                    onBlur={(e) => {
-                                        //inline validation.
-                                        return (!e.target.value || /^\(?(\d{3})\)?[- ]?(\d{3})[- ]?(\d{4})$/.test(e.target.value))
-                                        ? setValidationErrors(validationErrors.filter(err => err.key !== 'phone'))
-                                        : setValidationErrors([...validationErrors, { key: 'phone', value: 'Inavlid phone number'}])
-                                    }}
-                                    className={classes.formControl}
-                                    margin="normal"
-                                    variant="outlined"                                
-                                />
-                            </Grid>
-                            <Grid item xs={12} md={3}>	
-                                <Fragment/>
-                            </Grid>
-                            <Grid item xs={12} md={4}>							
-                                <AutoComplete
-                                    required
-                                    error={validationErrors.find(e => e.key === 'logicalHierarchyId') ? true : false }
-                                    helperText={
-                                        validationErrors.find(e => e.key === 'logicalHierarchyId') 
-                                        ? validationErrors.find(e => e.key === 'logicalHierarchyId').value 
-                                        : ''
-                                    }
-                                    name="logicalHierarchyId"
-                                    options={logicalOptions}
-                                    label="Logical Hierarchy"                        
-                                    placeholder="Select Hierarchy"
-                                    handleChange={handleAutoCompleteChange}
-                                    value={user.logicalHierarchyId ? logicalOptions.find(o => o.value === user.logicalHierarchyId) : null}
-                                    className={classes.formControl}
-                                    margin="normal"
-                                >
-                                </AutoComplete> 
-                            </Grid>	
-                            <Grid item xs={12} md={4}>							
-                                <AutoComplete
-                                    required
-                                    error={validationErrors.find(e => e.key === 'physicalHierarchyId') ? true : false }
-                                    helperText={
-                                        validationErrors.find(e => e.key === 'physicalHierarchyId') 
-                                        ? validationErrors.find(e => e.key === 'physicalHierarchyId').value 
-                                        : ''
-                                    }
-                                    name="physicalHierarchyId"
-                                    options={physicalOptions}
-                                    label="Physical Hierarchy"                        
-                                    placeholder="Select Hierarchy"
-                                    handleChange={handleAutoCompleteChange}
-                                    value={user.physicalHierarchyId ? physicalOptions.find(o => o.value === user.physicalHierarchyId) : null}
-                                    className={classes.formControl}
-                                    margin="normal"
-                                >
-                                </AutoComplete> 
-                            </Grid>	
-                            <Grid item xs={12} md={4}>							
-                                <AutoComplete
-                                    required
-                                    error={validationErrors.find(e => e.key === 'roleId') ? true : false }
-                                    helperText={
-                                        validationErrors.find(e => e.key === 'roleId') 
-                                        ? validationErrors.find(e => e.key === 'roleId').value 
-                                        : 'See below for role breakdown'
-                                    }
-                                    name="roleId"
-                                    options={roleOptions}
-                                    label="Role"                        
-                                    placeholder="Select Role"
-                                    handleChange={handleAutoCompleteChange}
-                                    value={user.roleId ? roleOptions.find(o => o.value === user.roleId) : null}
-                                    className={classes.formControl}
-                                    margin="normal"
-                                >
-                                </AutoComplete> 
-                            </Grid>	
-                            <Grid item xs={12} md={5}>
-                            </Grid>
-                            <Grid item xs={12} md={4}>
-                                <FormControl className={classes.formControl}>									
-                                    <FormControlLabel
-                                        control={
-                                            <Checkbox
-                                                name='enabled'
-                                                checked={Boolean(user.enabled)}
-                                                onChange={handleChange()}
-                                                color="primary"
-                                            />
+                    <form className={classes.form} >
+                        <fieldset disabled={canEdit ? false : true }>						
+                            <Grid container spacing={2}>
+                                <Grid item xs={12} >
+                                    <Typography variant="h6">
+                                        {canEdit ? null : 'Read-Only'}
+                                    </Typography>
+                                </Grid>		
+                                <Grid item xs={12} md={4}>			
+                                    <TextField
+                                        required
+                                        error={validationErrors.find(e => e.key === 'userId') ? true : false }
+                                        helperText={
+                                            validationErrors.find(e => e.key === 'userId') 
+                                            ? validationErrors.find(e => e.key === 'userId').value 
+                                            : 'Enter the users employeeId'
                                         }
-                                        label="Account Enabled"
+                                        name="userId"
+                                        label="UserId"
+                                        placeholder="UserId"
+                                        value={user.userId}
+                                        onChange={handleChange()}
+                                        onBlur={handleGetEmployee}
+                                        className={classes.formControl}
+                                        margin="normal"
+                                        variant="outlined"
+                                        InputProps={{
+                                            readOnly: userIdToEdit ? true : false, //can only edit this if its a new user. Must setup a new account if someone needs to change their userId
+                                        }}
+                                        
                                     />
-                                </FormControl>
+                                </Grid>	
+                                <Grid item xs={12} md={4}>			
+                                    <TextField
+                                        required
+                                        error={validationErrors.find(e => e.key === 'firstName') ? true : false }
+                                        helperText={
+                                            validationErrors.find(e => e.key === 'firstName') 
+                                            ? validationErrors.find(e => e.key === 'firstName').value 
+                                            : ''
+                                        }
+                                        name="firstName"
+                                        label="First Name"
+                                        placeholder="First Name"
+                                        value={user.firstName}
+                                        onChange={handleChange()}
+                                        className={classes.formControl}
+                                        margin="normal"
+                                        variant="outlined"                                
+                                    />
+                                </Grid>
+                                <Grid item xs={12} md={4}>			
+                                    <TextField
+                                        required
+                                        error={validationErrors.find(e => e.key === 'lastName') ? true : false }
+                                        helperText={
+                                            validationErrors.find(e => e.key === 'lastName') 
+                                            ? validationErrors.find(e => e.key === 'lastName').value 
+                                            : ''
+                                        }
+                                        name="lastName"
+                                        label="Last Name"
+                                        placeholder="Last Name"
+                                        value={user.lastName}
+                                        onChange={handleChange()}
+                                        className={classes.formControl}
+                                        margin="normal"
+                                        variant="outlined"                                
+                                    />
+                                </Grid>
+                                <Grid item xs={12} md={5}>			
+                                    <TextField
+                                        required
+                                        error={validationErrors.find(e => e.key === 'email') ? true : false }
+                                        helperText={
+                                            validationErrors.find(e => e.key === 'email') 
+                                            ? validationErrors.find(e => e.key === 'email').value 
+                                            : 'Enter the users email address'
+                                        }
+                                        name="email"
+                                        label="Email"
+                                        placeholder="Email"
+                                        type="email"
+                                        value={user.email}
+                                        onChange={handleChange()}
+                                        onBlur={(e) => {
+                                            //inline validation.
+                                            /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e.target.value)
+                                                ? setValidationErrors(validationErrors.filter(err => err.key !== e.target.name))
+                                                : setValidationErrors([...validationErrors, { key: e.target.name, value: 'Invalid email address' }])}
+                                        }
+                                        className={classes.formControl}
+                                        margin="normal"
+                                        variant="outlined"                                
+                                    />
+                                </Grid>
+                                <Grid item xs={12} md={4}>			
+                                    <TextField
+                                        error={validationErrors.find(e => e.key === 'phone') ? true : false }
+                                        helperText={
+                                            validationErrors.find(e => e.key === 'phone') 
+                                            ? validationErrors.find(e => e.key === 'phone').value 
+                                            : 'Enter the users phone number'
+                                        }
+                                        name="phone"
+                                        label="Phone"
+                                        placeholder="(555) 553-1234"
+                                        value={user.phone}
+                                        onChange={handleChange()}
+                                        onBlur={(e) => {
+                                            //inline validation.
+                                            return (!e.target.value || /^\(?(\d{3})\)?[- ]?(\d{3})[- ]?(\d{4})$/.test(e.target.value))
+                                            ? setValidationErrors(validationErrors.filter(err => err.key !== 'phone'))
+                                            : setValidationErrors([...validationErrors, { key: 'phone', value: 'Inavlid phone number'}])
+                                        }}
+                                        className={classes.formControl}
+                                        margin="normal"
+                                        variant="outlined"                                
+                                    />
+                                </Grid>
+                                <Grid item xs={12} md={3}>	
+                                    <Fragment/>
+                                </Grid>
+                                { canEdit ?
+                                    <Fragment>
+                                        <Grid item xs={12} md={4}>							
+                                            <AutoComplete
+                                                required
+                                                error={validationErrors.find(e => e.key === 'logicalHierarchyId') ? true : false }
+                                                helperText={
+                                                    validationErrors.find(e => e.key === 'logicalHierarchyId') 
+                                                    ? validationErrors.find(e => e.key === 'logicalHierarchyId').value 
+                                                    : ''
+                                                }
+                                                name="logicalHierarchyId"
+                                                options={logicalOptions}
+                                                label="Logical Hierarchy"                        
+                                                placeholder="Select Hierarchy"
+                                                handleChange={handleAutoCompleteChange}
+                                                value={user.logicalHierarchyId ? logicalOptions.find(o => o.value === user.logicalHierarchyId) : null}
+                                                className={classes.formControl}
+                                                margin="normal"
+                                            >
+                                            </AutoComplete> 
+                                        </Grid>	
+                                        <Grid item xs={12} md={4}>							
+                                            <AutoComplete
+                                                required
+                                                error={validationErrors.find(e => e.key === 'physicalHierarchyId') ? true : false }
+                                                helperText={
+                                                    validationErrors.find(e => e.key === 'physicalHierarchyId') 
+                                                    ? validationErrors.find(e => e.key === 'physicalHierarchyId').value 
+                                                    : ''
+                                                }
+                                                name="physicalHierarchyId"
+                                                options={physicalOptions}
+                                                label="Physical Hierarchy"                        
+                                                placeholder="Select Hierarchy"
+                                                handleChange={handleAutoCompleteChange}
+                                                value={user.physicalHierarchyId ? physicalOptions.find(o => o.value === user.physicalHierarchyId) : null}
+                                                className={classes.formControl}
+                                                margin="normal"
+                                            >
+                                            </AutoComplete> 
+                                        </Grid>	
+                                        <Grid item xs={12} md={4}>							
+                                            <AutoComplete
+                                                required
+                                                error={validationErrors.find(e => e.key === 'roleId') ? true : false }
+                                                helperText={
+                                                    validationErrors.find(e => e.key === 'roleId') 
+                                                    ? validationErrors.find(e => e.key === 'roleId').value 
+                                                    : 'See below for role breakdown'
+                                                }
+                                                name="roleId"
+                                                options={roleOptions}
+                                                label="Role"                        
+                                                placeholder="Select Role"
+                                                handleChange={handleAutoCompleteChange}
+                                                value={user.roleId ? roleOptions.find(o => o.value === user.roleId) : null}
+                                                className={classes.formControl}
+                                                margin="normal"
+                                            >
+                                            </AutoComplete> 
+                                        </Grid>	
+                                    </Fragment>
+                                : null }   
+                                <Grid item xs={12} md={5}>
+                                </Grid>
+                                <Grid item xs={12} md={4}>
+                                    <FormControl className={classes.formControl}>									
+                                        <FormControlLabel
+                                            control={
+                                                <Checkbox
+                                                    name='enabled'
+                                                    checked={Boolean(user.enabled)}
+                                                    onChange={handleChange()}
+                                                    color="primary"
+                                                />
+                                            }
+                                            label="Account Enabled"
+                                        />
+                                    </FormControl>
+                                </Grid>
+                                <Grid item xs={12} md={12}>
+                                    <Typography variant='h6'>
+                                        Role Breakdown
+                                    </Typography>
+                                    <Typography variant='subtitle2'>
+                                        Note: Levels are somewhat arbitrary, and just give an idea of how much access one role has relative to other roles. 1 being the lowest level. 
+                                    </Typography>
+                                    <Typography variant='body2'>
+                                        <List>
+                                            {lookupData.userRoles.map(r => {
+                                                return (
+                                                    <ListItem>
+                                                        <ListItemText primary={`${r.roleName} - Level ${r.roleLevel} - ${r.roleCapabilities}`}/>
+                                                    </ListItem>
+                                                )
+                                            })}
+                                        </List>
+                                    </Typography>
+                                </Grid>
                             </Grid>
-                            <Grid item xs={12} md={12}>
-                                <Typography variant='h6'>
-                                    Role Breakdown
-                                </Typography>
-                                <Typography variant='subtitle2'>
-                                    Note: Levels are somewhat arbitrary, and just give an idea of how much access one role has relative to other roles. 1 being the lowest level. 
-                                </Typography>
-                                <Typography variant='body2'>
-                                    <List>
-                                        {lookupData.userRoles.map(r => {
-                                            return (
-                                                <ListItem>
-                                                    <ListItemText primary={`${r.roleName} - Level ${r.roleLevel} - ${r.roleCapabilities}`}/>
-                                                </ListItem>
-                                            )
-                                        })}
-                                    </List>
-                                </Typography>
-                            </Grid>
-                        </Grid>
+                        </fieldset>
                     </form>				
                 </DialogContent>
                 <DialogActions>

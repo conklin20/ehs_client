@@ -145,6 +145,7 @@ const UserManagement = props => {
                             // users={users}
                             users={filterUsers()}
                             lookupData={lookupData}
+                            currentUser={currentUser}
                         />
                         : 
                         <div className={classes.loading}>
