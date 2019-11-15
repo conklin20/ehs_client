@@ -280,8 +280,10 @@ const AutoComplete = (props) => {
     }),
   };
 
-  const { label, placeholder, name, options, value, handleChange, className, required, error, helperText } = props; 
-  
+  const { label, placeholder, name, options, value, handleChange, className, required, error, helperText, disabled = false } = props; 
+
+
+  //disabled doesnt fully disable to dropdown. the down carrot is still clickable
   return (
     <div className={className}>
       <NoSsr>
@@ -294,6 +296,7 @@ const AutoComplete = (props) => {
             required,
             error, 
             helperText,
+            disabled,
             label: label,
             InputLabelProps: {
               htmlFor: 'react-select-single',
