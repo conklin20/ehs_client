@@ -131,7 +131,7 @@ const SafetyEventForm = props => {
     const [completed, setCompleted] = useState(new Set());
     const steps = getSteps();
 
-    const { currentUser, lookupData, errors, removeError  } = props
+    const { currentUser, lookupData } = props
     
     // Essentially what was componentDidMount and componentDidUpdate before Hooks
 	useEffect(() => {
@@ -141,14 +141,13 @@ const SafetyEventForm = props => {
 		return () => {
 			console.log('Cleanup function (ComponentDidUnmount)')
 		}
-	}, [lookupData.employees]); //this 2nd arg is important, it tells what to look for changes in, and will re-run the hook when this changes 
+	}, []); //this 2nd arg is important, it tells what to look for changes in, and will re-run the hook when this changes 
     
     
     const [event, setEvent] = useState({})
 
 	const fetchData = async () => {
         //if existing event, get event detail from api
-        // console.log(props.match.params)
         if(props.match.params.eventId) setEvent(await props.fetchEvent(props.match.params.eventId)) 
                         
         const timestamp = new Date().toISOString(); 
@@ -191,8 +190,6 @@ const SafetyEventForm = props => {
 
     // Handle field change 
     const handleChange = (section, input) => e => {
-        // console.log(event)
-        // console.log(e.target.type)
         setEvent({ ...event, [input]: e.target.type === 'checkbox' ? e.target.checked : e.target.value})
     }
 
@@ -294,7 +291,6 @@ const SafetyEventForm = props => {
                             handleChange={handleChange}
                             handleAutoCompleteChange={handleAutoCompleteChange}
                             handleSliderChange={handleSliderChange}
-                            // handleSave={event.eventStatus === "Draft" ? handleSaveDraft : handleSubmit}
                         />             
             case 3: 
                 return <Actions  
@@ -336,11 +332,10 @@ const SafetyEventForm = props => {
         props.fetchPeopleByEventId(event.eventId)
             .then(people => {
                 //update the peopleInvolved property since its changed 
-                console.log(people)
                 setEvent({ ...event, peopleInvolved: people});
             })
             .catch(err => {
-                console.log(err)
+                console.log(`refreshPeopleInvolved rejected promise:`, err); 
             });
     };
 
@@ -348,40 +343,34 @@ const SafetyEventForm = props => {
         props.fetchCausesByEventId(event.eventId)
             .then(causes => {
                 //update the cause list since its changed 
-                console.log(causes)
                 setEvent({ ...event, causes: causes});
             })
             .catch(err => {
-                console.log(err); 
+                console.log(`fetchCausesByEventId rejected promise:`, err); 
             });
     };
 
     const refreshEventFiles = () => {
-        console.log(event.eventId); 
         props.fetchFilesByEventId(event.eventId)
             .then(files => {
                 //update the file list since its changed 
-                console.log(files)
                 setEvent({ ...event, files: files});
             })
             .catch(err => {
-                console.log(err); 
+                console.log(`fetchFilesByEventId rejected promise:`, err); 
             });
     };
     
     const handleSaveDraft = e => {
-        // e.preventDefault();
         //if this event doesnt have an Id, it means its new and we need to post a new event 
         if(!event.hasOwnProperty('eventId')) {
             props.postNewSafetyIncident(event)
                 .then(res => {
-                    // console.log(res)
                     //201, Created
                     if(res.status === 201){
                         setEvent( { ...event, ...res.data} ) 
                         handleComplete();
                     } else {
-                        console.log(res); 
                         console.log(`Failed to save draft: ${res.status}`)
                     }
                 });        
@@ -390,11 +379,9 @@ const SafetyEventForm = props => {
             props.updateSafetyIncident(event, currentUser.user.userId)
                 .then(res => {
                     if(res.status === 202) {
-                        console.log(res); 
                         setEvent( { ...event, ...res.data } )
                         handleComplete();
                     } else {
-                        console.log(res); 
                         console.log(`Failed to update draft: ${res.status}`)
                     }
                 })
@@ -409,17 +396,15 @@ const SafetyEventForm = props => {
             // change status to Open
             event.eventStatus = 'Open';
             props.updateSafetyIncident(event, currentUser.user.userId)
-            .then(res => {
-                console.log(res)
-                setEvent(props.fetchEvent(event.eventId))
-                    .then(res => {
-                        setEvent({ ...event, ...res})
+            .then(res => {            
+                props.fetchEvent(event.eventId)
+                    .then(files => {
+                        setEvent({ ...res, ...files})
                     }) 
             })
         }
     }
 
-    // console.log(event) 
 	return (
 		<div className={classes.root}>
             { (event && Object.keys(event).length) || (props.match.path.includes('/si/new'))  ?             
@@ -447,7 +432,7 @@ const SafetyEventForm = props => {
                                     Background Data Still Loading...
                             </Typography>	
                             :
-                            <form className={classes.form} onSubmit={handleSubmit}>                        
+                            <div className={classes.form} >                        
                                 <Stepper alternativeLabel nonLinear activeStep={activeStep}>
                                     {steps.map((label, index) => {
                                         const stepProps = {};
@@ -496,32 +481,35 @@ const SafetyEventForm = props => {
                                                 </Button>
                                                 {event.eventStatus === 'Draft'
                                                     ?
-                                                        activeStep > 1 
-                                                            ?                                                             
-                                                                <Button
-                                                                    variant="contained"
-                                                                    color="primary"
-                                                                    onClick={handleSaveDraft}
-                                                                    className={classes.button}
-                                                                >
-                                                                {event.eventId ? 'Save Changes' : 'Save Draft' }
-                                                            </Button>
-                                                            :
-                                                                activeStep !== steps.length &&
-                                                                    (completed.has(activeStep) ? (
-                                                                    <Typography variant="caption" className={classes.completed}>
-                                                                        Step {activeStep + 1} already completed
-                                                                    </Typography>
-                                                                    ) : (
-                                                                    <Button 
-                                                                        variant="contained" 
+                                                        activeStep < steps.length-1
+                                                        ?
+                                                            activeStep > 1 
+                                                                ?                                                             
+                                                                    <Button
+                                                                        variant="contained"
                                                                         color="primary"
-                                                                        onClick={handleComplete}
-                                                                        disabled={dataIsLoading()}
+                                                                        onClick={handleSaveDraft}
+                                                                        className={classes.button}
                                                                     >
-                                                                        {completedSteps() === totalSteps() - 1 ? 'Finish' : 'Complete Step'}
-                                                                    </Button>
-                                                                ))
+                                                                    {event.eventId ? 'Save Changes' : 'Save Draft' }
+                                                                </Button>
+                                                                :
+                                                                    activeStep !== steps.length &&
+                                                                        (completed.has(activeStep) ? (
+                                                                        <Typography variant="caption" className={classes.completed}>
+                                                                            Step {activeStep + 1} already completed
+                                                                        </Typography>
+                                                                        ) : (
+                                                                        <Button 
+                                                                            variant="contained" 
+                                                                            color="primary"
+                                                                            onClick={handleComplete}
+                                                                            disabled={dataIsLoading()}
+                                                                        >
+                                                                            {completedSteps() === totalSteps() - 1 ? 'Finish' : 'Complete Step'}
+                                                                        </Button>
+                                                                    ))
+                                                        : null
                                                     :
                                                         <Button
                                                             variant="contained"
@@ -538,7 +526,7 @@ const SafetyEventForm = props => {
                                         </div>
                                     )}
                                 </Fragment>
-                            </form>	
+                            </div>	
                         }			
                     </DialogContent>
                     <DialogActions>
@@ -572,5 +560,5 @@ export default connect(mapStateToProps, {
     fetchEvent,
     fetchPeopleByEventId,
     fetchCausesByEventId, 
-    fetchFilesByEventId
+    fetchFilesByEventId,
 })(SafetyEventForm); 

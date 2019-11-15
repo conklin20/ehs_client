@@ -31,6 +31,7 @@ export const fetchEvent = (eventId) => {
 		return apiCall('get', `/safetyincidents/${eventId}` )
 			.then(res => {
 				// dispatch(loadEvent(res));
+				//sucess status = 200
 				return res.data
 			})
 			.catch(res => {	

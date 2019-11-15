@@ -73,7 +73,7 @@ const Causes = (props) => {
         setOpenDialog(false);
     }
     
-    const handleSubmit = e => {
+    const handleSubmitCauses = e => {
         e.preventDefault(); 
 
         const allCauses = [ ...immediateCauses, ...rootCauses, ...contributingFactors]; 
@@ -261,7 +261,7 @@ const Causes = (props) => {
                     <Button id='success' onClick={handleClose} color='primary' autofocus>OK</Button>
                 </DialogActions>
             </Dialog>
-            <form onSubmit={handleSubmit}>  
+            <form onSubmit={handleSubmitCauses}>  
                 <Typography variant='h4' gutterBottom>
                     Event Causes
                 </Typography>

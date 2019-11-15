@@ -1,6 +1,13 @@
 import React, { useState, Fragment } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Typography, Grid, TextField, Divider, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Paper } from '@material-ui/core'; 
+import { 
+    Typography, 
+    Grid, 
+    TextField, 
+    Divider, 
+    Button, 
+    Paper 
+} from '@material-ui/core'; 
 // import filterLookupDataByKey from '../../../helpers/filterLookupDataByKey'; 
 import filterEmployeeList from '../../../helpers/filterEmployeeList'; 
 import AutoCompleteMulti from '../../shared/AutoCompleteMulti'; 
@@ -35,17 +42,9 @@ const PeopleInvolved = (props) => {
     });
     
     const [peopleInvolved, setPeopleInvolved] = useState(currentPeople);
-    const [openDialog, setOpenDialog] = useState(false); 
     
-    const handleClickOpen = () => {
-        setOpenDialog(true); 
-    }; 
-
-    const handleClose = (e) => {
-        setOpenDialog(false);
-    }
-    
-    const handleSubmit = () => {
+    const handleSubmitPeople = e => {
+        e.preventDefault();
         //save PeopleInvolved to db 
         if(peopleInvolved.length){       
             props.savePeopleInvolved(peopleInvolved, props.currentUser.user.userId)
@@ -92,12 +91,11 @@ const PeopleInvolved = (props) => {
         }
 
         const values = peopleInvolved                                               //currently saved peopleInvolved records
-                        .filter(pi => pi.roleId === section.hierarchyAttributeId)   // filter on roleId (HierarchyId)
-                        .map(person => employees                                    // map over each person in the arry 
-                            .find(emp => emp.value === person.employeeId))          // extract out the value from the employees array 
+            .filter(pi => pi.roleId === section.hierarchyAttributeId)   // filter on roleId (HierarchyId)
+            .map(person => employees                                    // map over each person in the array 
+                .find(emp => emp.value === person.employeeId))          // extract out the value from the employees array 
         
-        // values.map(v => v.selected = true); 
-        console.log(section)
+
         return (
             <Paper className={classes.paper}>
                 <Typography variant='h5' gutterBottom>
@@ -142,24 +140,8 @@ const PeopleInvolved = (props) => {
     })
 
     return (
-        <Fragment>            
-            <Dialog 
-                open={openDialog}
-                onClose={handleClose}
-                aria-labelledby='confirm-dialog-title'
-                aria-describedby='confirm-dialog-description'
-            >
-                <DialogTitle id='confirm-dialog-title'>{"Saved Successfully!"}</DialogTitle>
-                <DialogContent>
-                    <DialogContentText id='confirm-dialog-description'>
-                        {`Employees assigned to roles have been successfully saved to the database. `}
-                    </DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                    <Button id='success' onClick={handleClose} color='primary' autofocus>OK</Button>
-                </DialogActions>
-            </Dialog>
-            <form onSubmit={handleSubmit}>  
+        <Fragment>
+            <form onSubmit={handleSubmitPeople}>  
                 <Typography variant='h4' gutterBottom>
                     People Involved
                 </Typography>

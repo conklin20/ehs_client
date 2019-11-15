@@ -157,7 +157,8 @@ const Actions = (props) => {
         } else {
             props.removeAction(id, currentUser.user.userId) 
                 .then(res => {
-                    setAssignedActions(assignedActions.filter(a => a.actionId !== res.actionId)) //remove the action from the array                     
+                    console.log(res);
+                    setAssignedActions(assignedActions.filter(a => a.actionId !== id)) //remove the action from the array                     
                 });                        
         
         } 

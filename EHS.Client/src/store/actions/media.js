@@ -7,6 +7,7 @@ export const saveFiles = (files, data) => (dispatch, getState) => {
 	return apiCallWithFiles('post', `/eventfiles`, files, data )
     .then(res => {
         //success status = 201
+        dispatch(addNotification(`${files.length} file(s) successfully uploaded to server!`, 'success'));
         return res.status
     })
     .catch(res => {	
@@ -18,6 +19,7 @@ export const saveFiles = (files, data) => (dispatch, getState) => {
 export const fetchFilesByEventId = (eventId) => (dispatch, getState) => {
     return apiCall('get', `/eventfiles/${eventId}`)
         .then(res => {
+            // console.log(res); 
             return res.data
         })
         .catch(res => {	
@@ -31,6 +33,7 @@ export const removeFile = (eventFileId, userId) => {
       return apiCall('delete', `/eventfiles/${eventFileId}?userId=${userId}`)
         .then(res => {
             //success status = 202
+            dispatch(addNotification(`File ${eventFileId} successfully deleted`, 'success'));
             return res.status
         })
         .catch(res => {	

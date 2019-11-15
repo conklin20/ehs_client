@@ -58,8 +58,6 @@ function MySnackbarContentWrapper(props) {
       message={
         <span id="client-snackbar" className={classes.message}>
           <Icon className={clsx(classes.icon, classes.iconVariant)} />
-          {/* { message || 'An unknown error has occured.'} */}
-          {/* Error Occured. User Friendly Error Messages are still under development */}
           {message}
         </span>
       }
@@ -74,44 +72,34 @@ function MySnackbarContentWrapper(props) {
 }
 
 const Notification = ( props ) => {
-  const [open, setOpen] = useState(true);
-  const {variant, autoHideDuration, message, removeNotification } = props;
+    const [open, setOpen] = useState(true);
+    const {variant, autoHideDuration, message, removeNotification } = props;
 
-  console.log(props); 
-
-  const handleClose = (event, reason) => {
-    if (reason === 'clickaway') {
-      return;
+    const handleClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
     }    
-    
-    console.log(removeNotification)
-    // if(typeof(removeNotification) === 'function') {
-    //   console.log('dispatching removeNotificaion')
-    //   props.dispatch(removeNotification)
-    // } else {
-    //   console.log('calling removeNotification()')
-    removeNotification(); 
-    // }
-    setOpen(false);
-  }
+        removeNotification(); 
+        setOpen(false);
+    }
 
-  return (
-    <Snackbar
-      anchorOrigin={{
-      vertical: 'bottom',
-      horizontal: 'left',
-    }}
-      open={open}
-      autoHideDuration={autoHideDuration || 5000}
-      onClose={handleClose}
-    >
-      <MySnackbarContentWrapper
-        onClose={handleClose}
-        variant={variant}
-        message={message}
-      />
-    </Snackbar>
-  )
+    return (
+        <Snackbar
+            anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'left',
+        }}
+            open={open}
+            autoHideDuration={autoHideDuration || 5000}
+            onClose={handleClose}
+        >
+            <MySnackbarContentWrapper
+            onClose={handleClose}
+            variant={variant}
+            message={message}
+            />
+        </Snackbar>
+    )
 }
 
-export default connect(null, null)(Notification);
+    export default connect(null, null)(Notification);
