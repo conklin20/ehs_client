@@ -46,26 +46,12 @@ namespace EHS.Server.WebApi.Controllers.Common
             {
                 string fileDir = _config.GetValue("AppSettings:EventFilesDir", "C:\\ehstemp");
                 List<EventFile> eventFiles = new List<EventFile>();
-                using (var stream = System.IO.File.Create(fileDir + "fstemp.temp")) ;
+                using (var stream = System.IO.File.Create(fileDir + "fstemp.temp"))
                 {
                     //formModel = await Request.StreamFile(stream);
                     eventFiles = await Request.StreamFile(fileDir);
                 }
-
-                //var viewModel = new MyViewModel();
-                //var model = new EventFile();
-
-                //var bindingSuccessful = await TryUpdateModelAsync(model, prefix: "",
-                //   valueProvider: formModel);
-
-                //if (!bindingSuccessful)
-                //{
-                //    if (!ModelState.IsValid)
-                //    {
-                //        return BadRequest(ModelState);
-                //    }
-                //}
-
+                
                 if (eventFiles == null)
                 {
                     _logger.LogError("No Files Found. {0}", NotFound().ToString());
@@ -83,10 +69,10 @@ namespace EHS.Server.WebApi.Controllers.Common
                 //map the list from the domain/database model objects, to data transfer objects to pass back to the client 
                 return Ok(eventFiles.Select(_mapper.Map<EventFile, EventFileDto>).ToList());
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError(ex.InnerException, ex.Message);
-                return BadRequest();
+                return BadRequest(ex);
             }
         }
 
@@ -129,7 +115,7 @@ namespace EHS.Server.WebApi.Controllers.Common
             catch (Exception ex)
             {
                 _logger.LogError(ex.InnerException, ex.Message);
-                return BadRequest();
+                return BadRequest(ex);
             }
         }
     }

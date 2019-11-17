@@ -8,7 +8,6 @@ import {
     Button, 
     Paper 
 } from '@material-ui/core'; 
-// import filterLookupDataByKey from '../../../helpers/filterLookupDataByKey'; 
 import filterEmployeeList from '../../../helpers/filterEmployeeList'; 
 import AutoCompleteMulti from '../../shared/AutoCompleteMulti'; 
 import { savePeopleInvolved } from '../../../store/actions/peopleInvolved';
@@ -31,7 +30,6 @@ const PeopleInvolved = (props) => {
     const supervisors = filterEmployeeList(props.lookupData['employees'], event['supervisorId'], 4001, true, true)
     const involvement = props.lookupData['logicalHierarchyAttributes'].filter(attr => attr.key === 'Employee Involvement');
 
-    
     const currentPeople = event.peopleInvolved.map(pe => {
         return {
             roleId: pe.roleId, 
@@ -90,11 +88,12 @@ const PeopleInvolved = (props) => {
             setPeopleInvolved([ ...peopleInvolved ])
         }
 
-        const values = peopleInvolved                                               //currently saved peopleInvolved records
+        const values = peopleInvolved                                   // currently saved peopleInvolved records
             .filter(pi => pi.roleId === section.hierarchyAttributeId)   // filter on roleId (HierarchyId)
             .map(person => employees                                    // map over each person in the array 
                 .find(emp => emp.value === person.employeeId))          // extract out the value from the employees array 
         
+        //append the currentPeople that are not in the Employee list (they may be inactive or have a different hierarchyId now) https://dev.azure.com/dinkin-flicka-engineering/Incident-Investigation/_workitems/edit/41
 
         return (
             <Paper className={classes.paper}>

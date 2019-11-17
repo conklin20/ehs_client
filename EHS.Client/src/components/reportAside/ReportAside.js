@@ -28,13 +28,10 @@ const ReportAside = props => {
                 <List>
                     <span className={classes.header}>Bugs:</span>
                     <ListItem>
-                        /events/si/new: Review page doesnt show all data from the event 
-                    </ListItem>
-                    <ListItem>
-                        /events/si/new: after saving 'People Involved' it switched the event to 'Open', even though its still in 'Draft' status
-                    </ListItem>
-                    <ListItem>
                         /dashboard: Can't search on employees Name, only on employeeId
+                    </ListItem>
+                    <ListItem>
+                        /dashboard: Sort doesnt work correctly on some columns
                     </ListItem>
                     <ListItem>
                         /logout: Sometimes it doesnt gracefully log you out.. you have to refresh a couple of times
@@ -45,8 +42,11 @@ const ReportAside = props => {
                 </List>                
                 <List>
                     <span className={classes.header}>Recently Fixed Bugs: </span>
-                    <ListItem>
-                        
+                    <ListItem className={classes.done}>
+                        /events/si/new: after saving 'People Involved' it switches the event to Open, even though its still in Draft status
+                    </ListItem>
+                    <ListItem className={classes.done}>
+                        /events/si/new: Review page doesnt show all data from the event 
                     </ListItem>
                 </List>
                 <List>
@@ -59,16 +59,16 @@ const ReportAside = props => {
                         all attributes like shifts, jobs, injury types, first aid types, enviornments, materials etc.)
                     </ListItem>
                     <ListItem>
-                        Finish Filter/Search page (low priority, dynamic search works well)
-                    </ListItem>
-                    <ListItem>
                         Finish User Settings page 
                     </ListItem>
                     <ListItem>
-                        Reports Page
+                        Reports Page (Critical Reports only for Phase 1)
                     </ListItem>
                     <ListItem>
                         Build Report Aside Reports
+                    </ListItem>
+                    <ListItem>
+                        Finish Filter/Search page (low priority, dynamic search works well)
                     </ListItem>
                 </List>
                 <List>
@@ -77,6 +77,10 @@ const ReportAside = props => {
                         Closing an Event. Which option would you prefer?<br />
                         1) Automated - built into the workflow. Once the final approval has been received for the final unapproved action, the event will auto-close. <br />
                         2) Manual - Once the final approval has been received for the final unapproved action, Safety will have to manually close the event. 
+                    </ListItem>
+                    <ListItem>
+                        Supervisor - how do we want to handle this? It's on the Event Details page (right after you select the employee involved in the incident), 
+                        as well as on the People Involved page.. logic is kind of funky 
                     </ListItem>
                 </List>
                 

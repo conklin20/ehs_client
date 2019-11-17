@@ -1,4 +1,5 @@
 import React, { useState, useEffect, Fragment } from 'react';
+import { bindActionCreators } from 'redux';
 import { connect } from "react-redux";
 import { Link } from 'react-router-dom'; 
 import { makeStyles } from '@material-ui/core/styles';
@@ -14,6 +15,7 @@ import {
     updateSafetyIncident,
     fetchEvent
 } from '../../../../store/actions/safetyIncidents'; 
+import { fetchActionsByEventId } from '../../../../store/actions/actions'; 
 import { fetchPeopleByEventId } from '../../../../store/actions/peopleInvolved'; 
 import { fetchCausesByEventId } from '../../../../store/actions/causes';
 import { fetchFilesByEventId } from '../../../../store/actions/media';  
@@ -31,7 +33,6 @@ import {
 	Dialog,
 	DialogActions, 
 	DialogContent, 
-	// DialogContentText, 
 	DialogTitle, 
     Step,
     Stepper, 
@@ -39,6 +40,21 @@ import {
 	Typography,
 } from '@material-ui/core';
 import Icon from '@material-ui/core/Icon';
+import { 
+    EVENT_ACTION_REQUIRED, 
+    EVENT_PEOPLE_REQUIRED, 
+    EVENT_CAUSES_REQUIRED, 
+    EVENT_LOGICAL_HIERARCHY_REQUIRED, 
+    EVENT_PHSYICAL_HIERARCHY_REQUIRED, 
+    EVENT_CATEGORY_REQUIRED,
+    EVENT_INVALID,
+    EVENT_SUBMITTED,
+    EVENT_ALREADY_SUBMITTED,
+    EVENT_UPDATE_FAILED,
+    EVENT_DRAFT_FAILED,
+    EVENT_UPDATE_SUCCESS, 
+} from '../../../../helpers/notificationMessages';
+import { S_I_STATUS } from '../../../../helpers/eventStatusEnum';
 
 const useStyles = makeStyles(theme => ({
 	root: {
@@ -107,6 +123,9 @@ const useStyles = makeStyles(theme => ({
     divider: {
         marginTop: '15px',
         marginBottom: '15px',
+    }, 
+    safetySection: {
+        margin: theme.spacing(2),
     }
   }));
 
@@ -148,22 +167,21 @@ const SafetyEventForm = props => {
 
 	const fetchData = async () => {
         //if existing event, get event detail from api
-        if(props.match.params.eventId) setEvent(await props.fetchEvent(props.match.params.eventId)) 
+        if(props.match.params.eventId) setEvent(await props.fetchEvent(props.match.params.eventId))
                         
         const timestamp = new Date().toISOString(); 
         //if this is a new event form, and the lookup data has been loaded, set the initial values for the evnt 
-        if(props.match.path.includes('/events/si/new') && lookupData.employees){
+        if(props.match.path.includes('/events/si/new')){
             setEvent({
                 eventType: 'Safety Incident', 
                 reportedBy: currentUser.user.userId,
                 reportedOn: timestamp, 
                 createdBy:  currentUser.user.userId, 
-                eventStatus: 'Draft',   
-                departmentId: currentUser.user.logicalHierarchyId, 
-                localeId: currentUser.user.physicalHierarchyId,
+                eventStatus: S_I_STATUS.DRAFT,   
+                // departmentId: currentUser.user.logicalHierarchyId, 
+                // localeId: currentUser.user.physicalHierarchyId,
                 eventDate: timestamp, 
                 hoursWorkedPrior: .5, 
-
                 //defaulting an empty array for actions, people, causes, and files
                 actions: [], 
                 peopleInvolved: [], 
@@ -176,8 +194,8 @@ const SafetyEventForm = props => {
 		if(!lookupData.employees) props.fetchEmployees();
 		if(!lookupData.logicalHierarchies ) props.fetchLogicalHierarchyTree(currentUser.user.logicalHierarchyPath.split('|')[currentUser.user.logicalHierarchyPath.split('|').length-1]);
 		if(!lookupData.physicalHierarchies) props.fetchPhysicalHierarchyTree(currentUser.user.physicalHierarchyPath.split('|')[currentUser.user.physicalHierarchyPath.split('|').length-1]);
-		if(!lookupData.logicalHierarchyAttributes) props.fetchLogicalHierarchyAttributes(event.departmentId || props.currentUser.user.logicalHierarchyId, 'singlepath', '?enabled=true');
-        if(!lookupData.physicalHierarchyAttributes) props.fetchPhysicalHierarchyAttributes(event.localeId || props.currentUser.user.physicalHierarchyId, 'singlepath', '?enabled=true&excludeglobal=true');
+		if(!lookupData.logicalHierarchyAttributes) props.fetchLogicalHierarchyAttributes(event.departmentId || currentUser.user.logicalHierarchyId, 'singlepath', '?enabled=true');
+        if(!lookupData.physicalHierarchyAttributes) props.fetchPhysicalHierarchyAttributes(event.localeId || currentUser.user.physicalHierarchyId, 'singlepath', '?enabled=true&excludeglobal=true');
             
     }
     
@@ -203,8 +221,8 @@ const SafetyEventForm = props => {
     }
 
     const handleRefreshData = () => {
-        props.fetchLogicalHierarchyAttributes(event.departmentId, 'singlepath', '?enabled=true');
-        props.fetchPhysicalHierarchyAttributes(event.localeId, 'singlepath', '?enabled=true&excludeglobal=true');
+        props.fetchLogicalHierarchyAttributes(event.departmentId || currentUser.user.logicalHierarchyId, 'singlepath', '?enabled=true');
+        props.fetchPhysicalHierarchyAttributes(event.localeId || currentUser.user.physicalHierarchyId, 'singlepath', '?enabled=true&excludeglobal=true');
 
     }
 
@@ -245,6 +263,15 @@ const SafetyEventForm = props => {
     };
 
     const handleComplete = () => {
+        //if on step 1 (Event Location), dont let user proceed with selecting a logical hierarchy 
+        if(activeStep+1 === 2 && !event.departmentId) {
+            return props.addNotification(EVENT_LOGICAL_HIERARCHY_REQUIRED, 'error')
+        }
+        //if on step 1 (Event Location), dont let user proceed with selecting a physical hierarchy 
+        if(activeStep+1 === 2 && !event.localeId) {
+            return props.addNotification(EVENT_PHSYICAL_HIERARCHY_REQUIRED, 'error')
+        }
+
         const newCompleted = new Set(completed);
         newCompleted.add(activeStep);
         setCompleted(newCompleted);
@@ -253,12 +280,6 @@ const SafetyEventForm = props => {
             handleNext();
         }
     }
-
-    // const handleReset = () => {
-    //     setActiveStep(0);
-    //     setCompleted(new Set());
-    //     // setSkipped(new Set());
-    // }    
     
     const isStepComplete = (step) => {
         return completed.has(step);
@@ -296,6 +317,7 @@ const SafetyEventForm = props => {
                 return <Actions  
                             useStyles={useStyles} 
                             event={event}
+                            refreshActions={refreshActions}
                         />        
             case 4: 
                 return <PeopleInvolved 
@@ -323,31 +345,45 @@ const SafetyEventForm = props => {
                             handleSubmit={handleSubmit}
                         />     
             default:
-                addNotification('Unkown Step', 'warning'); 
+                props.addNotification('Unkown Step', 'warning'); 
                 return 'Unknown Step';
         }
     }
 
+    const refreshActions = () => {
+        props.fetchActionsByEventId(event.eventId)
+            .then(res => {
+                //update the actions property since its changed
+                if(res.status === 200){
+                    setEvent({ ...event, actions: res.data});
+                } else {
+                    console.log(`Expected Status Code 200. Received ${res.status}`);
+                }
+            })
+    };
+
     const refreshPeopleInvolved = () => {
         props.fetchPeopleByEventId(event.eventId)
-            .then(people => {
+            .then(res => {
                 //update the peopleInvolved property since its changed 
-                setEvent({ ...event, peopleInvolved: people});
+                if(res.status === 200){
+                    setEvent({ ...event, peopleInvolved: res.data});
+                } else {
+                    console.log(`Expected Status Code 200. Received ${res.status}`);
+                }
             })
-            .catch(err => {
-                console.log(`refreshPeopleInvolved rejected promise:`, err); 
-            });
     };
 
     const refreshCauses = () => {
         props.fetchCausesByEventId(event.eventId)
-            .then(causes => {
+            .then(res => {
                 //update the cause list since its changed 
-                setEvent({ ...event, causes: causes});
+                if(res.status === 200){
+                    setEvent({ ...event, causes: res.data});
+                } else {
+                    console.log(`Expected Status Code 200. Received ${res.status}`); 
+                }
             })
-            .catch(err => {
-                console.log(`fetchCausesByEventId rejected promise:`, err); 
-            });
     };
 
     const refreshEventFiles = () => {
@@ -363,46 +399,126 @@ const SafetyEventForm = props => {
     
     const handleSaveDraft = e => {
         //if this event doesnt have an Id, it means its new and we need to post a new event 
-        if(!event.hasOwnProperty('eventId')) {
-            props.postNewSafetyIncident(event)
-                .then(res => {
-                    //201, Created
-                    if(res.status === 201){
-                        setEvent( { ...event, ...res.data} ) 
-                        handleComplete();
-                    } else {
-                        console.log(`Failed to save draft: ${res.status}`)
-                    }
-                });        
-        } else {
-            //update event 
+        if(handleValidateDraftForm()){
+            if(!event.hasOwnProperty('eventId')) {
+                props.postNewSafetyIncident(event)
+                    .then(res => {
+                        //201, Created
+                        if(res.status === 201){
+                            // setEvent( { ...event, ...res.data} ) 
+                            //On initial save, get the event from the db we need fields that arent returned from the insert 
+                            props.fetchEvent(res.data.eventId)
+                                .then(res => {
+                                    setEvent( { supervisorId: event.supervisorId, ...res } )
+                                })
+                            // handleComplete();
+                        } else {
+                            props.addNotification(EVENT_DRAFT_FAILED.replace('{0}', event.eventId), 'info')
+                            console.log(`Failed to save draft: ${res.status}`)
+                        }
+                    });        
+            } else if(handleValidateDraftForm()) {
+                //update event 
+                props.updateSafetyIncident(event, currentUser.user.userId)
+                    .then(res => {
+                        if(res.status === 202) {
+                            setEvent( { ...event, ...res.data } )
+                            handleComplete();
+                        } else {
+                            props.addNotification(EVENT_UPDATE_FAILED.replace('{0}', event.eventId), 'info')
+                            console.log(`Failed to update draft: ${res.status}`)
+                        }
+                    })
+            }
+            else {
+                props.addNotification(EVENT_INVALID, 'error')
+            }
+        }
+    }
+    
+    //updating an open event 
+    const handleSaveOpen = e => {
+        e.preventDefault();
+        
+        if(handleValidateCompletedForm()) {            
             props.updateSafetyIncident(event, currentUser.user.userId)
                 .then(res => {
                     if(res.status === 202) {
-                        setEvent( { ...event, ...res.data } )
-                        handleComplete();
+                        setEvent( { ...event, ...res.data } );
+                        props.addNotification(EVENT_UPDATE_SUCCESS.replace('{0}', event.eventId), 'info');
                     } else {
-                        console.log(`Failed to update draft: ${res.status}`)
+                        // props.addNotification(EVENT_SUBMITTED.replace('{0}', event.eventId), 'error')
+                        console.log(`Failed to submit draft: Failed with status ${res.response.status} (${res.response.statusText})`);
                     }
                 })
+        } else {
+            props.addNotification(EVENT_UPDATE_FAILED.replace('{0}', event.eventId), 'info');
         }
+        
     }
     
     const handleSubmit = e => {
         e.preventDefault();
 
         //shouldnt be able to Submit anything but a draft anyways, but this is a safeguard against that 
-        if(event.eventStatus === 'Draft' && event.actions.length && event.peopleInvolved.length && event.causes.length) {
+        if(event.eventStatus === S_I_STATUS.DRAFT && handleValidateCompletedForm()) {
             // change status to Open
-            event.eventStatus = 'Open';
+            event.eventStatus = S_I_STATUS.OPEN;
+            
             props.updateSafetyIncident(event, currentUser.user.userId)
-            .then(res => {            
-                props.fetchEvent(event.eventId)
-                    .then(files => {
-                        setEvent({ ...res, ...files})
-                    }) 
-            })
+                .then(res => {
+                    if(res.status === 202) {
+                        setEvent( { ...event, ...res.data } )
+                        props.addNotification(EVENT_SUBMITTED.replace('{0}', event.eventId), 'success')
+                        props.history.push('/dashboard')
+                    } else {
+                        // props.addNotification(EVENT_SUBMITTED.replace('{0}', event.eventId), 'error')
+                        setEvent( { ...event, eventStatus: S_I_STATUS.DRAFT })
+                        console.log(`Failed to submit draft: Failed with status ${res.response.status} (${res.response.statusText})`)
+                    }
+                })
+        } else {
+            props.addNotification(EVENT_ALREADY_SUBMITTED.replace('{0}', event.eventId), 'info')
         }
+    }
+    
+    //the web api/server will do most of the validation for us against the Event fields. However, it will not validate the relational tables (Actions, People, Causes, Media)
+    const handleValidateDraftForm = () => {
+        const validationErrors = [];
+        if(!event.initialCategory) {
+            validationErrors.push(EVENT_CATEGORY_REQUIRED)
+        }
+
+        if (validationErrors.length > 0 ) {
+            props.addNotification(validationErrors.join(), 'error')
+            return false
+        }
+        
+        return true
+    }    
+
+    
+    //the web api/server will do most of the validation for us against the Event fields. However, it will not validate the relational tables (Actions, People, Causes, Media)
+    const handleValidateCompletedForm = () => {
+        const validationErrors = []; 
+        if(!event.actions.length > 0) {
+            validationErrors.push(EVENT_ACTION_REQUIRED)
+        }
+
+        if(!event.peopleInvolved.length > 0) {
+            validationErrors.push(EVENT_PEOPLE_REQUIRED)
+        }
+
+        if(!event.causes.length > 0) {
+            validationErrors.push(EVENT_CAUSES_REQUIRED)
+        }
+
+        if (validationErrors.length > 0 ) {
+            props.addNotification(validationErrors.join(), 'error')
+            return false
+        }
+        
+        return true
     }
 
 	return (
@@ -479,7 +595,7 @@ const SafetyEventForm = props => {
                                                 >
                                                     Back
                                                 </Button>
-                                                {event.eventStatus === 'Draft'
+                                                {event.eventStatus === S_I_STATUS.DRAFT
                                                     ?
                                                         activeStep < steps.length-1
                                                         ?
@@ -491,8 +607,8 @@ const SafetyEventForm = props => {
                                                                         onClick={handleSaveDraft}
                                                                         className={classes.button}
                                                                     >
-                                                                    {event.eventId ? 'Save Changes' : 'Save Draft' }
-                                                                </Button>
+                                                                        {event.eventId ? 'Save & Continue' : 'Submit Draft' }
+                                                                    </Button>
                                                                 :
                                                                     activeStep !== steps.length &&
                                                                         (completed.has(activeStep) ? (
@@ -511,6 +627,7 @@ const SafetyEventForm = props => {
                                                                     ))
                                                         : null
                                                     :
+                                                    <Fragment>
                                                         <Button
                                                             variant="contained"
                                                             color="primary"
@@ -519,7 +636,20 @@ const SafetyEventForm = props => {
                                                             disabled={dataIsLoading()}
                                                         >
                                                             Next
-                                                        </Button>
+                                                        </Button>        
+                                                        {event.eventStatus === S_I_STATUS.OPEN
+                                                            ?                                   
+                                                                <Button
+                                                                    variant="contained"
+                                                                    color="primary"
+                                                                    onClick={handleSaveOpen}
+                                                                    className={classes.button}
+                                                                >
+                                                                    {'Save Changes'}
+                                                                </Button>
+                                                            : null 
+                                                        }       
+                                                    </Fragment>
                                                 }
                                                         
                                             </div>
@@ -549,16 +679,23 @@ function mapStateToProps(state) {
 	};
 }
 
-export default connect(mapStateToProps, { 
-    fetchEmployees,
-    fetchLogicalHierarchyTree, 
-    fetchPhysicalHierarchyTree, 
-    fetchLogicalHierarchyAttributes, 
-    fetchPhysicalHierarchyAttributes,
-    postNewSafetyIncident,
-    updateSafetyIncident,
-    fetchEvent,
-    fetchPeopleByEventId,
-    fetchCausesByEventId, 
-    fetchFilesByEventId,
-})(SafetyEventForm); 
+// INFO on how this works - https://react-redux.js.org/using-react-redux/connect-mapdispatch
+function mapDispatchToProps(dispatch) {
+    return bindActionCreators({ 
+        fetchEmployees,
+        fetchLogicalHierarchyTree, 
+        fetchPhysicalHierarchyTree, 
+        fetchLogicalHierarchyAttributes, 
+        fetchPhysicalHierarchyAttributes,
+        postNewSafetyIncident,
+        updateSafetyIncident,
+        fetchEvent,
+        fetchActionsByEventId,
+        fetchPeopleByEventId,
+        fetchCausesByEventId, 
+        fetchFilesByEventId,
+        addNotification
+    }, dispatch)
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(SafetyEventForm); 

@@ -1,14 +1,12 @@
 import React, { Fragment } from 'react';
 import { Typography, Grid,  Divider } from '@material-ui/core'; 
-import Moment from 'react-moment'; 
+import moment from 'moment'
 
 
 const ReportingInformation = (props) => {
     const classes = props.useStyles();    
     const { event, currentUser, lookupData } = props; 
-        
-    // console.log(event)
-    // console.log(Object.keys(event).length && Object.keys(lookupData).length)
+    
     return (
         <Fragment>  
             { 
@@ -31,17 +29,17 @@ const ReportingInformation = (props) => {
                         <Grid item xs={12}>		
                             <Typography className={classes.label} variant="body1" gutterBottom>
                                 <span>Date Reported: </span>
-                                <Moment format={currentUser.user.dateFormat || 'MM/DD/YYYY'}>
-                                    {event.reportedOn}
-                                </Moment> 
+                                {moment(event.reportedOn)
+                                    .subtract(new Date(event.reportedOn).getTimezoneOffset(), 'minutes')
+                                    .format('ll')}
                             </Typography>	
                         </Grid>       	
                         <Grid item xs={12}>		
                             <Typography className={classes.label} variant="body1" gutterBottom>   
                                 <span>Time Reported: </span>
-                                <Moment format="LTS" add={{ hours: currentUser.user.timeZone}}>
-                                    {event.reportedOn}
-                                </Moment>	
+                                {moment(event.reportedOn)
+                                    .subtract(new Date(event.reportedOn).getTimezoneOffset(), 'minutes')
+                                    .format('LT')}
                             </Typography>	
                         </Grid>      
                         <Grid item xs={12}>		

@@ -4,6 +4,7 @@ import Moment from 'react-moment';
 import { connect } from "react-redux";
 import { makeStyles } from '@material-ui/core/styles';
 import filterLookupDataByKey from '../../../helpers/filterLookupDataByKey';
+import { S_I_STATUS } from '../../../helpers/eventStatusEnum';
 
 
 const useStyles = makeStyles(theme => ({
@@ -178,7 +179,7 @@ const Review = (props) => {
                 <Grid item xs={6} md={3}>		
                     <Typography className={classes.label} variant="body1" gutterBottom>
                         <span className={classes.span}>Reported By: </span>
-                        {lookupData.employees.find(e => e.employeeId === event.reportedBy).fullName}
+                        {event.reportedBy === 'N/A' ? 'N/A' : lookupData.employees.find(e => e.employeeId === event.reportedBy).fullName}
                     </Typography>	
                 </Grid>      
                 <Grid item xs={6} md={3}>		
@@ -238,9 +239,9 @@ const Review = (props) => {
                 <Grid item xs={12}>		
                     <Typography className={classes.label} variant="body1" gutterBottom>
                         <span className={classes.span}>Category: </span>
-                        {event.resultingCategory !== event.initialCategory && event.resultingCategory ? 
+                        { event.resultingCategory && event.resultingCategory !== event.initialCategory ? 
                             `Initial Category - ${event.initialCategory} / Resulting Category - ${event.resultingCategory}`
-                            : `Resulting Category - ${event.resultingCategory}`    
+                            : `Category - ${event.initialCategory}`    
                         }
                     </Typography>	
                 </Grid>      
@@ -402,11 +403,11 @@ const Review = (props) => {
                 className={classes.submitBtn}
                 onClick={handleSubmit}
                 fullWidth
-                disabled={event.eventStatus === 'Closed' || event.eventStatus === 'Cancelled' ? true : false}
+                disabled={event.eventStatus === S_I_STATUS.CLOSED || event.eventStatus === S_I_STATUS.CANCELLED ? true : false}
                 >
-                { event.eventStatus === 'Draft' 
+                { event.eventStatus === S_I_STATUS.DRAFT
                     ? 'Submit Event'
-                    : event.eventStatus === 'Open'
+                    : event.eventStatus === S_I_STATUS.OPEN
                         ? 'Update Event' 
                         : 'Event Closed'
                 }

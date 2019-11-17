@@ -35,9 +35,9 @@ const MyApprovals = props => {
                 <ListItem>
                     <Link to={`/events/si/${a.action.eventId}/step/4`} className={classes.link} >
                         <ListItemText
-                            primary={`${a.action.eventId} - ${moment(a.action.completionDate)
-                                                                .add(props.currentUser.user.timeZone, 'hours')
-                                                                .format(props.currentUser.user.dateFormat || 'YYYY-MM-DD')}`}
+                            primary={`${a.action.actionId} - ${moment(a.action.completionDate)
+                                                                .subtract(new Date().getTimezoneOffset(), 'minutes')
+                                                                .format('ll')}`}
                             secondary={a.action.actionToTake}
                             />
                     </Link>

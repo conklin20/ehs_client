@@ -12,6 +12,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Paper, Typography } from '@material-ui/core';
 import EventList from './EventList';
 import EventSearch from './EventSearch';
+import { S_I_STATUS } from '../../../helpers/eventStatusEnum';
 
 const useStyles = makeStyles(theme => ({
 	root: {
@@ -89,9 +90,9 @@ const Dashboard = props => {
 
 	const { currentUser, lookupData } = props;
 
-	//defaulting the initial search to only return Events that are 'Open'
+	//defaulting the initial search to only return Events that are Open
 	const initialSearchFilterState = { 
-		eventStatuses: [ { value: "Open", label: "Open"} ],
+		eventStatuses: [ { value: S_I_STATUS.OPEN, label: S_I_STATUS.OPEN} ],
 	};
 
 	const [searchFilters, dispatch] = useReducer(searchFilterReducer, initialSearchFilterState); 
@@ -112,7 +113,8 @@ const Dashboard = props => {
 	}, [props.searchFilters]); //this 2nd arg is important, it tells what to look for changes in, and will re-run the hook when this changes 
 
 	const fetchData = async () => {
-		if(!props.safetyIncidents.length) await props.fetchSafetyIncidents(parseSearchFilters(searchFilters)) ; 
+		// refreshing the events every time as they may have changed, and the UserAside listens for changes 
+		await props.fetchSafetyIncidents(parseSearchFilters(searchFilters)) ; 
 		
 		// console.log(currentUser.user.logicalHierarchyPath.split('|')[currentUser.user.logicalHierarchyPath.split('|').length-1])
 		if(!lookupData.employees) await props.fetchEmployees();

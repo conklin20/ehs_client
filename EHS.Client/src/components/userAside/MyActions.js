@@ -35,8 +35,8 @@ const MyActions = props => {
                     <Link to={`/events/si/${a.eventId}/step/4`} className={classes.link} >
                         <ListItemText
                             primary={`${a.eventId} - ${moment(a.dueDate)
-                                                        .add(props.currentUser.user.timeZone, 'hours')
-                                                        .format(props.currentUser.user.dateFormat || 'YYYY-MM-DD')}`}
+                                                        .subtract(new Date().getTimezoneOffset(), 'minutes')
+                                                        .format('ll')}`}
                             secondary={a.actionToTake}
                             />
                     </Link>

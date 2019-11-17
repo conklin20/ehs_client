@@ -28,6 +28,7 @@ export function apiCall(method, path, data){
                 return resolve(res)
             })
             .catch(err => {
+                console.log(err);
                 console.log(err.response);
                 //if the reqs are returning 401, the user is no longer authenticated (could mean their token expired). Log the user out 
                 if(err.response.status === 401) { //unauthorized 

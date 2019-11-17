@@ -13,6 +13,6 @@ namespace EHS.Server.DataAccess.Repository
         Task<int> AddAsync(List<Action> actionsToAdd);
         Task<Action> UpdateAsync(Action actionToUpdate);
         Task<int> DeleteAsync(int actionId, string userId);
-        Task<List<Action>> GetAllByEventAsync(int eventId); 
+        Task<List<Action>> GetByEventId(int eventId); 
     }
 }

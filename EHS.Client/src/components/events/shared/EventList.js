@@ -62,10 +62,8 @@ const EventList = props => {
                     Header: 'Date',    
                     accessor: d => {
                       return moment(d.eventDate)
-                        .add(props.currentUser.user.timeZone, 'hours')
-                        .format(props.currentUser.user.dateFormat || 'YYYY-MM-DD')
-                        // .format('YYYY-MM-DD hh:mm a')
-                                                    
+                        .subtract(new Date(d.eventDate).getTimezoneOffset(), 'minutes')
+                        .format('ll')
                     }
                 },
                 {
