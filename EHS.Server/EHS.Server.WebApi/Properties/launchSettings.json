@@ -22,7 +22,7 @@
       "launchBrowser": true,
       "applicationUrl": "http://localhost:44311",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Test"
+        "ASPNETCORE_ENVIRONMENT": "Development"
       }
     }
   }
