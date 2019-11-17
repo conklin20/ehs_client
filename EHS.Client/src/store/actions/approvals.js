@@ -1,12 +1,13 @@
 import { apiCall } from "../../services/api";
 import { addNotification } from "./notifications";
-// import { REMOVE_ACTION, LOAD_ACTIONS } from "../actionTypes";
+import { ACTION_APPROVED } from '../../helpers/notificationMessages';
 
-export const addApproval = (approval) => (dispatch, getState) => {    
+export const addApproval = (approval, approvalLevel) => (dispatch, getState) => {  
 	return apiCall('post', '/approvals', approval )
         .then(res => {
             //success status = 201
-            return res.status
+            dispatch(addNotification(ACTION_APPROVED.replace('{0}', approval.actionId).replace('{1}', approvalLevel), 'success'));
+            return res
         })
         .catch(res => {	
             console.log(res)

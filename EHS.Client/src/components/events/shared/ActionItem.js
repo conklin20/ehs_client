@@ -10,8 +10,6 @@ import { Typography
         , Grid
         , List
         , ListItem
-        // , ListItemText
-        // , ListSubheader
         , Badge
         , Divider
         , Chip
@@ -22,16 +20,18 @@ import { Typography
         , DialogContentText
         , DialogTitle
     } from '@material-ui/core';
-// import MomentDate from '../../shared/MomentDate';
+import moment from 'moment'; //https://momentjs.com/
 import { MIN_ADMIN_ROLE_LEVEL } from '../../admin/adminRoleLevel';
+import { S_I_STATUS } from '../../../helpers/eventStatusEnum';
 
 const useStyles = makeStyles(theme => ({
     card: {
-        minWidth: '15vw',
-        maxWidth: '30%',
-        margin: 10,
-        backgroundColor: '#e2f1f8', //theme.palette.primary.light, 
-        paddingBottom: 20,
+        display: 'inline-grid',
+        width: '31%',
+        margin: theme.spacing(1),
+        paddingBottom: theme.spacing(1),
+        backgroundColor: theme.palette.grey['400'], //'#e2f1f8', //theme.palette.primary.light, 
+        textAlign: 'left',
     },
     cardHeader: {
         display: 'flex',
@@ -60,6 +60,7 @@ const useStyles = makeStyles(theme => ({
     approvalsBody: {
         display: 'flex', 
         justifyContent: 'space-around',
+        
       },
     list: {
         width: '45%', 
@@ -67,6 +68,10 @@ const useStyles = makeStyles(theme => ({
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center', 
+        borderRadius: '20px',
+    },
+    listBody: {
+        textAlign: 'center',
     },
     badge: {
         left: theme.spacing(2),
@@ -76,7 +81,6 @@ const useStyles = makeStyles(theme => ({
 const ActionItem = (props) => {
     const classes = useStyles();
     const [openDialog, setOpenDialog] = useState(false); 
-
     const { 
         action, 
         employees, 
@@ -99,21 +103,23 @@ const ActionItem = (props) => {
     }
     
     const assignedTo = action.assignedTo === 'N/A' ? 'N/A' : employees.find(e => e.employeeId === action.assignedTo).fullName;
-
-    // const dateFormat = currentUser.user.dateFormat || 'MM/DD/YYYY'; 
-    // const utcOffset = currentUser.user.timeZone; 
     
     const approvalsReceived = action.approvals
         .map(ar => {
             return (
                 <ListItem>
-                    <Tooltip title={`${ar.approvedBy === 'N/A' ? 'N/A' : employees.find(e => e.employeeId === ar.approvedBy).fullName} - ${ar.approvedOn}`} >
+                    <Tooltip title={`${ar.approvedBy === 'N/A' 
+                        ? 'N/A' 
+                        : employees.find(e => e.employeeId === ar.approvedBy).fullName} 
+                            - ${moment(ar.approvedOn)
+                                .subtract(new Date(ar.approvedOn).getTimezoneOffset(), 'minutes')
+                                .format('lll')}` } >
                         <Chip label={ar.approvalLevel.approvalLevelName.replace('Approval', '')} />
                     </Tooltip>
                 </ListItem>
             )
     }); 
-    
+
     const approvalsNeeded = action.approvalsNeeded
         .map(an => {
             return (
@@ -128,21 +134,22 @@ const ActionItem = (props) => {
 
     //criteria and reasoning for the "Complete" button being disabled 
     const completeButtomCriteria = [];
-    if(event.eventStatus !== 'Open') completeButtomCriteria.push('This event is not in an "Open" status. '); 
+    if(event.eventStatus !== S_I_STATUS.OPEN) completeButtomCriteria.push('This event is not in an "Open" status. '); 
     if(typeof(action.actionId) !== 'number') completeButtomCriteria.push('This action is still pending. '); 
     if(action.assignedTo !== currentUser.user.userId) completeButtomCriteria.push('This action is not assigned to you. '); 
     if(action.completionDate) completeButtomCriteria.push(`${assignedTo} has already completed this action. `); 
 
     //criteria and reasoning for the "Approve" button being disabled 
     const approveButtonCriteria = []; 
-    if(event.eventStatus !== 'Open') approveButtonCriteria.push('This event is not in an "Open" status. ');
+    if(event.eventStatus !== S_I_STATUS.OPEN) approveButtonCriteria.push('This event is not in an "Open" status. ');
     if(typeof(action.actionId) !== 'number') approveButtonCriteria.push('This action is still pending. ');
     if(!action.completionDate) approveButtonCriteria.push(`This action hasn't been completed by ${assignedTo} yet. `);
-    if(action.approvalDate) approveButtonCriteria.push(`This action has already been approved. `);
+    if(action.approvalDate) approveButtonCriteria.push(`This action has already received final approval. `);
     if(action.assignedTo === currentUser.user.userId) approveButtonCriteria.push(`This action is assigned to you, you can't approve your own action. `);
-    if(action.approvals.filter(ar => ar.approvalLevelId === currentUser.user.approvalLevel).length) {
+                                                    // eslint-disable-next-line 
+    if(action.approvals.find(ar => ar.approvalLevelId == currentUser.user.approvalLevel)) {
         approveButtonCriteria.push(`This action has already received
-            ${action.approvals.find(ar => ar.approvalLevelId === currentUser.user.approvalLevel).approvalLevel.approvalLevelName}. `);        
+            ${action.approvals.find(ar => ar.approvalLevelId == currentUser.user.approvalLevel).approvalLevel.approvalLevelName}. `);        
     }    
     
     return (
@@ -185,8 +192,12 @@ const ActionItem = (props) => {
                         <Typography variant="overline" display="block" gutterBottom>
                             {
                                 action.completionDate 
-                                    ? `Completion Date: ${action.completionDate}` 
-                                    : `Due Date: ${action.dueDate}`
+                                    ? `Completion Date: ${moment(action.completionDate)
+                                                            .subtract(new Date(action.completionDate).getTimezoneOffset(), 'minutes')
+                                                            .format('lll')}` 
+                                    : `Due Date: ${moment(action.dueDate)
+                                                            .subtract(new Date(action.dueDate).getTimezoneOffset(), 'minutes')
+                                                            .format('lll')}` 
                             }
                         </Typography>
                         <Typography variant="body2" gutterBottom>
@@ -207,7 +218,7 @@ const ActionItem = (props) => {
                                 </Typography>
                                 <Badge color="primary" badgeContent={approvalsNeeded.length} className={classes.badge} />
                             </div>
-                            <List dense={true}>
+                            <List className={classes.listBody} dense={true}>
                                 {approvalsNeeded}
                             </List>    
                         </div>
@@ -219,7 +230,7 @@ const ActionItem = (props) => {
                                 </Typography>
                                 <Badge color="primary" badgeContent={approvalsReceived.length} className={classes.badge} />
                             </div>
-                            <List dense={true}>
+                            <List className={classes.listBody} dense={true}>
                                 {approvalsReceived}
                             </List>   
                         </div>

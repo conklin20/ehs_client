@@ -38,8 +38,9 @@ namespace EHS.Server.WebApi.Controllers.Common
             {
                 if (!ModelState.IsValid)
                 {
-                    _logger.LogError(BadRequest().ToString());
-                    return BadRequest();
+                    var modelState = new BadRequestObjectResult(ModelState);
+                    _logger.LogError(BadRequest(modelState).ToString());
+                    return BadRequest(modelState);
                 }
 
                 var addedActions = await _peopleInvolvedRepo.SavePeopleInvolvedAsync(peopleInvolved, userId); 
@@ -49,7 +50,7 @@ namespace EHS.Server.WebApi.Controllers.Common
             catch (Exception ex)
             {
                 _logger.LogError(ex.InnerException, ex.Message);
-                return BadRequest();
+                return BadRequest(ex);
             }
         }
 
@@ -73,7 +74,7 @@ namespace EHS.Server.WebApi.Controllers.Common
             catch (Exception ex)
             {
                 _logger.LogError(ex.InnerException, ex.Message);
-                return BadRequest();
+                return BadRequest(ex);
             }
         }
     }

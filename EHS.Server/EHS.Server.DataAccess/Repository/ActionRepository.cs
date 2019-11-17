@@ -29,81 +29,70 @@ namespace EHS.Server.DataAccess.Repository
 
         public async Task<Action> GetByIdAsync(int id)
         {
-            using (IDbConnection sqlCon = Connection)
-            {
-                //build sql query 
-                string tsql = @"select a.*, 
+            using IDbConnection sqlCon = Connection;
+            //build sql query 
+            string tsql = @"select a.*, 
 	                                   e.*
                                 from Actions a 
 	                                 join SafetyEvents e on e.EventId = a.EventId
                                 where a.ActionId = @ActionId";
-                //build param list 
-                var p = new
+            //build param list 
+            var p = new
+            {
+                ActionId = id
+            };
+
+            var result = await sqlCon.QueryAsync<Action, SafetyEvent, Action>(
+                tsql,
+                (action, safetyEvent) =>
                 {
-                    ActionId = id
-                };
+                    action.SafetyEvent = safetyEvent;
+                    return action;
+                },
+                p,
+                splitOn: "EventId");
 
-                var result = await sqlCon.QueryAsync<Action, SafetyEvent, Action>(
-                    tsql, 
-                    (action, safetyEvent) =>
-                    {
-                        action.SafetyEvent = safetyEvent;
-                        return action;
-                    },
-                    p,
-                    splitOn: "EventId");
-
-                return result.FirstOrDefault();
-            }
+            return result.FirstOrDefault();
         }
 
         public async Task<List<Action>> GetMyActionsAsync(string userId)
         {
-            using (IDbConnection sqlCon = Connection)
-            {
-                //build sql query
-                string tsql = @"select a.*, 
+            using IDbConnection sqlCon = Connection;
+            //build sql query
+            string tsql = @"select a.*, 
 	                                   e.*
                                 from Actions a 
 	                                 join SafetyEvents e on e.EventId = a.EventId
                                 where a.AssignedTo = @AssignedTo";
 
-                //build param list 
-                var p = new
-                {
-                    AssignedTo = userId
-                };
+            //build param list 
+            var p = new
+            {
+                AssignedTo = userId
+            };
 
-                var result = await sqlCon.QueryAsync<Action, SafetyEvent, Action>(
-                    tsql,
-                    (action, safetyEvent) =>
-                    {
-                        action.SafetyEvent = safetyEvent;
-                        return action;
-                    },
-                    p,
-                    splitOn: "EventId");
-                return result.AsList();
-            }
+            var result = await sqlCon.QueryAsync<Action, SafetyEvent, Action>(
+                tsql,
+                (action, safetyEvent) =>
+                {
+                    action.SafetyEvent = safetyEvent;
+                    return action;
+                },
+                p,
+                splitOn: "EventId");
+            return result.AsList();
         }
 
         public async Task<List<Action>> GetAllAsync(List<DynamicParam> queryParams)
         {
-            using (IDbConnection sqlCon = Connection)
+            using IDbConnection sqlCon = Connection;
             {
-                //build sql query 
-                //string tsql = @"select a.*, 
-                //                       ap.*
-                //                from Actions a 
-                //                     left join Approvals ap on a.ActionId = ap.ActionId
-                //                where 1 = 1 ";
-
                 string tsql = @"select ac.*, 
 	                                   ar.*,
 	                                   ap.*
                                 from Actions ac
 	                                 join SafetyEvents e on e.EventId = ac.EventId
-	                                 join ApprovalRoutings ar on ar.SeverityId = dbo.fnGetEventSeverity(isnull(e.InitialCategory, e.ResultingCategory))
+	                                 join ApprovalRoutings ar on ar.SeverityId = dbo.fnGetEventSeverity(isnull(e.ResultingCategory, e.InitialCategory))
 	                                 left join Approvals ap on ap.ActionId = ac.ActionId and ap.ApprovalLevelId = ar.ApprovalLevel
                                 where 1 = 1 ";
 
@@ -126,7 +115,7 @@ namespace EHS.Server.DataAccess.Repository
                     }
                 }
 
-                tsql += " order by ac.DueDate desc, ac.CompletionDate desc, ar.ApprovalLevel ";
+                tsql += " order by ac.ActionId --ac.DueDate desc, ac.CompletionDate desc, ar.ApprovalLevel ";
 
                 //var result = await sqlCon.QueryAsync<Action>(tsql, paramList);
 
@@ -175,14 +164,20 @@ namespace EHS.Server.DataAccess.Repository
             }
         }
 
-        public async Task<List<Action>> GetAllByEventAsync(int eventId)
+        public async Task<List<Action>> GetByEventId(int eventId)
         {
-            using (IDbConnection sqlCon = Connection)
+            using IDbConnection sqlCon = Connection;
             {
                 //build sql query 
-                string tsql = @"select a.*
-                                from Actions a 
-                                where a.eventId = @EventId";
+                string tsql = @"select ac.*, 
+	                                   ar.*,
+	                                   ap.*
+                                from Actions ac
+	                                 join SafetyEvents e on e.EventId = ac.EventId
+	                                 join ApprovalRoutings ar on ar.SeverityId = dbo.fnGetEventSeverity(isnull(e.ResultingCategory, e.InitialCategory))
+	                                 left join Approvals ap on ap.ActionId = ac.ActionId and ap.ApprovalLevelId = ar.ApprovalLevel
+                                where ac.eventId = @EventId
+                                order by ac.ActionId ";
 
                 //build param list 
                 var p = new
@@ -190,16 +185,54 @@ namespace EHS.Server.DataAccess.Repository
                     EventId = eventId
                 };
 
-                var result = await sqlCon.QueryAsync<Action>(tsql, p);
-                
-                return result.AsList();
+                var actionDictionary = new Dictionary<int, Action>();
+
+                var result = await sqlCon.QueryAsync<Action, ApprovalRouting, Approval, Action>(
+                    tsql,
+                    (action, approvalLevel, approval) =>
+                    {
+
+                        if (!actionDictionary.TryGetValue(action.ActionId, out Action actionEntry))
+                        {
+                            actionEntry = action;
+                            actionEntry.ApprovalsNeeded = new List<ApprovalRouting>();
+                            actionEntry.Approvals = new List<Approval>();
+                            actionDictionary.Add(actionEntry.ActionId, actionEntry);
+                        }
+
+                        if (approvalLevel != null)
+                        {
+                            //check if this approval level has already been added to the event
+                            if (!actionEntry.ApprovalsNeeded.Any(approvalLevelToAdd => approvalLevelToAdd.ApprovalRoutingId == approvalLevel.ApprovalRoutingId)
+                                //If this approval level hasnt already been approved 
+                                && (approval != null ? approvalLevel.ApprovalLevel != approval.ApprovalLevelId : true))
+                            {
+                                actionEntry.ApprovalsNeeded.Add(approvalLevel);
+                            }
+                        }
+
+                        if (approval != null)
+                        {
+                            //check if this approval has already been added to the event
+                            if (!actionEntry.Approvals.Any(approvalToAdd => approvalToAdd.ApprovalId == approval.ApprovalId))
+                            {
+                                approval.ApprovalLevel = approvalLevel;
+                                actionEntry.Approvals.Add(approval);
+                            }
+                        }
+
+                        return action;
+                    },
+                    p,
+                    splitOn: "ApprovalRoutingId, ApprovalId");
+
+                return actionDictionary.Values.ToList();
             }
         }
 
         public async Task<int> AddAsync(List<Action> ActionsToAdd)
-        {   
-
-            using (IDbConnection sqlCon = Connection)
+        {
+            using IDbConnection sqlCon = Connection;
             {
                 for (var i = 0; i < ActionsToAdd.Count; i++)
                 {
@@ -227,7 +260,7 @@ namespace EHS.Server.DataAccess.Repository
 
         public async Task<Action> UpdateAsync(Action ActionToUpdate)
         {
-            using (IDbConnection sqlCon = Connection)
+            using IDbConnection sqlCon = Connection;
             {
                 
                 var result = await sqlCon.ExecuteAsync(
@@ -253,7 +286,7 @@ namespace EHS.Server.DataAccess.Repository
 
         public async Task<int> DeleteAsync(int actionId, string userId)
         {
-            using (IDbConnection sqlCon = Connection)
+            using IDbConnection sqlCon = Connection;
             {
                 
                 var result = await sqlCon.ExecuteAsync(

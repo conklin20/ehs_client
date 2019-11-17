@@ -78,7 +78,8 @@ const Causes = (props) => {
 
         const allCauses = [ ...immediateCauses, ...rootCauses, ...contributingFactors]; 
         
-        //save causes to db 
+        //save causes to db
+        console.log(allCauses.length)
         if(allCauses.length){
             props.saveCauses(allCauses, props.currentUser.user.userId)
                 .then(res => {

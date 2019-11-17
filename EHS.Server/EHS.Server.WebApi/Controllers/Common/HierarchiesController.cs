@@ -52,7 +52,7 @@ namespace EHS.Server.WebApi.Controllers.Common
             catch (Exception ex)
             {
                 _logger.LogError(ex.InnerException, ex.Message);
-                return BadRequest(); 
+                return BadRequest(ex);
             }
         }
 
@@ -76,7 +76,7 @@ namespace EHS.Server.WebApi.Controllers.Common
             catch (Exception ex)
             {
                 _logger.LogError(ex.InnerException, ex.Message);
-                return BadRequest();
+                return BadRequest(ex);
             }
         }
 
@@ -100,7 +100,7 @@ namespace EHS.Server.WebApi.Controllers.Common
             catch (Exception ex)
             {
                 _logger.LogError(ex.InnerException, ex.Message);
-                return BadRequest();
+                return BadRequest(ex);
             }
         }
 
@@ -124,7 +124,7 @@ namespace EHS.Server.WebApi.Controllers.Common
             catch (Exception ex)
             {
                 _logger.LogError(ex.InnerException, ex.Message);
-                return BadRequest();
+                return BadRequest(ex);
             }
         }
 
@@ -149,7 +149,7 @@ namespace EHS.Server.WebApi.Controllers.Common
             catch (Exception ex)
             {
                 _logger.LogError(ex.InnerException, ex.Message);
-                return BadRequest();
+                return BadRequest(ex);
             }
         }
 
@@ -161,8 +161,9 @@ namespace EHS.Server.WebApi.Controllers.Common
             {
                 if (!ModelState.IsValid)
                 {
-                    _logger.LogError(BadRequest().ToString());
-                    return BadRequest();
+                    var modelState = new BadRequestObjectResult(ModelState);
+                    _logger.LogError(BadRequest(modelState).ToString());
+                    return BadRequest(modelState);
                 }
 
                 //map the new hierarchy from the incoming dto object to the domain/database model object so we can pass it to the Add() method
@@ -176,7 +177,7 @@ namespace EHS.Server.WebApi.Controllers.Common
             catch (Exception ex)
             {
                 _logger.LogError(ex.InnerException, ex.Message);
-                return BadRequest();
+                return BadRequest(ex);
             }
         }
 
@@ -188,8 +189,9 @@ namespace EHS.Server.WebApi.Controllers.Common
             {
                 if (!ModelState.IsValid)
                 {
-                    _logger.LogError(BadRequest().ToString());
-                    return BadRequest();
+                    var modelState = new BadRequestObjectResult(ModelState);
+                    _logger.LogError(BadRequest(modelState).ToString());
+                    return BadRequest(modelState);
                 }
 
                 //map the hierarchy from the incoming dto object to the domain/database model object so we can pass it to the Update() method
@@ -202,34 +204,28 @@ namespace EHS.Server.WebApi.Controllers.Common
             catch (Exception ex)
             {
                 _logger.LogError(ex.InnerException, ex.Message);
-                return BadRequest();
+                return BadRequest(ex);
             }
         }
 
-        // DELETE: api/ApiWithActions/5
-        [HttpDelete("{hierarchyId}")]
-        public async Task<ActionResult<Hierarchy>> Delete([FromRoute]int hierarchyId, [FromQuery]string userId)
-        {
-            try
-            {
-                if (!ModelState.IsValid)
-                {
-                    _logger.LogError(BadRequest().ToString());
-                    return BadRequest();
-                }
+        //// DELETE: api/ApiWithActions/5
+        //[HttpDelete("{hierarchyId}")]
+        //public async Task<ActionResult<Hierarchy>> Delete([FromRoute]int hierarchyId, [FromQuery]string userId)
+        //{
+        //    try
+        //    {
+        //        //map the hierarchy from the incoming dto object to the domain/database model object so we can pass it to the Delete() method
+        //        //var hierarchyToDelete = _mapper.Map<HierarchyDto, Hierarchy>(hierarchyToDeleteDto);
+        //        var deletedHierarchy = await _hierarchyRepo.DeleteAsync(hierarchyId, userId);
 
-                //map the hierarchy from the incoming dto object to the domain/database model object so we can pass it to the Delete() method
-                //var hierarchyToDelete = _mapper.Map<HierarchyDto, Hierarchy>(hierarchyToDeleteDto);
-                var deletedHierarchy = await _hierarchyRepo.DeleteAsync(hierarchyId, userId);
-
-                //map back to dto, to pass back to client 
-                return AcceptedAtAction("Delete", hierarchyId); 
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.InnerException, ex.Message);
-                return BadRequest();
-            }
-        }
+        //        //map back to dto, to pass back to client 
+        //        return AcceptedAtAction("Delete", hierarchyId); 
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(ex.InnerException, ex.Message);
+        //        return BadRequest();
+        //    }
+        //}
     }
 }

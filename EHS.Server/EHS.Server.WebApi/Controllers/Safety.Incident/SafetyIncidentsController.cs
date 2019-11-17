@@ -93,7 +93,7 @@ namespace EHS.Server.WebApi.Controllers.Common
             catch (Exception ex)
             {
                 _logger.LogError(ex.InnerException, ex.Message);
-                return BadRequest();
+                return BadRequest(ex);
             }
         }
 
@@ -118,7 +118,7 @@ namespace EHS.Server.WebApi.Controllers.Common
             catch (Exception ex)
             {
                 _logger.LogError(ex.InnerException, ex.Message);
-                return BadRequest();
+                return BadRequest(ex);
             }
         }
 
@@ -130,35 +130,21 @@ namespace EHS.Server.WebApi.Controllers.Common
             {
                 if (!ModelState.IsValid)
                 {
-                    _logger.LogError(BadRequest().ToString());
-                    return BadRequest();
+                    var modelState = new BadRequestObjectResult(ModelState);
+                    _logger.LogError(BadRequest(modelState).ToString());
+                    return BadRequest(modelState);
                 }
 
                 //map the new SafetyEvent from the incoming dto object to the domain/database model object so we can pass it to the Add() method
-                //var safetyEventToAdd = _mapper.Map<SafetyEventDto, SafetyEvent>(safetyEventToAddDto);
                 int newId = await _safetyEventsRepo.AddAsync(safetyEventToAdd);
 
-                //map back to dto, to pass back to client 
-                //return CreatedAtAction(nameof(SafetyIncidentsController.Get), "GetSafetyEvent",
-                //    new
-                //    {
-                //        eventId = newId,
-                //        version = "v1" //apiVersion.ToString()
-                //    },
-                //    safetyEventToAdd);
                 safetyEventToAdd.EventId = newId; // <--not how i should do this
-                return CreatedAtRoute(
-                    routeName: "GetSafetyEvent",
-                    routeValues: new { eventId = newId },
-                    value: safetyEventToAdd
-                    );
-                //return CreatedAtAction(nameof(SafetyIncidentsController.Get),"GetSafetyEvent", new { id = newId }, null);
-                //return CreatedAtRoute(nameof(SafetyIncidentsController.Get), "GetSafetyEvent", safetyEventToAdd);
+                return CreatedAtAction("Post", new { eventId = newId },  _mapper.Map<SafetyEvent, SafetyEventDto>(safetyEventToAdd));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex.InnerException, ex.Message);
-                return BadRequest();
+                return BadRequest(ex);
             }
         }
 
@@ -170,12 +156,12 @@ namespace EHS.Server.WebApi.Controllers.Common
             {
                 if (!ModelState.IsValid)
                 {
-                    _logger.LogError(BadRequest().ToString());
-                    return BadRequest();
+                    var modelState = new BadRequestObjectResult(ModelState); 
+                    _logger.LogError(BadRequest(modelState).ToString());
+                    return BadRequest(modelState);
                 }
 
                 //map the SafetyEvent from the incoming dto object to the domain/database model object so we can pass it to the Update() method
-                //var safetyEventToUpdate = _mapper.Map<SafetyEventDto, SafetyEvent>(safetyEventToUpdateDto);
                 var success = await _safetyEventsRepo.UpdateAsync(safetyEventToUpdate, eventId, userId);
 
                 //map back to dto, to pass back to client 
@@ -184,7 +170,7 @@ namespace EHS.Server.WebApi.Controllers.Common
             catch (Exception ex)
             {
                 _logger.LogError(ex.InnerException, ex.Message);
-                return BadRequest();
+                return BadRequest(ex);
             }
         }
 
@@ -194,21 +180,14 @@ namespace EHS.Server.WebApi.Controllers.Common
         {
             try
             {
-                if (!ModelState.IsValid)
-                {
-                    _logger.LogError(BadRequest().ToString());
-                    return BadRequest();
-                }
-
                 var deletedSafetyEventStatus = await _safetyEventsRepo.DeleteAsync(eventId, userId);
-
-
+                
                 return AcceptedAtAction("Delete", "SafetyIncidents");
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex.InnerException, ex.Message);
-                return BadRequest();
+                return BadRequest(ex);
             }
         }
     }

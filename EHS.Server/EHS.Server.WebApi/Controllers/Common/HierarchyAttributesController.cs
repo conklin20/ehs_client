@@ -66,7 +66,7 @@ namespace EHS.Server.WebApi.Controllers.Common
             catch (Exception ex)
             {
                 _logger.LogError(ex.InnerException, ex.Message);
-                return BadRequest();
+                return BadRequest(ex);
             }
         }
 
@@ -103,7 +103,7 @@ namespace EHS.Server.WebApi.Controllers.Common
             catch (Exception ex)
             {
                 _logger.LogError(ex.InnerException, ex.Message);
-                return BadRequest();
+                return BadRequest(ex);
             }
         }
 
@@ -140,7 +140,7 @@ namespace EHS.Server.WebApi.Controllers.Common
             catch (Exception ex)
             {
                 _logger.LogError(ex.InnerException, ex.Message);
-                return BadRequest();
+                return BadRequest(ex);
             }
         }
 
@@ -165,7 +165,7 @@ namespace EHS.Server.WebApi.Controllers.Common
             catch (Exception ex)
             {
                 _logger.LogError(ex.InnerException, ex.Message);
-                return BadRequest();
+                return BadRequest(ex);
             }
         }
 
@@ -177,8 +177,9 @@ namespace EHS.Server.WebApi.Controllers.Common
             {
                 if (!ModelState.IsValid)
                 {
-                    _logger.LogError(BadRequest().ToString());
-                    return BadRequest();
+                    var modelState = new BadRequestObjectResult(ModelState);
+                    _logger.LogError(BadRequest(modelState).ToString());
+                    return BadRequest(modelState);
                 }
 
                 //map the new hierarchyAttribute from the incoming dto object to the domain/database model object so we can pass it to the Add() method
@@ -193,7 +194,7 @@ namespace EHS.Server.WebApi.Controllers.Common
             catch (Exception ex)
             {
                 _logger.LogError(ex.InnerException, ex.Message);
-                return BadRequest();
+                return BadRequest(ex);
             }
         }
 
@@ -205,8 +206,9 @@ namespace EHS.Server.WebApi.Controllers.Common
             {
                 if (!ModelState.IsValid)
                 {
-                    _logger.LogError(BadRequest().ToString());
-                    return BadRequest();
+                    var modelState = new BadRequestObjectResult(ModelState);
+                    _logger.LogError(BadRequest(modelState).ToString());
+                    return BadRequest(modelState);
                 }
 
                 //map the hierarchyAttribute from the incoming dto object to the domain/database model object so we can pass it to the Update() method
@@ -219,7 +221,7 @@ namespace EHS.Server.WebApi.Controllers.Common
             catch (Exception ex)
             {
                 _logger.LogError(ex.InnerException, ex.Message);
-                return BadRequest();
+                return BadRequest(ex);
             }
         }
 
@@ -231,8 +233,8 @@ namespace EHS.Server.WebApi.Controllers.Common
             {
                 if (!ModelState.IsValid)
                 {
-                    _logger.LogError(BadRequest().ToString());
-                    return BadRequest();
+                    _logger.LogError(BadRequest(Response).ToString());
+                    return BadRequest(Response);
                 }
 
                 //map the hierarchyAttribute from the incoming dto object to the domain/database model object so we can pass it to the Delete() method
@@ -245,7 +247,7 @@ namespace EHS.Server.WebApi.Controllers.Common
             catch (Exception ex)
             {
                 _logger.LogError(ex.InnerException, ex.Message);
-                return BadRequest();
+                return BadRequest(ex);
             }
         }
     }

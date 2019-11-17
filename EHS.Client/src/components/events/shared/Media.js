@@ -104,8 +104,9 @@ const Media = (props) => {
                             acceptedFiles={['image/*', 'video/*', 'application/*']}
                             maxFileSize={10500000}  //bytes (~10 mb)
                             showPreviews={false}
-                            getFileAddedMessage={() => `File(s) successfully queued for upload. ` }
-                            getFileRemovedMessage={() => `File successfuly removed from queue`}
+                            showAlerts={false}
+                            // getFileAddedMessage={() => `File(s) successfully queued for upload. ` }
+                            // getFileRemovedMessage={() => `File successfuly removed from queue`}
                             showPreviewsInDropzone={true}
                             showFileNamesInPreview={true}
                         />

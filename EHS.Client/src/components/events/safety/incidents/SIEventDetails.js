@@ -1,5 +1,6 @@
 import React, { Fragment } from 'react';
 import { Typography, Grid, TextField, Divider, Checkbox, FormControlLabel  } from '@material-ui/core'; 
+import WarningIcon from '@material-ui/icons/Warning';
 import AutoComplete from '../../../shared/AutoComplete'; 
 import CustomSlider from '../../../shared/Slider'; 
 import filterLookupDataByKey from '../../../../helpers/filterLookupDataByKey'; 
@@ -352,15 +353,21 @@ const SIEventDetails = (props) => {
                         </AutoComplete> 
                     </Grid>
                     <Grid item xs={12}>
-                        {currentUser.user.roleLevel === 5 //Safety Admin and Health
+                        {currentUser.user.roleLevel == 5 //Safety Admin and Health
                             ?
-                                <Fragment>
+                                <div className={classes.safetySection}>
                                     <Divider gutterBottom/>
                                     <Typography variant='h6' >
                                         Safety Only
                                     </Typography>
                                     <Typography variant='subtitle2' >
                                         If the result of the incident changed (Ex. a First Aid incident turned into a Recordable), you can change it here. 
+                                    </Typography>
+
+                                    <WarningIcon fontSize="small" color="action" style={{paddingTop: '3px', paddingRight: '3px'}} />
+                                    <Typography variant="overline">
+                                        Caution: This will potentially cause the Approval requirements to change. If the event is closed and the Resulting 
+                                        Category being applied to the event requires further approval, the event will automatically be re-opened. 
                                     </Typography>
                                     <Grid item xs={12} md={3}>							
                                         <AutoComplete
@@ -374,7 +381,7 @@ const SIEventDetails = (props) => {
                                         >
                                         </AutoComplete> 
                                     </Grid>
-                                </Fragment>
+                                </div>
                             : null 
                         }
                     </Grid>

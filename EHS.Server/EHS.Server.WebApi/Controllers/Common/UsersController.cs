@@ -86,7 +86,7 @@ namespace EHS.Server.WebApi.Controllers.Common
             catch (Exception ex)
             {
                 _logger.LogError(ex.InnerException, ex.Message);
-                return BadRequest();
+                return BadRequest(ex);
             }
         }
 
@@ -111,7 +111,7 @@ namespace EHS.Server.WebApi.Controllers.Common
             catch (Exception ex)
             {
                 _logger.LogError(ex.InnerException, ex.Message);
-                return BadRequest();
+                return BadRequest(ex);
             }
         }
 
@@ -123,8 +123,9 @@ namespace EHS.Server.WebApi.Controllers.Common
             {
                 if (!ModelState.IsValid)
                 {
-                    _logger.LogError(BadRequest().ToString());
-                    return BadRequest();
+                    var modelState = new BadRequestObjectResult(ModelState);
+                    _logger.LogError(BadRequest(modelState).ToString());
+                    return BadRequest(modelState);
                 }
 
                 //map the new user from the incoming dto object to the domain/database model object so we can pass it to the Add() method
@@ -138,7 +139,7 @@ namespace EHS.Server.WebApi.Controllers.Common
             catch (Exception ex)
             {
                 _logger.LogError(ex.InnerException, ex.Message);
-                return BadRequest();
+                return BadRequest(ex);
             }
         }
 
@@ -150,8 +151,9 @@ namespace EHS.Server.WebApi.Controllers.Common
             {
                 if (!ModelState.IsValid)
                 {
-                    _logger.LogError(BadRequest().ToString());
-                    return BadRequest();
+                    var modelState = new BadRequestObjectResult(ModelState);
+                    _logger.LogError(BadRequest(modelState).ToString());
+                    return BadRequest(modelState);
                 }
 
                 //map the user from the incoming dto object to the domain/database model object so we can pass it to the Update() method
@@ -164,34 +166,28 @@ namespace EHS.Server.WebApi.Controllers.Common
             catch (Exception ex)
             {
                 _logger.LogError(ex.InnerException, ex.Message);
-                return BadRequest();
+                return BadRequest(ex);
             }
         }
 
-        // DELETE: api/ApiWithActions/5
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<User>> Delete([FromRoute]string userIdToDelete, [FromQuery]string userId)
-        {
-            try
-            {
-                if (!ModelState.IsValid)
-                {
-                    _logger.LogError(BadRequest().ToString());
-                    return BadRequest();
-                }
-                
-                //map the user from the incoming dto object to the domain/database model object so we can pass it to the Delete() method
-                //var userToDelete = _mapper.Map<UserDto, User>(userToDeleteDto);
-                var deletedUserId = await _userRepo.DeleteAsync(userIdToDelete, userId);
+        //// DELETE: api/ApiWithActions/5
+        //[HttpDelete("{id}")]
+        //public async Task<ActionResult<User>> Delete([FromRoute]string userIdToDelete, [FromQuery]string userId)
+        //{
+        //    try
+        //    {
+        //        //map the user from the incoming dto object to the domain/database model object so we can pass it to the Delete() method
+        //        //var userToDelete = _mapper.Map<UserDto, User>(userToDeleteDto);
+        //        var deletedUserId = await _userRepo.DeleteAsync(userIdToDelete, userId);
 
-                //map back to dto, to pass back to client 
-                return Accepted(deletedUserId);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.InnerException, ex.Message);
-                return BadRequest();
-            }
-        }
+        //        //map back to dto, to pass back to client 
+        //        return Accepted(deletedUserId);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(ex.InnerException, ex.Message);
+        //        return BadRequest(ex);
+        //    }
+        //}
     }
 }

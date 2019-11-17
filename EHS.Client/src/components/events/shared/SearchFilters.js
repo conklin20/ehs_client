@@ -20,6 +20,8 @@ import {
 	TextField, 
 	Typography,
 } from '@material-ui/core';
+import { S_I_STATUS } from '../../../helpers/eventStatusEnum';
+
 
 const useStyles = makeStyles(theme => ({
 	root: {
@@ -68,7 +70,7 @@ const SearchFilters = props => {
 	const statuses = lookupData.logicalHierarchyAttributes
 		.filter(d => d.key === 'Statuses')
 		.sort()
-		.filter(s => s.value !== 'Draft') //filter our Drafts, you dont want to be able to look up other peoples drafts
+		.filter(s => s.value !== S_I_STATUS.DRAFT) //filter our Drafts, you dont want to be able to look up other peoples drafts
 		.map(status => ({		
 			// value: status.hierarchyAttributeId, 
 			value: status.value, 

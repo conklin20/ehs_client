@@ -1,20 +1,36 @@
 import React, { useState, useEffect, Fragment } from 'react';
-import { Typography, Grid, TextField, Divider, Checkbox, FormControlLabel, Button  } from '@material-ui/core'; 
+import { Typography, Grid, TextField, Divider, Checkbox, FormControlLabel, Button, Badge  } from '@material-ui/core'; 
 import AutoComplete from '../../shared/AutoComplete'; 
 import filterLookupDataByKey from '../../../helpers/filterLookupDataByKey'; 
 import filterEmployeeList from '../../../helpers/filterEmployeeList'; 
 import formatDate from '../../../helpers/formatDate'; 
 import ActionList from './ActionList';
 import { addNotification } from '../../../store/actions/notifications';
-import { removeAction, addAction, fetchActions, updateAction } from '../../../store/actions/actions';
+import { removeAction, addAction, fetchActionsByEventId, updateAction } from '../../../store/actions/actions';
 import { addApproval } from '../../../store/actions/approvals';
 import { connect } from "react-redux";
+import { makeStyles } from '@material-ui/styles';
+import { S_I_STATUS } from '../../../helpers/eventStatusEnum';
+
+
+const useStyles = makeStyles(theme => ({
+	actions: {
+        textAlign: 'center',
+    },
+    badge: {
+        marginLeft: theme.spacing(3), 
+    }, 
+    buttonContainer: {
+        textAlign: 'center',
+    },
+  }));
 
 
 const Actions = (props) => {
-    const classes = props.useStyles();
+    const componentClasses = useStyles(); 
+    const classes = Object.assign(componentClasses, props.useStyles()); // combining the styles from the parent component with this components styles
 
-    const { lookupData, currentUser, useStyles, event } = props; 
+    const { lookupData, currentUser, event, refreshActions } = props; 
     
     const [assignedActions, setAssignedActions] = useState([])
     const [newAction, setNewAction] = useState({
@@ -26,12 +42,13 @@ const Actions = (props) => {
     // Essentially what was componentDidMount and componentDidUpdate before Hooks
 	useEffect(() => {
         //get Actions 
-        props.fetchActions(`?eventId=${event.eventId}`)
+        props.fetchActionsByEventId(event.eventId)
             .then(res => {
-                setAssignedActions(res)
-            })
-            .catch(err => {
-                console.log(err)
+                if(res.status === 200){
+                    setAssignedActions(res.data)
+                } else {
+                    console.log(res)
+                }
             })
 
 		return () => {
@@ -95,15 +112,16 @@ const Actions = (props) => {
         if(newActionList.length){       
             props.addAction(newActionList)
                 .then(res => {
-                    props.fetchActions(`?eventId=${event.eventId}`)
+                    props.fetchActionsByEventId(event.eventId)
                         .then(res => {
-                            // console.log(res); 
-                            setNewActionList([]);  //clear out the pending list 
-                            setAssignedActions([...res]); //append the newly saved actions to the assigned actions state
+                            if(res.status === 200){
+                                refreshActions();
+                                setNewActionList([]);  //clear out the pending list 
+                                setAssignedActions([...res.data]); //append the newly saved actions to the assigned actions state
+                            } else {
+                                console.log(res); 
+                            }
                         })
-                        .catch(err => {
-                            console.log(err); 
-                        });
                 });                    
             
         };
@@ -133,21 +151,23 @@ const Actions = (props) => {
             }
             
             //save to DB 
-            props.addApproval(approval)
+            props.addApproval(approval, currentUser.user.approvalLevelName)
                 .then(res => {
-                    //update the state
-                    //not ideal to re-grab all actions after an approval, but it works for now
-                    props.fetchActions(`?eventId=${event.eventId}`)
-                        .then(res => {
-                            setAssignedActions(res)
-                        })
-                        .catch(err => {
-                            console.log(err)
-                        })
+                    if(res.status === 201){
+                        //update the state
+                        //not ideal to re-grab all actions after an approval, but it works for now
+                        props.fetchActionsByEventId(event.eventId)
+                            .then(res => {
+                                if(res.status === 200){
+                                    setAssignedActions(res.data)
+                                } else {
+                                    console.log(res)
+                                }
+                            })
+                    } else {
+                        console.log(res)
+                    }
                 })
-                .catch(err => {
-                    console.log(err)
-                }); 
         };
     };
 
@@ -174,107 +194,122 @@ const Actions = (props) => {
                 Actions
             </Typography>
             <Typography className={classes.caption} variant="caption" display="block" gutterBottom>
-                Instructions: This Action form is reserved for actions that were immediately taken following the event.
-                You will enter corrective and any other action types in a seperate form later.
+                Instructions: Assign actions to users (requires EHS account), mark actions assigned to you as complete, 
+                and approve actions requiring your approval
             </Typography>  
             <Divider className={classes.divider}/>
-
-            <form onSubmit={handleNewActionAssignment}>
-                <Grid container spacing={2}>
-                    <Grid item xs={12} md={3}>							
-                        <AutoComplete
-                            required
-                            name="actionType"
-                            options={actionTypes}
-                            label="Action Type"                        
-                            placeholder="Select Type"
-                            handleChange={handleAutoCompleteChange}
-                            className={classes.formControl}
-                        >
-                        </AutoComplete> 
-                    </Grid>
-                    <Grid item xs={12} md={3}>							
-                        <AutoComplete
-                            required
-                            name='assignedTo'
-                            options={employees}
-                            label='Assigned To'                        
-                            placeholder='Select Employee'
-                            handleChange={handleAutoCompleteChange}
-                            className={classes.formControl}
-                        >
-                        </AutoComplete> 
-                    </Grid>
-                    <Grid item xs={12} md={3}>
-                        <TextField
-                            required
-                            type='date'
-                            label='Due Date'
-                            className={classes.formControl}
-                            defaultValue={newAction.dueDate}
-                            onChange={handleChange('actions', 'dueDate')}
-                            variant='outlined'
-                        />
-                    </Grid>
-                    <Grid item xs={12} md={3}>
-                        <FormControlLabel
-                            control={
-                                <Checkbox
-                                    color='primary'
-                                    checked={newAction.completed ? true : false}
-                                    onChange={handleChange('actions', 'completed')}
+            {event.eventStatus !== S_I_STATUS.CLOSED 
+                ?
+                <Fragment>
+                    <form onSubmit={handleNewActionAssignment}>
+                        <Grid container spacing={2}>
+                            <Grid item xs={12} md={3}>							
+                                <AutoComplete
+                                    required
+                                    name="actionType"
+                                    options={actionTypes}
+                                    label="Action Type"                        
+                                    placeholder="Select Type"
+                                    handleChange={handleAutoCompleteChange}
+                                    className={classes.formControl}
+                                >
+                                </AutoComplete> 
+                            </Grid>
+                            <Grid item xs={12} md={3}>							
+                                <AutoComplete
+                                    required
+                                    name='assignedTo'
+                                    options={employees}
+                                    label='Assigned To'                        
+                                    placeholder='Select Employee'
+                                    handleChange={handleAutoCompleteChange}
+                                    className={classes.formControl}
+                                >
+                                </AutoComplete> 
+                            </Grid>
+                            <Grid item xs={12} md={3}>
+                                <TextField
+                                    required
+                                    type='date'
+                                    label='Due Date'
+                                    className={classes.formControl}
+                                    defaultValue={newAction.dueDate}
+                                    onChange={handleChange('actions', 'dueDate')}
+                                    variant='outlined'
                                 />
-                            }
-                            label='Completed?'
-                        />                    
-                    </Grid> 
-                    <Grid item xs={12}>		
-                        <TextField
-                            required
-                            className={classes.formControl}
-                            label='Action to Take'
-                            multiline
-                            fullWidth
-                            rows='3'
-                            // value={values.whatHappened}
-                            onChange={handleChange('actions', 'actionToTake')}
-                            // helperText='Explain in as much detail possible what actions were taken at the time of the event'
-                            variant="outlined"
-                        />                    
-                    </Grid>     
-                    <Button 
-                        type="submit"
-                        name='assignNewAction'
-                        variant='contained' 
-                        color="secondary" 
-                        className={classes.button}
-                    >
-                        Create Action
-                    </Button>
-                </Grid>
-            </form>  
-            <Divider className={classes.divider}/>
-            {assignedActions.length || newActionList.length  
-                ? 
-                <Grid container spacing={2}>
-                    <ActionList
-                        useStyles={useStyles} 
-                        actions={assignedActions ? assignedActions : []}
-                        pendActions={newActionList ? newActionList : []}
-                        employees={lookupData['employees']}
-                        currentUser={currentUser}
-                        handleCompleteAction={handleCompleteAction}
-                        handleApproveAction={handleApproveAction}
-                        handleDelete={handleDelete}
-                        handleSavePendingActions={handleSavePendingActions}
-                        event={event}
-                        />
-                </Grid>
-                : 
-                <Typography variant='h4' gutterBottom>
-                    {event.eventStatus === 'Draft' ? 'No Actions Assigned Yet' : 'Loading Actions...'}
-                </Typography>
+                            </Grid>
+                            <Grid item xs={12} md={3}>
+                                <FormControlLabel
+                                    control={
+                                        <Checkbox
+                                            color='primary'
+                                            checked={newAction.completed ? true : false}
+                                            onChange={handleChange('actions', 'completed')}
+                                        />
+                                    }
+                                    label='Completed?'
+                                />                    
+                            </Grid> 
+                            <Grid item xs={12}>		
+                                <TextField
+                                    required
+                                    className={classes.formControl}
+                                    label='Action to Take'
+                                    multiline
+                                    fullWidth
+                                    rows='3'
+                                    // value={values.whatHappened}
+                                    onChange={handleChange('actions', 'actionToTake')}
+                                    // helperText='Explain in as much detail possible what actions were taken at the time of the event'
+                                    variant="outlined"
+                                />                    
+                            </Grid>     
+                            <Grid item xs={12}>	
+                                <div className={classes.buttonContainer}>
+                                    <Button 
+                                        type="submit"
+                                        name='assignNewAction'
+                                        variant='contained' 
+                                        color="secondary" 
+                                        className={classes.button}
+                                    >
+                                        Create Action
+                                    </Button>	
+                                </div>
+                            </Grid>
+                        </Grid>
+                    </form>  
+                    <Divider className={classes.divider}/>
+                </Fragment>
+                : null 
             }
+
+            <div className={classes.actions}>
+                {assignedActions.length || newActionList.length                  
+                    ?
+                        <Fragment>
+                            <Typography variant='h4' gutterBottom>
+                                Assigned Actions
+                                <Badge color="primary" badgeContent={assignedActions.length} className={classes.badge} />
+                            </Typography>
+                            <ActionList
+                                actions={assignedActions ? assignedActions : []}
+                                pendActions={newActionList ? newActionList : []}
+                                employees={lookupData['employees']}
+                                currentUser={currentUser}
+                                handleCompleteAction={handleCompleteAction}
+                                handleApproveAction={handleApproveAction}
+                                handleDelete={handleDelete}
+                                handleSavePendingActions={handleSavePendingActions}
+                                event={event}
+                            />
+                        </Fragment>
+                    : 
+                    <Typography variant='h4' gutterBottom>
+                        {event.eventStatus === S_I_STATUS.DRAFT ? 'No Actions Assigned Yet' : 'Loading Actions...'}
+                    </Typography>
+                }
+            </div>
             <Divider className={classes.divider}/>   
         </Fragment>
     );
@@ -291,7 +326,7 @@ function mapStateToProps(state) {
 export default connect(mapStateToProps, { 
     removeAction, 
     addAction,
-    fetchActions, 
+    fetchActionsByEventId, 
     updateAction, 
     addApproval
 })(Actions); 

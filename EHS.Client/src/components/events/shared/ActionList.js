@@ -4,9 +4,12 @@ import { makeStyles } from '@material-ui/core/styles';
 import ActionItem from './ActionItem';
 
 const useStyles = makeStyles(theme => ({
-    cardContainer: {
-        display: 'flex', 
-
+    pendActions: {
+        border: 'solid yellow 4px',
+    }, 
+    button: {
+        margin: theme.spacing(2), 
+        width: '20%'
     },
 })); 
 
@@ -24,7 +27,7 @@ const ActionList = (props) => {
         pendActions, 
         handleSavePendingActions, 
     } = props; 
-
+    
     const assignedActions = actions
         .map(a => {
         return (
@@ -62,38 +65,28 @@ const ActionList = (props) => {
             {/* IF There are no pending actions, dont display the pending actions section  */}
             { pendingActions.length ? 
                 <Paper>
-                    <Typography variant='h4' gutterBottom>
-                        Pending Actions (Need Saved)
-                    </Typography>
-                    <Grid container spacing={2}>
-                        {pendingActions}
-                    </Grid>                         
-                    <Button 
-                        name='assignNewAction'
-                        variant='contained' 
-                        color="secondary" 
-                        className={classes.button}
-                        onClick={handleSavePendingActions}
-                    >
-                        Save Pending Actions
-                    </Button>
-                    <Divider className={classes.divider} />
+                    <div className={classes.pendActions}>
+                        <Typography variant='h4' gutterBottom>
+                            Pending Actions (Need Saved)
+                        </Typography>
+                        {pendingActions}         
+                        <Typography gutterBottom> 
+                            <Button 
+                                name='assignNewAction'
+                                variant='contained' 
+                                color="secondary" 
+                                className={classes.button}
+                                onClick={handleSavePendingActions}
+                            >
+                                Save Pending Actions
+                            </Button> 
+                        </Typography> 
+                    </div>
                 </Paper>
                 : null 
             }
 
-            {/* IF There are no assigned actions, dont display the assigned actions section  */}
-            { assignedActions.length ? 
-                <Paper>
-                    <Typography variant='h4' gutterBottom>
-                        Actions Currently Assigned
-                    </Typography>
-                    <Grid container spacing={2}>
-                        {assignedActions}  
-                    </Grid>
-                </Paper>
-                : null 
-            }
+            {assignedActions}
         </Fragment>
     )
 }

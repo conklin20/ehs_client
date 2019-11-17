@@ -1,16 +1,12 @@
 import { apiCall } from '../../services/api'; 
 import { addNotification } from './notifications'; 
 import { LOAD_SAFETY_INCIDENTS } from '../actionTypes'; //not including a REMOVE Action because the Drafts arent being stored in the redux store 
+import { EVENT_DRAFT_ADDED, EVENT_DRAFT_DELETED, EVENT_SUBMITTED } from '../../helpers/notificationMessages'; 
 
 export const loadSafetyIncidents = safetyIncidents => ({
 	type: LOAD_SAFETY_INCIDENTS, 
 	safetyIncidents
 });
-
-// export const loadEvent = event => ({
-// 	type: LOAD_EVENT, 
-// 	event
-// })
 
 export const fetchSafetyIncidents = (query) => {
 	// console.log(query)
@@ -21,7 +17,7 @@ export const fetchSafetyIncidents = (query) => {
 			})
 			.catch(res => {	
 				console.log(res)
-				dispatch(addNotification(`TODO: Customize Error Message. ${res.status}`, 'error'));
+				dispatch(addNotification(`TODO: Customize Error Message. ${res.response.status} (see console)`, 'error'));
 		});
 	};
 };
@@ -36,7 +32,7 @@ export const fetchEvent = (eventId) => {
 			})
 			.catch(res => {	
 				console.log(res)
-				dispatch(addNotification(`TODO: Customize Error Message. ${res.status}`, 'error'));
+				dispatch(addNotification(`TODO: Customize Error Message. ${res.response.status} (see console)`, 'error'));
 		});
 	};
 };
@@ -50,7 +46,7 @@ export const fetchDrafts = (query) => {
 			})
 			.catch(res => {	
 				console.log(res)
-				dispatch(addNotification(`TODO: Customize Error Message. ${res.status}`, 'error'));
+				dispatch(addNotification(`TODO: Customize Error Message. ${res.response.status} (see console)`, 'error'));
 		});
 	};
 };
@@ -60,12 +56,14 @@ export const postNewSafetyIncident = (safetyEventToAdd) => (dispatch, getState) 
 	return apiCall('post', '/safetyincidents', safetyEventToAdd )
 		.then(res => {
 			//success status = 201
+            dispatch(addNotification(EVENT_DRAFT_ADDED.replace('{0}', res.data.eventId), 'success'));
 			return res
 			// dispatch(res);
 		})
         .catch(res => {	
             console.log(res)
-            dispatch(addNotification(`TODO: Customize Error Message. ${res.status}`, 'error'));
+			dispatch(addNotification(`TODO: Customize Error Message. ${res.response.status} (see console)`, 'error'));
+			return res; 
 		})
 }
 
@@ -74,12 +72,21 @@ export const updateSafetyIncident = (safetyEventToUpdate, userId) => (dispatch, 
 	return apiCall('put', `/safetyincidents/${safetyEventToUpdate.eventId}?userId=${userId}`, safetyEventToUpdate )
 		.then(res => {
 			//success status = 202
+            // dispatch(addNotification(`Event ${safetyEventToUpdate.eventId} successfully updated!`, 'success'));
 			return res
-			// dispatch(res);
 		})
         .catch(res => {	
-            console.log(res)
-            dispatch(addNotification(`TODO: Customize Error Message. ${res.status}`, 'error'));
+			//check for validation (ModelValidation) error's from API.
+			//since these are coming from the API, they come with the verbiage, so we cant use the notificationMessage.js like normal
+			if(res.response.data && res.response.data){
+				const validationErrors = Object.keys(res.response.data.value)
+											.reduce((acc, val) => {
+												return acc.concat(` ${res.response.data.value[val]}`)
+											},[])
+				console.log(validationErrors)
+				dispatch(addNotification(`Validation Error(s): ${validationErrors.join()}`, 'error'));
+			}
+			return res
 		})
 }
 
@@ -88,10 +95,11 @@ export const deleteSafetyIncident = (eventId, userId) => (dispatch, getState) =>
 	return apiCall('delete', `/safetyincidents/${eventId}?userId=${userId}` )
 		.then(res => {
 			//success status = 202
+            dispatch(addNotification(EVENT_DRAFT_DELETED.replace('{0}', eventId), 'success'));
 			return res.status
 		})
         .catch(res => {	
             console.log(res)
-            dispatch(addNotification(`TODO: Customize Error Message. ${res.status}`, 'error'));
+			dispatch(addNotification(`TODO: Customize Error Message. ${res.response.status} (see console)`, 'error'));
 		})
 }

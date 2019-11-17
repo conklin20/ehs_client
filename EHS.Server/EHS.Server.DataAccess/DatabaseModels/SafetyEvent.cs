@@ -14,38 +14,39 @@ namespace EHS.Server.DataAccess.DatabaseModels
     { 
         public int EventId { get; set; }
         [Display(Name="Event Type")]
-        [AllowNullWhenDraft, MaxLength(50)]
+        [ConditionallyAllowNulls, MaxLength(50)]
         public string EventType { get; set; }       //From HierarchyAttribute
         [Display(Name = "Event Status")]
-        [AllowNullWhenDraft, MaxLength(50)]
+        [ConditionallyAllowNulls, MaxLength(50)]
         public string EventStatus { get; set; }     //From HierarchyAttribute
         [Display(Name = "Reported By")]
         public string ReportedBy { get; set; }
         [Display(Name = "Reported On")]
-        [AllowNullWhenDraft]
+        [ConditionallyAllowNulls]
         public DateTime ReportedOn { get; set; }
         [Display(Name = "Event Date")]
-        [AllowNullWhenDraft, DataType(DataType.DateTime)]
+        [ConditionallyAllowNulls, DataType(DataType.DateTime)]
         public DateTime EventDate { get; set; }
         //[Display(Name = "Event Time")]
-        //[AllowNullWhenDraft, DataType(DataType.Time)]
+        //[ConditionallyAllowNulls, DataType(DataType.Time)]
         public TimeSpan EventTime { get; set; }
+        [ConditionallyAllowNulls]
         public string EmployeeId { get; set; }
         [Display(Name = "Job Title")]
-        [AllowNullWhenDraft, MaxLength(50)]
+        [ConditionallyAllowNulls, MaxLength(50)]
         public string JobTitle { get; set; }        //From HierarchyAttribute
-        [AllowNullWhenDraft, MaxLength(50)]
+        [ConditionallyAllowNulls, MaxLength(50)]
         public string Shift { get; set; }           //From HierarchyAttribute
         [Display(Name = "What Happened")]
-        [AllowNullWhenDraft]
+        [ConditionallyAllowNulls]
         public string WhatHappened { get; set; }
         public bool IsInjury { get; set; }
         public bool IsIllness { get; set; }
         [Display(Name = "Hours Worked Prior")]
-        [AllowNullWhenDraft, Range(.5, 24)]
+        [ConditionallyAllowNulls, Range(.5, 24)]
         public decimal HoursWorkedPrior { get; set; }
         [Display(Name = "Initial Catagory")]
-        [AllowNullWhenDraft, MaxLength(50),]
+        [Required, MaxLength(50),]
         public string InitialCategory { get; set; } //From HierarchyAttribute
         [Display(Name = "Resulting Catagory")]
         [MaxLength(50)]
@@ -69,19 +70,19 @@ namespace EHS.Server.DataAccess.DatabaseModels
         [MaxLength(50)]
         public string LocalePlantArea { get; set; } //From HierarchyAttribute (Locale/Building Hierarchy)
         [Display(Name = "Work Environment")]
-        [AllowNullWhenDraft, MaxLength(50)]
+        [ConditionallyAllowNulls, MaxLength(50)]
         public string WorkEnvironment { get; set; } //From HierarchyAttribute
         [Display(Name = "Nature of Injury")]
-        [AllowNullWhenDraft, MaxLength(50)]
+        [ConditionallyAllowNulls, MaxLength(50)]        
         public string NatureOfInjury { get; set; }  //From HierarchyAttribute
         [Display(Name = "Body Part")]
-        [AllowNullWhenDraft, MaxLength(50)]
+        [ConditionallyAllowNulls, MaxLength(50)]
         public string BodyPart { get; set; }        //From HierarchyAttribute
         [Display(Name = "First Aid Type")]
-        [MaxLength(50)]
+        [ConditionallyAllowNulls, MaxLength(50)]
         public string FirstAidType { get; set; }    //From HierarchyAttribute
         [Display(Name = "Off Plant Medical Facility")]
-        [MaxLength(50)]
+        [ConditionallyAllowNulls, MaxLength(50)]
         public string OffPlantMedicalFacility { get; set; } //From HierarchyAttribute
         [Display(Name = "Material Involved")]
         [MaxLength(50)]

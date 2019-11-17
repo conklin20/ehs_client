@@ -70,7 +70,7 @@ namespace EHS.Server.WebApi.Controllers.Common
             catch (Exception ex)
             {
                 _logger.LogError(ex.InnerException, ex.Message);
-                return BadRequest();
+                return BadRequest(ex);
             }
         }
 
@@ -80,7 +80,7 @@ namespace EHS.Server.WebApi.Controllers.Common
             try
             {
                 //get the action 
-                var actions = await _actionRepo.GetAllByEventAsync(eventId);
+                var actions = await _actionRepo.GetByEventId(eventId);
 
                 if (actions == null)
                 {
@@ -94,7 +94,7 @@ namespace EHS.Server.WebApi.Controllers.Common
             catch (Exception ex)
             {
                 _logger.LogError(ex.InnerException, ex.Message);
-                return BadRequest();
+                return BadRequest(ex);
             }
         }
 
@@ -119,7 +119,7 @@ namespace EHS.Server.WebApi.Controllers.Common
             catch (Exception ex)
             {
                 _logger.LogError(ex.InnerException, ex.Message);
-                return BadRequest();
+                return BadRequest(ex);
             }
         }
 
@@ -156,8 +156,9 @@ namespace EHS.Server.WebApi.Controllers.Common
             {
                 if (!ModelState.IsValid)
                 {
-                    _logger.LogError(BadRequest().ToString());
-                    return BadRequest();
+                    var modelState = new BadRequestObjectResult(ModelState);
+                    _logger.LogError(BadRequest(modelState).ToString());
+                    return BadRequest(modelState);
                 }
 
                 //map the new action from the incoming dto object to the domain/database model object so we can pass it to the Add() method
@@ -173,7 +174,7 @@ namespace EHS.Server.WebApi.Controllers.Common
             catch (Exception ex)
             {
                 _logger.LogError(ex.InnerException, ex.Message);
-                return BadRequest();
+                return BadRequest(ex);
             }
         }
 
@@ -185,12 +186,12 @@ namespace EHS.Server.WebApi.Controllers.Common
             {
                 if (!ModelState.IsValid)
                 {
-                    _logger.LogError(BadRequest().ToString());
-                    return BadRequest();
+                    var modelState = new BadRequestObjectResult(ModelState);
+                    _logger.LogError(BadRequest(modelState).ToString());
+                    return BadRequest(modelState);
                 }
 
                 //map the action from the incoming dto object to the domain/database model object so we can pass it to the Update() method
-                //var actionToUpdate = _mapper.Map<ActionDto, DataAccess.DatabaseModels.Action>(actionToUpdateDto);
                 var updatedAction = await _actionRepo.UpdateAsync(actionToUpdate);
 
                 //map back to dto, to pass back to client 
@@ -199,7 +200,7 @@ namespace EHS.Server.WebApi.Controllers.Common
             catch (Exception ex)
             {
                 _logger.LogError(ex.InnerException, ex.Message);
-                return BadRequest();
+                return BadRequest(ex);
             }
         }
 
@@ -209,15 +210,14 @@ namespace EHS.Server.WebApi.Controllers.Common
         {
             try
             {
-
                 if (!ModelState.IsValid)
                 {
-                    _logger.LogError(BadRequest().ToString());
-                    return BadRequest();
+                    var modelState = new BadRequestObjectResult(ModelState);
+                    _logger.LogError(BadRequest(modelState).ToString());
+                    return BadRequest(modelState);
                 }
 
                 //map the action from the incoming dto object to the domain/database model object so we can pass it to the Delete() method
-                //var actionToDelete = _mapper.Map<ActionDto, DataAccess.DatabaseModels.Action>(actionToDeleteDto);
                 var deletedAction = await _actionRepo.DeleteAsync(actionId, userId);
 
                 //map back to dto, to pass back to client 
@@ -226,7 +226,7 @@ namespace EHS.Server.WebApi.Controllers.Common
             catch (Exception ex)
             {
                 _logger.LogError(ex.InnerException, ex.Message);
-                return BadRequest();
+                return BadRequest(ex);
             }
         }
     }
