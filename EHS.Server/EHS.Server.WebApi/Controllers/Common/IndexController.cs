@@ -32,6 +32,15 @@ namespace EHS.Server.WebApi.Controllers.Common
         {
             _logger.LogInformation($"Web API Is Running! Environment: {environment}");
             _logger.LogWarning("Warning, logging to a database is slow as...");
+
+            try
+            {
+                throw new DivideByZeroException();
+            }
+            catch(DivideByZeroException ex)
+            {
+                _logger.LogError("Test Error", ex.InnerException); 
+            }
             return new string[] 
             { 
                 "Web API Is Running!", 

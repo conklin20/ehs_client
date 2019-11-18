@@ -55,6 +55,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\EHS.Server.DataAccess\EHS.Server.DataAccess.csproj" />
+    <ProjectReference Include="..\EHS.Server.Worker\EHS.Server.Worker.csproj" />
   </ItemGroup>
 
 </Project>
