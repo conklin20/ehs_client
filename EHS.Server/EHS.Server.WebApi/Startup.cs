@@ -84,6 +84,7 @@ namespace EHS.Server.WebApi
             services.AddTransient<ICausesRepository, CauseRepository>();
             services.AddTransient<IEventFileRepository, EventFileRepository>();
             services.AddTransient<IUserRoleRepository, UserRoleRepository>();
+            services.AddTransient<IFileSweeperRepository, FileSweeperRepository>();
 
             // Utility for mapping DTO's to Models 
             var config = new AutoMapper.MapperConfiguration(cfg =>
@@ -98,6 +99,9 @@ namespace EHS.Server.WebApi
             services.AddControllers(o =>
             {
             });
+
+            //adding the WorkerService (handles saving log files to the db) 
+            services.AddHostedService<Worker.Worker>();
 
             services.AddMvc(o =>
             {
