@@ -403,12 +403,12 @@ const Review = (props) => {
                 className={classes.submitBtn}
                 onClick={handleSubmit}
                 fullWidth
-                disabled={event.eventStatus === S_I_STATUS.CLOSED || event.eventStatus === S_I_STATUS.CANCELLED ? true : false}
+                disabled={event.eventStatus !== S_I_STATUS.DRAFT ? true : false}
                 >
                 { event.eventStatus === S_I_STATUS.DRAFT
                     ? 'Submit Event'
                     : event.eventStatus === S_I_STATUS.OPEN
-                        ? 'Update Event' 
+                        ? 'Event Already Submitted' 
                         : 'Event Closed'
                 }
             </Button>

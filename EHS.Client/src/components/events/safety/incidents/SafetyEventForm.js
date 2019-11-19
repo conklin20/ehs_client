@@ -3,6 +3,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from "react-redux";
 import { Link } from 'react-router-dom'; 
 import { makeStyles } from '@material-ui/core/styles';
+import { fetchSafetyIncidents } from '../../../../store/actions/safetyIncidents';
 import { 
 	fetchLogicalHierarchyTree, 
 	fetchPhysicalHierarchyTree, 
@@ -157,8 +158,10 @@ const SafetyEventForm = props => {
 
         fetchData(); 
     
-		return () => {
-			console.log('Cleanup function (ComponentDidUnmount)')
+		return () => {            
+            //should probably handle this differently, but for now will revert the search back to Open incidents when this form unmounts
+            props.fetchSafetyIncidents('?eventStatuses=Open')
+			console.log('SafetyEventForm Unmounting...')
 		}
 	}, []); //this 2nd arg is important, it tells what to look for changes in, and will re-run the hook when this changes 
     
@@ -478,7 +481,9 @@ const SafetyEventForm = props => {
                     }
                 })
         } else {
-            props.addNotification(EVENT_ALREADY_SUBMITTED.replace('{0}', event.eventId), 'info')
+            if(event.eventStatus !== S_I_STATUS.DRAFT){
+                props.addNotification(EVENT_ALREADY_SUBMITTED.replace('{0}', event.eventId), 'info')
+            }
         }
     }
     
@@ -497,7 +502,6 @@ const SafetyEventForm = props => {
         return true
     }    
 
-    
     //the web api/server will do most of the validation for us against the Event fields. However, it will not validate the relational tables (Actions, People, Causes, Media)
     const handleValidateCompletedForm = () => {
         const validationErrors = []; 
@@ -521,6 +525,7 @@ const SafetyEventForm = props => {
         return true
     }
 
+    console.log(event.eventId, event)
 	return (
 		<div className={classes.root}>
             { (event && Object.keys(event).length) || (props.match.path.includes('/si/new'))  ?             
@@ -541,7 +546,7 @@ const SafetyEventForm = props => {
                             </Link>
                         </div>
                     </DialogTitle>
-                    <DialogContent className={classes.content}>	
+                    <DialogContent className={classes.content}>
                     { dataIsLoading() ?                              
                                 
                             <Typography variant='h6'>
@@ -687,6 +692,7 @@ function mapDispatchToProps(dispatch) {
         fetchPhysicalHierarchyTree, 
         fetchLogicalHierarchyAttributes, 
         fetchPhysicalHierarchyAttributes,
+        fetchSafetyIncidents,
         postNewSafetyIncident,
         updateSafetyIncident,
         fetchEvent,

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'; 
+import React, { useEffect, Fragment } from 'react'; 
 import { Switch, Route, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
@@ -31,13 +31,8 @@ const useStyles = makeStyles(theme => ({
     },
     body: {
         display: 'flex',
-        // padding: theme.spacing(2),
         textAlign: 'center',
         color: theme.palette.text.secondary,
-        // height: '80vh',
-        // // overflowY: 'scroll',
-        // margin: '0', 
-        // padding: '0',
         minWidth: '80vw',
     }, 
     reportAside: {
@@ -101,9 +96,37 @@ const Routes = props => {
                     <Route path='/' exact component={Homepage} ></Route>
                     <Route path='/logout' component={Logout} ></Route>
                     <Route path='/dashboard' render={(props) => <div className={classes.main}><Dashboard /> </div> } ></Route>
-                    <Route path='/events/si/new' exact component={SafetyEventForm} ></Route>
-                    <Route path='/events/si/:eventId' exact component={SafetyEventForm} ></Route>
-                    <Route path='/events/si/:eventId/step/:stepNo' component={SafetyEventForm} ></Route>
+                    {/* <Route path='/events/si/new' exact component={SafetyEventForm} ></Route> */}
+                    <Route  path='/events/si/new' 
+                            render={(props) => 
+                                <div className={classes.main}>
+                                    <Fragment>
+                                        <Dashboard {...props} /> 
+                                        <SafetyEventForm {...props} />
+                                    </Fragment>
+                                </div> }>                        
+                    </Route>
+                    {/* <Route path='/events/si/:eventId' exact component={SafetyEventForm} ></Route> */}
+                    <Route  path='/events/si/:eventId' 
+                            exact 
+                            render={(props) => 
+                                <div className={classes.main}>
+                                    <Fragment>
+                                        <Dashboard {...props} /> 
+                                        <SafetyEventForm {...props} />
+                                    </Fragment>
+                                </div> }>                        
+                    </Route>
+                    {/* <Route path='/events/si/:eventId/step/:stepNo' component={SafetyEventForm} ></Route> */}
+                    <Route  path='/events/si/:eventId/step/:stepNo' 
+                            render={(props) => 
+                                <div className={classes.main}>
+                                    <Fragment>
+                                        <Dashboard {...props} /> 
+                                        <SafetyEventForm {...props} />
+                                    </Fragment>
+                                </div> }>                        
+                    </Route>
                     <Route path='/user/profile' render={(props) => <div className={classes.main}><UserProfile /> </div> }  ></Route>
                     <Route path='/manage/users' exact render={(props) => <div className={classes.main}><UserManagement /> </div> }  ></Route>
                     <Route path='/manage/users/:userId' exact render={(props) => <div className={classes.main}><UserManagement /> </div> }  ></Route>

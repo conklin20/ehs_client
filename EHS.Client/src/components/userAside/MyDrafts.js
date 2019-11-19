@@ -6,27 +6,11 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import { Link } from 'react-router-dom';
 
 const useStyles = makeStyles(theme => ({
-    root: {
-      width: '100%',
-    //   maxWidth: 360,
-      backgroundColor: theme.palette.background.paper,
-      maxHeight: '25vh',
-      overflowY: 'scroll',
-    },
-    link: {
-        textDecoration: 'none',
-        color: theme.palette.primary.dark
-    },
-    margin: {
-        marginTop: theme.spacing(2),
-    },
-    padding: {
-      padding: theme.spacing(0, 2),
-    },
-  }));
+}));
 
 const MyDrafts = props => {
-    const classes = useStyles();
+    const componentClasses = useStyles(); 
+    const classes = Object.assign(componentClasses, props.useStyles()); // combining the styles from the parent component with this components styles
 
     const [openDialog, setOpenDialog] = useState(false); 
     
@@ -87,12 +71,11 @@ const MyDrafts = props => {
 
     return (     
         <Fragment>
-            <Badge color="primary" badgeContent={drafts.length} className={classes.margin}>
-                <Typography variant='h6' className={classes.padding} >
-                    My Drafts
-                </Typography>
-            </Badge>
-            <List className={classes.root}>
+            <Typography variant='h6' className={classes.sectionTitle}>
+                My Drafts
+                <Badge color="primary" badgeContent={drafts.length} className={classes.badge}></Badge>
+            </Typography>
+            <List className={classes.sectionBody}>
                 {drafts}
             </List>
         </Fragment>

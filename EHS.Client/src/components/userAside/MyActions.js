@@ -5,29 +5,13 @@ import { Link } from 'react-router-dom';
 import moment from 'moment'
 
 const useStyles = makeStyles(theme => ({
-    root: {
-      width: '100%',
-    //   maxWidth: 360,
-      backgroundColor: theme.palette.background.paper,
-      maxHeight: '25vh',
-      overflowY: 'scroll',
-    },
-    link: {
-        textDecoration: 'none',
-        color: theme.palette.primary.dark
-    },
-    margin: {
-        marginTop: theme.spacing(2),    
-    },
-    padding: {
-        padding: theme.spacing(0, 2),
-    },
-  }));
+
+}));
 
 const MyActions = props => {
-    const classes = useStyles();
+    const componentClasses = useStyles(); 
+    const classes = Object.assign(componentClasses, props.useStyles()); // combining the styles from the parent component with this components styles
 
-    // console.log(props); 
     const actions = props.actions.map(a => {
         return (
             <Fragment>   
@@ -35,7 +19,7 @@ const MyActions = props => {
                     <Link to={`/events/si/${a.eventId}/step/4`} className={classes.link} >
                         <ListItemText
                             primary={`${a.eventId} - ${moment(a.dueDate)
-                                                        .subtract(new Date().getTimezoneOffset(), 'minutes')
+                                                        .subtract(new Date(a.dueDate).getTimezoneOffset(), 'minutes')
                                                         .format('ll')}`}
                             secondary={a.actionToTake}
                             />
@@ -48,12 +32,11 @@ const MyActions = props => {
 
     return (     
         <Fragment>
-            <Badge color="primary" badgeContent={actions.length} className={classes.margin}>
-                <Typography variant='h6' className={classes.padding} >
-                    My Actions
-                </Typography>
-            </Badge>
-            <List className={classes.root}>
+            <Typography variant='h6' className={classes.sectionTitle}>
+                My Actions
+                <Badge color="primary" badgeContent={actions.length} className={classes.badge} ></Badge>
+            </Typography>
+            <List className={classes.sectionBody}>
                 {actions}
             </List>
         </Fragment>

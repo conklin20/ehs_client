@@ -5,27 +5,11 @@ import { Link } from 'react-router-dom';
 import moment from 'moment'; 
 
 const useStyles = makeStyles(theme => ({
-    root: {
-      width: '100%',
-    //   maxWidth: 360,
-      backgroundColor: theme.palette.background.paper,
-      maxHeight: '25vh',
-      overflowY: 'scroll',
-    },
-    link: {
-        textDecoration: 'none',
-        color: theme.palette.primary.dark
-    },
-    margin: {
-      marginTop: theme.spacing(2),
-    },
-    padding: {
-      padding: theme.spacing(0, 2),
-    },
-  }));
+}));
 
 const MyApprovals = props => {
-    const classes = useStyles();
+    const componentClasses = useStyles(); 
+    const classes = Object.assign(componentClasses, props.useStyles()); // combining the styles from the parent component with this components styles
 
     // console.log(props.pendingApprovals); 
     const pendingApprovals = props.pendingApprovals.map(a => {
@@ -36,7 +20,7 @@ const MyApprovals = props => {
                     <Link to={`/events/si/${a.action.eventId}/step/4`} className={classes.link} >
                         <ListItemText
                             primary={`${a.action.actionId} - ${moment(a.action.completionDate)
-                                                                .subtract(new Date().getTimezoneOffset(), 'minutes')
+                                                                .subtract(new Date(a.action.completionDate).getTimezoneOffset(), 'minutes')
                                                                 .format('ll')}`}
                             secondary={a.action.actionToTake}
                             />
@@ -49,12 +33,11 @@ const MyApprovals = props => {
 
     return (     
         <Fragment>
-            <Badge color="primary" badgeContent={pendingApprovals.length} className={classes.margin}>
-                <Typography variant='h6' className={classes.padding} >
-                    My Pending Approvals
-                </Typography>
-            </Badge>
-            <List className={classes.root}>
+            <Typography variant='h6' className={classes.sectionTitle}>
+                My Pending Approvals
+                <Badge color="primary" badgeContent={pendingApprovals.length} className={classes.badge}></Badge>
+            </Typography>
+            <List className={classes.sectionBody}>
                 {pendingApprovals}
             </List>
         </Fragment>

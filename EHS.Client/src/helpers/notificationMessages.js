@@ -16,7 +16,7 @@ export const EVENT_CATEGORY_REQUIRED = ' An event category is required to contin
 export const EVENT_INVALID = ' Invalid attempt to save event'
 
 //ACTIONS
-export const EVENT_ACTION_REQUIRED = ' At least one action is required'
+export const EVENT_ACTION_REQUIRED = ' Section 4 - Actions incomlete. At least 1 action needs to be assigned'
 export const ACTION_ADDED = ' 1 action saved successfully!'
 export const ACTIONS_ADDED = ' actions saved successfully!'
 export const ACTION_DELETED = 'Action #{0} successfully deleted!'
@@ -25,12 +25,12 @@ export const ACTION_APPROVED = 'Action #{0} successfully received {1}'
 
 
 //PEOPLE
-export const EVENT_PEOPLE_REQUIRED = ' People Involved incomplete'
+export const EVENT_PEOPLE_REQUIRED = ' Section 5 - People Involved incomplete. At least 1 person involved needs to be added.'
 export const PERSON_ADDED = ' 1 person involved in the event saved successfully!'
 export const PEOPLE_ADDED = ' people involved in the event saved successfully'
 
 //CAUSES
-export const EVENT_CAUSES_REQUIRED = ' At least one cause is required'
+export const EVENT_CAUSES_REQUIRED = ' Section 6 - Causes incomplete. At least 1 cause needs to be added'
 export const CAUSE_ADDED = ' 1 cause saved successfully!'
 export const CAUSES_ADDED = ' causes saved successfully!'
 

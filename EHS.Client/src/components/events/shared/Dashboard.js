@@ -22,10 +22,7 @@ const useStyles = makeStyles(theme => ({
 		padding: theme.spacing(2),
 		textAlign: 'center',
 		color: theme.palette.text.secondary,
-		minHeight: '94vh',
-		// marginTop: 0, 
-		// padding: '0',
-		
+		minHeight: '90%',
 	},
 	icon: {
 		margin: theme.spacing(0),
@@ -222,5 +219,5 @@ export default connect(mapStateToProps, {
 	fetchPhysicalHierarchyAttributes, 
 	fetchLogicalHierarchyTree, 
 	fetchPhysicalHierarchyTree, 
-	fetchEmployees 
+	fetchEmployees, 
 })(Dashboard); 

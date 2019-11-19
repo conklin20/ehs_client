@@ -60,7 +60,6 @@ const Actions = (props) => {
     const handleChange = (section, input) => e => {
         if (input === 'completed') {
             //if its a bool/checkbox, we need to use the checked property as opposed to value property
-            // console.log(input, e.target.checked)
             return setNewAction(
                 {  
                     ...newAction, 

@@ -1,15 +1,34 @@
 import React, { useState, useEffect, Fragment } from 'react'; 
 import { connect } from "react-redux";
-import { Typography, } from '@material-ui/core';
 import MyActions from './MyActions'; 
 import MyApprovals from './MyApprovals';
 import MyDrafts from './MyDrafts';
 import { fetchDrafts, deleteSafetyIncident } from '../../store/actions/safetyIncidents';
 import { fetchMyPendingApprovals } from '../../store/actions/approvals';
-import { fetchActions } from '../../store/actions/actions'; 
+import { fetchActions } from '../../store/actions/actions';
+import { makeStyles } from '@material-ui/core/styles';
+
+const useStyles = makeStyles(theme => ({
+    sectionTitle:{
+        marginTop: theme.spacing(1),
+    },
+    sectionBody: {
+      width: '100%',
+      backgroundColor: theme.palette.background.paper,
+      maxHeight: '33vh',
+      overflowY: 'scroll',      
+    },
+    link: {
+        textDecoration: 'none',
+        color: theme.palette.primary.dark
+    },
+    badge: {
+        paddingLeft: theme.spacing(2),
+    }
+})); 
 
 const UserAside = props => {
-    
+
     const [myActions, setMyActions] = useState([]);
     const [myPendingApprovals, setMyPendingApprovals] = useState([]);
     const [myDrafts, setMyDrafts] = useState([]);
@@ -18,6 +37,7 @@ const UserAside = props => {
 
     // Essentially what was componentDidMount and componentDidUpdate before Hooks
 	useEffect(() => {
+        console.log('called!')
         //get users open actions 
         fetchActions(`?userId=${currentUser.user.userId}&eventStatus=Open`)
             .then(res => {
@@ -56,35 +76,35 @@ const UserAside = props => {
 
     // console.log(props.employees)
     return (     
-        <Fragment mdDown>
+        <Fragment>
             {employees && employees.length ? 
-                <Fragment>
-                    {/* <Typography variant="h4" gutterBottom>User Aside</Typography>   */}
-                    <Typography>
-                        {myActions.length ? 
-                            <MyActions 
-                                actions={myActions}
-                                currentUser={currentUser}
-                            />
-                            : null
-                        }
-                        {myPendingApprovals.length ? 
-                            <MyApprovals
-                                pendingApprovals={myPendingApprovals}
-                                currentUser={currentUser}
-                            />
-                            : null
-                        }
-                        {myDrafts.length ?                         
-                            <MyDrafts 
-                                drafts={myDrafts}
-                                handleDelete={handleDelete}
-                                employees={employees}
-                                currentUser={currentUser}
-                            />
-                            : null
-                        }
-                    </Typography>
+                <Fragment>                    
+                    {myActions.length ? 
+                        <MyActions 
+                            actions={myActions}
+                            currentUser={currentUser}
+                            useStyles={useStyles} 
+                        />
+                        : null
+                    }
+                    {myPendingApprovals.length ? 
+                        <MyApprovals
+                            pendingApprovals={myPendingApprovals}
+                            currentUser={currentUser}
+                            useStyles={useStyles} 
+                        />
+                        : null
+                    }
+                    {myDrafts.length ?             
+                        <MyDrafts 
+                            drafts={myDrafts}
+                            handleDelete={handleDelete}
+                            employees={employees}
+                            currentUser={currentUser}
+                            useStyles={useStyles} 
+                        />
+                        : null
+                    }
                 </Fragment>
             : null
             }
