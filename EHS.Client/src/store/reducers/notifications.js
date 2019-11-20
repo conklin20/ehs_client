@@ -11,7 +11,6 @@ export default (state = {message: null, variant: null}, action) => {
             };
             // return {...state, userRoles: action.roles}
         case REMOVE_NOTIFICATION:
-            console.log('remove notifcation called')
             return {
                 message: null, 
                 variant: null 

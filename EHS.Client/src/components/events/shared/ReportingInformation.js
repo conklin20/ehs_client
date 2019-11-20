@@ -7,6 +7,7 @@ const ReportingInformation = (props) => {
     const classes = props.useStyles();    
     const { event, currentUser, lookupData } = props; 
     
+    // console.log(moment(event.reportedOn).utc().format(), moment(event.reportedOn).format() ,event.reportedOn);
     return (
         <Fragment>  
             { 
@@ -30,7 +31,7 @@ const ReportingInformation = (props) => {
                             <Typography className={classes.label} variant="body1" gutterBottom>
                                 <span>Date Reported: </span>
                                 {moment(event.reportedOn)
-                                    .subtract(new Date(event.reportedOn).getTimezoneOffset(), 'minutes')
+                                    // .subtract(new Date(event.reportedOn).getTimezoneOffset(), 'minutes')
                                     .format('ll')}
                             </Typography>	
                         </Grid>       	
@@ -38,7 +39,7 @@ const ReportingInformation = (props) => {
                             <Typography className={classes.label} variant="body1" gutterBottom>   
                                 <span>Time Reported: </span>
                                 {moment(event.reportedOn)
-                                    .subtract(new Date(event.reportedOn).getTimezoneOffset(), 'minutes')
+                                    // .subtract(new Date(event.reportedOn).getTimezoneOffset(), 'minutes')
                                     .format('LT')}
                             </Typography>	
                         </Grid>      

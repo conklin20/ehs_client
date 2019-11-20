@@ -112,7 +112,7 @@ const ActionItem = (props) => {
                         ? 'N/A' 
                         : employees.find(e => e.employeeId === ar.approvedBy).fullName} 
                             - ${moment(ar.approvedOn)
-                                .subtract(new Date(ar.approvedOn).getTimezoneOffset(), 'minutes')
+                                // .subtract(new Date(ar.approvedOn).getTimezoneOffset(), 'minutes')
                                 .format('lll')}` } >
                         <Chip label={ar.approvalLevel.approvalLevelName.replace('Approval', '')} />
                     </Tooltip>
@@ -193,10 +193,10 @@ const ActionItem = (props) => {
                             {
                                 action.completionDate 
                                     ? `Completion Date: ${moment(action.completionDate)
-                                                            .subtract(new Date(action.completionDate).getTimezoneOffset(), 'minutes')
+                                                            // .subtract(new Date(action.completionDate).getTimezoneOffset(), 'minutes')
                                                             .format('lll')}` 
                                     : `Due Date: ${moment(action.dueDate)
-                                                            .subtract(new Date(action.dueDate).getTimezoneOffset(), 'minutes')
+                                                            // .subtract(new Date(action.dueDate).getTimezoneOffset(), 'minutes')
                                                             .format('lll')}` 
                             }
                         </Typography>

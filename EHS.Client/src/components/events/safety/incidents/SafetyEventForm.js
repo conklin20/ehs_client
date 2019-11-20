@@ -2,11 +2,13 @@ import React, { useState, useEffect, Fragment } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from "react-redux";
 import { Link } from 'react-router-dom'; 
+import moment from 'moment'
 import { makeStyles } from '@material-ui/core/styles';
 import { fetchSafetyIncidents } from '../../../../store/actions/safetyIncidents';
 import { 
 	fetchLogicalHierarchyTree, 
-	fetchPhysicalHierarchyTree, 
+    fetchPhysicalHierarchyTree, 
+    fetchGlobalHierarchyAttributes,
 	fetchLogicalHierarchyAttributes, 
     fetchPhysicalHierarchyAttributes, 
     fetchEmployees, 
@@ -172,7 +174,7 @@ const SafetyEventForm = props => {
         //if existing event, get event detail from api
         if(props.match.params.eventId) setEvent(await props.fetchEvent(props.match.params.eventId))
                         
-        const timestamp = new Date().toISOString(); 
+        const timestamp = moment.utc().format(); 
         //if this is a new event form, and the lookup data has been loaded, set the initial values for the evnt 
         if(props.match.path.includes('/events/si/new')){
             setEvent({
@@ -197,14 +199,15 @@ const SafetyEventForm = props => {
 		if(!lookupData.employees) props.fetchEmployees();
 		if(!lookupData.logicalHierarchies ) props.fetchLogicalHierarchyTree(currentUser.user.logicalHierarchyPath.split('|')[currentUser.user.logicalHierarchyPath.split('|').length-1]);
 		if(!lookupData.physicalHierarchies) props.fetchPhysicalHierarchyTree(currentUser.user.physicalHierarchyPath.split('|')[currentUser.user.physicalHierarchyPath.split('|').length-1]);
-		if(!lookupData.logicalHierarchyAttributes) props.fetchLogicalHierarchyAttributes(event.departmentId || currentUser.user.logicalHierarchyId, 'singlepath', '?enabled=true');
-        if(!lookupData.physicalHierarchyAttributes) props.fetchPhysicalHierarchyAttributes(event.localeId || currentUser.user.physicalHierarchyId, 'singlepath', '?enabled=true&excludeglobal=true');
+		if(!lookupData.globalHierarchyAttributes) props.fetchGlobalHierarchyAttributes(1000, 'singlepath', '?attributetype=global&enabled=true'); //first arg will be the root hierarchy
+		if(!lookupData.logicalHierarchyAttributes) props.fetchLogicalHierarchyAttributes(event.departmentId || currentUser.user.logicalHierarchyId, 'singlepath', '?attributetype=logical&enabled=true');
+        if(!lookupData.physicalHierarchyAttributes) props.fetchPhysicalHierarchyAttributes(event.localeId || currentUser.user.physicalHierarchyId, 'singlepath', '?attributetype=physical&enabled=true');
             
     }
     
     //function to check if all data has been loaded/returned from the API. only then can the user navigate around the form 
     const dataIsLoading = () =>  {
-        return Object.keys(lookupData).length < 5 ? true : false
+        return Object.keys(lookupData).length < 6 ? true : false
     }
 
     // const [actions, setActions] = useState(event ? event.actions : null);
@@ -224,8 +227,8 @@ const SafetyEventForm = props => {
     }
 
     const handleRefreshData = () => {
-        props.fetchLogicalHierarchyAttributes(event.departmentId || currentUser.user.logicalHierarchyId, 'singlepath', '?enabled=true');
-        props.fetchPhysicalHierarchyAttributes(event.localeId || currentUser.user.physicalHierarchyId, 'singlepath', '?enabled=true&excludeglobal=true');
+        props.fetchLogicalHierarchyAttributes(event.departmentId || currentUser.user.logicalHierarchyId, 'singlepath', '?attributetype=logical&enabled=true');
+        props.fetchPhysicalHierarchyAttributes(event.localeId || currentUser.user.physicalHierarchyId, 'singlepath', '?attributetype=physical&enabled=true');
 
     }
 
@@ -412,7 +415,9 @@ const SafetyEventForm = props => {
                             //On initial save, get the event from the db we need fields that arent returned from the insert 
                             props.fetchEvent(res.data.eventId)
                                 .then(res => {
-                                    setEvent( { supervisorId: event.supervisorId, ...res } )
+                                    setEvent( { supervisorId: event.supervisorId
+                                                , reportedOn: moment.utc(res.reportedOn).format()
+                                                , ...res } )
                                 })
                             // handleComplete();
                         } else {
@@ -490,6 +495,13 @@ const SafetyEventForm = props => {
     //the web api/server will do most of the validation for us against the Event fields. However, it will not validate the relational tables (Actions, People, Causes, Media)
     const handleValidateDraftForm = () => {
         const validationErrors = [];
+        if(!event.departmentId)
+        {
+            validationErrors.push(EVENT_LOGICAL_HIERARCHY_REQUIRED)
+        }
+        if(!event.localeId){
+            validationErrors.push(EVENT_PHSYICAL_HIERARCHY_REQUIRED)
+        }
         if(!event.initialCategory) {
             validationErrors.push(EVENT_CATEGORY_REQUIRED)
         }
@@ -525,7 +537,7 @@ const SafetyEventForm = props => {
         return true
     }
 
-    console.log(event.eventId, event)
+    // console.log(event)
 	return (
 		<div className={classes.root}>
             { (event && Object.keys(event).length) || (props.match.path.includes('/si/new'))  ?             
@@ -690,6 +702,7 @@ function mapDispatchToProps(dispatch) {
         fetchEmployees,
         fetchLogicalHierarchyTree, 
         fetchPhysicalHierarchyTree, 
+        fetchGlobalHierarchyAttributes,
         fetchLogicalHierarchyAttributes, 
         fetchPhysicalHierarchyAttributes,
         fetchSafetyIncidents,

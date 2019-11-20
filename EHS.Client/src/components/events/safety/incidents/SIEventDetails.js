@@ -14,22 +14,29 @@ const SIEventDetails = (props) => {
     const { event, lookupData, handleChange, handleAutoCompleteChange, handleSliderChange, currentUser } = props; 
 
     //building each lookup data object
+    //Employee Lists
     const employees = filterEmployeeList(lookupData['employees'], event['employeeId'], 4001, true, false)
     const supervisors = filterEmployeeList(lookupData['employees'], event['supervisorId'], 4001, true, true)
+
+    //Global Attributes
+    const initialCategories = filterLookupDataByKey(lookupData, 'globalHierarchyAttributes', 'Initial Category', event['initialCategory']);
+    const resultingCategories = filterLookupDataByKey(lookupData, 'globalHierarchyAttributes', 'Resulting Category', event['resultingCategory']);
+
+    //Logical Attributes
     const shifts = filterLookupDataByKey(lookupData, 'logicalHierarchyAttributes', 'Shifts', event['shift']); 
     const jobTitles = filterLookupDataByKey(lookupData, 'logicalHierarchyAttributes', 'Job Titles', event['jobTitle']); 
     const injuryNatures = filterLookupDataByKey(lookupData, 'logicalHierarchyAttributes', 'Nature of Injury', event['natureOfInjury']); 
     const bodyParts = filterLookupDataByKey(lookupData, 'logicalHierarchyAttributes', 'Body Parts', event['bodyPart']); 
     const firstAidTypes = filterLookupDataByKey(lookupData, 'logicalHierarchyAttributes', 'First Aid Types', event['firstAidType']);
-    const offPlantMedicalFacilities = filterLookupDataByKey(lookupData, 'physicalHierarchyAttributes', 'Off Plant Medical Facility', event['offPlantMedicalFacility']);
     const workEnvironments = filterLookupDataByKey(lookupData, 'logicalHierarchyAttributes', 'Work Environment', event['workEnvironment']);
     const materials = filterLookupDataByKey(lookupData, 'logicalHierarchyAttributes', 'Materials', event['materialInvolved']);
+    
+    //Physical Attributes 
+    const offPlantMedicalFacilities = filterLookupDataByKey(lookupData, 'physicalHierarchyAttributes', 'Off Plant Medical Facility', event['offPlantMedicalFacility']);
     const equipment = filterLookupDataByKey(lookupData, 'physicalHierarchyAttributes', 'Equipment', event['equipmentInvolved']);
-    const initialCategories = filterLookupDataByKey(lookupData, 'logicalHierarchyAttributes', 'Initial Category', event['initialCategory']);
-    const resultingCategories = filterLookupDataByKey(lookupData, 'logicalHierarchyAttributes', 'Resulting Category', event['resultingCategory']);
 
     //grabbing the HierarchyAttributeId from the lookup list to be used below to populate the Supervisor field from the PeopleInvolved table
-    const supervisorHierarchyAttributeId = filterLookupDataByKey(lookupData, 'logicalHierarchyAttributes', 'Employee Involvement', null, true).find(sup => sup.label === 'Supervisor').value;
+    const supervisorHierarchyAttributeId = filterLookupDataByKey(lookupData, 'globalHierarchyAttributes', 'Employee Involvement', null, true).find(sup => sup.label === 'Supervisor').value;
     
     return (
         // <Fragment>  
@@ -336,6 +343,7 @@ const SIEventDetails = (props) => {
                             handleChange={handleAutoCompleteChange}
                             value={equipment.filter(o => o.selected === true)}
                             className={classes.formControl}
+                            helperText={`This dropdown will respond much quicker if equipment/machines are moved to their resepctive physical hierarchies`}
                         >
                         </AutoComplete> 
                     </Grid>

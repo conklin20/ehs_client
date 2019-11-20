@@ -3,11 +3,13 @@ import { addNotification } from './notifications';
 import { 
     LOAD_LOGICAL_HIERARCHIES, 
     LOAD_PHYSICAL_HIERARCHIES,
+    LOAD_GLOBAL_HIERARCHY_ATTRIBUTES, 
     LOAD_LOGICAL_HIERARCHY_ATTRIBUTES, 
     LOAD_PHYSICAL_HIERARCHY_ATTRIBUTES, 
     LOAD_EMPLOYEES,
     LOAD_USER_ROLES, 
 } from '../actionTypes'; 
+import { GOD_ROLE_LEVEL } from '../../components/admin/adminRoleLevel';
 
 export const loadLogicalHierarchies = logicalHierarchies => ({
     type: LOAD_LOGICAL_HIERARCHIES, 
@@ -17,6 +19,11 @@ export const loadLogicalHierarchies = logicalHierarchies => ({
 export const loadPhysicalHierarchies = physicalHierarchies => ({
     type: LOAD_PHYSICAL_HIERARCHIES, 
     physicalHierarchies
+}); 
+
+export const loadGlobalHierarchyAttributes = globalHierarchyAttributes => ({
+    type: LOAD_GLOBAL_HIERARCHY_ATTRIBUTES, 
+    globalHierarchyAttributes
 }); 
 
 export const loadLogicalHierarchyAttributes = logicalHierarchyAttributes => ({
@@ -66,6 +73,20 @@ export const fetchPhysicalHierarchyTree = (hierachyId) => {
 }
 
 //Type = fulltree or singlepath 
+export const fetchGlobalHierarchyAttributes = (hierarchyId, type, query) => {
+    return dispatch => {
+        return apiCall('get', `/hierarchyattributes/${type}/${hierarchyId}${query ? query : ''}`)
+            .then(res => {
+                dispatch(loadGlobalHierarchyAttributes(res.data)); 
+            })
+            .catch(res => {	
+                console.log(res)
+                dispatch(addNotification(`TODO: Customize Error Message. ${res.status}`, 'error'));
+            });
+    }
+}
+
+//Type = fulltree or singlepath 
 export const fetchLogicalHierarchyAttributes = (hierarchyId, type, query) => {
     return dispatch => {
         return apiCall('get', `/hierarchyattributes/${type}/${hierarchyId}${query ? query : ''}`)
@@ -97,7 +118,8 @@ export const fetchUserRoles = () => {
     return dispatch => {
         return apiCall('get', '/userroles')
             .then(res => {
-                dispatch(loadUserRoles(res.data)); 
+                //dont display SysAdmin to users
+                dispatch(loadUserRoles(res.data.filter(r => r.roleLevel < GOD_ROLE_LEVEL))); 
             })
             .catch(res => {	
                 console.log(res)

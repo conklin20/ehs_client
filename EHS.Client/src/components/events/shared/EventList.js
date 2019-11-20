@@ -62,7 +62,7 @@ const EventList = props => {
                     Header: 'Date',    
                     accessor: d => {
                       return moment(d.eventDate)
-                        .subtract(new Date(d.eventDate).getTimezoneOffset(), 'minutes')
+                        // .subtract(new Date(d.eventDate).getTimezoneOffset(), 'minutes')
                         .format('ll')
                     }
                 },

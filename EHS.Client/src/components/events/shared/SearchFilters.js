@@ -78,17 +78,22 @@ const SearchFilters = props => {
 	}));
 	
     //building each lookup data object 
-    // const shifts = filterLookupDataByKey(lookupData, 'logicalHierarchyAttributes', 'Shifts'); 
-    // const jobTitles = filterLookupDataByKey(lookupData, 'logicalHierarchyAttributes', 'Job Titles', values['jobTitle']); 
-    // const injuryNatures = filterLookupDataByKey(lookupData, 'logicalHierarchyAttributes', 'Nature of Injury', values['natureOfInjury']); 
-    // const bodyParts = filterLookupDataByKey(lookupData, 'logicalHierarchyAttributes', 'Body Parts', values['bodyPart']); 
-    // const firstAidTypes = filterLookupDataByKey(lookupData, 'logicalHierarchyAttributes', 'First Aid Types', values['firstAidType']);
-    // const offPlantMedicalFacilities = filterLookupDataByKey(lookupData, 'physicalHierarchyAttributes', 'Off Plant Medical Facility', values['offPlantMedicalFacility']);
-    // const workEnvironments = filterLookupDataByKey(lookupData, 'logicalHierarchyAttributes', 'Work Environment', values['workEnvironment']);
-    // const materials = filterLookupDataByKey(lookupData, 'logicalHierarchyAttributes', 'Materials', values['materialInvolved']);
-    // const equipment = filterLookupDataByKey(lookupData, 'logicalHierarchyAttributes', 'Equipment', values['equipmentInvolved']);
-    const initialCategories = filterLookupDataByKey(lookupData, 'logicalHierarchyAttributes', 'Initial Category', searchFilters['initialCategory']);
-    const resultingCategories = filterLookupDataByKey(lookupData, 'logicalHierarchyAttributes', 'Resulting Category', searchFilters['resultingCategory']);
+    //Global Attributes
+    const initialCategories = filterLookupDataByKey(lookupData, 'globalHierarchyAttributes', 'Initial Category', searchFilters['initialCategory']);
+    const resultingCategories = filterLookupDataByKey(lookupData, 'globalHierarchyAttributes', 'Resulting Category', searchFilters['resultingCategory']);
+
+    //Logical Attributes
+    const shifts = filterLookupDataByKey(lookupData, 'logicalHierarchyAttributes', 'Shifts', searchFilters['shift']); 
+    const jobTitles = filterLookupDataByKey(lookupData, 'logicalHierarchyAttributes', 'Job Titles', searchFilters['jobTitle']); 
+    const injuryNatures = filterLookupDataByKey(lookupData, 'logicalHierarchyAttributes', 'Nature of Injury', searchFilters['natureOfInjury']); 
+    const bodyParts = filterLookupDataByKey(lookupData, 'logicalHierarchyAttributes', 'Body Parts', searchFilters['bodyPart']); 
+    const firstAidTypes = filterLookupDataByKey(lookupData, 'logicalHierarchyAttributes', 'First Aid Types', searchFilters['firstAidType']);
+    const workEnvironments = filterLookupDataByKey(lookupData, 'logicalHierarchyAttributes', 'Work Environment', searchFilters['workEnvironment']);
+    const materials = filterLookupDataByKey(lookupData, 'logicalHierarchyAttributes', 'Materials', searchFilters['materialInvolved']);
+    
+    //Physical Attributes 
+    const offPlantMedicalFacilities = filterLookupDataByKey(lookupData, 'physicalHierarchyAttributes', 'Off Plant Medical Facility', searchFilters['offPlantMedicalFacility']);
+    const equipment = filterLookupDataByKey(lookupData, 'physicalHierarchyAttributes', 'Equipment', searchFilters['equipmentInvolved']);
 	
 	return (
 		<div className={classes.root}>

@@ -4,6 +4,7 @@ import { fetchSafetyIncidents } from '../../../store/actions/safetyIncidents';
 import { 
 	fetchLogicalHierarchyTree, 
 	fetchPhysicalHierarchyTree, 
+	fetchGlobalHierarchyAttributes, 
 	fetchLogicalHierarchyAttributes, 
 	fetchPhysicalHierarchyAttributes, 
 	fetchEmployees } from '../../../store/actions/lookupData'; 
@@ -117,8 +118,9 @@ const Dashboard = props => {
 		if(!lookupData.employees) await props.fetchEmployees();
 		if(!lookupData.logicalHierarchies ) await props.fetchLogicalHierarchyTree(currentUser.user.logicalHierarchyPath.split('|')[currentUser.user.logicalHierarchyPath.split('|').length-1]);
 		if(!lookupData.physicalHierarchies) await props.fetchPhysicalHierarchyTree(currentUser.user.physicalHierarchyPath.split('|')[currentUser.user.physicalHierarchyPath.split('|').length-1]);
-		if(!lookupData.logicalHierarchyAttributes) await props.fetchLogicalHierarchyAttributes(1000, 'fulltree', '?enabled=true');
-		if(!lookupData.physicalHierarchyAttributes) await  props.fetchPhysicalHierarchyAttributes(1000, 'fulltree', '?enabled=true&excludeglobal=true');
+		if(!lookupData.globalHierarchyAttributes) await props.fetchGlobalHierarchyAttributes(1000, 'fulltree', '?attributetype=global&enabled=true'); //will be the root hierarchy 
+		if(!lookupData.logicalHierarchyAttributes) await props.fetchLogicalHierarchyAttributes(1000, 'fulltree', '?attributetype=logical&enabled=true'); 
+		if(!lookupData.physicalHierarchyAttributes) await  props.fetchPhysicalHierarchyAttributes(1000, 'fulltree', '?attributetype=physical&enabled=true'); 
 		
 	
 		//WOULD LIKE TO USE THIS TO RETURN ONLY THE USERS PERTINENT EVENTS (Their Site, Area's or Depts...) 
@@ -215,6 +217,7 @@ function mapStateToProps(state) {
 
 export default connect(mapStateToProps, { 
 	fetchSafetyIncidents,
+	fetchGlobalHierarchyAttributes, 
 	fetchLogicalHierarchyAttributes, 
 	fetchPhysicalHierarchyAttributes, 
 	fetchLogicalHierarchyTree, 

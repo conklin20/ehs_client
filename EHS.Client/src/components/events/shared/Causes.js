@@ -23,9 +23,9 @@ const Causes = (props) => {
     const { event, refreshCauses } = props; 
     
     //building each lookup data object
-    const immediateCauseList = filterLookupDataByKey(props.lookupData, 'logicalHierarchyAttributes', 'Immediate Causes', null, true)
-    const rootCauseList = filterLookupDataByKey(props.lookupData, 'logicalHierarchyAttributes', 'Root Causes', null, true)
-    const contributingFactorList = filterLookupDataByKey(props.lookupData, 'logicalHierarchyAttributes', 'Contributing Factors', null, true)
+    const immediateCauseList = filterLookupDataByKey(props.lookupData, 'globalHierarchyAttributes', 'Immediate Causes', null, true)
+    const rootCauseList = filterLookupDataByKey(props.lookupData, 'globalHierarchyAttributes', 'Root Causes', null, true)
+    const contributingFactorList = filterLookupDataByKey(props.lookupData, 'globalHierarchyAttributes', 'Contributing Factors', null, true)
         
     //find which cause type is associated to each cause
     const currentImmediateCauses = event.causes

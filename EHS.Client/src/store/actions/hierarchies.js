@@ -8,6 +8,7 @@ export const fetchHierarchyTreeWithDepth = (type, hierachyId) => {
             })
             .catch(res => {	
                 console.log(res)
+                return res;
                 //dispatch(addNotification(`TODO: Customize Error Message. ${res.status}`, 'error'));
             });
     
@@ -21,6 +22,7 @@ export const fetchHierarchyLevels = () => {
             })
             .catch(res => {	
                 console.log(res)
+                return res;
                 // dispatch(addNotification(`TODO: Customize Error Message. ${res.status}`, 'error'));
             });
     
@@ -35,6 +37,7 @@ export const postNewHierarchy = (hierarchies, firstChild = false, userId) => {
             })
             .catch(res => {	
                 console.log(res)
+                return res;
                 // dispatch(addNotification(`TODO: Customize Error Message. ${res.status}`, 'error'));
             })
     // }    
@@ -50,6 +53,7 @@ export const updateHierarchy = (hierarchy, userId) => {
             })
             .catch(res => {	
                 console.log(res)
+                return res;
                 // dispatch(addNotification(`TODO: Customize Error Message. ${res.status}`, 'error'));
             })
     // }
@@ -64,6 +68,7 @@ export const deleteHierarchy = (hierarchyId, userId) => {
             })
             .catch(res => {	
                 console.log(res)
+                return res;
                 // dispatch(addNotification(`TODO: Customize Error Message. ${res.status}`, 'error'));
             })
     // }

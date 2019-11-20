@@ -44,7 +44,6 @@ const Homepage = (props) => {
     const classes = useStyles();
     const { authUser, errors, removeNotification, currentUser } = props;
 
-    console.log(removeNotification)
     //if user is not logged in, route them to the main landing page 
     return (
       <Fragment>

@@ -46,9 +46,9 @@ namespace EHS.Server.WebApi.Controllers.Common
                     dynamicParamList.Add(new DynamicParam { TableAlias = "ha.", FieldName = "Enabled", Operator = "=", ParamName = "@Enabled", SingleValue = queryParams.Enabled });
                     dynamicParamList.Add(new DynamicParam { TableAlias = "a.", FieldName = "Enabled", Operator = "=", ParamName = "@AttrEnabled", SingleValue = queryParams.Enabled });
                 }
-                if (queryParams.ExcludeGlobal != null && bool.Parse(queryParams.ExcludeGlobal) == true)
+                if (queryParams.AttributeType != null) //a value should ALWAYS be passed in 
                 {
-                    dynamicParamList.Add(new DynamicParam { TableAlias = "a.", FieldName = "AttributeName", Operator = "!=", ParamName = "@AttributeName", SingleValue = "Global Attributes" });
+                    dynamicParamList.Add(new DynamicParam { TableAlias = "a.", FieldName = "AttributeName", Operator = "=", ParamName = "@AttributeName", SingleValue = queryParams.AttributeType });
                 }
 
                 //get the list of hierarchyAttributes 
@@ -83,10 +83,15 @@ namespace EHS.Server.WebApi.Controllers.Common
                     dynamicParamList.Add(new DynamicParam { TableAlias = "ha.", FieldName = "Enabled", Operator = "=", ParamName = "@Enabled", SingleValue = queryParams.Enabled });
                     dynamicParamList.Add(new DynamicParam { TableAlias = "a.", FieldName = "Enabled", Operator = "=", ParamName = "@AttrEnabled", SingleValue = queryParams.Enabled });
                 }
-                if (queryParams.ExcludeGlobal != null && bool.Parse(queryParams.ExcludeGlobal) == true)
+                if (queryParams.AttributeType != null) //a value should ALWAYS be passed in 
                 {
-                    dynamicParamList.Add(new DynamicParam { TableAlias = "a.", FieldName = "AttributeName", Operator = "!=", ParamName = "@AttributeName", SingleValue = "Global Attributes" });
+                    dynamicParamList.Add(new DynamicParam { TableAlias = "a.", FieldName = "AttributeName", Operator = "=", ParamName = "@AttributeName", SingleValue = queryParams.AttributeType });
                 }
+
+
+
+                //global, logical, or physical
+                string attributeType = queryParams.AttributeType;
 
                 //get the list of hierarchyAttributes 
                 var hierarchyAttributes = await _hierarchyAttributeRepo.GetFullTreeAsync(dynamicParamList, id);
@@ -120,9 +125,9 @@ namespace EHS.Server.WebApi.Controllers.Common
                     dynamicParamList.Add(new DynamicParam { TableAlias = "ha.", FieldName = "Enabled", Operator = "=", ParamName = "@Enabled", SingleValue = queryParams.Enabled });
                     dynamicParamList.Add(new DynamicParam { TableAlias = "a.", FieldName = "Enabled", Operator = "=", ParamName = "@AttrEnabled", SingleValue = queryParams.Enabled });
                 }
-                if (queryParams.ExcludeGlobal != null && bool.Parse(queryParams.ExcludeGlobal) == true)
+                if (queryParams.AttributeType != null) //a value should ALWAYS be passed in 
                 {
-                    dynamicParamList.Add(new DynamicParam { TableAlias = "a.", FieldName = "AttributeName", Operator = "!=", ParamName = "@AttributeName", SingleValue = "Global Attributes" });
+                    dynamicParamList.Add(new DynamicParam { TableAlias = "a.", FieldName = "AttributeName", Operator = "=", ParamName = "@AttributeName", SingleValue = queryParams.AttributeType });
                 }
 
                 //get the list of hierarchyAttributes 

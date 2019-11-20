@@ -10,8 +10,8 @@ namespace EHS.Server.WebApi.Helpers.Queries
     {
         [FromQuery(Name = "enabled")]
         public string Enabled { get; set; }
-
-        [FromQuery(Name = "excludeglobal")]
-        public string ExcludeGlobal { get; set; }
+        
+        [FromQuery(Name = "attributetype")]
+        public string AttributeType { get; set; }
     }
 }

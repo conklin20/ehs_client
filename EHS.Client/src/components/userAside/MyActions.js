@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react'; 
 import { makeStyles } from '@material-ui/core/styles';
-import { Divider, Typography, List, ListItem, ListItemText, Badge } from '@material-ui/core';
+import { Divider, Typography, List, ListItem, ListItemText, Badge, Tooltip } from '@material-ui/core';
 import { Link } from 'react-router-dom';
 import moment from 'moment'
 
@@ -15,16 +15,18 @@ const MyActions = props => {
     const actions = props.actions.map(a => {
         return (
             <Fragment>   
-                <ListItem>
-                    <Link to={`/events/si/${a.eventId}/step/4`} className={classes.link} >
-                        <ListItemText
-                            primary={`${a.eventId} - ${moment(a.dueDate)
-                                                        .subtract(new Date(a.dueDate).getTimezoneOffset(), 'minutes')
-                                                        .format('ll')}`}
-                            secondary={a.actionToTake}
-                            />
-                    </Link>
-                </ListItem>        
+                <Tooltip title='Event # - Action # - Action Due Date' placement="top" >
+                    <ListItem>
+                        <Link to={`/events/si/${a.eventId}/step/4`} className={classes.link} >
+                            <ListItemText
+                                primary={`${a.eventId} - ${a.actionId} - ${moment(a.dueDate)
+                                                            // .subtract(new Date(a.dueDate).getTimezoneOffset(), 'minutes')
+                                                            .format('ll')}`}
+                                secondary={a.actionToTake}
+                                />
+                        </Link>
+                    </ListItem>
+                </Tooltip>        
                 <Divider component="li" />
             </Fragment>
         )
@@ -34,11 +36,18 @@ const MyActions = props => {
         <Fragment>
             <Typography variant='h6' className={classes.sectionTitle}>
                 My Actions
-                <Badge color="primary" badgeContent={actions.length} className={classes.badge} ></Badge>
+                <Badge color="primary" badgeContent={actions.length} className={classes.badge} showZero ></Badge>
             </Typography>
-            <List className={classes.sectionBody}>
-                {actions}
-            </List>
+            {actions.length 
+                ?
+                    <List className={classes.sectionBody}>
+                        {actions}
+                    </List>
+                :
+                    <Typography variant="caption" >
+                        You're good, you've got no pending actions!
+                    </Typography>
+            }
         </Fragment>
     )
     

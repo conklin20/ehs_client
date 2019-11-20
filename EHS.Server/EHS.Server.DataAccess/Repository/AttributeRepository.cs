@@ -29,75 +29,71 @@ namespace EHS.Server.DataAccess.Repository
 
         public async Task<Attribute> GetByIdAsync(int id)
         {
-            using (IDbConnection sqlCon = Connection)
-            {
-                //build sql query 
-                string tsql = @"select a.*
+            using IDbConnection sqlCon = Connection;
+            //build sql query 
+            string tsql = @"select a.*
 	                                  ,h.*
                                 from Attributes a
 	                                 join HierarchyAttributes h on h.AttributeId = a.AttributeId
                                 where a.AttributeId = @AttributeId";
 
-                //build param list 
-                var p = new
+            //build param list 
+            var p = new
+            {
+                AttributeId = id
+            };
+
+            var attributeDictionary = new Dictionary<int, Attribute>();
+
+            var result = await sqlCon.QueryAsync<Attribute, HierarchyAttribute, Attribute>(
+                tsql,
+                (attribute, hierarchyAttributes) =>
                 {
-                    AttributeId = id
-                };
-
-                var attributeDictionary = new Dictionary<int, Attribute>();
-
-                var result = await sqlCon.QueryAsync<Attribute, HierarchyAttribute, Attribute>(
-                    tsql,
-                    (attribute, hierarchyAttributes) =>
+                    if (!attributeDictionary.TryGetValue(attribute.AttributeId, out Attribute attributeEntry))
                     {
-                        if (!attributeDictionary.TryGetValue(attribute.AttributeId, out Attribute attributeEntry))
-                        {
-                            attributeEntry = attribute;
-                            attributeEntry.HierarchyAttributes = new List<HierarchyAttribute>();
-                            attributeDictionary.Add(attributeEntry.AttributeId, attributeEntry);
-                        }
+                        attributeEntry = attribute;
+                        attributeEntry.HierarchyAttributes = new List<HierarchyAttribute>();
+                        attributeDictionary.Add(attributeEntry.AttributeId, attributeEntry);
+                    }
 
-                        attributeEntry.HierarchyAttributes.Add(hierarchyAttributes);
-                        return attributeEntry;
-                    },
-                    p,
-                    splitOn: "HierarchyAttributeId");
-                
+                    attributeEntry.HierarchyAttributes.Add(hierarchyAttributes);
+                    return attributeEntry;
+                },
+                p,
+                splitOn: "HierarchyAttributeId");
 
-                return result.Distinct().AsList().FirstOrDefault();
-            }
+
+            return result.Distinct().AsList().FirstOrDefault();
         }
 
         public async Task<List<Attribute>> GetAllAsync()
         {
-            using (IDbConnection sqlCon = Connection)
-            {
-                //build sql query 
-                string tsql = @"select a.*
+            using IDbConnection sqlCon = Connection;
+            //build sql query 
+            string tsql = @"select a.*
 	                                  ,h.*
                                 from Attributes a
 	                                 join HierarchyAttributes h on h.AttributeId = a.AttributeId";
 
-                var attributeDictionary = new Dictionary<int, Attribute>();
+            var attributeDictionary = new Dictionary<int, Attribute>();
 
-                var result = await sqlCon.QueryAsync<Attribute, HierarchyAttribute, Attribute>(
-                    tsql,
-                    (attribute, hierarchyAttributes) =>
+            var result = await sqlCon.QueryAsync<Attribute, HierarchyAttribute, Attribute>(
+                tsql,
+                (attribute, hierarchyAttributes) =>
+                {
+                    if (!attributeDictionary.TryGetValue(attribute.AttributeId, out Attribute attributeEntry))
                     {
-                        if (!attributeDictionary.TryGetValue(attribute.AttributeId, out Attribute attributeEntry))
-                        {
-                            attributeEntry = attribute;
-                            attributeEntry.HierarchyAttributes = new List<HierarchyAttribute>();
-                            attributeDictionary.Add(attributeEntry.AttributeId, attributeEntry);
-                        }
+                        attributeEntry = attribute;
+                        attributeEntry.HierarchyAttributes = new List<HierarchyAttribute>();
+                        attributeDictionary.Add(attributeEntry.AttributeId, attributeEntry);
+                    }
 
-                        attributeEntry.HierarchyAttributes.Add(hierarchyAttributes);
-                        return attributeEntry;
-                    },
-                    splitOn: "HierarchyAttributeId");
+                    attributeEntry.HierarchyAttributes.Add(hierarchyAttributes);
+                    return attributeEntry;
+                },
+                splitOn: "HierarchyAttributeId");
 
-                return result.Distinct().AsList();
-            }
+            return result.Distinct().AsList();
         }
 
         //public async Task<Attribute> AddAsync(Attribute AttributeToAdd)
