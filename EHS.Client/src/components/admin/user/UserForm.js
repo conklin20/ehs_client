@@ -74,7 +74,7 @@ const UserForm = props => {
     }))
     //check if user's role level you're trying to edit is at or below your role level
     // console.log(roleOptions.find(o => o.value == user.roleId))
-    const canEdit = roleOptions.find(o => o.value == user.roleId) || !userIdToEdit ? true : false; 
+    const canEdit = roleOptions.find(o => o.value == user.roleId) || !userIdToEdit || userIdToEdit === currentUser.user.userId ? true : false; 
     
     // Handle field change 
     const handleChange = () => e => {

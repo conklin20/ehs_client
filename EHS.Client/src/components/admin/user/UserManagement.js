@@ -140,7 +140,7 @@ const UserManagement = props => {
                         handleShowUserForm={handleShowUserForm}
                         handleSearchTextChange={handleSearchTextChange}
                     />
-                    {Object.keys(lookupData).length >= 3 && users.length?
+                    {Object.keys(lookupData).length >= 4 && users.length?
                         <UserList 
                             // users={users}
                             users={filterUsers()}

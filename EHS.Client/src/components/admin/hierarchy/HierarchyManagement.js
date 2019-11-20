@@ -246,7 +246,7 @@ const HierarchyManagement = props => {
                         <DialogTitle id="confirm-delete-dialog">Delete Hierarchy</DialogTitle>
                         <DialogContent>
                             <DialogContentText>
-                                Are you sure you want to delete ths hierarchy? All Hierarchies within this hierarchy will also be deleted.
+                                Are you sure you want to delete this hierarchy? All Hierarchies within this hierarchy will also be deleted.
                                 This action will not be undoable. If you want to proceed, re-type the name of the hierarchy you want to delete. 
                             </DialogContentText>
                             <TextField

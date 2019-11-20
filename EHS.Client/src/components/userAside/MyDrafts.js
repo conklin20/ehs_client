@@ -73,11 +73,20 @@ const MyDrafts = props => {
         <Fragment>
             <Typography variant='h6' className={classes.sectionTitle}>
                 My Drafts
-                <Badge color="primary" badgeContent={drafts.length} className={classes.badge}></Badge>
+                <Badge color="primary" badgeContent={drafts.length} className={classes.badge} showZero ></Badge>
             </Typography>
-            <List className={classes.sectionBody}>
-                {drafts}
-            </List>
+            {drafts.length
+                ?
+                    <List className={classes.sectionBody}>
+                        {drafts}
+                    </List>
+                :
+                    <Link to="/events/si/new" className={classes.link} >
+                        <Typography variant="caption" >
+                            You've got no Draft, click here to get one started
+                        </Typography>
+                    </Link>
+            }
         </Fragment>
     )
     

@@ -65,6 +65,11 @@ const Routes = props => {
 
  	// Essentially what was componentDidMount and componentDidUpdate before Hooks
 	useEffect(() => {
+        if(!props.currentUser.isAuthenticated){
+            console.log('sending user to log in screen')
+            props.history.push('/');
+        }
+
 		return () => {
 			console.log('Routes Component Unmounting')
 		}

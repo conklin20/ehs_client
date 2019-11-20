@@ -10,7 +10,7 @@ import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles(theme => ({
     sectionTitle:{
-        marginTop: theme.spacing(1),
+        marginTop: theme.spacing(3),
     },
     sectionBody: {
       width: '100%',
@@ -37,7 +37,6 @@ const UserAside = props => {
 
     // Essentially what was componentDidMount and componentDidUpdate before Hooks
 	useEffect(() => {
-        console.log('called!')
         //get users open actions 
         fetchActions(`?userId=${currentUser.user.userId}&eventStatus=Open`)
             .then(res => {
@@ -78,24 +77,17 @@ const UserAside = props => {
     return (     
         <Fragment>
             {employees && employees.length ? 
-                <Fragment>                    
-                    {myActions.length ? 
+                <Fragment>                   
                         <MyActions 
                             actions={myActions}
                             currentUser={currentUser}
                             useStyles={useStyles} 
                         />
-                        : null
-                    }
-                    {myPendingApprovals.length ? 
                         <MyApprovals
                             pendingApprovals={myPendingApprovals}
                             currentUser={currentUser}
                             useStyles={useStyles} 
-                        />
-                        : null
-                    }
-                    {myDrafts.length ?             
+                        />          
                         <MyDrafts 
                             drafts={myDrafts}
                             handleDelete={handleDelete}
@@ -103,8 +95,6 @@ const UserAside = props => {
                             currentUser={currentUser}
                             useStyles={useStyles} 
                         />
-                        : null
-                    }
                 </Fragment>
             : null
             }

@@ -185,7 +185,7 @@ const Actions = (props) => {
 
     //building each lookup data object 
     const employees = filterEmployeeList(lookupData['employees'], null, 4001, true, false)
-    const actionTypes = filterLookupDataByKey(lookupData, 'logicalHierarchyAttributes', 'Action Types', null); 
+    const actionTypes = filterLookupDataByKey(lookupData, 'globalHierarchyAttributes', 'Action Types', null); 
 
     return (
         <Fragment>

@@ -100,9 +100,9 @@ const Review = (props) => {
         )      
     })
 
-    const immediateCauseList = filterLookupDataByKey(props.lookupData, 'logicalHierarchyAttributes', 'Immediate Causes', null, true)
-    const rootCauseList = filterLookupDataByKey(props.lookupData, 'logicalHierarchyAttributes', 'Root Causes', null, true)
-    const contributingFactorList = filterLookupDataByKey(props.lookupData, 'logicalHierarchyAttributes', 'Contributing Factors', null, true)
+    const immediateCauseList = filterLookupDataByKey(props.lookupData, 'globalHierarchyAttributes', 'Immediate Causes', null, true)
+    const rootCauseList = filterLookupDataByKey(props.lookupData, 'globalHierarchyAttributes', 'Root Causes', null, true)
+    const contributingFactorList = filterLookupDataByKey(props.lookupData, 'globalHierarchyAttributes', 'Contributing Factors', null, true)
     const causes = ['Immediate Causes','Root Causes','Contributing Factors'].map(causeType => {                
         switch(causeType){
             case 'Immediate Causes':
