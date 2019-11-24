@@ -44,6 +44,11 @@ namespace EHS.Server.WebApi.Services
                 _logger.LogError("User {0} not found.", username);
                 return null;
             }
+            if (!user.Enabled)
+            {
+                _logger.LogError("{User {0} found, but the account is disabled", username);
+                return user;
+            }
 
             //check password against AD 
             bool success = false;

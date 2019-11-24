@@ -138,20 +138,21 @@ const Tree = props => {
 			console.log('Tree Component Unmounting')
 		}
 
-    }, []); //this 2nd arg is important, it tells what to look for changes in, and will re-run the hook when this changes 
+    }, [hierarchies]); //this 2nd arg is important, it tells what to look for changes in, and will re-run the hook when this changes 
     
     const generateTree = () => {
-
         const rootLevel = hierarchyLevels.find(l => l.hierarchyLevelNumber === 1);
         const level2 = hierarchyLevels.find(l => l.hierarchyLevelNumber === 2);
         const level3 = hierarchyLevels.find(l => l.hierarchyLevelNumber === 3);
         const level4 = hierarchyLevels.find(l => l.hierarchyLevelNumber === 4);
         const level5 = hierarchyLevels.find(l => l.hierarchyLevelNumber === 5);
+        
+        console.log(hierarchyLevels)
 
         // console.log(hierarchyLevels)
         setItems((() => {
             const rootHierarchy = hierarchies.find(root => root.hierarchyLevel.hierarchyLevelNumber + 1 === 1) //hierarchyLevelNumber here is 0 based, adding 1 for clarity so it aligns with hierarchyLevels
-            // console.log(rootHierarchy)
+
             return (
                 //level 0 / root
                 <StyledTreeItem 
@@ -256,9 +257,9 @@ const Tree = props => {
                                                                                                                                         <TextField
                                                                                                                                             id={h4.hierarchyId}
                                                                                                                                             name='newLevel5'
-                                                                                                                                            placeholder={`New ${level5.hierarchyLevelAlias || level5.hierarchyLevelName} under ${h3.hierarchyName}...`}
+                                                                                                                                            placeholder={`Copy/Paste new ${level5.hierarchyLevelAlias || level5.hierarchyLevelName} under ${h3.hierarchyName}...`}
                                                                                                                                             className={classes.textField}
-                                                                                                                                            label={`New ${level5.hierarchyLevelAlias || level5.hierarchyLevelName} under ${h3.hierarchyName}...`}
+                                                                                                                                            label={`Copy/Paste new ${level5.hierarchyLevelAlias || level5.hierarchyLevelName} under ${h3.hierarchyName}...`}
                                                                                                                                             margin="normal"
                                                                                                                                             onChange={handleChange}
                                                                                                                                             // value={newHierarchy['newLevel5']}
@@ -282,9 +283,9 @@ const Tree = props => {
                                                                                                                 <TextField
                                                                                                                     id={h3.hierarchyId}
                                                                                                                     name='newLevel5'
-                                                                                                                    placeholder={`New ${level5.hierarchyLevelAlias || level5.hierarchyLevelName} under ${h3.hierarchyName}...`}
+                                                                                                                    placeholder={`Copy/Paste new ${level5.hierarchyLevelAlias || level5.hierarchyLevelName} under ${h3.hierarchyName}...`}
                                                                                                                     className={classes.textField}
-                                                                                                                    label={`New ${level5.hierarchyLevelAlias || level5.hierarchyLevelName} under ${h3.hierarchyName}...`}
+                                                                                                                    label={`Copy/Paste new ${level5.hierarchyLevelAlias || level5.hierarchyLevelName} under ${h3.hierarchyName}...`}
                                                                                                                     margin="normal"
                                                                                                                     onChange={handleChange}
                                                                                                                     // value={newHierarchy['newLevel5']}
@@ -308,9 +309,9 @@ const Tree = props => {
                                                                                                             <TextField
                                                                                                                 id={h3.hierarchyId}
                                                                                                                 name='newLevel4'
-                                                                                                                placeholder={`New ${level4.hierarchyLevelAlias || level4.hierarchyLevelName} under ${h2.hierarchyName}...`}
+                                                                                                                placeholder={`Copy/Paste new ${level4.hierarchyLevelAlias || level4.hierarchyLevelName} under ${h2.hierarchyName}...`}
                                                                                                                 className={classes.textField}
-                                                                                                                label={`New ${level4.hierarchyLevelAlias || level4.hierarchyLevelName} under ${h2.hierarchyName}...`}
+                                                                                                                label={`Copy/Paste new ${level4.hierarchyLevelAlias || level4.hierarchyLevelName} under ${h2.hierarchyName}...`}
                                                                                                                 margin="normal"
                                                                                                                 onChange={handleChange}
                                                                                                                 fullWidth
@@ -333,9 +334,9 @@ const Tree = props => {
                                                                                         <TextField
                                                                                             id={h2.hierarchyId}
                                                                                             name='newLevel4'
-                                                                                            placeholder={`New ${level4.hierarchyLevelAlias || level4.hierarchyLevelName} under ${h2.hierarchyName}...`}
+                                                                                            placeholder={`Copy/Paste new ${level4.hierarchyLevelAlias || level4.hierarchyLevelName} under ${h2.hierarchyName}...`}
                                                                                             className={classes.textField}
-                                                                                            label={`New ${level4.hierarchyLevelAlias || level4.hierarchyLevelName} under ${h2.hierarchyName}...`}
+                                                                                            label={`Copy/Paste new ${level4.hierarchyLevelAlias || level4.hierarchyLevelName} under ${h2.hierarchyName}...`}
                                                                                             margin="normal"
                                                                                             onChange={handleChange}
                                                                                             fullWidth
@@ -358,9 +359,9 @@ const Tree = props => {
                                                                                     <TextField
                                                                                         id={h2.hierarchyId}
                                                                                         name='newLevel3'
-                                                                                        placeholder={`New ${level3.hierarchyLevelAlias || level3.hierarchyLevelName} under ${h1.hierarchyName}...`}
+                                                                                        placeholder={`Copy/Paste new ${level3.hierarchyLevelAlias || level3.hierarchyLevelName} under ${h1.hierarchyName}...`}
                                                                                         className={classes.textField}
-                                                                                        label={`New ${level3.hierarchyLevelAlias || level3.hierarchyLevelName} under ${h1.hierarchyName}...`}
+                                                                                        label={`Copy/Paste new ${level3.hierarchyLevelAlias || level3.hierarchyLevelName} under ${h1.hierarchyName}...`}
                                                                                         margin="normal"
                                                                                         onChange={handleChange}
                                                                                         fullWidth
@@ -384,9 +385,9 @@ const Tree = props => {
                                                             <TextField
                                                                 id={h1.hierarchyId}
                                                                 name='newLevel3'
-                                                                placeholder={`New ${level3.hierarchyLevelAlias || level3.hierarchyLevelName} under ${h1.hierarchyName}...`}
+                                                                placeholder={`Copy/Paste new ${level3.hierarchyLevelAlias || level3.hierarchyLevelName} under ${h1.hierarchyName}...`}
                                                                 className={classes.textField}
-                                                                label={`New ${level3.hierarchyLevelAlias || level3.hierarchyLevelName} under ${h1.hierarchyName}...`}
+                                                                label={`Copy/Paste new ${level3.hierarchyLevelAlias || level3.hierarchyLevelName} under ${h1.hierarchyName}...`}
                                                                 margin="normal"
                                                                 onChange={handleChange}
                                                                 fullWidth
@@ -410,9 +411,9 @@ const Tree = props => {
                                                             <TextField
                                                                 id={h1.hierarchyId}
                                                                 name='newLevel2'
-                                                                placeholder={`New ${level2.hierarchyLevelAlias || level2.hierarchyLevelName} under ${rootHierarchy.hierarchyName}...`}
+                                                                placeholder={`Copy/Paste new ${level2.hierarchyLevelAlias || level2.hierarchyLevelName} under ${rootHierarchy.hierarchyName}...`}
                                                                 className={classes.textField}
-                                                                label={`New ${level2.hierarchyLevelAlias || level2.hierarchyLevelName} under ${rootHierarchy.hierarchyName}...`}
+                                                                label={`Copy/Paste new ${level2.hierarchyLevelAlias || level2.hierarchyLevelName} under ${rootHierarchy.hierarchyName}...`}
                                                                 margin="normal"
                                                                 onChange={handleChange}
                                                                 fullWidth
@@ -436,9 +437,9 @@ const Tree = props => {
                                 <TextField
                                     id={rootHierarchy.hierarchyId}
                                     name='newLevel2'
-                                    placeholder={`New ${level2.hierarchyLevelAlias || level2.hierarchyLevelName} under ${rootHierarchy.hierarchyName}...`}
+                                    placeholder={`Copy/Paste new ${level2.hierarchyLevelAlias || level2.hierarchyLevelName} under ${rootHierarchy.hierarchyName}...`}
                                     className={classes.textField}
-                                    label={`New ${level2.hierarchyLevelAlias || level2.hierarchyLevelName} under ${rootHierarchy.hierarchyName}...`}
+                                    label={`Copy/Paste new ${level2.hierarchyLevelAlias || level2.hierarchyLevelName} under ${rootHierarchy.hierarchyName}...`}
                                     margin="normal"
                                     onChange={handleChange}
                                     fullWidth

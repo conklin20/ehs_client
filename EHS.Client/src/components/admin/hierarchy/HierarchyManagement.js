@@ -7,9 +7,19 @@ import LogicalTree from './LogicalTree';
 import { fetchHierarchyTreeWithDepth, fetchHierarchyLevels, postNewHierarchy, updateHierarchy, deleteHierarchy } from '../../../store/actions/hierarchies';
 import PhysicalTree from './PhysicalTree';
 import { addNotification } from '../../../store/actions/notifications'; 
+import { HIERARCHY_ADD_SUCCESS
+        , HIERARCHY_ADD_FAILED 
+        , HIERARCHY_UPDATE_SUCCESS
+        , HIERARCHY_UPDATE_FAILED
+        , HIERARCHY_DELETE_SUCCESS
+        , HIERARCHY_DELETE_FAILED
+} from '../../../helpers/notificationMessages';
 import { MIN_ADMIN_ROLE_LEVEL } from '../adminRoleLevel';
 
 const useStyles = makeStyles(theme => ({
+    header: {
+        margin: theme.spacing(2), 
+    },
 	paper: {
 		padding: theme.spacing(2),
 		textAlign: 'center',
@@ -41,7 +51,7 @@ const useStyles = makeStyles(theme => ({
         justifyContent: 'space-between',
         marginBottom: theme.spacing(3), 
     }
-  }));
+}));
 
 const HierarchyManagement = props => {
     const classes = useStyles(); 
@@ -122,20 +132,23 @@ const HierarchyManagement = props => {
             rgt: -1, 
             hierarchyLevelId: hierarchyLevelId
         }
-        // console.log(newHierarchy)
         const hierarchies = [newHierarchy, leftHierarchy]
         props.postNewHierarchy(hierarchies, firstChild,currentUser.user.userId)
             .then(res => {
-                // console.log(res); 
                 if(res.status === 201){
-                    setLogicalHierarchies([...logicalHierarchies, res.data])
-                    dispatch(addNotification(`Successfully created hierarchy: ${newHierarchyName}`, 'success')); 
+                    if(res.data.hierarchyLevel.hierarchyLevelName.includes('Logical')){
+                        //have to re-fetch the entire hierarchy as most of the lft and rgt values will change when a new one is created 
+                        fetchData(); 
+                    } else 
+                    if(res.data.hierarchyLevel.hierarchyLevelName.includes('Physical')){
+                        //have to re-fetch the entire hierarchy as most of the lft and rgt values will change when a new one is created 
+                        fetchData(); 
+                    }
+                    dispatch(addNotification(HIERARCHY_ADD_SUCCESS.replace('{0}', newHierarchyName), 'success')); 
                     newHierarchyName = '';
-                    setHierarchy({});
-                    fetchData(); 
                 } else {
                     console.log(res.data)
-                    dispatch(addNotification(`Error creating hierarchy: ${newHierarchyName}`, 'error')); 
+                    dispatch(addNotification(HIERARCHY_ADD_FAILED.replace('{0}', newHierarchyName), 'error')); 
                 }
             })
     }
@@ -155,11 +168,12 @@ const HierarchyManagement = props => {
         props.updateHierarchy(hierarchy, currentUser.user.userId)
             .then(res => {
                 if(res.status === 202){
-                    dispatch(addNotification(`Successfully updated hierarchy name: ${hierarchy.hierarchyName}`, 'success')); 
+                    fetchData(); 
+                    dispatch(addNotification(HIERARCHY_UPDATE_SUCCESS.replace('{0}', hierarchy.hierarchyName), 'success')); 
                     setHierarchy({});
                 } else {
                     console.log(res.data)
-                    dispatch(addNotification(`Error updating hierarchy name: ${hierarchy.hierarchyName}`, 'error')); 
+                    dispatch(addNotification(HIERARCHY_UPDATE_FAILED.replace('{0}', hierarchy.hierarchyName), 'error')); 
                 }
             })
             handleClose(); 
@@ -172,12 +186,14 @@ const HierarchyManagement = props => {
     const handleDelete = () => {
         if(confirmDeleteHierarchy === hierarchy.hierarchyName){
             //delete hierarchy 
+            console.log(hierarchy)
             props.deleteHierarchy(hierarchy.hierarchyId, currentUser.user.userId)
                 .then(res => {
                     if(res.status === 202){
-                        dispatch(addNotification(`Successfully deleted hierarchy: ${confirmDeleteHierarchy}`, 'success')); 
+                        fetchData(); 
+                        dispatch(addNotification(HIERARCHY_DELETE_SUCCESS.replace('{0}', confirmDeleteHierarchy), 'success')); 
                     } else {
-                        dispatch(addNotification(`Error deleting hierarchy: ${confirmDeleteHierarchy}`, 'error')); 
+                        dispatch(addNotification(HIERARCHY_DELETE_FAILED.replace('{0}', confirmDeleteHierarchy), 'error')); 
                     }
                 })
         } else {
@@ -192,7 +208,7 @@ const HierarchyManagement = props => {
     // console.log(`Re-rendering! Logical: ${logicalHierarchies.length}. Physical: ${physicalHierarchies.length}. Levels: ${hierarchyLevels.length}.`)
     return (
         <Paper className={classes.paper} square={true} >
-            <Typography variant='h4' >
+            <Typography variant='h4'  className={classes.header}>
                 Manage Hierarchies
             </Typography>
             { currentUser.user.roleLevel >= MIN_ADMIN_ROLE_LEVEL

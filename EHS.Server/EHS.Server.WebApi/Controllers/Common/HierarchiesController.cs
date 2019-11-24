@@ -169,9 +169,12 @@ namespace EHS.Server.WebApi.Controllers.Common
                 //map the new hierarchy from the incoming dto object to the domain/database model object so we can pass it to the Add() method
                 var addedHierarchy = await _hierarchyRepo.AddAsync(hierarchies, firstChild, userId);
 
+                //selecting the new Hierarchyto retrieve associated data 
+                var Hierarchy = await _hierarchyRepo.GetByIdAsync(addedHierarchy.HierarchyId);
+
                 //map back to dto, to pass back to client 
                 //return CreatedAtAction("GetHierarchy", new { id = addedHierarchy.HierarchyId }, addedHierarchy); 
-                return CreatedAtAction("Post", _mapper.Map<Hierarchy, HierarchyDto>(addedHierarchy));
+                return CreatedAtAction("Post", _mapper.Map<Hierarchy, HierarchyDto>(Hierarchy));
                 //return _mapper.Map<Hierarchy, HierarchyDto>(addedHierarchy);
             }
             catch (Exception ex)

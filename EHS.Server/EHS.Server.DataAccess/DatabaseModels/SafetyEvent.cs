@@ -32,6 +32,8 @@ namespace EHS.Server.DataAccess.DatabaseModels
         public TimeSpan EventTime { get; set; }
         [ConditionallyAllowNulls]
         public string EmployeeId { get; set; }
+        [ConditionallyAllowNulls]
+        public string SupervisorId { get; set; }
         [Display(Name = "Job Title")]
         [ConditionallyAllowNulls, MaxLength(50)]
         public string JobTitle { get; set; }        //From HierarchyAttribute

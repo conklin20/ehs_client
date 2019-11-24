@@ -15,9 +15,9 @@ import {
 import { MIN_ADMIN_ROLE_LEVEL } from '../adminRoleLevel';
 
 const useStyles = makeStyles(theme => ({
-	root: {
-        flex: 1,
-	},
+    header: {
+        margin: theme.spacing(2), 
+    },
 	paper: {
 		padding: theme.spacing(2),
 		textAlign: 'center',
@@ -118,7 +118,7 @@ const UserManagement = props => {
 
     return (
         <Paper className={classes.paper} square={true} >  
-            <Typography variant='h4' >
+            <Typography variant='h4'  className={classes.header}>
                 Manage System Users 
             </Typography>
             { currentUser.user.roleLevel >= MIN_ADMIN_ROLE_LEVEL 

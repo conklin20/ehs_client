@@ -90,7 +90,7 @@ const Notification = ( props ) => {
             horizontal: 'left',
         }}
             open={open}
-            autoHideDuration={autoHideDuration || 5000}
+            autoHideDuration={autoHideDuration || 6000}
             onClose={handleClose}
         >
             <MySnackbarContentWrapper

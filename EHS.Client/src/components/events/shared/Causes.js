@@ -5,6 +5,7 @@ import filterLookupDataByKey from '../../../helpers/filterLookupDataByKey';
 import AutoCompleteMulti from '../../shared/AutoCompleteMulti'; 
 import { saveCauses } from '../../../store/actions/causes';
 import { connect } from "react-redux";
+import { ATTR_CATS } from '../../../helpers/attributeCategoryEnum';
 
 const useStyles = makeStyles(theme => ({
     paper: {
@@ -23,9 +24,9 @@ const Causes = (props) => {
     const { event, refreshCauses } = props; 
     
     //building each lookup data object
-    const immediateCauseList = filterLookupDataByKey(props.lookupData, 'globalHierarchyAttributes', 'Immediate Causes', null, true)
-    const rootCauseList = filterLookupDataByKey(props.lookupData, 'globalHierarchyAttributes', 'Root Causes', null, true)
-    const contributingFactorList = filterLookupDataByKey(props.lookupData, 'globalHierarchyAttributes', 'Contributing Factors', null, true)
+    const immediateCauseList = filterLookupDataByKey(props.lookupData, ATTR_CATS.IMMEDIATE_CAUSES.lookupDataKey, ATTR_CATS.IMMEDIATE_CAUSES.key, null, true)
+    const rootCauseList = filterLookupDataByKey(props.lookupData, ATTR_CATS.ROOT_CAUSES.lookupDataKey, ATTR_CATS.ROOT_CAUSES.key, null, true)
+    const contributingFactorList = filterLookupDataByKey(props.lookupData, ATTR_CATS.CONTRIBUTING_FACTORS.lookupDataKey, ATTR_CATS.CONTRIBUTING_FACTORS.key, null, true)
         
     //find which cause type is associated to each cause
     const currentImmediateCauses = event.causes

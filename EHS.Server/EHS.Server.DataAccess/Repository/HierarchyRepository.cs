@@ -31,10 +31,24 @@ namespace EHS.Server.DataAccess.Repository
         {
             using IDbConnection sqlCon = Connection;
             string tsql = @"select h.HierarchyId, h.HierarchyName, h.HierarchyLevelId, h.Lft, h.Rgt, h.CreatedBy, h.CreatedOn, h.ModifiedBy, h.ModifiedOn
-                                  from Hierarchies h 
-                                  where h.HierarchyId = @hierarchyId ";
+		                        ,l.HierarchyLevelId, l.HierarchyLevelName, l.HierarchyLevel as HierarchyLevelNumber, l.HierarchyLevelAlias
+                            from Hierarchies h 
+								join HierarchyLevels l on l.HierarchyLevelId = h.HierarchyLevelId
+                            where h.HierarchyId = @hierarchyId ";
 
-            var result = await sqlCon.QueryAsync<Hierarchy>(tsql, new { hierarchyId = id });
+            DynamicParameters paramList = new DynamicParameters();
+            //add param from route (hierarchyId)
+            paramList.Add("@HierarchyId", id);
+
+            var result = await sqlCon.QueryAsync<Hierarchy, HierarchyLevel, Hierarchy>(
+                tsql,
+                (hierarchy, hierarchyLevel) =>
+                {
+                    hierarchy.HierarchyLevel = hierarchyLevel;
+                    return hierarchy;
+                },
+                paramList,
+                splitOn: "HierarchyLevelId");
             return result.FirstOrDefault();
         }
 
@@ -174,18 +188,23 @@ namespace EHS.Server.DataAccess.Repository
             leftRow[4] = leftHierarchy.HierarchyLevelId;
             leftHierarchyDt.Rows.Add(leftRow);
 
+
+            DynamicParameters parameters = new DynamicParameters();
+            parameters.Add("@Hierarchy", newHierarchyDt, dbType: DbType.Object);
+            parameters.Add("@LeftHierarchy", leftHierarchyDt, dbType: DbType.Object);
+            parameters.Add("@FirstChild", firstChild, dbType: DbType.Boolean);
+            parameters.Add("@UserId", userId, dbType: DbType.String);
+            parameters.Add("@NewHierarchyId", dbType: DbType.Int32, direction: ParameterDirection.Output);
+
             using IDbConnection sqlCon = Connection;
-            var result = await sqlCon.ExecuteAsync(
+            var result = sqlCon.Execute(
                 "dbo.spHierarchyAddOrUpdate",
-                new
-                {
-                    hierarchy = newHierarchyDt,
-                    leftHierarchy = leftHierarchyDt,
-                    firstChild,
-                    userId
-                },
+                parameters,
                 commandType: CommandType.StoredProcedure
-                );
+            );
+
+            int newId = parameters.Get<int>("@NewHierarchyId");
+            newHierarchy.HierarchyId = newId;
             return newHierarchy;
         }
 
@@ -224,16 +243,17 @@ namespace EHS.Server.DataAccess.Repository
             leftRow[4] = -1;
             leftHierarchyDt.Rows.Add(leftRow);
 
+            DynamicParameters parameters = new DynamicParameters();
+            parameters.Add("@Hierarchy", hierarchyToUpdateDt, dbType: DbType.Object);
+            parameters.Add("@LeftHierarchy", leftHierarchyDt, dbType: DbType.Object);
+            parameters.Add("@FirstChild", false, dbType: DbType.Boolean);
+            parameters.Add("@UserId", userId, dbType: DbType.String);
+            parameters.Add("@NewHierarchyId", dbType: DbType.Int32, direction: ParameterDirection.Output);
+
             using IDbConnection sqlCon = Connection;
             var result = await sqlCon.ExecuteAsync(
                 "dbo.spHierarchyAddOrUpdate",
-                new
-                {
-                    hierarchy = hierarchyToUpdateDt,
-                    leftHierarchy = leftHierarchyDt,
-                    firstChild = false,
-                    userId
-                },
+                parameters,
                 commandType: CommandType.StoredProcedure
                 );
             return hierarchyToUpdate;

@@ -12,6 +12,7 @@ import filterEmployeeList from '../../../helpers/filterEmployeeList';
 import AutoCompleteMulti from '../../shared/AutoCompleteMulti'; 
 import { savePeopleInvolved } from '../../../store/actions/peopleInvolved';
 import { connect } from "react-redux";
+import { ATTR_CATS } from '../../../helpers/attributeCategoryEnum';
 
 const useStyles = makeStyles(theme => ({
     paper: {
@@ -28,7 +29,7 @@ const PeopleInvolved = (props) => {
     //building each lookup data object
     const employees = filterEmployeeList(props.lookupData['employees'], null, 4001, true, false)
     const supervisors = filterEmployeeList(props.lookupData['employees'], event['supervisorId'], 4001, true, true)
-    const involvement = props.lookupData['logicalHierarchyAttributes'].filter(attr => attr.key === 'Employee Involvement');
+    const involvement = props.lookupData[ATTR_CATS.EMPLOYEE_INVOLVEMENT.lookupDataKey].filter(attr => attr.key === ATTR_CATS.EMPLOYEE_INVOLVEMENT.key);
 
     const currentPeople = event.peopleInvolved.map(pe => {
         return {

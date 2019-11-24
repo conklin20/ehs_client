@@ -11,8 +11,8 @@ namespace EHS.Server.DataAccess.Repository
         Task<List<HierarchyAttribute>> GetAllAsync(List<DynamicParam> queryParams);
         Task<List<HierarchyAttribute>> GetFullTreeAsync(List<DynamicParam> queryParams, int hierarchyId);
         Task<List<HierarchyAttribute>> GetSinglePathAsync(List<DynamicParam> queryParams, int hierarchyId);
-        Task<HierarchyAttribute> AddAsync(HierarchyAttribute hierarchyAttribute);
-        Task<HierarchyAttribute> UpdateAsync(HierarchyAttribute hierarchyAttributeToUpdate);
-        Task<HierarchyAttribute> DeleteAsync(HierarchyAttribute hierarchyAttributeToDelete);
+        Task<HierarchyAttribute> AddAsync(HierarchyAttribute hierarchyAttribute, string userId);
+        Task<HierarchyAttribute> UpdateAsync(HierarchyAttribute hierarchyAttributeToUpdate, string userId);
+        Task<int> DeleteAsync(int hierarchyAttributeID, string userId);
     }
 }

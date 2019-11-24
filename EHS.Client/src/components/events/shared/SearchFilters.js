@@ -21,7 +21,7 @@ import {
 	Typography,
 } from '@material-ui/core';
 import { S_I_STATUS } from '../../../helpers/eventStatusEnum';
-
+import { ATTR_CATS } from '../../../helpers/attributeCategoryEnum';
 
 const useStyles = makeStyles(theme => ({
 	root: {
@@ -67,8 +67,7 @@ const SearchFilters = props => {
 	const { showSearchFilters, handleShowSearchFilters, handleSearchFiltersChange, handleAutoCompleteChange, handleSearch, searchFilters, lookupData } = props
 	// console.log(searchFilters)
 	//filtering lookup data on key=Statueses, then mapping over it and creating an object with value and label, which react-dropdown needs
-	const statuses = lookupData.logicalHierarchyAttributes
-		.filter(d => d.key === 'Statuses')
+	const statuses = filterLookupDataByKey(lookupData, ATTR_CATS.EVENT_STATUSES.lookupDataKey, ATTR_CATS.EVENT_STATUSES.key, searchFilters[ATTR_CATS.EVENT_STATUSES.dbField])
 		.sort()
 		.filter(s => s.value !== S_I_STATUS.DRAFT) //filter our Drafts, you dont want to be able to look up other peoples drafts
 		.map(status => ({		
@@ -79,21 +78,21 @@ const SearchFilters = props => {
 	
     //building each lookup data object 
     //Global Attributes
-    const initialCategories = filterLookupDataByKey(lookupData, 'globalHierarchyAttributes', 'Initial Category', searchFilters['initialCategory']);
-    const resultingCategories = filterLookupDataByKey(lookupData, 'globalHierarchyAttributes', 'Resulting Category', searchFilters['resultingCategory']);
+    const initialCategories = filterLookupDataByKey(lookupData, ATTR_CATS.INITIAL_CATEGORY.lookupDataKey, ATTR_CATS.INITIAL_CATEGORY.key, searchFilters[ATTR_CATS.INITIAL_CATEGORY.dbField]);
+    const resultingCategories = filterLookupDataByKey(lookupData, ATTR_CATS.RESULTING_CATEGORY.lookupDataKey, ATTR_CATS.RESULTING_CATEGORY.key, searchFilters[ATTR_CATS.RESULTING_CATEGORY.dbField]);
+    const bodyParts = filterLookupDataByKey(lookupData, ATTR_CATS.BODY_PARTS.lookupDataKey, ATTR_CATS.BODY_PARTS.key, searchFilters[ATTR_CATS.BODY_PARTS.dbField]);
 
     //Logical Attributes
-    const shifts = filterLookupDataByKey(lookupData, 'logicalHierarchyAttributes', 'Shifts', searchFilters['shift']); 
-    const jobTitles = filterLookupDataByKey(lookupData, 'logicalHierarchyAttributes', 'Job Titles', searchFilters['jobTitle']); 
-    const injuryNatures = filterLookupDataByKey(lookupData, 'logicalHierarchyAttributes', 'Nature of Injury', searchFilters['natureOfInjury']); 
-    const bodyParts = filterLookupDataByKey(lookupData, 'logicalHierarchyAttributes', 'Body Parts', searchFilters['bodyPart']); 
-    const firstAidTypes = filterLookupDataByKey(lookupData, 'logicalHierarchyAttributes', 'First Aid Types', searchFilters['firstAidType']);
-    const workEnvironments = filterLookupDataByKey(lookupData, 'logicalHierarchyAttributes', 'Work Environment', searchFilters['workEnvironment']);
-    const materials = filterLookupDataByKey(lookupData, 'logicalHierarchyAttributes', 'Materials', searchFilters['materialInvolved']);
+    const shifts = filterLookupDataByKey(lookupData, ATTR_CATS.SHIFTS.lookupDataKey, ATTR_CATS.SHIFTS.key, searchFilters[ATTR_CATS.SHIFTS.dbField]);
+    const jobTitles = filterLookupDataByKey(lookupData, ATTR_CATS.JOB_TITLES.lookupDataKey, ATTR_CATS.JOB_TITLES.key, searchFilters[ATTR_CATS.JOB_TITLES.dbField]);
+    const injuryNatures = filterLookupDataByKey(lookupData, ATTR_CATS.INJURY_NATURES.lookupDataKey, ATTR_CATS.INJURY_NATURES.key, searchFilters[ATTR_CATS.INJURY_NATURES.dbField]);
+    const firstAidTypes = filterLookupDataByKey(lookupData, ATTR_CATS.FIRST_AID_TYPES.lookupDataKey, ATTR_CATS.FIRST_AID_TYPES.key, searchFilters[ATTR_CATS.FIRST_AID_TYPES.dbField]);
+    const workEnvironments = filterLookupDataByKey(lookupData, ATTR_CATS.WORK_ENVIRONMENTS.lookupDataKey, ATTR_CATS.WORK_ENVIRONMENTS.key, searchFilters[ATTR_CATS.WORK_ENVIRONMENTS.dbField]);
+    const materials = filterLookupDataByKey(lookupData, ATTR_CATS.MATERIALS.lookupDataKey, ATTR_CATS.MATERIALS.key, searchFilters[ATTR_CATS.MATERIALS.dbField]);
     
     //Physical Attributes 
-    const offPlantMedicalFacilities = filterLookupDataByKey(lookupData, 'physicalHierarchyAttributes', 'Off Plant Medical Facility', searchFilters['offPlantMedicalFacility']);
-    const equipment = filterLookupDataByKey(lookupData, 'physicalHierarchyAttributes', 'Equipment', searchFilters['equipmentInvolved']);
+    const offPlantMedicalFacilities = filterLookupDataByKey(lookupData, ATTR_CATS.MEDICAL_FACILITIES.lookupDataKey, ATTR_CATS.MEDICAL_FACILITIES.key, searchFilters[ATTR_CATS.MEDICAL_FACILITIES.dbField]);
+    const equipment = filterLookupDataByKey(lookupData, ATTR_CATS.EQUIPMENT.lookupDataKey, ATTR_CATS.EQUIPMENT.key, searchFilters[ATTR_CATS.EQUIPMENT.dbField]);
 	
 	return (
 		<div className={classes.root}>
