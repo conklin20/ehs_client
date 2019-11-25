@@ -7,7 +7,8 @@ CREATE PROCEDURE [dbo].[spHierarchyAddOrUpdate]
 	@Hierarchy dbo.HierarchyTableType READONLY, 
 	@LeftHierarchy dbo.HierarchyTableType READONLY,
 	@FirstChild bit = 0, 
-	@UserId nvarchar(50)
+	@UserId nvarchar(50),
+	@NewHierarchyId int output
 
 AS
 BEGIN
@@ -50,6 +51,8 @@ BEGIN
 
 			insert into Hierarchies(HierarchyName, lft, rgt, HierarchyLevelId, CreatedOn, CreatedBy, ModifiedOn, ModifiedBy) 
 			select HierarchyName, @myRight + 1, @myRight + 2, HierarchyLevelId, getutcdate(), @UserId, getutcdate(), @UserId from @Hierarchy
+			set @NewHierarchyId = SCOPE_IDENTITY()
+			return @NewHierarchyId
 		end 
 		else 
 		begin 
@@ -69,6 +72,8 @@ BEGIN
 
 			insert into Hierarchies(HierarchyName, lft, rgt, HierarchyLevelId, CreatedOn, CreatedBy, ModifiedOn, ModifiedBy) 
 			select HierarchyName, @myLeft + 1, @myLeft + 2, HierarchyLevelId, getutcdate(), @UserId, getutcdate(), @UserId from @Hierarchy
+			set @NewHierarchyId = SCOPE_IDENTITY()
+			return @NewHierarchyId
 		end
 
 		

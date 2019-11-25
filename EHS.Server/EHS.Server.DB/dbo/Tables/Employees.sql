@@ -11,9 +11,10 @@
     [Email]         NVARCHAR (100) NULL,
     [HierarchyId]   INT            NULL,
     [IsSupervisor]  BIT            NULL,
-    CONSTRAINT [PK_Employees] PRIMARY KEY CLUSTERED ([EmployeeId] ASC),
-    CONSTRAINT [FK_Employees_Employees_SupervisorId] FOREIGN KEY ([SupervisorId]) REFERENCES [dbo].[Employees] ([EmployeeId])
+    CONSTRAINT [PK_Employees] PRIMARY KEY CLUSTERED ([EmployeeId] ASC)
 );
+
+
 
 
 

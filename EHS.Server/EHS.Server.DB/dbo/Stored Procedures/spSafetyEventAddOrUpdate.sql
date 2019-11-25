@@ -15,6 +15,7 @@ CREATE PROCEDURE [dbo].[spSafetyEventAddOrUpdate]
 	@EventDate	datetime,
 	--@EventTime	time(7),
 	@EmployeeId	nvarchar(50),
+	@SupervisorId nvarchar(50), --Not being saved to the event record, but using it to insert into the PeopleInvolved table
 	@JobTitle	nvarchar(50),
 	@Shift	nvarchar(50),
 	@WhatHappened	nvarchar(max),
@@ -61,6 +62,8 @@ BEGIN
 		@LocaleSite	nvarchar(50)		= (select h.HierarchyName from dbo.fnGetHierarchySinglePath(@LocaleId) h join HierarchyLevels l on h.HierarchyLevelId = l.HierarchyLevelId where l.HierarchyLevel = 3),
 		@LocalePlant nvarchar(50)		= (select h.HierarchyName from dbo.fnGetHierarchySinglePath(@LocaleId) h join HierarchyLevels l on h.HierarchyLevelId = l.HierarchyLevelId where l.HierarchyLevel = 4),
 		@LocalePlantArea nvarchar(50)	= (select h.HierarchyName from dbo.fnGetHierarchySinglePath(@LocaleId) h join HierarchyLevels l on h.HierarchyLevelId = l.HierarchyLevelId where l.HierarchyLevel = 5)
+	
+	declare @RoleId int
 
     if(@EventId is null) 
 	begin 
@@ -157,6 +160,18 @@ BEGIN
             @UserId)
 
 			set @NewEventId = SCOPE_IDENTITY()
+
+			--Insert the Supervisor PeopleInvolved record 
+			if not exists(select * from PeopleInvolved p join HierarchyAttributes ha on ha.HierarchyAttributeId = p.RoleId where p.EventId = @NewEventId and ha.[Key] = 'Employee Involvement' and ha.[Value] = 'Supervisor')
+			begin 				
+				if(@SupervisorId is not null)
+				begin 
+					set @RoleId = (select ha.HierarchyAttributeId from HierarchyAttributes ha where ha.[Key] = 'Employee Involvement' and ha.[Value] = 'Supervisor')
+					insert into PeopleInvolved (RoleId, EventId, EmployeeId, Comments)
+					values (@RoleId, @NewEventId, @SupervisorId, 'Auto-generated from step 3')
+				end
+			end
+
 			return @NewEventId
 	end
 	else 
@@ -206,5 +221,17 @@ BEGIN
 			ModifiedOn = GETUTCDATE(),
 			ModifiedBy = @UserId
 		where EventId = @EventId
+
+		
+		--Insert the Supervisor PeopleInvolved record 
+		if not exists(select PeopleInvolvedId from PeopleInvolved p join HierarchyAttributes ha on ha.HierarchyAttributeId = p.RoleId where p.EventId = @EventId  and ha.[Key] = 'Employee Involvement' and ha.[Value] = 'Supervisor')
+		begin 				
+			if(@SupervisorId is not null)
+			begin 	
+				set @RoleId = (select ha.HierarchyAttributeId from HierarchyAttributes ha where ha.[Key] = 'Employee Involvement' and ha.[Value] = 'Supervisor')
+				insert into PeopleInvolved (RoleId, EventId, EmployeeId, Comments)
+				values (@RoleId, @EventId, @SupervisorId, 'Auto-generated from step 3')
+			end
+		end
 	end
 END

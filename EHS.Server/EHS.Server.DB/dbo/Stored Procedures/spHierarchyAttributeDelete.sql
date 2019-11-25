@@ -14,30 +14,11 @@ BEGIN
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 	
-    print 'Delete hierarchyAttribute' 
-	select @HierarchyAttributeId
-	--INSERT INTO [app].[AppLog]
- --          ([AppId]
- --          ,[Level]
- --          ,[Logger]
- --          ,[UserName]
- --          ,[MachineName]
- --          ,[LoggedOn]
- --          ,[Thread]
- --          ,[Message]
- --          ,[CallSite]
- --          ,[Exception]
- --          ,[StackTrace])
- --    VALUES
- --          (1
- --          ,'Debug'
- --          ,'SQL'
- --          ,'caryc'
- --          ,@@SERVERNAME
- --          ,GETUTCDATE()
- --          ,0
- --          ,'spHierarchyDelete Stored proc was successfully called via Dapper!'
- --          ,''
- --          ,''
- --          ,'')
+	--set Context_Info for the user passed into the proc so the Audit triggers can capture who's making the change 
+	exec dbo.spSetUserContext @UserId
+
+	update HierarchyAttributes 
+	set Enabled = 0 
+	where HierarchyAttributeId = @HierarchyAttributeId
+
 END
