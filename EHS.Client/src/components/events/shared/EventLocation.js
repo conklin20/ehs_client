@@ -6,15 +6,15 @@ import AutoComplete from '../../shared/AutoComplete';
 const EventLocation = (props) => {
     const classes = props.useStyles();
 
-    const { lookupData, event, /*currentUser,*/ handleAutoCompleteChange, handleRefreshData } = props; 
+    const { lookupData, event, handleAutoCompleteChange, handleRefreshData } = props; 
     
     // Essentially what was componentDidMount and componentDidUpdate before Hooks
 	useEffect(() => {
-        // this.nameInput.focus()
+
 		return () => {
             //when component unmounts, go retrieve the new lookup data given the selctions made 
             //idea here is that we dont need to query the db everytime the selection changes, only when the user advances to the next screen
-            handleRefreshData();
+            // handleRefreshData();
 		}
 	}, []); //this 2nd arg is important, it tells what to look for changes in, and will re-run the hook when this changes 
 

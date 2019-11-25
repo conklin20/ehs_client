@@ -5,7 +5,7 @@ import { connect } from "react-redux";
 import { makeStyles } from '@material-ui/core/styles';
 import filterLookupDataByKey from '../../../helpers/filterLookupDataByKey';
 import { S_I_STATUS } from '../../../helpers/eventStatusEnum';
-
+import { ATTR_CATS } from '../../../helpers/attributeCategoryEnum';
 
 const useStyles = makeStyles(theme => ({
     sectionTitle: {
@@ -100,9 +100,9 @@ const Review = (props) => {
         )      
     })
 
-    const immediateCauseList = filterLookupDataByKey(props.lookupData, 'globalHierarchyAttributes', 'Immediate Causes', null, true)
-    const rootCauseList = filterLookupDataByKey(props.lookupData, 'globalHierarchyAttributes', 'Root Causes', null, true)
-    const contributingFactorList = filterLookupDataByKey(props.lookupData, 'globalHierarchyAttributes', 'Contributing Factors', null, true)
+    const immediateCauseList = filterLookupDataByKey(props.lookupData, ATTR_CATS.IMMEDIATE_CAUSES.lookupDataKey, ATTR_CATS.IMMEDIATE_CAUSES.key, null, true)
+    const rootCauseList = filterLookupDataByKey(props.lookupData, ATTR_CATS.ROOT_CAUSES.lookupDataKey, ATTR_CATS.ROOT_CAUSES.key, null, true)
+    const contributingFactorList = filterLookupDataByKey(props.lookupData, ATTR_CATS.CONTRIBUTING_FACTORS.lookupDataKey, ATTR_CATS.CONTRIBUTING_FACTORS.key, null, true)
     const causes = ['Immediate Causes','Root Causes','Contributing Factors'].map(causeType => {                
         switch(causeType){
             case 'Immediate Causes':

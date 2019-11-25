@@ -40,20 +40,20 @@ const UserAside = props => {
         //get users open actions 
         fetchActions(`?userId=${currentUser.user.userId}&eventStatus=Open`)
             .then(res => {
-                if(res) setMyActions(res.filter(a => !a.completionDate)); 
+                if(res) setMyActions(res.filter(a => !a.completionDate).sort((a, z) => a.eventId - z.eventId)); 
             })
 
         //get users pending approvals 
         fetchMyPendingApprovals(currentUser.user.userId)
             .then(res => {
                 // console.log(res)
-                if(res) setMyPendingApprovals(res)
+                if(res) setMyPendingApprovals(res.sort((a, z) => a.eventId - z.eventId))
             })
 
         //get users drafts
         fetchDrafts('?eventStatuses=Draft')
             .then(res => {
-                if(res) setMyDrafts(res); 
+                if(res) setMyDrafts(res.sort((a, z) => a.eventId - z.eventId)); 
             })
                 
 		return () => {

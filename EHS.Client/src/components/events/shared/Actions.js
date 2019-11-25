@@ -11,6 +11,7 @@ import { addApproval } from '../../../store/actions/approvals';
 import { connect } from "react-redux";
 import { makeStyles } from '@material-ui/styles';
 import { S_I_STATUS } from '../../../helpers/eventStatusEnum';
+import { ATTR_CATS } from '../../../helpers/attributeCategoryEnum'
 
 
 const useStyles = makeStyles(theme => ({
@@ -185,7 +186,7 @@ const Actions = (props) => {
 
     //building each lookup data object 
     const employees = filterEmployeeList(lookupData['employees'], null, 4001, true, false)
-    const actionTypes = filterLookupDataByKey(lookupData, 'globalHierarchyAttributes', 'Action Types', null); 
+    const actionTypes = filterLookupDataByKey(lookupData, ATTR_CATS.ACTION_TYPES.lookupDataKey, ATTR_CATS.ACTION_TYPES.key, null);
 
     return (
         <Fragment>

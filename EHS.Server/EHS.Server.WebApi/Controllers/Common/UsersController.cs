@@ -54,6 +54,8 @@ namespace EHS.Server.WebApi.Controllers.Common
 
                 if (user == null)
                     return BadRequest(new { message = "Username or password is incorrect." });
+                if (!user.Enabled)
+                    return BadRequest(new { message = "We found your account, but it's disabled. Please contact your EHS Department" });
 
                 //map the user from the domain/database model object, to data transfer object to pass back to the client 
                 return Ok(_mapper.Map<User, UserDto>(user));

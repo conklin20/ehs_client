@@ -1,5 +1,5 @@
 //This file is just a spot to hold all validation messages returned to the user
-//custom logic to immitate what String.Format does in c#. If you need to inject something in-between the strings, use the {0} {1} ... {n} convention
+//custom logic to immitate what String.Format does in c#. If you need to inject something in-between the strings, use the "{0}" {1} ... {n} convention
 
 //EVENT (Shared)
 export const EVENT_LOGICAL_HIERARCHY_REQUIRED = ' Logical hierarchy is required to continue'
@@ -37,4 +37,20 @@ export const CAUSES_ADDED = ' causes saved successfully!'
 //FILES 
 export const EVENT_FILE_ADDED = ' 1 files saved successfully!'
 export const EVENT_FILES_ADDED = ' files saved successfully!'
-export const EVENT_FILE_DELETED = ' File {0} deleted successfully!'
+export const EVENT_FILE_DELETED = ' File "{0}" deleted successfully!'
+
+//HIERARCHIES 
+export const HIERARCHY_ADD_SUCCESS = ' Hierarchy "{0}" successfully created! '
+export const HIERARCHY_ADD_FAILED = ' Failed to create hierarchy "{0}". Please try again. '
+export const HIERARCHY_UPDATE_SUCCESS = ' Hierarchy "{0}" successfully updated! '
+export const HIERARCHY_UPDATE_FAILED = ' Failed to update hierarchy "{0}". Please try again. '
+export const HIERARCHY_DELETE_SUCCESS = ' Hierarchy "{0}" successfully deleted! '
+export const HIERARCHY_DELETE_FAILED = ' Failed to delete hierarchy "{0}". Please try again. '
+
+//HIERARCHYATTRIBUTES 
+export const HIERARCHY_ATTRIBUTE_ADD_SUCCESS = ' Attribute "{0}" successfully created! '
+export const HIERARCHY_ATTRIBUTE_ADD_FAILED = ' Failed to create attribute "{0}". Please try again. '
+export const HIERARCHY_ATTRIBUTE_UPDATE_SUCCESS = ' Attribute "{0}" successfully updated! '
+export const HIERARCHY_ATTRIBUTE_UPDATE_FAILED = ' Failed to update attribute "{0}". Please try again. '
+export const HIERARCHY_ATTRIBUTE_DELETE_SUCCESS = ' Attribute "{0}" successfully deleted! '
+export const HIERARCHY_ATTRIBUTE_DELETE_FAILED = ' Failed to delete attribute "{0}". Please try again. '

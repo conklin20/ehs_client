@@ -153,6 +153,16 @@ const EHSAppBar = (props) => {
 														</Button> 
 													</Link>	
 												</MenuItem>
+												<MenuItem>
+													<Link className={classes.link} to="/manage/hierarchies/attributes">
+														<Button 
+															name='manageAttributes' 
+															onClick={handleMenuClick}
+														>
+															Manage Attributes
+														</Button> 
+													</Link>	
+												</MenuItem>
 											</Menu>
 										</Fragment>
 										: null 

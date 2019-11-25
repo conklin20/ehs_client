@@ -12,10 +12,14 @@ const MyDrafts = props => {
     const componentClasses = useStyles(); 
     const classes = Object.assign(componentClasses, props.useStyles()); // combining the styles from the parent component with this components styles
 
-    const [openDialog, setOpenDialog] = useState(false); 
+    const [openDialog, setOpenDialog] = useState(false);
+    const [eventId, setEventId] = useState(0); 
     
-    const handleClickOpen = () => {
-        setOpenDialog(true); 
+    const handleClickOpen = eventId => () => {
+        if(eventId){
+            setEventId(eventId)
+            setOpenDialog(true); 
+        }
     }; 
 
     const handleClose = (eventId) => e => {
@@ -28,23 +32,6 @@ const MyDrafts = props => {
     const drafts = props.drafts.map(d => {
         return (
             <Fragment>   
-                <Dialog 
-                    open={openDialog}
-                    onClose={handleClose}
-                    aria-labelledby='confirm-dialog-title'
-                    aria-describedby='confirm-dialog-description'
-                >
-                    <DialogTitle id='confirm-dialog-title'>{"Are you sure you want to delete this draft?"}</DialogTitle>
-                    <DialogContent>
-                        <DialogContentText id='confirm-dialog-description'>
-                            {`Are you sure you want to delete draft ${d.eventId}? You will not be able to undo this action.`}
-                        </DialogContentText>
-                    </DialogContent>
-                    <DialogActions>
-                        <Button id='deleteDraft' onClick={handleClose(d.eventId)} color='primary' autofocus>Yes</Button>
-                        <Button onClick={handleClose(null)} color='primary'>No</Button>
-                    </DialogActions>
-                </Dialog>
                 <ListItem>
                     <Link to={`/events/si/${d.eventId}`} className={classes.link} >
                         <ListItemText
@@ -58,7 +45,7 @@ const MyDrafts = props => {
                         <IconButton 
                             edge="end" 
                             aria-label="delete"
-                            onClick={handleClickOpen}
+                            onClick={handleClickOpen(d.eventId)}
                         >
                             <DeleteIcon />
                         </IconButton>
@@ -71,6 +58,23 @@ const MyDrafts = props => {
 
     return (     
         <Fragment>
+            <Dialog 
+                open={openDialog}
+                onClose={handleClose}
+                aria-labelledby='confirm-dialog-title'
+                aria-describedby='confirm-dialog-description'
+            >
+                <DialogTitle id={eventId}>Are you sure you want to delete this draft?</DialogTitle>
+                <DialogContent>
+                    <DialogContentText id={eventId}>
+                        {`Are you sure you want to delete draft ${eventId}? You will not be able to undo this action.`}
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button id='deleteDraft' onClick={handleClose(eventId)} color='primary' autofocus>Yes</Button>
+                    <Button onClick={handleClose(null)} color='primary'>No</Button>
+                </DialogActions>
+            </Dialog>
             <Typography variant='h6' className={classes.sectionTitle}>
                 My Drafts
                 <Badge color="primary" badgeContent={drafts.length} className={classes.badge} showZero ></Badge>

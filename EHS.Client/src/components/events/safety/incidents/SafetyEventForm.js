@@ -152,6 +152,8 @@ const SafetyEventForm = props => {
     const [activeStep, setActiveStep] = useState(props.match.params.stepNo - 1 || 0);
     const [completed, setCompleted] = useState(new Set());
     const steps = getSteps();
+    
+    const [event, setEvent] = useState({})
 
     const { currentUser, lookupData } = props
     
@@ -168,7 +170,6 @@ const SafetyEventForm = props => {
 	}, []); //this 2nd arg is important, it tells what to look for changes in, and will re-run the hook when this changes 
     
     
-    const [event, setEvent] = useState({})
 
 	const fetchData = async () => {
         //if existing event, get event detail from api
@@ -183,8 +184,6 @@ const SafetyEventForm = props => {
                 reportedOn: timestamp, 
                 createdBy:  currentUser.user.userId, 
                 eventStatus: S_I_STATUS.DRAFT,   
-                // departmentId: currentUser.user.logicalHierarchyId, 
-                // localeId: currentUser.user.physicalHierarchyId,
                 eventDate: timestamp, 
                 hoursWorkedPrior: .5, 
                 //defaulting an empty array for actions, people, causes, and files
@@ -227,9 +226,12 @@ const SafetyEventForm = props => {
     }
 
     const handleRefreshData = () => {
-        props.fetchLogicalHierarchyAttributes(event.departmentId || currentUser.user.logicalHierarchyId, 'singlepath', '?attributetype=logical&enabled=true');
-        props.fetchPhysicalHierarchyAttributes(event.localeId || currentUser.user.physicalHierarchyId, 'singlepath', '?attributetype=physical&enabled=true');
-
+        console.log(event)
+        if(event.departmentId && event.localeId){
+            console.log(event)
+            props.fetchLogicalHierarchyAttributes(event.departmentId || currentUser.user.logicalHierarchyId, 'singlepath', '?attributetype=logical&enabled=true');
+            props.fetchPhysicalHierarchyAttributes(event.localeId || currentUser.user.physicalHierarchyId, 'singlepath', '?attributetype=physical&enabled=true');
+        }
     }
 
     //Code copied from material-ui for the stepping functionality   
@@ -250,12 +252,17 @@ const SafetyEventForm = props => {
     }
   
     const handleNext = () => {
-      const newActiveStep =
-        isLastStep() && !allStepsCompleted()
-          ? // It's the last step, but not all steps have been completed
-            // find the first step that has been completed
-            steps.findIndex((step, i) => !completed.has(i))
-          : activeStep + 1;
+        //force refresh data if moving away from EventLocation step
+        if(activeStep === 1){
+            handleRefreshData();
+        }
+
+        const newActiveStep =
+            isLastStep() && !allStepsCompleted()
+            ? // It's the last step, but not all steps have been completed
+                // find the first step that has been completed
+                steps.findIndex((step, i) => !completed.has(i))
+            : activeStep + 1;
   
       setActiveStep(newActiveStep);
     }
@@ -264,8 +271,13 @@ const SafetyEventForm = props => {
       setActiveStep(prevActiveStep => prevActiveStep - 1);
     }
   
-    const handleStep = step => () => {
-      setActiveStep(step);
+    const handleStep = step => () => {        
+        //force refresh data if moving away from EventLocation step
+        if(activeStep === 1){
+            handleRefreshData();
+        }
+
+        setActiveStep(step);
     };
 
     const handleComplete = () => {
@@ -411,7 +423,6 @@ const SafetyEventForm = props => {
                     .then(res => {
                         //201, Created
                         if(res.status === 201){
-                            // setEvent( { ...event, ...res.data} ) 
                             //On initial save, get the event from the db we need fields that arent returned from the insert 
                             props.fetchEvent(res.data.eventId)
                                 .then(res => {
@@ -447,7 +458,6 @@ const SafetyEventForm = props => {
     //updating an open event 
     const handleSaveOpen = e => {
         e.preventDefault();
-        
         if(handleValidateCompletedForm()) {            
             props.updateSafetyIncident(event, currentUser.user.userId)
                 .then(res => {
@@ -467,7 +477,6 @@ const SafetyEventForm = props => {
     
     const handleSubmit = e => {
         e.preventDefault();
-
         //shouldnt be able to Submit anything but a draft anyways, but this is a safeguard against that 
         if(event.eventStatus === S_I_STATUS.DRAFT && handleValidateCompletedForm()) {
             // change status to Open
@@ -575,7 +584,7 @@ const SafetyEventForm = props => {
                                             <StepButton
                                                 onClick={handleStep(index)}
                                                 completed={isStepComplete(index)}
-                                                disabled={dataIsLoading()}
+                                                disabled={dataIsLoading() || (index > 2 && !event.eventId)} //If no eventId, disabled steps 4, 5, 6, 7, 8
                                                 {...buttonProps}
                                             >
                                                 {label}

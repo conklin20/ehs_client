@@ -77,6 +77,7 @@ export const fetchGlobalHierarchyAttributes = (hierarchyId, type, query) => {
     return dispatch => {
         return apiCall('get', `/hierarchyattributes/${type}/${hierarchyId}${query ? query : ''}`)
             .then(res => {
+                // console.log(res); 
                 dispatch(loadGlobalHierarchyAttributes(res.data)); 
             })
             .catch(res => {	

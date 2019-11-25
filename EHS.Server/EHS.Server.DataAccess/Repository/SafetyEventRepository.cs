@@ -217,6 +217,7 @@ namespace EHS.Server.DataAccess.Repository
             parameters.Add("@ReportedOn", SafetyEventToAdd.ReportedOn, dbType: DbType.DateTime2);
             parameters.Add("@EventDate", SafetyEventToAdd.EventDate, dbType: DbType.Date);
             parameters.Add("@EmployeeId", SafetyEventToAdd.EmployeeId, dbType: DbType.String);
+            parameters.Add("@SupervisorId", SafetyEventToAdd.SupervisorId, dbType: DbType.String);
             parameters.Add("@JobTitle", SafetyEventToAdd.JobTitle, dbType: DbType.String);
             parameters.Add("@Shift", SafetyEventToAdd.Shift, dbType: DbType.String);
             parameters.Add("@WhatHappened", SafetyEventToAdd.WhatHappened, dbType: DbType.String);
@@ -267,6 +268,7 @@ namespace EHS.Server.DataAccess.Repository
             parameters.Add("@ReportedOn", SafetyEventToUpdate.ReportedOn, dbType: DbType.DateTime2);
             parameters.Add("@EventDate", SafetyEventToUpdate.EventDate, dbType: DbType.Date);
             parameters.Add("@EmployeeId", SafetyEventToUpdate.EmployeeId, dbType: DbType.String);
+            parameters.Add("@SupervisorId", SafetyEventToUpdate.SupervisorId, dbType: DbType.String);
             parameters.Add("@JobTitle", SafetyEventToUpdate.JobTitle, dbType: DbType.String);
             parameters.Add("@Shift", SafetyEventToUpdate.Shift, dbType: DbType.String);
             parameters.Add("@WhatHappened", SafetyEventToUpdate.WhatHappened, dbType: DbType.String);

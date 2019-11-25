@@ -15,6 +15,7 @@ import ReportAside from '../reportAside/ReportAside';
 import UserProfile from '../user/UserProfile';
 import UserManagement from '../admin/user/UserManagement'; 
 import HierarchyManagement from '../admin/hierarchy/HierarchyManagement'; 
+import AttributeManagement from '../admin/attributes/AttributeManagement';
 import Logout from '../user/Logout'; 
 import Notification from '../shared/Notification';
 
@@ -136,6 +137,7 @@ const Routes = props => {
                     <Route path='/manage/users' exact render={(props) => <div className={classes.main}><UserManagement /> </div> }  ></Route>
                     <Route path='/manage/users/:userId' exact render={(props) => <div className={classes.main}><UserManagement /> </div> }  ></Route>
                     <Route path='/manage/hierarchies' exact render={(props) => <div className={classes.main}><HierarchyManagement /> </div> }  ></Route>
+                    <Route path='/manage/hierarchies/attributes' render={(props) => <div className={classes.main}><AttributeManagement /> </div> }  ></Route>
                     
                     {/* /manage/attributes */}
                     {/* /reports */}

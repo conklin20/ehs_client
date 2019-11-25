@@ -32,9 +32,15 @@ namespace EHS.Server.DataAccess.Repository
         {
             using IDbConnection sqlCon = Connection;
             //build sql query 
-            string sql = @"select ha.HierarchyAttributeId, ha.HierarchyId, ha.AttributeId, ha.[Key], ha.Value, ha.Enabled, ha.CreatedOn, ha.CreatedBy, ha.ModifiedOn, ha.ModifiedBy
-                                  from dbo.HierarchyAttributes ha
-                                  where ha.HierarchyAttributeId = @hierarchyAttributeId";
+            string tsql = @" declare @hierarchyId int = (select HierarchyId from HierarchyAttributes ha where ha.HierarchyAttributeId = @hierarchyAttributeId)
+                            
+                            select ha.* 
+	                            , a.*
+	                            , h.*
+                            from dbo.HierarchyAttributes ha 
+	                            join dbo.fnGetHierarchySinglePath(@hierarchyId) h on h.HierarchyId = ha.HierarchyId
+	                            join dbo.Attributes a on a.AttributeId = ha.AttributeId 
+                            where ha.HierarchyAttributeId = @hierarchyAttributeId";
             //build param list 
             var p = new
             {
@@ -42,7 +48,16 @@ namespace EHS.Server.DataAccess.Repository
             };
 
 
-            var result = await sqlCon.QueryAsync<HierarchyAttribute>(sql, p);
+            var result = await sqlCon.QueryAsync<HierarchyAttribute, Attribute, Hierarchy, HierarchyAttribute>(
+                    tsql,
+                    (hierarchyAttribute, attribute, hierarchy) =>
+                    {
+                        hierarchyAttribute.Attribute = attribute;
+                        hierarchyAttribute.Hierarchy = hierarchy;
+                        return hierarchyAttribute;
+                    },
+                    p,
+                    splitOn: "AttributeId, HierarchyId");
             return result.FirstOrDefault();
         }
 
@@ -191,58 +206,66 @@ namespace EHS.Server.DataAccess.Repository
             return result.AsList();
         }
         
-        public async Task<HierarchyAttribute> AddAsync(HierarchyAttribute HierarchyAttributeToAdd)
+        public async Task<HierarchyAttribute> AddAsync(HierarchyAttribute HierarchyAttributeToAdd, string userId)
         {
             using IDbConnection sqlCon = Connection;
-            var result = await sqlCon.ExecuteAsync(
+            DynamicParameters parameters = new DynamicParameters();
+
+            parameters.Add("@HierarchyId", HierarchyAttributeToAdd.HierarchyId, dbType: DbType.Int32);
+            parameters.Add("@AttributeId", HierarchyAttributeToAdd.AttributeId, dbType: DbType.Int32);
+            parameters.Add("@Key", HierarchyAttributeToAdd.Key, dbType: DbType.String);
+            parameters.Add("@Value", HierarchyAttributeToAdd.Value, dbType: DbType.String);
+            parameters.Add("@Enabled", HierarchyAttributeToAdd.Enabled, dbType: DbType.Boolean);
+            parameters.Add("@UserId", userId, dbType: DbType.String);
+            parameters.Add("@NewHierarchyAttributeId", dbType: DbType.Int32, direction: ParameterDirection.Output);
+
+            var result = sqlCon.Execute(
                 "dbo.spHierarchyAttributeAddOrUpdate",
-                new
-                {
-                    HierarchyAttributeToAdd.HierarchyAttributeId,
-                    HierarchyAttributeToAdd.HierarchyId,
-                    HierarchyAttributeToAdd.AttributeId,
-                    HierarchyAttributeToAdd.Key,
-                    HierarchyAttributeToAdd.Value,
-                    HierarchyAttributeToAdd.Enabled,
-                    userId = HierarchyAttributeToAdd.CreatedBy
-                },
+                parameters,
                 commandType: CommandType.StoredProcedure
-                );
+            );
+
+            int newId = parameters.Get<int>("@NewHierarchyAttributeId");
+            HierarchyAttributeToAdd.HierarchyAttributeId = newId;
             return HierarchyAttributeToAdd;
         }
 
-        public async Task<HierarchyAttribute> UpdateAsync(HierarchyAttribute HierarchyAttributeToUpdate)
+        public async Task<HierarchyAttribute> UpdateAsync(HierarchyAttribute HierarchyAttributeToUpdate, string userId)
         {
             using IDbConnection sqlCon = Connection;
+
+            DynamicParameters parameters = new DynamicParameters();
+
+            parameters.Add("@HierarchyAttributeId", HierarchyAttributeToUpdate.HierarchyAttributeId, dbType: DbType.Int32);
+            parameters.Add("@HierarchyId", HierarchyAttributeToUpdate.HierarchyId, dbType: DbType.Int32);
+            parameters.Add("@AttributeId", HierarchyAttributeToUpdate.AttributeId, dbType: DbType.Int32);
+            parameters.Add("@Key", HierarchyAttributeToUpdate.Key, dbType: DbType.String);
+            parameters.Add("@Value", HierarchyAttributeToUpdate.Value, dbType: DbType.String);
+            parameters.Add("@Enabled", HierarchyAttributeToUpdate.Enabled, dbType: DbType.Boolean);
+            parameters.Add("@UserId", userId, dbType: DbType.String);
+            parameters.Add("@NewHierarchyAttributeId", dbType: DbType.Int32, direction: ParameterDirection.Output);
+
             var result = await sqlCon.ExecuteAsync(
                 "dbo.spHierarchyAttributeAddOrUpdate",
-                new
-                {
-                    HierarchyAttributeToUpdate.HierarchyId,
-                    HierarchyAttributeToUpdate.AttributeId,
-                    HierarchyAttributeToUpdate.Key,
-                    HierarchyAttributeToUpdate.Value,
-                    HierarchyAttributeToUpdate.Enabled,
-                    userId = HierarchyAttributeToUpdate.ModifiedBy
-                },
+                parameters,
                 commandType: CommandType.StoredProcedure
                 );
             return HierarchyAttributeToUpdate;
         }
 
-        public async Task<HierarchyAttribute> DeleteAsync(HierarchyAttribute HierarchyAttributeToDelete)
+        public async Task<int> DeleteAsync(int hierarchyAttributeId, string userId)
         {
             using IDbConnection sqlCon = Connection;
             var result = await sqlCon.ExecuteAsync(
                 "dbo.spHierarchyAttributeDelete",
                 new
                 {
-                    HierarchyAttributeToDelete.HierarchyAttributeId,
-                    HierarchyAttributeToDelete.ModifiedBy
+                    hierarchyAttributeId,
+                    userId
                 },
                 commandType: CommandType.StoredProcedure
                 );
-            return HierarchyAttributeToDelete;
+            return hierarchyAttributeId;
         }
     }
 }
