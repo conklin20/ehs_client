@@ -112,7 +112,7 @@ const Dashboard = props => {
 
 	const fetchData = async () => {
 		// refreshing the events every time as they may have changed, and the UserAside listens for changes 
-		await props.fetchSafetyIncidents(parseSearchFilters(searchFilters)) ; 
+		await props.fetchSafetyIncidents(parseSearchFilters(searchFilters));
 		
 		// console.log(currentUser.user.logicalHierarchyPath.split('|')[currentUser.user.logicalHierarchyPath.split('|').length-1])
 		if(!lookupData.employees) await props.fetchEmployees();
@@ -223,4 +223,4 @@ export default connect(mapStateToProps, {
 	fetchLogicalHierarchyTree, 
 	fetchPhysicalHierarchyTree, 
 	fetchEmployees, 
-})(Dashboard); 
+})(Dashboard);

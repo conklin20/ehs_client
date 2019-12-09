@@ -13,10 +13,6 @@ const events = (state = [], action) => {
                 console.log(err)
             }
             break;
-        // case LOAD_EVENT:
-        //     console.log(state) 
-        //     console.log(action)
-        //     return state
         default: 
             return state;  
     }

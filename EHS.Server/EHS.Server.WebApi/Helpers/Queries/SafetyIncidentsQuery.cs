@@ -28,5 +28,11 @@ namespace EHS.Server.WebApi.Helpers.Queries
         public string Area { get; set; }
         [FromQuery(Name = "department")]
         public string Department { get; set; }
+        [FromQuery(Name = "initialCategory")]
+        public string InitialCategory { get; set; }
+        [FromQuery(Name = "resultingCategory")]
+        public string ResultingCategory { get; set; }
+        [FromQuery(Name = "isInjury")]
+        public Boolean IsInjury { get; set; }
     }
 }

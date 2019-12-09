@@ -54,3 +54,6 @@ export const HIERARCHY_ATTRIBUTE_UPDATE_SUCCESS = ' Attribute "{0}" successfully
 export const HIERARCHY_ATTRIBUTE_UPDATE_FAILED = ' Failed to update attribute "{0}". Please try again. '
 export const HIERARCHY_ATTRIBUTE_DELETE_SUCCESS = ' Attribute "{0}" successfully deleted! '
 export const HIERARCHY_ATTRIBUTE_DELETE_FAILED = ' Failed to delete attribute "{0}". Please try again. '
+
+//REPORTS 
+export const REPORTS_NO_DATA = ' No events found, please change your search criteria and try again. '
