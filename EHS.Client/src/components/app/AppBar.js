@@ -63,6 +63,10 @@ const EHSAppBar = (props) => {
 				// return setAnchorUserEl(event.currentTarget);
 			case 'systemManagementMenu':
 				return setSysManagementAnchorEl(event.currentTarget)
+			case 'reports':
+				return props.history.push('/reports');
+			case 'docs':
+				return props.history.push('/docs');
 			default:
 				return 'Invalid target'	
 		}
@@ -167,6 +171,22 @@ const EHSAppBar = (props) => {
 										</Fragment>
 										: null 
 									}
+									<Button 
+										name='reports' 
+										className={classes.menuButton}
+										onClick={handleMenuClick}
+										size="large" 
+									>
+										Reports
+									</Button>
+									<Button 
+										name='docs' 
+										className={classes.menuButton}
+										onClick={handleMenuClick}
+										size="large" 
+									>
+										Docs
+									</Button>
 								</Typography> 
 							</div>		
 							<div>

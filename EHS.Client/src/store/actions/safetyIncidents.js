@@ -32,7 +32,7 @@ export const fetchEvent = (eventId) => {
 			})
 			.catch(res => {	
 				console.log(res)
-				dispatch(addNotification(`TODO: Customize Error Message. ${res.response.status} (see console)`, 'error'));
+				// dispatch(addNotification(`TODO: Customize Error Message. ${res.response.status} (see console)`, 'error'));
 		});
 	};
 };

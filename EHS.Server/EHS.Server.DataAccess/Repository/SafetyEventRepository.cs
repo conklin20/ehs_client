@@ -147,7 +147,7 @@ namespace EHS.Server.DataAccess.Repository
 
             var safetyEventDictionary = new Dictionary<int, SafetyEvent>();
 
-            var result = await sqlCon.QueryAsync<SafetyEvent, Action, PeopleInvolved, Cause, EventFile, SafetyEvent>(
+                var result = await sqlCon.QueryAsync<SafetyEvent, Action, PeopleInvolved, Cause, EventFile, SafetyEvent>(
                 tsql,
                 (safetyEvent, action, personInvolved, cause, file) =>
                 {

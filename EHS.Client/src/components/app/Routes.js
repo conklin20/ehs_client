@@ -4,7 +4,14 @@ import { connect } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { logout } from '../../store/actions/auth';
 import { removeNotification } from '../../store/actions/notifications'; 
-import { Hidden } from '@material-ui/core'; 
+import { Hidden, Typography, LinearProgress } from '@material-ui/core'; 
+import { 
+	fetchLogicalHierarchyTree, 
+	fetchPhysicalHierarchyTree, 
+	fetchGlobalHierarchyAttributes, 
+	fetchLogicalHierarchyAttributes, 
+	fetchPhysicalHierarchyAttributes, 
+	fetchEmployees } from '../../store/actions/lookupData'; 
 //components
 import AppBar from './AppBar';
 import Homepage from './Homepage';
@@ -16,7 +23,9 @@ import UserProfile from '../user/UserProfile';
 import UserManagement from '../admin/user/UserManagement'; 
 import HierarchyManagement from '../admin/hierarchy/HierarchyManagement'; 
 import AttributeManagement from '../admin/attributes/AttributeManagement';
-import Logout from '../user/Logout'; 
+import Reports from '../reports/Reports'
+import Logout from '../user/Logout';
+import PageNotFound from '../shared/PageNotFound';
 import Notification from '../shared/Notification';
 
 
@@ -56,26 +65,50 @@ const useStyles = makeStyles(theme => ({
         backgroundColor: theme.palette.primary.light,
         color: 'white',
         padding: theme.spacing(2),
+    },
+    loading: {
+        display: 'flex', 
+        flexDirection: 'column', 
+        alignItems: 'center',
+        justifyContent: 'center',
+        flex: 4,
+        marginTop: theme.spacing(10),
+    },
+    progress: {
+        width: '70%',     
+        marginTop: '10px',
+        height: '2em',
     }
 })); 
 
 const Routes = props => {
     const classes = useStyles(); 
 
-    const { notifications } = props; 
+    const { notifications, lookupData, currentUser } = props; 
 
  	// Essentially what was componentDidMount and componentDidUpdate before Hooks
 	useEffect(() => {
-        if(!props.currentUser.isAuthenticated){
+        //check user auth
+        if(!currentUser.isAuthenticated){
             console.log('sending user to log in screen')
             props.history.push('/');
+        } else {
+            // console.log(currentUser.user.logicalHierarchyPath.split('|'))
+            props.fetchEmployees();
+            props.fetchLogicalHierarchyTree(currentUser.user.logicalHierarchyPath.split('|')[currentUser.user.logicalHierarchyPath.split('|').length-1]);
+            props.fetchPhysicalHierarchyTree(currentUser.user.physicalHierarchyPath.split('|')[currentUser.user.physicalHierarchyPath.split('|').length-1]);
+            props.fetchGlobalHierarchyAttributes(1000, 'fulltree', '?attributetype=global&enabled=true'); //will be the root hierarchy 
+            props.fetchLogicalHierarchyAttributes(1000, 'fulltree', '?attributetype=logical&enabled=true'); 
+            props.fetchPhysicalHierarchyAttributes(1000, 'fulltree', '?attributetype=physical&enabled=true'); 
         }
-
+        
+        // console.log(currentUser)
 		return () => {
 			console.log('Routes Component Unmounting')
 		}
-    }, []); //this 2nd arg is important, it tells what to look for changes in, and will re-run the hook when this changes 
+    }, [currentUser.isAuthenticated]); //this 2nd arg is important, it tells what to look for changes in, and will re-run the hook when this changes 
 
+    // console.log(Object.keys(lookupData).length)
     return (
         <div className={classes.index}>
             {/* 
@@ -94,63 +127,79 @@ const Routes = props => {
             APP BODY STARTS HERE 
              */}
             <div className={classes.appBar}>
-                { props.currentUser.isAuthenticated ? <AppBar onLogout={props.logout} { ...props } /> : null }
+                { currentUser.isAuthenticated ? <AppBar onLogout={props.logout} { ...props } /> : null }
             </div>
-            <div id='body' className={classes.body}>
-                { props.currentUser.isAuthenticated ? <Hidden smDown><div className={classes.reportAside}><ReportAside /> </div></Hidden> : null }
-                <Switch>
-                    <Route path='/' exact component={Homepage} ></Route>
-                    <Route path='/logout' component={Logout} ></Route>
-                    <Route path='/dashboard' render={(props) => <div className={classes.main}><Dashboard /> </div> } ></Route>
-                    {/* <Route path='/events/si/new' exact component={SafetyEventForm} ></Route> */}
-                    <Route  path='/events/si/new' 
-                            render={(props) => 
-                                <div className={classes.main}>
-                                    <Fragment>
-                                        <Dashboard {...props} /> 
-                                        <SafetyEventForm {...props} />
-                                    </Fragment>
-                                </div> }>                        
-                    </Route>
-                    {/* <Route path='/events/si/:eventId' exact component={SafetyEventForm} ></Route> */}
-                    <Route  path='/events/si/:eventId' 
-                            exact 
-                            render={(props) => 
-                                <div className={classes.main}>
-                                    <Fragment>
-                                        <Dashboard {...props} /> 
-                                        <SafetyEventForm {...props} />
-                                    </Fragment>
-                                </div> }>                        
-                    </Route>
-                    {/* <Route path='/events/si/:eventId/step/:stepNo' component={SafetyEventForm} ></Route> */}
-                    <Route  path='/events/si/:eventId/step/:stepNo' 
-                            render={(props) => 
-                                <div className={classes.main}>
-                                    <Fragment>
-                                        <Dashboard {...props} /> 
-                                        <SafetyEventForm {...props} />
-                                    </Fragment>
-                                </div> }>                        
-                    </Route>
-                    <Route path='/user/profile' render={(props) => <div className={classes.main}><UserProfile /> </div> }  ></Route>
-                    <Route path='/manage/users' exact render={(props) => <div className={classes.main}><UserManagement /> </div> }  ></Route>
-                    <Route path='/manage/users/:userId' exact render={(props) => <div className={classes.main}><UserManagement /> </div> }  ></Route>
-                    <Route path='/manage/hierarchies' exact render={(props) => <div className={classes.main}><HierarchyManagement /> </div> }  ></Route>
-                    <Route path='/manage/hierarchies/attributes' render={(props) => <div className={classes.main}><AttributeManagement /> </div> }  ></Route>
-                    
-                    {/* /manage/attributes */}
-                    {/* /reports */}
-                </Switch>
-                { props.currentUser.isAuthenticated ? <div className={classes.userAside}><UserAside /> </div> : null }
+                <div id='body' className={classes.body}>
+                    { currentUser.isAuthenticated && Object.keys(lookupData).length === 6 ? <Hidden smDown><div className={classes.reportAside}><ReportAside /> </div></Hidden> : null }
+                    <Switch>
+                        <Route path='/' exact component={Homepage} ></Route>
+                        {currentUser.isAuthenticated && Object.keys(lookupData).length === 6
+                            ?   
+                            <Fragment>
+                                <Route path='/logout' component={Logout} ></Route>
+                                <Route path='/dashboard' render={(props) => <div className={classes.main}><Dashboard /> </div> } ></Route>
+                                <Route path='/user/profile' exact render={(props) => <div className={classes.main}><UserProfile /> </div> }  ></Route>
+                                
+                                {/* SAFETY INCIDENTS */}
+                                <Route  path='/events/si/new' 
+                                        render={(props) => 
+                                            <div className={classes.main}>
+                                                <Fragment>
+                                                    <Dashboard {...props} /> 
+                                                    <SafetyEventForm {...props} />
+                                                </Fragment>
+                                            </div> }>                        
+                                </Route>
+                                <Route  path='/events/si/:eventId' 
+                                        exact 
+                                        render={(props) => 
+                                            <div className={classes.main}>
+                                                <Fragment>
+                                                    <Dashboard {...props} /> 
+                                                    <SafetyEventForm {...props} />
+                                                </Fragment>
+                                            </div> }>                        
+                                </Route>
+                                <Route  path='/events/si/:eventId/step/:stepNo' 
+                                        render={(props) => 
+                                            <div className={classes.main}>
+                                                <Fragment>
+                                                    <Dashboard {...props} /> 
+                                                    <SafetyEventForm {...props} />
+                                                </Fragment>
+                                            </div> }>                        
+                                </Route>
+                                
+                                {/* SYS MANAGEMENT */}
+                                <Route path='/manage/users' exact render={(props) => <div className={classes.main}><UserManagement /> </div> }  ></Route>
+                                <Route path='/manage/users/:userId' exact render={(props) => <div className={classes.main}><UserManagement /> </div> }  ></Route>
+                                <Route path='/manage/hierarchies' exact render={(props) => <div className={classes.main}><HierarchyManagement /> </div> }  ></Route>
+                                <Route path='/manage/hierarchies/attributes' render={(props) => <div className={classes.main}><AttributeManagement /> </div> }  ></Route>
+                                {/* manage approval routings */}
+
+                                {/* REPORTS */}
+                                <Route path='/reports' exact render={(props) => <div className={classes.main}><Reports {...props} /> </div> }  ></Route>                    
+                                <Route path='/reports/:type' exact render={(props) => <div className={classes.main}><Reports {...props} /> </div> }  ></Route>                    
+                                <Route path='/reports/:type/:report' exact render={(props) => <div className={classes.main}><Reports {...props} /> </div> }  ></Route>                   
+                                         
+                            </Fragment>                
+                            : <div className={classes.loading}>
+                                 <Typography variant='h3' gutterBottom>Loading Application...</Typography>
+                                 <LinearProgress className={classes.progress} variant='determinate' value={100 / (6 - Object.keys(lookupData).length)} />
+                            </div>
+                        }
+                        
+                        <Route component={PageNotFound}></Route>
+                    </Switch>
+                    { props.currentUser.isAuthenticated && Object.keys(lookupData).length === 6 ? <div className={classes.userAside}><UserAside /> </div> : null }
+                </div>
             </div>
-        </div>
     )
 }
 
 function mapStateToProps(state){
     return {
-        // lookupData: state.lookupData,
+        lookupData: state.lookupData,
         currentUser: state.currentUser,
         notifications: state.notifications, 
     }
@@ -160,4 +209,10 @@ export default withRouter(
     connect(mapStateToProps,  { 
         logout,
         removeNotification,
+        fetchEmployees,
+        fetchGlobalHierarchyAttributes, 
+        fetchLogicalHierarchyAttributes, 
+        fetchPhysicalHierarchyAttributes, 
+        fetchLogicalHierarchyTree, 
+        fetchPhysicalHierarchyTree, 
 })(Routes)); 

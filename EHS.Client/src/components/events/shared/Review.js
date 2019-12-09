@@ -85,7 +85,7 @@ const Review = (props) => {
         )
     })
 
-    const involvement = lookupData['logicalHierarchyAttributes'].filter(attr => attr.key === 'Employee Involvement');
+    const involvement = lookupData['globalHierarchyAttributes'].filter(attr => attr.key === 'Employee Involvement');
     const peopleInvolved = involvement.map(i => {
 
         const people = event.peopleInvolved.filter(r => r.roleId === i.hierarchyAttributeId)

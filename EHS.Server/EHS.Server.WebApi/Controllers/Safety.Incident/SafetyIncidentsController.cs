@@ -78,13 +78,25 @@ namespace EHS.Server.WebApi.Controllers.Common
                 {
                     dynamicParamList.Add(new DynamicParam { TableAlias = "e.", FieldName = "DepartmentId", Operator = "=", ParamName = "@DepartmentId", SingleValue = queryParams.DepartmentId });
                 }
+                if (queryParams.InitialCategory != null)
+                {
+                    dynamicParamList.Add(new DynamicParam { TableAlias = "e.", FieldName = "InitialCategory", Operator = "=", ParamName = "@InitialCategory", SingleValue = queryParams.InitialCategory });
+                }
+                if (queryParams.ResultingCategory != null)
+                {
+                    dynamicParamList.Add(new DynamicParam { TableAlias = "e.", FieldName = "ResultingCategory", Operator = "=", ParamName = "@ResutingCategory", SingleValue = queryParams.ResultingCategory });
+                }
+                if (queryParams.IsInjury)
+                {
+                    dynamicParamList.Add(new DynamicParam { TableAlias = "e.", FieldName = "IsInjury", Operator = "=", ParamName = "@IsInjury", SingleValue = queryParams.IsInjury.ToString() });
+                }
                 //get the list of safetyEvents 
                 var safetyEvents = await _safetyEventsRepo.GetAllAsync(dynamicParamList);
 
-                if (safetyEvents == null)
+                if (safetyEvents == null || safetyEvents.Count == 0)
                 {
                     _logger.LogError("No Safety Events found. {0}", NotFound().ToString());
-                    return NotFound();
+                    return NotFound(); 
                 }
 
                 //map the list from the domain/database model objects, to data transfer objects to pass back to the client 
