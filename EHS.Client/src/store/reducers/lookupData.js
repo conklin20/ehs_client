@@ -35,6 +35,7 @@ const lookupData = (state = {}, action) => {
             return {...state, employees: action.employees}
 
         case LOAD_USER_ROLES: 
+            // console.log(action)
             return {...state, userRoles: action.roles}
 
         default: 

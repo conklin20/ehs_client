@@ -28,6 +28,7 @@ import Logout from '../user/Logout';
 import PageNotFound from '../shared/PageNotFound';
 import Notification from '../shared/Notification';
 
+const MIN_LOOKUP_DATA_LEN = 6; 
 
 const useStyles = makeStyles(theme => ({
     index: {
@@ -98,8 +99,8 @@ const Routes = props => {
             props.fetchLogicalHierarchyTree(currentUser.user.logicalHierarchyPath.split('|')[currentUser.user.logicalHierarchyPath.split('|').length-1]);
             props.fetchPhysicalHierarchyTree(currentUser.user.physicalHierarchyPath.split('|')[currentUser.user.physicalHierarchyPath.split('|').length-1]);
             props.fetchGlobalHierarchyAttributes(1000, 'fulltree', '?attributetype=global&enabled=true'); //will be the root hierarchy 
-            props.fetchLogicalHierarchyAttributes(1000, 'fulltree', '?attributetype=logical&enabled=true'); 
-            props.fetchPhysicalHierarchyAttributes(1000, 'fulltree', '?attributetype=physical&enabled=true'); 
+            props.fetchLogicalHierarchyAttributes(currentUser.user.logicalHierarchyId || 1000, 'fulltree', '?attributetype=logical&enabled=true'); 
+            props.fetchPhysicalHierarchyAttributes(currentUser.user.physicalHierarchyId || 1000, 'fulltree', '?attributetype=physical&enabled=true'); 
         }
         
         // console.log(currentUser)
@@ -108,7 +109,7 @@ const Routes = props => {
 		}
     }, [currentUser.isAuthenticated]); //this 2nd arg is important, it tells what to look for changes in, and will re-run the hook when this changes 
 
-    // console.log(Object.keys(lookupData).length)
+    console.log(Object.keys(lookupData).length)
     return (
         <div className={classes.index}>
             {/* 
@@ -130,10 +131,10 @@ const Routes = props => {
                 { currentUser.isAuthenticated ? <AppBar onLogout={props.logout} { ...props } /> : null }
             </div>
                 <div id='body' className={classes.body}>
-                    { currentUser.isAuthenticated && Object.keys(lookupData).length === 6 ? <Hidden smDown><div className={classes.reportAside}><ReportAside /> </div></Hidden> : null }
+                    { currentUser.isAuthenticated && Object.keys(lookupData).length >= MIN_LOOKUP_DATA_LEN ? <Hidden smDown><div className={classes.reportAside}><ReportAside /> </div></Hidden> : null }
                     <Switch>
                         <Route path='/' exact component={Homepage} ></Route>
-                        {currentUser.isAuthenticated && Object.keys(lookupData).length === 6
+                        {currentUser.isAuthenticated && Object.keys(lookupData).length >= MIN_LOOKUP_DATA_LEN
                             ?   
                             <Fragment>
                                 <Route path='/logout' component={Logout} ></Route>
@@ -185,13 +186,13 @@ const Routes = props => {
                             </Fragment>                
                             : <div className={classes.loading}>
                                  <Typography variant='h3' gutterBottom>Loading Application...</Typography>
-                                 <LinearProgress className={classes.progress} variant='determinate' value={100 / (6 - Object.keys(lookupData).length)} />
+                                 <LinearProgress className={classes.progress} variant='determinate' value={100 / (MIN_LOOKUP_DATA_LEN - Object.keys(lookupData).length)} />
                             </div>
                         }
                         
                         <Route component={PageNotFound}></Route>
                     </Switch>
-                    { props.currentUser.isAuthenticated && Object.keys(lookupData).length === 6 ? <div className={classes.userAside}><UserAside /> </div> : null }
+                    { props.currentUser.isAuthenticated && Object.keys(lookupData).length >= MIN_LOOKUP_DATA_LEN ? <div className={classes.userAside}><UserAside /> </div> : null }
                 </div>
             </div>
     )

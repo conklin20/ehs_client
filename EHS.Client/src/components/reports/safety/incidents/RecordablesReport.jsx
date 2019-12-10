@@ -142,7 +142,7 @@ class RecordablesReportWPO extends Component {
                     .html(() => {
                         return (
                             `<h3>${d.data.value.key}</h3>
-                             <div>${d.data.value.values.length} Injuries</div>
+                             <div>${d.data.value.values.length} Recordables</div>
                             `
                         )
                     })

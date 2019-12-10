@@ -107,7 +107,6 @@ const SIReports = props => {
         //create new object with just the param names as keys, for the comparer 
         console.log(config)
         if(config){
-
             const requiredParams = {};
             config.parameters.filter(p => p.required).map(p => requiredParams[p.name] = '')
             //check if all required params have been supplied 
@@ -151,7 +150,7 @@ const SIReports = props => {
     };
 
     const reportComponent = () => {
-        
+
         if(match.params.hasOwnProperty('report')){
             if(loading){
                 return (
