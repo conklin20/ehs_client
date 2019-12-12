@@ -105,7 +105,7 @@ const Dashboard = props => {
 		fetchData(); 
 
 		return () => {
-			console.log('Dashboard Component Unmounting')
+			// console.log('Dashboard Component Unmounting')
 		}
 
 	}, [props.searchFilters]); //this 2nd arg is important, it tells what to look for changes in, and will re-run the hook when this changes 
@@ -175,7 +175,7 @@ const Dashboard = props => {
 	// console.log(props)
 	return (
 		<Fragment>
-			<Paper className={[classes.paper]}
+			<Paper className={classes.paper}
 					square={true}
 					>                 
 				<EventSearch 

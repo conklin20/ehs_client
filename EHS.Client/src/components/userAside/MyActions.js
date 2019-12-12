@@ -14,7 +14,7 @@ const MyActions = props => {
 
     const actions = props.actions.map(a => {
         return (
-            <Fragment>   
+            <Fragment key={a.actionId}> 
                 <Tooltip title='Event # - Action # - Action Due Date' placement="top" >
                     <ListItem>
                         <Link to={`/events/si/${a.eventId}/step/4`} className={classes.link} >

@@ -1,8 +1,7 @@
-import React, { Component, useEffect, useState, useRef, Fragment } from 'react';
+import React, { Component, useRef, Fragment } from 'react';
 import { makeStyles } from '@material-ui/styles';
-import { connect } from "react-redux";
 import moment from 'moment';
-import { Grid, Typography, Button, Select, MenuItem, InputLabel } from '@material-ui/core';
+import { Typography, Button, Select, MenuItem, InputLabel } from '@material-ui/core';
 import queryString from 'query-string';
 import PrintIcon from '@material-ui/icons/Print'
 import ReactToPrint from 'react-to-print';
@@ -78,7 +77,7 @@ class InjuriesReportWPO extends Component {
             // .rollup(function(c) { return c.length; })
             .entries(data)
 
-        console.log(groupedByX)
+        // console.log(groupedByX)
 
         let width = 900,
             height = 600,
@@ -123,7 +122,7 @@ class InjuriesReportWPO extends Component {
                 .outerRadius(radius)
             )
             .attr('fill', (d,i) => { 
-                console.log((i+1)/dataReady.length)
+                // console.log((i+1)/dataReady.length)
                 return(color((i+1)/dataReady.length)) 
             })
             .attr("stroke", "white")
@@ -192,13 +191,13 @@ class InjuriesReportWPO extends Component {
                 <Typography variant='subtitle1'>
                     {`${queryString.parse(userParams).site}: ${queryString.parse(userParams).startDate} through ${queryString.parse(userParams).endDate || moment().format('YYYY-MM-DD')}`}
                 </Typography>
-                <Typography variant='body1'>                    
+                <Fragment>                    
                     <InputLabel style={{marginTop: 5}} id='group-by-label'>Group By</InputLabel>                     
                     <Select
                         id='group-by'
                         variant='outlined'
                         className={classes.formControl}
-                        labelId='group-by-label'
+                        labelid='group-by-label'
                         value={this.state.groupBy}
                         onChange={e => this.setState({
                             groupBy: e.target.value
@@ -207,12 +206,12 @@ class InjuriesReportWPO extends Component {
                     {
                         this.state.groupByCategories.map(c => {
                             return (
-                                <MenuItem value={c.field} name={c.name}>{c.name}</MenuItem>
+                                <MenuItem key={c.field} value={c.field} name={c.name}>{c.name}</MenuItem>
                             )
                         })
                     }
                     </Select>
-                </Typography>
+                </Fragment>
                 <div id={'injuriesReportBody'}></div>  
             </div>
         )

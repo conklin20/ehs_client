@@ -30,19 +30,6 @@ const useStyles = makeStyles(theme => ({
   singleValue: {
     fontSize: 16,
   },
-  // placeholder: {
-  //   position: 'absolute',
-  //   left: 2,
-  //   bottom: 6,
-  //   fontSize: 16,
-  // },
-  // paper: {
-  //   position: 'absolute',
-  //   zIndex: 1,
-  //   marginTop: theme.spacing(1),
-  //   left: 0,
-  //   right: 0,
-  // }
 }));
 
 function NoOptionsMessage(props) {
@@ -65,7 +52,7 @@ NoOptionsMessage.propTypes = {
   /**
    * Props to be passed on to the wrapper.
    */
-  innerProps: PropTypes.object.isRequired,
+  // innerProps: PropTypes.object.isRequired,
   selectProps: PropTypes.object.isRequired,
 };
 
@@ -157,22 +144,22 @@ Option.propTypes = {
    */
   innerProps: PropTypes.shape({
     id: PropTypes.string.isRequired,
-    key: PropTypes.string.isRequired,
+    // key: PropTypes.string.isRequired,
     onClick: PropTypes.func.isRequired,
-    onMouseMove: PropTypes.func.isRequired,
-    onMouseOver: PropTypes.func.isRequired,
+    // onMouseMove: PropTypes.func.isRequired,
+    // onMouseOver: PropTypes.func.isRequired,
     tabIndex: PropTypes.number.isRequired,
   }).isRequired,
   /**
    * Inner ref to DOM Node
    */
-  innerRef: PropTypes.oneOfType([
-    PropTypes.oneOf([null]),
-    PropTypes.func,
-    PropTypes.shape({
-      current: PropTypes.any.isRequired,
-    }),
-  ]).isRequired,
+  // innerRef: PropTypes.oneOfType([
+  //   PropTypes.oneOf([null]),
+  //   PropTypes.func,
+  //   PropTypes.shape({
+  //     current: PropTypes.any.isRequired,
+  //   }),
+  // ]).isRequired,
   /**
    * Whether the option is focused.
    */
@@ -220,7 +207,7 @@ SingleValue.propTypes = {
   /**
    * Props passed to the wrapping element for the group.
    */
-  innerProps: PropTypes.any.isRequired,
+  // innerProps: PropTypes.any.isRequired,
   selectProps: PropTypes.object.isRequired,
 };
 

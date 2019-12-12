@@ -38,9 +38,6 @@ const useStyles = makeStyles(theme => ({
   noOptionsMessage: {
     padding: theme.spacing(1, 2),
   },
-//   singleValue: {
-//     fontSize: 16,
-//   },
   placeholder: {
     position: 'absolute',
     left: 2,
@@ -76,7 +73,7 @@ NoOptionsMessage.propTypes = {
   /**
    * Props to be passed on to the wrapper.
    */
-  innerProps: PropTypes.object.isRequired,
+  // innerProps: PropTypes.object.isRequired,
   selectProps: PropTypes.object.isRequired,
 };
 
@@ -168,22 +165,22 @@ Option.propTypes = {
    */
   innerProps: PropTypes.shape({
     id: PropTypes.string.isRequired,
-    key: PropTypes.string.isRequired,
+    // key: PropTypes.string.isRequired,
     onClick: PropTypes.func.isRequired,
-    onMouseMove: PropTypes.func.isRequired,
-    onMouseOver: PropTypes.func.isRequired,
+    // onMouseMove: PropTypes.func.isRequired,
+    // onMouseOver: PropTypes.func.isRequired,
     tabIndex: PropTypes.number.isRequired,
   }).isRequired,
   /**
    * Inner ref to DOM Node
    */
-  innerRef: PropTypes.oneOfType([
-    PropTypes.oneOf([null]),
-    PropTypes.func,
-    PropTypes.shape({
-      current: PropTypes.any.isRequired,
-    }),
-  ]).isRequired,
+  // innerRef: PropTypes.oneOfType([
+  //   PropTypes.oneOf([null]),
+  //   PropTypes.func,
+  //   PropTypes.shape({
+  //     current: PropTypes.any.isRequired,
+  //   }),
+  // ]).isRequired,
   /**
    * Whether the option is focused.
    */

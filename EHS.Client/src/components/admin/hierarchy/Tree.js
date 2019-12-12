@@ -72,8 +72,9 @@ const StyledTreeItem = withStyles(theme => ({
         padding: 0
     }
   }))(props => {
-    // console.log(props)
     const [isMouseInside, setIsMouseInside] = useState(false); 
+    const { classes, currentUser, handleSubmit, handleChange, handleEdit, hierarchies, hierarchyLevels, parentHierarchy, ...newProps } = props
+    // console.log(newProps)
     
     return (
         <span
@@ -82,7 +83,7 @@ const StyledTreeItem = withStyles(theme => ({
             className={props.classes.treeItem}
         >
             <TreeItem 
-                {...props} 
+                {...newProps} 
                 TransitionComponent={TransitionComponent} 
             >
             </TreeItem>
@@ -135,7 +136,7 @@ const Tree = props => {
         if(hierarchies.length) generateTree(); 
 
 		return () => {
-			console.log('Tree Component Unmounting')
+			// console.log('Tree Component Unmounting')
 		}
 
     }, [hierarchies]); //this 2nd arg is important, it tells what to look for changes in, and will re-run the hook when this changes 
@@ -147,7 +148,7 @@ const Tree = props => {
         const level4 = hierarchyLevels.find(l => l.hierarchyLevelNumber === 4);
         const level5 = hierarchyLevels.find(l => l.hierarchyLevelNumber === 5);
         
-        console.log(hierarchyLevels)
+        // console.log(hierarchyLevels)
 
         // console.log(hierarchyLevels)
         setItems((() => {
@@ -156,8 +157,9 @@ const Tree = props => {
             return (
                 //level 0 / root
                 <StyledTreeItem 
-                    id={rootHierarchy.hierarchyId}
-                    nodeId={rootHierarchy.hierarchyId}
+                    key={rootHierarchy.hierarchyId}
+                    id={`${rootHierarchy.hierarchyId}`}
+                    nodeId={`${rootHierarchy.hierarchyId}`}
                     label={rootHierarchy.hierarchyName}
                     hierarchy={rootHierarchy}
                     handleEdit={handleEdit}
@@ -173,10 +175,11 @@ const Tree = props => {
                                 && hl1.lft > rootHierarchy.lft && hl1.rgt < rootHierarchy.rgt)
                                 .map((h1, i, arr) => {
                                     return (
-                                        <Fragment>
-                                            <StyledTreeItem 
-                                                id={h1.hierarchyId}
-                                                nodeId={h1.hierarchyId}
+                                        <Fragment key={h1.hierarchyId}>
+                                            <StyledTreeItem
+                                                key={h1.hierarchyId}
+                                                id={`${h1.hierarchyId}`}
+                                                nodeId={`${h1.hierarchyId}`}
                                                 label={h1.hierarchyName}
                                                 hierarchy={h1}
                                                 parentHierarchy={rootHierarchy}
@@ -193,10 +196,11 @@ const Tree = props => {
                                                                 && hl2.lft > h1.lft && hl2.rgt < h1.rgt) 
                                                             .map((h2, i, arr) => {
                                                                 return (
-                                                                <Fragment>
+                                                                <Fragment key={h2.hierarchyId}>
                                                                     <StyledTreeItem 
-                                                                        id={h2.hierarchyId}
-                                                                        nodeId={h2.hierarchyId}
+                                                                        key={h2.hierarchyId}
+                                                                        id={`${h2.hierarchyId}`}
+                                                                        nodeId={`${h2.hierarchyId}`}
                                                                         label={h2.hierarchyName}
                                                                         hierarchy={h2}
                                                                         parentHierarchy={h1}
@@ -213,10 +217,11 @@ const Tree = props => {
                                                                                             && h3.lft > h2.lft && h3.rgt < h2.rgt)
                                                                                     .map((h3, i, arr) => {
                                                                                         return (
-                                                                                        <Fragment>
+                                                                                        <Fragment key={h3.hierarchyId}>
                                                                                             <StyledTreeItem 
-                                                                                                id={h3.hierarchyId}
-                                                                                                nodeId={h3.hierarchyId}
+                                                                                                key={h3.hierarchyId}
+                                                                                                id={`${h3.hierarchyId}`}
+                                                                                                nodeId={`${h3.hierarchyId}`}
                                                                                                 label={h3.hierarchyName}
                                                                                                 hierarchy={h3}
                                                                                                 parentHierarchy={h2}
@@ -238,10 +243,11 @@ const Tree = props => {
                                                                                                             })
                                                                                                             .map((h4, i, arr) => {
                                                                                                                 return (
-                                                                                                                    <Fragment>
+                                                                                                                    <Fragment key={h4.hierarchyId}>
                                                                                                                         <StyledTreeItem 
-                                                                                                                            id={h4.hierarchyId}
-                                                                                                                            nodeId={h4.hierarchyId}
+                                                                                                                            key={h4.hierarchyId}
+                                                                                                                            id={`${h4.hierarchyId}`}
+                                                                                                                            nodeId={`${h4.hierarchyId}`}
                                                                                                                             label={h4.hierarchyName}
                                                                                                                             hierarchy={h4}
                                                                                                                             parentHierarchy={h3}
@@ -255,11 +261,12 @@ const Tree = props => {
                                                                                                                                 ?
                                                                                                                                     <form className={classes.newHierarchyForm} onSubmit={handleSubmit(h4, false, level5.hierarchyLevelId)}>
                                                                                                                                         <TextField
-                                                                                                                                            id={h4.hierarchyId}
+                                                                                                                                            key={h4.hierarchyId}
+                                                                                                                                            id={`${h4.hierarchyId}`}
                                                                                                                                             name='newLevel5'
-                                                                                                                                            placeholder={`Copy/Paste new ${level5.hierarchyLevelAlias || level5.hierarchyLevelName} under ${h3.hierarchyName}...`}
+                                                                                                                                            placeholder={`New ${level5.hierarchyLevelAlias || level5.hierarchyLevelName} under ${h3.hierarchyName}...`}
                                                                                                                                             className={classes.textField}
-                                                                                                                                            label={`Copy/Paste new ${level5.hierarchyLevelAlias || level5.hierarchyLevelName} under ${h3.hierarchyName}...`}
+                                                                                                                                            label={`New ${level5.hierarchyLevelAlias || level5.hierarchyLevelName} under ${h3.hierarchyName}...`}
                                                                                                                                             margin="normal"
                                                                                                                                             onChange={handleChange}
                                                                                                                                             // value={newHierarchy['newLevel5']}
@@ -281,11 +288,11 @@ const Tree = props => {
                                                                                                             // Form for if this is the FIRST Child of the hierarchy - PLANT/AREA
                                                                                                             <form className={classes.newHierarchyForm} onSubmit={handleSubmit(h3, true, level5.hierarchyLevelId)}>
                                                                                                                 <TextField
-                                                                                                                    id={h3.hierarchyId}
+                                                                                                                    id={`${h3.hierarchyId}`}
                                                                                                                     name='newLevel5'
-                                                                                                                    placeholder={`Copy/Paste new ${level5.hierarchyLevelAlias || level5.hierarchyLevelName} under ${h3.hierarchyName}...`}
+                                                                                                                    placeholder={`New ${level5.hierarchyLevelAlias || level5.hierarchyLevelName} under ${h3.hierarchyName}...`}
                                                                                                                     className={classes.textField}
-                                                                                                                    label={`Copy/Paste new ${level5.hierarchyLevelAlias || level5.hierarchyLevelName} under ${h3.hierarchyName}...`}
+                                                                                                                    label={`New ${level5.hierarchyLevelAlias || level5.hierarchyLevelName} under ${h3.hierarchyName}...`}
                                                                                                                     margin="normal"
                                                                                                                     onChange={handleChange}
                                                                                                                     // value={newHierarchy['newLevel5']}
@@ -307,11 +314,11 @@ const Tree = props => {
                                                                                                     ?
                                                                                                         <form className={classes.newHierarchyForm} onSubmit={handleSubmit(h3, false, level4.hierarchyLevelId)}>
                                                                                                             <TextField
-                                                                                                                id={h3.hierarchyId}
+                                                                                                                id={`${h3.hierarchyId}`}
                                                                                                                 name='newLevel4'
-                                                                                                                placeholder={`Copy/Paste new ${level4.hierarchyLevelAlias || level4.hierarchyLevelName} under ${h2.hierarchyName}...`}
+                                                                                                                placeholder={`New ${level4.hierarchyLevelAlias || level4.hierarchyLevelName} under ${h2.hierarchyName}...`}
                                                                                                                 className={classes.textField}
-                                                                                                                label={`Copy/Paste new ${level4.hierarchyLevelAlias || level4.hierarchyLevelName} under ${h2.hierarchyName}...`}
+                                                                                                                label={`New ${level4.hierarchyLevelAlias || level4.hierarchyLevelName} under ${h2.hierarchyName}...`}
                                                                                                                 margin="normal"
                                                                                                                 onChange={handleChange}
                                                                                                                 fullWidth
@@ -332,11 +339,11 @@ const Tree = props => {
                                                                                     // Form for if this is the FIRST Child of the hierarchy - PLANT/AREA
                                                                                     <form className={classes.newHierarchyForm} onSubmit={handleSubmit(h2, true, level4.hierarchyLevelId)}>
                                                                                         <TextField
-                                                                                            id={h2.hierarchyId}
+                                                                                            id={`${h2.hierarchyId}`}
                                                                                             name='newLevel4'
-                                                                                            placeholder={`Copy/Paste new ${level4.hierarchyLevelAlias || level4.hierarchyLevelName} under ${h2.hierarchyName}...`}
+                                                                                            placeholder={`New ${level4.hierarchyLevelAlias || level4.hierarchyLevelName} under ${h2.hierarchyName}...`}
                                                                                             className={classes.textField}
-                                                                                            label={`Copy/Paste new ${level4.hierarchyLevelAlias || level4.hierarchyLevelName} under ${h2.hierarchyName}...`}
+                                                                                            label={`New ${level4.hierarchyLevelAlias || level4.hierarchyLevelName} under ${h2.hierarchyName}...`}
                                                                                             margin="normal"
                                                                                             onChange={handleChange}
                                                                                             fullWidth
@@ -357,11 +364,11 @@ const Tree = props => {
                                                                             ?
                                                                                 <form className={classes.newHierarchyForm} onSubmit={handleSubmit(h2, false, level3.hierarchyLevelId)}>
                                                                                     <TextField
-                                                                                        id={h2.hierarchyId}
+                                                                                        id={`${h2.hierarchyId}`}
                                                                                         name='newLevel3'
-                                                                                        placeholder={`Copy/Paste new ${level3.hierarchyLevelAlias || level3.hierarchyLevelName} under ${h1.hierarchyName}...`}
+                                                                                        placeholder={`New ${level3.hierarchyLevelAlias || level3.hierarchyLevelName} under ${h1.hierarchyName}...`}
                                                                                         className={classes.textField}
-                                                                                        label={`Copy/Paste new ${level3.hierarchyLevelAlias || level3.hierarchyLevelName} under ${h1.hierarchyName}...`}
+                                                                                        label={`New ${level3.hierarchyLevelAlias || level3.hierarchyLevelName} under ${h1.hierarchyName}...`}
                                                                                         margin="normal"
                                                                                         onChange={handleChange}
                                                                                         fullWidth
@@ -383,11 +390,11 @@ const Tree = props => {
                                                         // Form for if this is the FIRST Child of the hierarchy - SITE/SITE
                                                         <form className={classes.newHierarchyForm} onSubmit={handleSubmit(h1, true, level3.hierarchyLevelId)}>
                                                             <TextField
-                                                                id={h1.hierarchyId}
+                                                                id={`${h1.hierarchyId}`}
                                                                 name='newLevel3'
-                                                                placeholder={`Copy/Paste new ${level3.hierarchyLevelAlias || level3.hierarchyLevelName} under ${h1.hierarchyName}...`}
+                                                                placeholder={`New ${level3.hierarchyLevelAlias || level3.hierarchyLevelName} under ${h1.hierarchyName}...`}
                                                                 className={classes.textField}
-                                                                label={`Copy/Paste new ${level3.hierarchyLevelAlias || level3.hierarchyLevelName} under ${h1.hierarchyName}...`}
+                                                                label={`New ${level3.hierarchyLevelAlias || level3.hierarchyLevelName} under ${h1.hierarchyName}...`}
                                                                 margin="normal"
                                                                 onChange={handleChange}
                                                                 fullWidth
@@ -409,11 +416,11 @@ const Tree = props => {
                                                     ?
                                                         <form className={classes.newHierarchyForm} onSubmit={handleSubmit(h1, false, level2.hierarchyLevelId)}>
                                                             <TextField
-                                                                id={h1.hierarchyId}
+                                                                id={`${h1.hierarchyId}`}
                                                                 name='newLevel2'
-                                                                placeholder={`Copy/Paste new ${level2.hierarchyLevelAlias || level2.hierarchyLevelName} under ${rootHierarchy.hierarchyName}...`}
+                                                                placeholder={`New ${level2.hierarchyLevelAlias || level2.hierarchyLevelName} under ${rootHierarchy.hierarchyName}...`}
                                                                 className={classes.textField}
-                                                                label={`Copy/Paste new ${level2.hierarchyLevelAlias || level2.hierarchyLevelName} under ${rootHierarchy.hierarchyName}...`}
+                                                                label={`New ${level2.hierarchyLevelAlias || level2.hierarchyLevelName} under ${rootHierarchy.hierarchyName}...`}
                                                                 margin="normal"
                                                                 onChange={handleChange}
                                                                 fullWidth
@@ -435,11 +442,11 @@ const Tree = props => {
                             // Form for if this is the FIRST Child of the hierarchy - REGION/DIVISON
                             <form className={classes.newHierarchyForm} onSubmit={handleSubmit(rootHierarchy, true, level2.hierarchyLevelId)}>
                                 <TextField
-                                    id={rootHierarchy.hierarchyId}
+                                    id={`${rootHierarchy.hierarchyId}`}
                                     name='newLevel2'
-                                    placeholder={`Copy/Paste new ${level2.hierarchyLevelAlias || level2.hierarchyLevelName} under ${rootHierarchy.hierarchyName}...`}
+                                    placeholder={`New ${level2.hierarchyLevelAlias || level2.hierarchyLevelName} under ${rootHierarchy.hierarchyName}...`}
                                     className={classes.textField}
-                                    label={`Copy/Paste new ${level2.hierarchyLevelAlias || level2.hierarchyLevelName} under ${rootHierarchy.hierarchyName}...`}
+                                    label={`New ${level2.hierarchyLevelAlias || level2.hierarchyLevelName} under ${rootHierarchy.hierarchyName}...`}
                                     margin="normal"
                                     onChange={handleChange}
                                     fullWidth
@@ -462,7 +469,7 @@ const Tree = props => {
     return (
         <TreeView
             className={classes.tree}
-            defaultExpanded={hierarchies.map(i => i.hierarchyId)} 
+            defaultExpanded={hierarchies.map(i => `${i.hierarchyId}`)} 
             defaultCollapseIcon={<MinusSquare />}
             defaultExpandIcon={<PlusSquare />}
             defaultEndIcon={<CloseSquare />}

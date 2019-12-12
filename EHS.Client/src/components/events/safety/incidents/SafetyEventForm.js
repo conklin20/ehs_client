@@ -165,7 +165,7 @@ const SafetyEventForm = props => {
 		return () => {            
             //should probably handle this differently, but for now will revert the search back to Open incidents when this form unmounts
             props.fetchSafetyIncidents('?eventStatuses=Open')
-			console.log('SafetyEventForm Unmounting...')
+			// console.log('SafetyEventForm Unmounting...')
 		}
 	}, []); //this 2nd arg is important, it tells what to look for changes in, and will re-run the hook when this changes 
     
@@ -173,7 +173,7 @@ const SafetyEventForm = props => {
 
 	const fetchData = async () => {
         //if existing event, get event detail from api
-        if(props.match.params.eventId) setEvent(await props.fetchEvent(props.match.params.eventId))
+        if(props.match.params.eventId && props.match.params.eventId !== 'new') setEvent(await props.fetchEvent(props.match.params.eventId))
                         
         const timestamp = moment.utc().format(); 
         //if this is a new event form, and the lookup data has been loaded, set the initial values for the evnt 
@@ -186,6 +186,12 @@ const SafetyEventForm = props => {
                 eventStatus: S_I_STATUS.DRAFT,   
                 eventDate: timestamp, 
                 hoursWorkedPrior: .5, 
+                isInjury: false, 
+                firstAid: false, 
+                transported: false, 
+                er: false, 
+                isIllness: false, 
+                lostTime: false,
                 //defaulting an empty array for actions, people, causes, and files
                 actions: [], 
                 peopleInvolved: [], 
@@ -606,12 +612,10 @@ const SafetyEventForm = props => {
                                     </div>
                                     ) : (
                                         <div className={classes.sectionBody}>
-                                            <div>
-                                                <Typography className={classes.instructions}>
-                                                    { 
-                                                        getStepContent(activeStep)
-                                                    }
-                                                </Typography>
+                                            <div className={classes.instructions}>
+                                                { 
+                                                    getStepContent(activeStep)
+                                                }
                                             </div>
                                             <div>
                                                 <Button 

@@ -215,7 +215,7 @@ namespace EHS.Server.DataAccess.Repository
             parameters.Add("@EventStatus", SafetyEventToAdd.EventStatus, dbType: DbType.String);
             parameters.Add("@ReportedBy", SafetyEventToAdd.ReportedBy, dbType: DbType.String);
             parameters.Add("@ReportedOn", SafetyEventToAdd.ReportedOn, dbType: DbType.DateTime2);
-            parameters.Add("@EventDate", SafetyEventToAdd.EventDate, dbType: DbType.Date);
+            parameters.Add("@EventDate", SafetyEventToAdd.EventDate, dbType: DbType.DateTime2);
             parameters.Add("@EmployeeId", SafetyEventToAdd.EmployeeId, dbType: DbType.String);
             parameters.Add("@SupervisorId", SafetyEventToAdd.SupervisorId, dbType: DbType.String);
             parameters.Add("@JobTitle", SafetyEventToAdd.JobTitle, dbType: DbType.String);
@@ -266,7 +266,7 @@ namespace EHS.Server.DataAccess.Repository
             parameters.Add("@EventStatus", SafetyEventToUpdate.EventStatus, dbType: DbType.String);
             parameters.Add("@ReportedBy", SafetyEventToUpdate.ReportedBy, dbType: DbType.String);
             parameters.Add("@ReportedOn", SafetyEventToUpdate.ReportedOn, dbType: DbType.DateTime2);
-            parameters.Add("@EventDate", SafetyEventToUpdate.EventDate, dbType: DbType.Date);
+            parameters.Add("@EventDate", SafetyEventToUpdate.EventDate, dbType: DbType.DateTime2);
             parameters.Add("@EmployeeId", SafetyEventToUpdate.EmployeeId, dbType: DbType.String);
             parameters.Add("@SupervisorId", SafetyEventToUpdate.SupervisorId, dbType: DbType.String);
             parameters.Add("@JobTitle", SafetyEventToUpdate.JobTitle, dbType: DbType.String);

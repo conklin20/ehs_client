@@ -98,7 +98,7 @@ const AttributeManagement = props => {
         fetchData();         
 
 		return () => {
-			console.log('HierarchyManagement Component Unmounting')
+			// console.log('HierarchyManagement Component Unmounting')
 		}
 
     }, []); //this 2nd arg is important, it tells what to look for changes in, and will re-run the hook when this changes 
@@ -253,7 +253,7 @@ const AttributeManagement = props => {
         
         props.postNewHierarchyAttribute(newAttribute, currentUser.user.userId)
             .then(res => {
-                console.log(res); 
+                // console.log(res); 
                 if(res.status === 201){
                     switch(selectedAttribute.attributeName){
                         case 'Global':
@@ -282,6 +282,7 @@ const AttributeManagement = props => {
                 { attributes.map(a => {
                     return (
                         <Button
+                            key={a.attributeId}
                             onClick={() => setSelectedAttribute(a)}
                             >
                             {a.attributeName}

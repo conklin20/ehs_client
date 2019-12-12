@@ -1,0 +1,962 @@
+{
+  "config": {
+    "title": "Ehs Frontend",
+    "description": "My awesome app using docz",
+    "menu": [],
+    "version": "1.0.0",
+    "repository": null,
+    "native": false,
+    "themeConfig": {},
+    "separator": "-"
+  },
+  "entries": [
+    {
+      "key": "README.md",
+      "value": {
+        "id": "04c6e90faac2675aa89e2176d2eec7d8",
+        "filepath": "README.md",
+        "fullpath": "C:\\Users\\caryc\\Projects\\Vista Outdoor\\EHS\\EHS.Client\\README.md",
+        "link": "",
+        "slug": "readme",
+        "route": "/readme",
+        "name": "Readme",
+        "menu": "",
+        "headings": [
+          {
+            "slug": "available-scripts",
+            "depth": 2,
+            "value": "Available Scripts"
+          },
+          {
+            "slug": "npm-start",
+            "depth": 3,
+            "value": "npm start"
+          },
+          {
+            "slug": "npm-test",
+            "depth": 3,
+            "value": "npm test"
+          },
+          {
+            "slug": "npm-run-build",
+            "depth": 3,
+            "value": "npm run build"
+          },
+          {
+            "slug": "npm-run-eject",
+            "depth": 3,
+            "value": "npm run eject"
+          },
+          {
+            "slug": "learn-more",
+            "depth": 2,
+            "value": "Learn More"
+          },
+          {
+            "slug": "code-splitting",
+            "depth": 3,
+            "value": "Code Splitting"
+          },
+          {
+            "slug": "analyzing-the-bundle-size",
+            "depth": 3,
+            "value": "Analyzing the Bundle Size"
+          },
+          {
+            "slug": "making-a-progressive-web-app",
+            "depth": 3,
+            "value": "Making a Progressive Web App"
+          },
+          {
+            "slug": "advanced-configuration",
+            "depth": 3,
+            "value": "Advanced Configuration"
+          },
+          {
+            "slug": "deployment",
+            "depth": 3,
+            "value": "Deployment"
+          },
+          {
+            "slug": "npm-run-build-fails-to-minify",
+            "depth": 3,
+            "value": "npm run build  fails to minify"
+          }
+        ]
+      }
+    },
+    {
+      "key": "src/docs/bugs.mdx",
+      "value": {
+        "name": "Bugs",
+        "route": "/docs/bugs",
+        "menu": "3. Bugs",
+        "id": "fa312b0ab45a8ab5f997506096b113c5",
+        "filepath": "src/docs/bugs.mdx",
+        "fullpath": "C:\\Users\\caryc\\Projects\\Vista Outdoor\\EHS\\EHS.Client\\src\\docs\\bugs.mdx",
+        "link": "",
+        "slug": "src-docs-bugs",
+        "headings": [
+          {
+            "slug": "bugs",
+            "depth": 1,
+            "value": "Bugs"
+          },
+          {
+            "slug": "open",
+            "depth": 2,
+            "value": "Open"
+          },
+          {
+            "slug": "recently-fixed",
+            "depth": 2,
+            "value": "Recently Fixed"
+          }
+        ]
+      }
+    },
+    {
+      "key": "src/docs/faq.mdx",
+      "value": {
+        "name": "FAQ",
+        "route": "/docs/faq",
+        "menu": "2. FAQ",
+        "id": "d2f058ee1b65881710a68a1bb34b652f",
+        "filepath": "src/docs/faq.mdx",
+        "fullpath": "C:\\Users\\caryc\\Projects\\Vista Outdoor\\EHS\\EHS.Client\\src\\docs\\faq.mdx",
+        "link": "",
+        "slug": "src-docs-faq",
+        "headings": [
+          {
+            "slug": "frequently-asked-questions",
+            "depth": 1,
+            "value": "Frequently Asked Questions"
+          },
+          {
+            "slug": "how-do-i-log-in",
+            "depth": 2,
+            "value": "How do I log in?"
+          },
+          {
+            "slug": "how-do-i-update-my-ehs-account",
+            "depth": 2,
+            "value": "How do I update my EHS Account?"
+          }
+        ]
+      }
+    },
+    {
+      "key": "src/docs/index.mdx",
+      "value": {
+        "name": "Introduction",
+        "route": "/docs",
+        "menu": "1. How To's",
+        "id": "13a8a147f67d34248cdc424d524520a5",
+        "filepath": "src/docs/index.mdx",
+        "fullpath": "C:\\Users\\caryc\\Projects\\Vista Outdoor\\EHS\\EHS.Client\\src\\docs\\index.mdx",
+        "link": "",
+        "slug": "src-docs-index",
+        "headings": [
+          {
+            "slug": "introduction",
+            "depth": 1,
+            "value": "Introduction"
+          },
+          {
+            "slug": "accessing-the-application",
+            "depth": 2,
+            "value": "Accessing the application"
+          },
+          {
+            "slug": "logging-in-to-the-application",
+            "depth": 2,
+            "value": "Logging in to the application"
+          },
+          {
+            "slug": "application-layout",
+            "depth": 2,
+            "value": "Application layout"
+          },
+          {
+            "slug": "viewing-my-account",
+            "depth": 2,
+            "value": "Viewing my account"
+          }
+        ]
+      }
+    },
+    {
+      "key": "src/docs/modules.mdx",
+      "value": {
+        "name": "Modules",
+        "route": "/docs/modules",
+        "menu": "1. How To's",
+        "id": "44575161b78a20c0b411553c1b88c776",
+        "filepath": "src/docs/modules.mdx",
+        "fullpath": "C:\\Users\\caryc\\Projects\\Vista Outdoor\\EHS\\EHS.Client\\src\\docs\\modules.mdx",
+        "link": "",
+        "slug": "src-docs-modules",
+        "headings": [
+          {
+            "slug": "modules",
+            "depth": 1,
+            "value": "Modules"
+          },
+          {
+            "slug": "environmental",
+            "depth": 2,
+            "value": "Environmental"
+          },
+          {
+            "slug": "health",
+            "depth": 2,
+            "value": "Health"
+          },
+          {
+            "slug": "safety",
+            "depth": 2,
+            "value": "Safety"
+          },
+          {
+            "slug": "incidents",
+            "depth": 3,
+            "value": "Incidents"
+          },
+          {
+            "slug": "observations",
+            "depth": 3,
+            "value": "Observations"
+          }
+        ]
+      }
+    }
+  ],
+  "props": [
+    {
+      "key": "src/components/app/App.jsx",
+      "value": [
+        {
+          "description": "",
+          "displayName": "App",
+          "methods": [],
+          "actualName": "App"
+        }
+      ]
+    },
+    {
+      "key": "src/components/app/AppBar.jsx",
+      "value": [
+        {
+          "description": "",
+          "displayName": "EHSAppBar",
+          "methods": [],
+          "actualName": "EHSAppBar"
+        }
+      ]
+    },
+    {
+      "key": "src/components/app/AuthForm.jsx",
+      "value": [
+        {
+          "description": "",
+          "displayName": "AuthForm",
+          "methods": [],
+          "actualName": "AuthForm"
+        }
+      ]
+    },
+    {
+      "key": "src/components/app/Homepage.jsx",
+      "value": [
+        {
+          "description": "",
+          "displayName": "Homepage",
+          "methods": [],
+          "actualName": "Homepage"
+        }
+      ]
+    },
+    {
+      "key": "src/components/app/Routes.jsx",
+      "value": [
+        {
+          "description": "",
+          "displayName": "Routes",
+          "methods": [],
+          "actualName": "Routes"
+        }
+      ]
+    },
+    {
+      "key": "src/components/reportAside/OpenEvents.jsx",
+      "value": [
+        {
+          "description": "",
+          "displayName": "OpenEvents",
+          "methods": [],
+          "actualName": "OpenEvents"
+        }
+      ]
+    },
+    {
+      "key": "src/components/reportAside/ReportAside.js",
+      "value": [
+        {
+          "description": "",
+          "displayName": "ReportAside",
+          "methods": [],
+          "actualName": "ReportAside"
+        }
+      ]
+    },
+    {
+      "key": "src/components/reportAside/SafeDays.jsx",
+      "value": [
+        {
+          "description": "",
+          "displayName": "SafeDays",
+          "methods": [],
+          "actualName": "SafeDays"
+        }
+      ]
+    },
+    {
+      "key": "src/components/shared/AutoComplete.js",
+      "value": [
+        {
+          "description": "",
+          "displayName": "AutoComplete",
+          "methods": [],
+          "actualName": "AutoComplete"
+        }
+      ]
+    },
+    {
+      "key": "src/components/shared/AutoCompleteMulti.js",
+      "value": [
+        {
+          "description": "",
+          "displayName": "AutoCompleteMulti",
+          "methods": [],
+          "actualName": "AutoCompleteMulti"
+        }
+      ]
+    },
+    {
+      "key": "src/components/shared/MomentDate.js",
+      "value": [
+        {
+          "description": "",
+          "displayName": "MomentDate",
+          "methods": [],
+          "actualName": "MomentDate"
+        }
+      ]
+    },
+    {
+      "key": "src/components/shared/Notification.js",
+      "value": [
+        {
+          "description": "",
+          "displayName": "Notification",
+          "methods": [],
+          "actualName": "Notification"
+        }
+      ]
+    },
+    {
+      "key": "src/components/shared/PageNotFound.js",
+      "value": [
+        {
+          "description": "",
+          "displayName": "PageNotFound",
+          "methods": [],
+          "actualName": "PageNotFound"
+        }
+      ]
+    },
+    {
+      "key": "src/components/shared/Slider.js",
+      "value": [
+        {
+          "description": "",
+          "displayName": "CustomSlider",
+          "methods": [],
+          "actualName": "CustomSlider"
+        }
+      ]
+    },
+    {
+      "key": "src/components/shared/Table.js",
+      "value": [
+        {
+          "description": "",
+          "displayName": "Table",
+          "methods": [],
+          "actualName": "Table"
+        }
+      ]
+    },
+    {
+      "key": "src/components/reports/GeneratingReport.jsx",
+      "value": [
+        {
+          "description": "",
+          "displayName": "GeneratingReport",
+          "methods": [],
+          "actualName": "GeneratingReport"
+        }
+      ]
+    },
+    {
+      "key": "src/components/reports/ReportDetailTemplate.jsx",
+      "value": [
+        {
+          "description": "",
+          "displayName": "ReportComponentName",
+          "methods": [],
+          "actualName": "ReportComponentName"
+        }
+      ]
+    },
+    {
+      "key": "src/components/reports/ReportFormTemplate.jsx",
+      "value": [
+        {
+          "description": "",
+          "displayName": "EventDetailForm",
+          "methods": [],
+          "actualName": "EventDetailForm"
+        }
+      ]
+    },
+    {
+      "key": "src/components/reports/Reports.jsx",
+      "value": [
+        {
+          "description": "",
+          "displayName": "Reports",
+          "methods": [],
+          "actualName": "Reports"
+        }
+      ]
+    },
+    {
+      "key": "src/components/user/Logout.js",
+      "value": [
+        {
+          "description": "",
+          "displayName": "Logout",
+          "methods": [],
+          "actualName": "Logout"
+        }
+      ]
+    },
+    {
+      "key": "src/components/user/UserProfile.js",
+      "value": [
+        {
+          "description": "",
+          "displayName": "UserProfile",
+          "methods": [],
+          "actualName": "UserProfile"
+        }
+      ]
+    },
+    {
+      "key": "src/components/userAside/MyActions.js",
+      "value": [
+        {
+          "description": "",
+          "displayName": "MyActions",
+          "methods": [],
+          "actualName": "MyActions"
+        }
+      ]
+    },
+    {
+      "key": "src/components/userAside/MyApprovals.js",
+      "value": [
+        {
+          "description": "",
+          "displayName": "MyApprovals",
+          "methods": [],
+          "actualName": "MyApprovals"
+        }
+      ]
+    },
+    {
+      "key": "src/components/userAside/MyDrafts.js",
+      "value": [
+        {
+          "description": "",
+          "displayName": "MyDrafts",
+          "methods": [],
+          "actualName": "MyDrafts"
+        }
+      ]
+    },
+    {
+      "key": "src/components/userAside/UserAside.js",
+      "value": [
+        {
+          "description": "",
+          "displayName": "UserAside",
+          "methods": [],
+          "actualName": "UserAside"
+        }
+      ]
+    },
+    {
+      "key": "src/components/admin/attributes/AttributeManagement.js",
+      "value": [
+        {
+          "description": "",
+          "displayName": "AttributeManagement",
+          "methods": [],
+          "actualName": "AttributeManagement"
+        }
+      ]
+    },
+    {
+      "key": "src/components/admin/attributes/GlobalTree.js",
+      "value": [
+        {
+          "description": "",
+          "displayName": "GlobalTree",
+          "methods": [],
+          "actualName": "GlobalTree"
+        }
+      ]
+    },
+    {
+      "key": "src/components/admin/attributes/LogicalTree.js",
+      "value": [
+        {
+          "description": "",
+          "displayName": "LogicalTree",
+          "methods": [],
+          "actualName": "LogicalTree"
+        }
+      ]
+    },
+    {
+      "key": "src/components/admin/attributes/PhysicalTree.js",
+      "value": [
+        {
+          "description": "",
+          "displayName": "PhysicalTree",
+          "methods": [],
+          "actualName": "PhysicalTree"
+        }
+      ]
+    },
+    {
+      "key": "src/components/admin/attributes/Tree.js",
+      "value": [
+        {
+          "description": "",
+          "displayName": "Tree",
+          "methods": [],
+          "actualName": "Tree"
+        }
+      ]
+    },
+    {
+      "key": "src/components/admin/hierarchy/HierarchyManagement.js",
+      "value": [
+        {
+          "description": "",
+          "displayName": "HierarchyManagement",
+          "methods": [],
+          "actualName": "HierarchyManagement"
+        }
+      ]
+    },
+    {
+      "key": "src/components/admin/hierarchy/LogicalTree.js",
+      "value": [
+        {
+          "description": "",
+          "displayName": "LogicalTree",
+          "methods": [],
+          "actualName": "LogicalTree"
+        }
+      ]
+    },
+    {
+      "key": "src/components/admin/hierarchy/PhysicalTree.js",
+      "value": [
+        {
+          "description": "",
+          "displayName": "PhysicalTree",
+          "methods": [],
+          "actualName": "PhysicalTree"
+        }
+      ]
+    },
+    {
+      "key": "src/components/admin/hierarchy/Tree.js",
+      "value": [
+        {
+          "description": "",
+          "displayName": "Tree",
+          "methods": [],
+          "actualName": "Tree"
+        }
+      ]
+    },
+    {
+      "key": "src/components/admin/user/UserForm.js",
+      "value": [
+        {
+          "description": "",
+          "displayName": "UserForm",
+          "methods": [],
+          "actualName": "UserForm"
+        }
+      ]
+    },
+    {
+      "key": "src/components/admin/user/UserList.js",
+      "value": [
+        {
+          "description": "",
+          "displayName": "UserList",
+          "methods": [],
+          "actualName": "UserList"
+        }
+      ]
+    },
+    {
+      "key": "src/components/admin/user/UserManagement.js",
+      "value": [
+        {
+          "description": "",
+          "displayName": "UserManagement",
+          "methods": [],
+          "actualName": "UserManagement"
+        }
+      ]
+    },
+    {
+      "key": "src/components/admin/user/UserSearch.js",
+      "value": [
+        {
+          "description": "",
+          "displayName": "UserSearch",
+          "methods": [],
+          "actualName": "UserSearch"
+        }
+      ]
+    },
+    {
+      "key": "src/components/events/shared/ActionItem.js",
+      "value": [
+        {
+          "description": "",
+          "displayName": "ActionItem",
+          "methods": [],
+          "actualName": "ActionItem"
+        }
+      ]
+    },
+    {
+      "key": "src/components/events/shared/ActionList.js",
+      "value": [
+        {
+          "description": "",
+          "displayName": "ActionList",
+          "methods": [],
+          "actualName": "ActionList"
+        }
+      ]
+    },
+    {
+      "key": "src/components/events/shared/Actions.js",
+      "value": [
+        {
+          "description": "",
+          "displayName": "Actions",
+          "methods": [],
+          "actualName": "Actions"
+        }
+      ]
+    },
+    {
+      "key": "src/components/events/shared/Causes.js",
+      "value": [
+        {
+          "description": "",
+          "displayName": "Causes",
+          "methods": [],
+          "actualName": "Causes"
+        }
+      ]
+    },
+    {
+      "key": "src/components/events/shared/Dashboard.js",
+      "value": [
+        {
+          "description": "",
+          "displayName": "Dashboard",
+          "methods": [],
+          "actualName": "Dashboard"
+        }
+      ]
+    },
+    {
+      "key": "src/components/events/shared/EventList.js",
+      "value": [
+        {
+          "description": "",
+          "displayName": "EventList",
+          "methods": [],
+          "actualName": "EventList"
+        }
+      ]
+    },
+    {
+      "key": "src/components/events/shared/EventLocation.js",
+      "value": [
+        {
+          "description": "",
+          "displayName": "EventLocation",
+          "methods": [],
+          "actualName": "EventLocation"
+        }
+      ]
+    },
+    {
+      "key": "src/components/events/shared/EventSearch.js",
+      "value": [
+        {
+          "description": "",
+          "displayName": "EventSearch",
+          "methods": [],
+          "actualName": "EventSearch"
+        }
+      ]
+    },
+    {
+      "key": "src/components/events/shared/Media.js",
+      "value": [
+        {
+          "description": "",
+          "displayName": "Media",
+          "methods": [],
+          "actualName": "Media"
+        }
+      ]
+    },
+    {
+      "key": "src/components/events/shared/PeopleInvolved.js",
+      "value": [
+        {
+          "description": "",
+          "displayName": "PeopleInvolved",
+          "methods": [],
+          "actualName": "PeopleInvolved"
+        }
+      ]
+    },
+    {
+      "key": "src/components/events/shared/ReportingInformation.js",
+      "value": [
+        {
+          "description": "",
+          "displayName": "ReportingInformation",
+          "methods": [],
+          "actualName": "ReportingInformation"
+        }
+      ]
+    },
+    {
+      "key": "src/components/events/shared/Review.js",
+      "value": [
+        {
+          "description": "",
+          "displayName": "Review",
+          "methods": [],
+          "actualName": "Review"
+        }
+      ]
+    },
+    {
+      "key": "src/components/events/shared/SearchBar.js",
+      "value": [
+        {
+          "description": "",
+          "displayName": "SearchBar",
+          "methods": [],
+          "actualName": "SearchBar"
+        }
+      ]
+    },
+    {
+      "key": "src/components/events/shared/SearchFilters.js",
+      "value": [
+        {
+          "description": "",
+          "displayName": "SearchFilters",
+          "methods": [],
+          "actualName": "SearchFilters"
+        }
+      ]
+    },
+    {
+      "key": "src/components/events/safety/incidents/SafetyEventForm.js",
+      "value": [
+        {
+          "description": "",
+          "displayName": "SafetyEventForm",
+          "methods": [],
+          "actualName": "SafetyEventForm"
+        }
+      ]
+    },
+    {
+      "key": "src/components/events/safety/incidents/SIEventDetails.js",
+      "value": [
+        {
+          "description": "",
+          "displayName": "SIEventDetails",
+          "methods": [],
+          "actualName": "SIEventDetails"
+        }
+      ]
+    },
+    {
+      "key": "src/components/reports/safety/incidents/EventDetailForm.jsx",
+      "value": [
+        {
+          "description": "",
+          "displayName": "EventDetailForm",
+          "methods": [],
+          "actualName": "EventDetailForm"
+        }
+      ]
+    },
+    {
+      "key": "src/components/reports/safety/incidents/EventDetailReport.jsx",
+      "value": [
+        {
+          "description": "",
+          "displayName": "EventDetailReport",
+          "methods": [],
+          "actualName": "EventDetailReport"
+        }
+      ]
+    },
+    {
+      "key": "src/components/reports/safety/incidents/InjuriesForm.jsx",
+      "value": [
+        {
+          "description": "",
+          "displayName": "InjuriesForm",
+          "methods": [],
+          "actualName": "InjuriesForm"
+        }
+      ]
+    },
+    {
+      "key": "src/components/reports/safety/incidents/InjuriesReport - Lab.jsx",
+      "value": [
+        {
+          "description": "",
+          "displayName": "InjuriesReport",
+          "methods": [],
+          "actualName": "InjuriesReport"
+        }
+      ]
+    },
+    {
+      "key": "src/components/reports/safety/incidents/InjuriesReport.jsx",
+      "value": [
+        {
+          "description": "",
+          "displayName": "InjuriesReport",
+          "methods": [],
+          "actualName": "InjuriesReport"
+        }
+      ]
+    },
+    {
+      "key": "src/components/reports/safety/incidents/OpenEventsForm.jsx",
+      "value": [
+        {
+          "description": "",
+          "displayName": "OpenEventsForm",
+          "methods": [],
+          "actualName": "OpenEventsForm"
+        }
+      ]
+    },
+    {
+      "key": "src/components/reports/safety/incidents/OpenEventsReport.jsx",
+      "value": [
+        {
+          "description": "",
+          "displayName": "OpenEventsReport",
+          "methods": [],
+          "actualName": "OpenEventsReport"
+        }
+      ]
+    },
+    {
+      "key": "src/components/reports/safety/incidents/RecordablesForm.jsx",
+      "value": [
+        {
+          "description": "",
+          "displayName": "RecordablesForm",
+          "methods": [],
+          "actualName": "RecordablesForm"
+        }
+      ]
+    },
+    {
+      "key": "src/components/reports/safety/incidents/RecordablesReport.jsx",
+      "value": [
+        {
+          "description": "",
+          "displayName": "RecordablesReport",
+          "methods": [],
+          "actualName": "RecordablesReport"
+        }
+      ]
+    },
+    {
+      "key": "src/components/reports/safety/incidents/SafeDaysForm.jsx",
+      "value": [
+        {
+          "description": "",
+          "displayName": "EventDetailForm",
+          "methods": [],
+          "actualName": "EventDetailForm"
+        }
+      ]
+    },
+    {
+      "key": "src/components/reports/safety/incidents/SafeDaysReport.jsx",
+      "value": [
+        {
+          "description": "",
+          "displayName": "SafeDaysReport",
+          "methods": [],
+          "actualName": "SafeDaysReport"
+        }
+      ]
+    },
+    {
+      "key": "src/components/reports/safety/incidents/SIReports.jsx",
+      "value": [
+        {
+          "description": "",
+          "displayName": "SIReports",
+          "methods": [],
+          "actualName": "SIReports"
+        }
+      ]
+    }
+  ]
+}

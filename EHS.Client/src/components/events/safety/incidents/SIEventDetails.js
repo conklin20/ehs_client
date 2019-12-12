@@ -141,6 +141,7 @@ const SIEventDetails = (props) => {
                             <Checkbox
                                 color='primary'
                                 checked={event.isInjury}
+                                value={event.isInjury}
                                 onChange={handleChange('eventDetails', 'isInjury')}
                             />
                         }
@@ -187,6 +188,7 @@ const SIEventDetails = (props) => {
                             <Checkbox
                                 color='primary'
                                 checked={event.firstAid}
+                                value={event.firstAid}
                                 onChange={handleChange('eventDetails', 'firstAid')}
                             />
                         }
@@ -224,6 +226,7 @@ const SIEventDetails = (props) => {
                             <Checkbox
                                 color='primary'
                                 checked={event.transported}
+                                value={event.transported}
                                 onChange={handleChange('eventDetails', 'transported')}
                             />
                         }
@@ -261,6 +264,7 @@ const SIEventDetails = (props) => {
                                 <Checkbox
                                     color='primary'
                                     checked={event.er}
+                                    value={event.er}
                                     onChange={handleChange('eventDetails', 'er')}
                                 />
                             }
@@ -274,6 +278,7 @@ const SIEventDetails = (props) => {
                             <Checkbox
                                 color='primary'
                                 checked={event.isIllness}
+                                value={event.isIllness}
                                 onChange={handleChange('eventDetails', 'isIllness')}
                             />
                         }
@@ -287,6 +292,7 @@ const SIEventDetails = (props) => {
                             <Checkbox
                                 color='primary'
                                 checked={event.lostTime}
+                                value={event.lostTime}
                                 onChange={handleChange('eventDetails', 'lostTime')}
                             />
                         }

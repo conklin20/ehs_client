@@ -13,22 +13,22 @@ const ReportingInformation = (props) => {
             { 
                 Object.keys(event).length && Object.keys(lookupData).length ?  
                 <Fragment>
-                    <Typography variant='h4' gutterBottom>
+                    <Typography variant='h4' >
                         Reporting Information
                     </Typography>
-                    <Typography className={classes.caption} variant="caption" display="block" gutterBottom>
+                    <Typography className={classes.caption} variant="caption" display="block" >
                         Instructions: No input required, these fields will be defaulted 
                     </Typography>       
                     <Divider/>    						
                     <Grid container spacing={2}>			
                         <Grid item xs={12}>		
-                            <Typography className={classes.label} variant="body1" gutterBottom>
+                            <Typography className={classes.label} variant="body1" >
                                 <span>Reported By: </span>
                                 {event.reportedBy === 'N/A' ? event.reportedBy : lookupData.employees.find(e => e.employeeId === event.reportedBy).fullName}
                             </Typography>	
                         </Grid>       	
                         <Grid item xs={12}>		
-                            <Typography className={classes.label} variant="body1" gutterBottom>
+                            <Typography className={classes.label} variant="body1" >
                                 <span>Date Reported: </span>
                                 {moment(event.reportedOn)
                                     // .subtract(new Date(event.reportedOn).getTimezoneOffset(), 'minutes')
@@ -36,7 +36,7 @@ const ReportingInformation = (props) => {
                             </Typography>	
                         </Grid>       	
                         <Grid item xs={12}>		
-                            <Typography className={classes.label} variant="body1" gutterBottom>   
+                            <Typography className={classes.label} variant="body1" >   
                                 <span>Time Reported: </span>
                                 {moment(event.reportedOn)
                                     // .subtract(new Date(event.reportedOn).getTimezoneOffset(), 'minutes')
@@ -44,7 +44,7 @@ const ReportingInformation = (props) => {
                             </Typography>	
                         </Grid>      
                         <Grid item xs={12}>		
-                            <Typography className={classes.label} variant="body1" gutterBottom>   
+                            <Typography className={classes.label} variant="body1" >   
                                 <span>Event Status: </span>
                                 {event.eventStatus}
                             </Typography>	

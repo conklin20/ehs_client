@@ -1,8 +1,7 @@
-import React, { Fragment } from 'react';
-import { TextField, Button, Typography } from '@material-ui/core';
+import React, {  } from 'react';
+import { Button, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
-import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/pickers'
-import moment from 'moment'
+import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/pickers';
 import MomentUtils from '@date-io/moment';
 import AutoComplete from '../../../shared/AutoComplete';
 
@@ -46,7 +45,7 @@ const InjuriesForm = props => {
         switch(p.muiControl){
             case KeyboardDatePicker: 
                 return (
-                    <MuiPickersUtilsProvider utils={MomentUtils}>
+                    <MuiPickersUtilsProvider key={p.name} utils={MomentUtils}>
                         <KeyboardDatePicker
                             id={p.name}
                             autoOk
@@ -65,11 +64,12 @@ const InjuriesForm = props => {
             case AutoComplete: 
                 return (
                     <AutoComplete
-                        name="site"
+                        key={p.name}
+                        name={p.name}
                         options={logicalOptions}
                         className={classes.formControl}
-                        label="Logical Hierarchy"                     
-                        placeholder="Select Site"
+                        label={p.alias}                     
+                        placeholder={`Select ${p.alias}`}
                         handleChange={handleAutoCompleteChange}
                     />
                 )        
@@ -80,7 +80,7 @@ const InjuriesForm = props => {
 
     return (
         <form className={classes.form} onSubmit={handleSubmit(config)}>
-            <Typography className={classes.header} variant="h4" gutterbottom>
+            <Typography className={classes.header} variant="h4" >
                 <em>Injuries</em>
             </Typography>
             

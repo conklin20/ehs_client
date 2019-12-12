@@ -203,13 +203,12 @@ const Causes = (props) => {
         }; 
                             
         return (
-            <Paper className={classes.paper}>
+            <Paper key={index} className={classes.paper}>
                 <Typography variant='h5' gutterBottom>
                     {type}
                 </Typography>
                 <Grid item xs={12}>											
                     <AutoCompleteMulti
-                        key={index}
                         name={type}
                         options={options()}
                         placeholder="Type or select an option..."
@@ -224,7 +223,6 @@ const Causes = (props) => {
                 </Grid>
                 <Grid item xs={12}>		
                     <TextField
-                        key={index}
                         name={type}
                         placeholder={`${type} Comments...`}
                         variant='outlined'

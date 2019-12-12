@@ -109,7 +109,7 @@ class EventListWithPrintOption extends Component {
                 ]
             },
             {
-                Header: '**Actions',
+                Header: '*Actions',
                 columns: [
                     {
                         Header: 'O', 
@@ -149,10 +149,10 @@ class EventListWithPrintOption extends Component {
                     <Table columns={columns} data={siData} route='/events/si/' {...this.props} />
                 </Styles>
                 <Typography variant="caption" display="block" gutterBottom>
-                    *Hint - Click anywhere on the row of an event to navigate to the details of the event
+                    Hint - Click anywhere on the row of an event to navigate to the details of the event
                 </Typography>
                 <Typography variant="caption" display="block" gutterBottom>
-                    **O = Open (Incomplete) Actions. PA = Actions Pending Approval
+                    *O = Open (Incomplete) Actions. PA = Actions Pending Approval
                 </Typography>
             </Fragment>
         )

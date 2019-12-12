@@ -6,6 +6,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import filterLookupDataByKey from '../../../helpers/filterLookupDataByKey';
 import { S_I_STATUS } from '../../../helpers/eventStatusEnum';
 import { ATTR_CATS } from '../../../helpers/attributeCategoryEnum';
+import EventDetailReport from '../../reports/safety/incidents/EventDetailReport';
 
 const useStyles = makeStyles(theme => ({
     sectionTitle: {
@@ -31,128 +32,9 @@ const Review = (props) => {
 
     const { event, lookupData, currentUser, handleSubmit } = props; 
 
-    const actions = event.actions.map((a, i) => {
+    const files = event.files.map(f => {    
         return (
-            <Fragment >
-                <Grid item xs={1}>		
-                    <Typography className={classes.label} variant="body1" gutterBottom>
-                        <span className={classes.span}> {i+1} </span>
-                    </Typography>	
-                </Grid>   
-                <Grid item xs={6} md={3}>		
-                    <Typography className={classes.label} variant="body1" gutterBottom>
-                        <span className={classes.span}>Assigned To: </span>
-                        {lookupData.employees.find(e => e.employeeId === a.assignedTo).fullName}
-                    </Typography>	
-                </Grid>   
-                <Grid item xs={6} md={2}>		
-                    <Typography className={classes.label} variant="body1" gutterBottom>  
-                        <span className={classes.span}>Due Date: </span>
-                        <Moment format={currentUser.user.dateFormat || 'MM/DD/YYYY'}>
-                            {a.dueDate}
-                        </Moment>                  
-                    </Typography>	
-                </Grid>  
-                <Grid item xs={6} md={3}>	
-                    <Typography className={classes.label} variant="body1" gutterBottom>  
-                        <span className={classes.span}>Completion Date: </span>
-                        <Moment format={currentUser.user.dateFormat || 'MM/DD/YYYY'}>
-                            {a.completionDate}
-                        </Moment>                  
-                    </Typography>	
-                </Grid>  
-                <Grid item xs={6} md={3}>	
-                    <Typography className={classes.label} variant="body1" gutterBottom>  
-                        <span className={classes.span}>ApprovalDate Date: </span>
-                        <Moment format={currentUser.user.dateFormat || 'MM/DD/YYYY'}>
-                            {a.approvalDate}
-                        </Moment>                  
-                    </Typography>	
-                </Grid>  
-                <Grid item xs={1}>		
-                    <Typography className={classes.label} variant="body1" gutterBottom>
-                        <span className={classes.span}>__________ </span>
-                    </Typography>	
-                </Grid>   
-                <Grid item xs={11} >		
-                    <Typography className={classes.label} variant="body1" gutterBottom>
-                        <span className={classes.span}>Action to Take/Taken: </span>
-                        {a.actionToTake}
-                    </Typography>	
-                </Grid>
-                <Divider />
-            </Fragment>     
-        )
-    })
-
-    const involvement = lookupData['globalHierarchyAttributes'].filter(attr => attr.key === 'Employee Involvement');
-    const peopleInvolved = involvement.map(i => {
-
-        const people = event.peopleInvolved.filter(r => r.roleId === i.hierarchyAttributeId)
-
-        return (
-            <Grid item xs={12}>		
-                <Typography className={classes.label} variant="body1" gutterBottom>
-                    <span className={classes.span}> {`${i.value}: `} </span>
-                    {`${people.map(p => ' ' + lookupData.employees.find(e => e.employeeId === p.employeeId).fullName)} `}
-                </Typography>	
-            </Grid>   
-        )      
-    })
-
-    const immediateCauseList = filterLookupDataByKey(props.lookupData, ATTR_CATS.IMMEDIATE_CAUSES.lookupDataKey, ATTR_CATS.IMMEDIATE_CAUSES.key, null, true)
-    const rootCauseList = filterLookupDataByKey(props.lookupData, ATTR_CATS.ROOT_CAUSES.lookupDataKey, ATTR_CATS.ROOT_CAUSES.key, null, true)
-    const contributingFactorList = filterLookupDataByKey(props.lookupData, ATTR_CATS.CONTRIBUTING_FACTORS.lookupDataKey, ATTR_CATS.CONTRIBUTING_FACTORS.key, null, true)
-    const causes = ['Immediate Causes','Root Causes','Contributing Factors'].map(causeType => {                
-        switch(causeType){
-            case 'Immediate Causes':
-                return (
-                    <Grid item xs={12}>		
-                        <Typography className={classes.label} variant="body1" gutterBottom>
-                            <span className={classes.span}> {`${causeType}: `} </span>
-                            {`
-                                ${event.causes
-                                .filter(c => immediateCauseList.some(icl => icl.value === c.causeId))
-                                .map(ic => ' ' + immediateCauseList.find(icl => icl.value === ic.causeId).label)}
-                            `}
-                        </Typography>	
-                    </Grid>  
-                );
-            case 'Root Causes':
-                return (
-                    <Grid item xs={12}>		
-                        <Typography className={classes.label} variant="body1" gutterBottom>
-                            <span className={classes.span}> {`${causeType}: `} </span>
-                            {`
-                                ${event.causes
-                                .filter(c => rootCauseList.some(rcl => rcl.value === c.causeId))
-                                .map(rc => ' ' + rootCauseList.find(rcl => rcl.value === rc.causeId).label)}
-                            `}
-                        </Typography>	
-                    </Grid>  
-                );
-            case 'Contributing Factors':
-                return (
-                    <Grid item xs={12}>		
-                        <Typography className={classes.label} variant="body1" gutterBottom>
-                            <span className={classes.span}> {`${causeType}: `} </span>
-                            {`
-                                ${event.causes
-                                .filter(c => contributingFactorList.some(cfl => cfl.value === c.causeId))
-                                .map(cf => ' ' + contributingFactorList.find(cfl => cfl.value === cf.causeId).label)}
-                            `}
-                        </Typography>	
-                    </Grid>  
-                );
-            default: 
-                console.log(`Invalid Type: ${causeType}`)
-                return causeType
-        }
-    })
-
-    const files = event.files.map(f => {        
-        return (
-            <Grid item xs={12}>		
+            <Grid item key={f.eventFileId} xs={12}>		
                 <Typography className={classes.label} variant="body1" gutterBottom>
                     {f.userFileName}
                 </Typography>	
@@ -160,7 +42,7 @@ const Review = (props) => {
         )      
     })
 
-    // console.log(lookupData)
+    // console.log(event)
     return (
         <Fragment>  
             <Typography variant='h4' gutterBottom>
@@ -168,224 +50,13 @@ const Review = (props) => {
             </Typography>
             <Typography className={classes.caption} variant="caption" display="block" gutterBottom>
                 Instructions: Review all event information for accuracy. If this is a Draft, you can submit it from here. 
-            </Typography>       
-            <Divider />    						
-            <Grid container spacing={2}>
-                <Grid item xs={12}>
-                    <Typography variant='h6' className={classes.sectionTitle} >
-                        Reporting Information
-                    </Typography>
-                </Grid>
-                <Grid item xs={6} md={3}>		
-                    <Typography className={classes.label} variant="body1" gutterBottom>
-                        <span className={classes.span}>Reported By: </span>
-                        {event.reportedBy === 'N/A' ? 'N/A' : lookupData.employees.find(e => e.employeeId === event.reportedBy).fullName}
-                    </Typography>	
-                </Grid>      
-                <Grid item xs={6} md={3}>		
-                    <Typography className={classes.label} variant="body1" gutterBottom>  
-                        <span className={classes.span}>Date Reported: </span>
-                        <Moment format={currentUser.user.dateFormat || 'MM/DD/YYYY'}>
-                            {event.reportedOn}
-                        </Moment>                  
-                    </Typography>	
-                </Grid>       
-                <Grid item xs={6} md={3}>		
-                    <Typography className={classes.label} variant="body1" gutterBottom>  
-                        <span className={classes.span}>Time Reported: </span>
-                        <Moment format="LTS" add={{ hours: currentUser.user.timeZone}}>
-                            {event.reportedOn}
-                        </Moment>	                     
-                    </Typography>	
-                </Grid>     
-                <Grid item xs={6} md={3}>		
-                    <Typography className={classes.label} variant="body1" gutterBottom>   
-                        <span className={classes.span}>Event Status: </span>
-                        {event.eventStatus}               
-                    </Typography>	
-                </Grid>        
-            </Grid>	
+            </Typography>     
             
-            <Divider />    		
-
-            <Grid container spacing={2}>                
-                <Grid item xs={12}>
-                    <Typography variant='h6' className={classes.sectionTitle} >
-                        Event Location
-                    </Typography>
-                </Grid>
-                <Grid item xs={6}>		
-                    <Typography className={classes.label} variant="body1" gutterBottom>
-                        <span className={classes.span}>Logical/Reporting Location: </span>
-                        {`${event.site} > ${event.area} > ${event.department}`}
-                    </Typography>	
-                </Grid>      
-                <Grid item xs={6} >		
-                    <Typography className={classes.label} variant="body1" gutterBottom>  
-                        <span className={classes.span}>Physical Location: </span>
-                        {`${event.localeSite} > ${event.localePlant} > ${event.localePlantArea}`}
-                    </Typography>	
-                </Grid>       
-            </Grid>
+            <EventDetailReport
+                data={[event]}
+                lookupData={lookupData}
+            />  
             
-            <Divider />    		
-
-            <Grid container spacing={2}>                
-                <Grid item xs={12}>
-                    <Typography variant='h6' className={classes.sectionTitle} >
-                        Event Details
-                    </Typography>
-                </Grid>
-                <Grid item xs={12}>		
-                    <Typography className={classes.label} variant="body1" gutterBottom>
-                        <span className={classes.span}>Category: </span>
-                        { event.resultingCategory && event.resultingCategory !== event.initialCategory ? 
-                            `Initial Category - ${event.initialCategory} / Resulting Category - ${event.resultingCategory}`
-                            : `Category - ${event.initialCategory}`    
-                        }
-                    </Typography>	
-                </Grid>      
-                <Grid item xs={6} md={3}>		
-                    <Typography className={classes.label} variant="body1" gutterBottom>
-                        <span className={classes.span}>Date of Event: </span>
-                        {event.eventDate}
-                        {/* <Moment format={currentUser.user.dateFormat || 'MM/DD/YYYY'}>
-                            {event.eventDate}
-                        </Moment>             */}
-                    </Typography>	
-                </Grid>      
-                <Grid item xs={6} md={3} >		
-                    <Typography className={classes.label} variant="body1" gutterBottom>  
-                        <span className={classes.span}>Employee Involved: </span>
-                        { lookupData.employees.some(e => e.employeeId === event.employeeId) 
-                            ? lookupData.employees.find(e => e.employeeId === event.employeeId).fullName 
-                            : `${event.employeeId} - Employee Not Found`}
-                    </Typography>	
-                </Grid>      
-                <Grid item xs={6} md={3} >		
-                    <Typography className={classes.label} variant="body1" gutterBottom>  
-                        <span className={classes.span}>Shift: </span>
-                        {event.shift}
-                    </Typography>	
-                </Grid>      
-                <Grid item xs={6} md={3} >		
-                    <Typography className={classes.label} variant="body1" gutterBottom>  
-                        <span className={classes.span}>Job Title: </span>
-                        {event.jobTitle}
-                    </Typography>	
-                </Grid>        
-                <Grid item xs={12} >		
-                    <Typography className={classes.label} variant="body1" gutterBottom>  
-                        <span className={classes.span}>What Happened: </span>
-                        {event.whatHappened}
-                    </Typography>	
-                </Grid> 
-                { event.isInjury ?      
-                    <Grid item xs={12} >		
-                        <Typography className={classes.label} variant="body1" gutterBottom>  
-                            <span className={classes.span}>Injury Information: </span>
-                            { `Nature of Injury: ${event.natureOfInjury} - Body Part: ${event.bodyPart}` }
-                        </Typography>	
-                    </Grid> 
-                    : null
-                }   
-                { event.firstAid === true ?      
-                    <Grid item xs={12} >		
-                        <Typography className={classes.label} variant="body1" gutterBottom>  
-                            <span className={classes.span}>First Aid: </span>
-                            { event.firstAidType }
-                        </Typography>	
-                    </Grid> 
-                    : null
-                }   
-                { event.transported === true ?      
-                    <Grid item xs={12} >		
-                        <Typography className={classes.label} variant="body1" gutterBottom>  
-                            <span className={classes.span}>Transported to: </span>
-                            { event.offPlantMedicalFacility }
-                        </Typography>	
-                    </Grid> 
-                    : null
-                }   
-                <Grid item xs={3} >		
-                    <Typography className={classes.label} variant="body1" gutterBottom>  
-                        <span className={classes.span}>ER?: </span>
-                        {event.er ? 'Yes' : 'No' }
-                    </Typography>	
-                </Grid>      
-                <Grid item xs={3} >		
-                    <Typography className={classes.label} variant="body1" gutterBottom>  
-                        <span className={classes.span}>Illness?: </span>
-                        {event.isIllness ? 'Yes' : 'No' }
-                    </Typography>	
-                </Grid>      
-                <Grid item xs={3} >		
-                    <Typography className={classes.label} variant="body1" gutterBottom>  
-                        <span className={classes.span}>Lost Time?: </span>
-                        {event.lostTime ? 'Yes' : 'No' }
-                    </Typography>	
-                </Grid>      
-                <Grid item xs={3} >		
-                    <Typography className={classes.label} variant="body1" gutterBottom>  
-                        <span className={classes.span}>Hours Worked: </span>
-                        {event.hoursWorkedPrior }
-                    </Typography>	
-                </Grid>       
-                <Grid item xs={4} >		
-                    <Typography className={classes.label} variant="body1" gutterBottom>  
-                        <span className={classes.span}>Work Environment: </span>
-                        {event.workEnvironment }
-                    </Typography>	
-                </Grid>      
-                <Grid item xs={4} >		
-                    <Typography className={classes.label} variant="body1" gutterBottom>  
-                        <span className={classes.span}>Material Involved: </span>
-                        {event.materialInvolved }
-                    </Typography>	
-                </Grid>      
-                <Grid item xs={4} >		
-                    <Typography className={classes.label} variant="body1" gutterBottom>  
-                        <span className={classes.span}>Equipment Involved: </span>
-                        {event.equipmentInvolved }
-                    </Typography>	
-                </Grid>      
-            </Grid>
-            
-            <Divider />    		
-
-            <Grid container spacing={2}>                     
-                <Grid item xs={12}>
-                    <Typography variant='h6' className={classes.sectionTitle} >
-                        Actions
-                    </Typography>
-                </Grid>  
-                {actions}
-            </Grid>            
-            
-            <Divider />    		
-
-            <Grid container spacing={2}>                     
-                <Grid item xs={12}>
-                    <Typography variant='h6' className={classes.sectionTitle} >
-                        People Involved
-                    </Typography>
-                </Grid>  
-                {peopleInvolved}
-            </Grid>       
-            
-            <Divider />    		
-
-            <Grid container spacing={2}>                     
-                <Grid item xs={12}>
-                    <Typography variant='h6' className={classes.sectionTitle} >
-                        Causes
-                    </Typography>
-                </Grid>  
-                {causes}
-            </Grid>
-            
-            <Divider />    		
-
             <Grid container spacing={2}>                     
                 <Grid item xs={12}>
                     <Typography variant='h6' className={classes.sectionTitle} >

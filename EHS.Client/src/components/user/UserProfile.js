@@ -43,7 +43,7 @@ const UserProfile = props => {
 		fetchData(); 
 
 		return () => {
-			console.log('UserProfile Component Unmounting')
+			// console.log('UserProfile Component Unmounting')
 		}
 	}, []); //this 2nd arg is important, it tells what to look for changes in, and will re-run the hook when this changes 
 

@@ -1,8 +1,7 @@
-import React, { Fragment } from 'react';
-import { TextField, Button, Typography } from '@material-ui/core';
+import React, {  } from 'react';
+import { Button, Typography } from '@material-ui/core';
 import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/pickers'
 import { makeStyles } from '@material-ui/styles';
-import moment from 'moment'
 import MomentUtils from '@date-io/moment';
 
 const useStyles = makeStyles(theme => ({
@@ -37,7 +36,7 @@ const OpenEventsForm = props => {
         switch(p.muiControl){
             case KeyboardDatePicker: 
                 return (
-                    <MuiPickersUtilsProvider utils={MomentUtils}>
+                    <MuiPickersUtilsProvider key={p.name} utils={MomentUtils}>
                         <KeyboardDatePicker
                             id={p.name}
                             autoOk
@@ -60,7 +59,7 @@ const OpenEventsForm = props => {
 
     return (
         <form className={classes.form} onSubmit={handleSubmit(config)}>
-            <Typography className={classes.header} variant="h4" gutterbottom>
+            <Typography className={classes.header} variant="h4" >
                 <em>Open Events</em>
             </Typography>
             

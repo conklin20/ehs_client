@@ -45,10 +45,10 @@ const ActionList = (props) => {
     })
 
     const pendingActions = pendActions
-        .map(a => {
+        .map((a, i) => {
         return (
             <ActionItem 
-                key={a.actionId}
+                key={`${a.eventId}-${i}`}
                 action={a}
                 employees={employees}
                 currentUser={currentUser}

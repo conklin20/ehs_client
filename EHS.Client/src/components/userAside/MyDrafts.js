@@ -31,7 +31,7 @@ const MyDrafts = props => {
     // console.log(props); 
     const drafts = props.drafts.map(d => {
         return (
-            <Fragment>   
+            <Fragment key={d.eventId}>   
                 <ListItem>
                     <Link to={`/events/si/${d.eventId}`} className={classes.link} >
                         <ListItemText

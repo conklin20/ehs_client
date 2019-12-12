@@ -123,7 +123,7 @@ const ActionItem = (props) => {
     const approvalsNeeded = action.approvalsNeeded
         .map(an => {
             return (
-                <ListItem>
+                <ListItem key={an.approvalRoutingId}>
                     <Chip label={an.approvalLevelName.replace('Approval', '')} />
                 </ListItem>
             )
@@ -175,20 +175,20 @@ const ActionItem = (props) => {
             <CardContent >
                 <Grid container spacing={2} >
                     <Grid item xs={12}>
-                        <div className={classes.cardHeader}>
+                        <Typography variant='inherit' className={classes.cardHeader}>
                             <Typography variant="h5" gutterBottom>
                                 {`${action.actionId} - ${assignedTo}`}
                             </Typography>
                             { isAdmin || typeof(action.actionId) !== 'number' ?  
-                                <span>
+                                <Typography>
                                     <DeleteIcon 
                                         onClick={handleClickOpen}
                                         size={'large'}
                                         />
-                                </span>
+                                </Typography>
                                 : null
                             }
-                        </div>
+                        </Typography>
                         <Typography variant="overline" display="block" gutterBottom>
                             {
                                 action.completionDate 
@@ -211,29 +211,29 @@ const ActionItem = (props) => {
                         </Typography>
                     </Grid>
                     <Grid container className={classes.approvalsBody}>
-                        <div className={classes.list}>
-                            <div className={classes.approvalsSubTitle}>
+                        <Typography variant='inherit' className={classes.list}>
+                            <Typography variant='inherit' className={classes.approvalsSubTitle}>
                                 <Typography variant="h6" >
                                     Needed
                                 </Typography>
                                 <Badge color="primary" badgeContent={approvalsNeeded.length} className={classes.badge} />
-                            </div>
+                            </Typography>
                             <List className={classes.listBody} dense={true}>
                                 {approvalsNeeded}
                             </List>    
-                        </div>
+                        </Typography>
                         <Divider orientation="vertical" />
-                        <div className={classes.list}>
-                            <div className={classes.approvalsSubTitle}>
+                        <Typography variant='inherit' className={classes.list}>
+                            <Typography variant='inherit' className={classes.approvalsSubTitle}>
                                 <Typography variant="h6" >
                                     Received
                                 </Typography>
                                 <Badge color="primary" badgeContent={approvalsReceived.length} className={classes.badge} />
-                            </div>
+                            </Typography>
                             <List className={classes.listBody} dense={true}>
                                 {approvalsReceived}
                             </List>   
-                        </div>
+                        </Typography>
                     </Grid>
                 </Grid>
             </CardContent>
@@ -246,24 +246,24 @@ const ActionItem = (props) => {
                         color="secondary" 
                     >
                         <Tooltip title={completeButtomCriteria.length > 0 ? completeButtomCriteria.join(' ') : 'Click to mark this action as complete'}>
-                            <span className={classes.spanButton}>
+                            <Typography variant='inherit' className={classes.spanButton}>
                                 <Button 
                                     onClick={handleCompleteAction(action)}
                                     disabled={completeButtomCriteria.length > 0 ? true : false}
                                 >
                                 Complete Action
                                 </Button>
-                            </span>
+                            </Typography>
                         </Tooltip>
                         <Tooltip title={approveButtonCriteria.length > 0 ? approveButtonCriteria.join(' ') : 'Click to approve this action'}>
-                            <span className={classes.spanButton}>
+                            <Typography variant='inherit' className={classes.spanButton}>
                                 <Button 
                                     onClick={handleApproveAction(action)}
                                     disabled={approveButtonCriteria.length > 0 ? true : false}
                                 >
                                     Approve Action
                                 </Button>
-                            </span>
+                            </Typography>
                         </Tooltip>
                     </ButtonGroup>
                 </CardActions>

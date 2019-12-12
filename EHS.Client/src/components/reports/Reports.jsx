@@ -100,12 +100,12 @@ const Reports = props => {
                 !Object.keys(match.params).length
                     ?
                     <Fragment>
-                        <Typography className={classes.header} variant="h4" gutterbottom>
+                        <Typography className={classes.header} variant="h4" >
                             Reports
                         </Typography>
                         {reportCategories.map(cat => {
                             return (
-                                <Link to={cat.url} className={classes.link}>
+                                <Link key={cat.url} to={cat.url} className={classes.link}>
                                     <Button className={classes.button} variant="contained" color="primary" >
                                         {cat.name}
                                     </Button>

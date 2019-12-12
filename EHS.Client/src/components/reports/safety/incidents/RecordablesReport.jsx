@@ -253,13 +253,13 @@ class RecordablesReportWPO extends Component {
                 <Typography variant='subtitle1'>
                     {`${queryString.parse(userParams).site}: ${queryString.parse(userParams).startDate} through ${queryString.parse(userParams).endDate || moment().format('YYYY-MM-DD')}`}
                 </Typography>
-                <Typography variant='body1'>                    
+                <Fragment>                    
                     <InputLabel style={{marginTop: 5}} id='group-by-label'>Group By</InputLabel>                     
                     <Select
                         id='group-by'
                         variant='outlined'
                         className={classes.formControl}
-                        labelId='group-by-label'
+                        labelid='group-by-label'
                         value={this.state.groupBy}
                         onChange={e => this.setState({
                             groupBy: e.target.value
@@ -268,7 +268,7 @@ class RecordablesReportWPO extends Component {
                     {
                         this.state.groupByCategories.map(c => {
                             return (
-                                <MenuItem value={c.field} name={c.name}>{c.name}</MenuItem>
+                                <MenuItem key={c.field} value={c.field} name={c.name}>{c.name}</MenuItem>
                             )
                         })
                     }
@@ -287,7 +287,7 @@ class RecordablesReportWPO extends Component {
                         label="Show Table"
                         className={classes.formControl}
                     /> */}
-                </Typography>
+                </Fragment>
                 <div id={'recordablesReportBody'}></div>  
             </div>
         )

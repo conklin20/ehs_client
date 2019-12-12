@@ -105,13 +105,13 @@ const SIReports = props => {
         //get the config for this report 
         const config = reportList.find(r => r.url === match.url)
         //create new object with just the param names as keys, for the comparer 
-        console.log(config)
+        // console.log(config)
         if(config){
             const requiredParams = {};
             config.parameters.filter(p => p.required).map(p => requiredParams[p.name] = '')
             //check if all required params have been supplied 
             let paramCheckRes = paramCheck(requiredParams, queryString.parse(props.location.search))
-            console.log(paramCheckRes)
+            // console.log(paramCheckRes)
             //add any hidden params to the reportParams (dont want to display these in the querystring)
             if (config) {
                 query += query.length === 0 ? '?' : '&' + config.parameters
@@ -281,7 +281,7 @@ const SIReports = props => {
             {!match.params.hasOwnProperty('report')
                 ?
                     <Fragment>
-                        <Typography className={classes.header} variant="h4" gutterbottom>
+                        <Typography className={classes.header} variant="h4">
                             Safety Incident Reports
                         </Typography>
                         {reportList.map(r => {

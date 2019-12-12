@@ -1,6 +1,5 @@
 // Took this directly from Material-UI with a few mods - https://material-ui.com/components/snackbars/
-import React, { useState } from 'react';
-import { connect } from 'react-redux';
+import React, { useState, useEffect } from 'react';
 import clsx from 'clsx';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import ErrorIcon from '@material-ui/icons/Error';
@@ -50,6 +49,17 @@ function MySnackbarContentWrapper(props) {
   const classes = useStyles();
   const { className, message, onClose, variant, ...other } = props;
   const Icon = variantIcon[variant];
+  
+ 	// Essentially what was componentDidMount and componentDidUpdate before Hooks
+   useEffect(() => {
+    const abortController = new AbortController(); 
+    const signal = abortController.signal;
+
+    return () => {
+      abortController.abort(); 
+    }
+
+  },[])
   
   return (
     <SnackbarContent
@@ -102,4 +112,4 @@ const Notification = ( props ) => {
     )
 }
 
-    export default connect(null, null)(Notification);
+export default Notification;

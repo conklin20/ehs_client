@@ -29,10 +29,10 @@ namespace EHS.Server.DataAccess.DatabaseModels
         public DateTime EventDate { get; set; }
         //[Display(Name = "Event Time")]
         //[ConditionallyAllowNulls, DataType(DataType.Time)]
-        public TimeSpan EventTime { get; set; }
+        //public TimeSpan EventTime { get; set; }
         [ConditionallyAllowNulls]
         public string EmployeeId { get; set; }
-        [ConditionallyAllowNulls]
+        //[ConditionallyAllowNulls]
         public string SupervisorId { get; set; }
         [Display(Name = "Job Title")]
         [ConditionallyAllowNulls, MaxLength(50)]

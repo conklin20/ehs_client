@@ -57,7 +57,7 @@ const UserAside = props => {
             })
                 
 		return () => {
-			console.log('UserAside Unmounting')
+			// console.log('UserAside Unmounting')
 		}
 	}, [props.safetyIncidents]); //this 2nd arg is important, it tells what to look for changes in, and will re-run the hook when this changes 
 
