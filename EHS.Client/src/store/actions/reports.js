@@ -15,7 +15,7 @@ export const clearReportData = (report) => ({
 });
 
 export const fetchSafetyIncidents = (report, query) => {
-	console.log(report, query)
+	// console.log(report, query)
 	return dispatch => {
 		return apiCall('get', '/safetyincidents' + query)
 			.then(res => {

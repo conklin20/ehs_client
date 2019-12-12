@@ -1,5 +1,5 @@
-import React, { Fragment } from 'react';
-import { TextField, Button, Typography } from '@material-ui/core';
+import React, {  } from 'react';
+import { Button, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 import AutoComplete from '../../../shared/AutoComplete';
 
@@ -41,10 +41,11 @@ const EventDetailForm = props => {
                 case AutoComplete: 
                     return (
                         <AutoComplete
-                            name="site"
+                            key={p.name}
+                            name={p.name}
                             options={logicalOptions}
-                            label="Logical Hierarchy"                     
-                            placeholder="Select Site"
+                            label={p.alias}                    
+                            placeholder={`Select ${p.alias}`}
                             handleChange={handleAutoCompleteChange}
                         />
                     )             
@@ -56,7 +57,7 @@ const EventDetailForm = props => {
 
     return (
         <form className={classes.form} onSubmit={handleSubmit(config)}>
-            <Typography className={classes.header} variant="h4" gutterbottom>
+            <Typography className={classes.header} variant="h4" >
                 <em>Safe Days Report</em>
             </Typography>
             

@@ -29,6 +29,7 @@ const EventDetailForm = props => {
             case TextField: 
                 return (
                     <TextField
+                        key={p.name}
                         id={p.name}
                         name={p.name}
                         type={p.type}
@@ -47,7 +48,7 @@ const EventDetailForm = props => {
 
     return (
         <form className={classes.form} onSubmit={handleSubmit(config)}>
-            <Typography className={classes.header} variant="h4" gutterbottom>
+            <Typography className={classes.header} variant="h4">
                 <em>Safety Incident Report</em>
             </Typography>
             

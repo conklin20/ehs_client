@@ -32,8 +32,8 @@
     <None Include="wwwroot\static\css\main.abfb5c91.chunk.css.map" />
     <None Include="wwwroot\static\js\2.b628140a.chunk.js" />
     <None Include="wwwroot\static\js\2.b628140a.chunk.js.map" />
-    <None Include="wwwroot\static\js\main.eae48016.chunk.js" />
-    <None Include="wwwroot\static\js\main.eae48016.chunk.js.map" />
+    <None Include="wwwroot\static\js\main.4e97809e.chunk.js" />
+    <None Include="wwwroot\static\js\main.4e97809e.chunk.js.map" />
     <None Include="wwwroot\static\js\runtime~main.a8a9905a.js" />
     <None Include="wwwroot\static\js\runtime~main.a8a9905a.js.map" />
   </ItemGroup>

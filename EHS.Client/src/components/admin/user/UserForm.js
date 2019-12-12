@@ -5,7 +5,8 @@ import AutoComplete from '../../shared/AutoComplete';
 import { makeStyles } from '@material-ui/core/styles';
 import { fetchEmployee } from '../../../store/actions/lookupData';
 import { postNewUser, updateUser } from '../../../store/actions/users'; 
-import { addNotification } from '../../../store/actions/notifications'; 
+import { addNotification } from '../../../store/actions/notifications';
+import { MIN_ADMIN_ROLE_LEVEL } from '../adminRoleLevel';
 
 const useStyles = makeStyles(theme => ({
     formControl: {
@@ -21,11 +22,11 @@ const useStyles = makeStyles(theme => ({
 
 const UserForm = props => {
     const classes = useStyles(); 
-
+    // console.log(props)
     const { showUserForm, handleShowUserForm, userIdToEdit, lookupData, currentUser, refreshUsers, users, dispatch } = props;
 
     const [user, setUser] = useState({
-        userId: userIdToEdit, 
+        userId: userIdToEdit || '', 
         firstName: '', 
         lastName: '', 
         email: '', 
@@ -44,7 +45,7 @@ const UserForm = props => {
         if(userIdToEdit) handleGetEmployee(); 
 
 		return () => {
-			console.log('UserForm Component Unmounting')
+			// console.log('UserForm Component Unmounting')
 		}
 
 	}, []); //this 2nd arg is important, it tells what to look for changes in, and will re-run the hook when this changes   
@@ -73,8 +74,11 @@ const UserForm = props => {
             label: `${r.roleName} (Level ${r.roleLevel})`,
     }))
     //check if user's role level you're trying to edit is at or below your role level
-    // console.log(roleOptions.find(o => o.value == user.roleId))
-    const canEdit = roleOptions.find(o => o.value == user.roleId) || !userIdToEdit || userIdToEdit === currentUser.user.userId ? true : false; 
+    const canEdit = roleOptions.find(o => o.value == user.roleId) 
+        || !userIdToEdit 
+        || userIdToEdit === currentUser.user.userId
+        || currentUser.user.roleLevel >= MIN_ADMIN_ROLE_LEVEL
+        ? true : false; 
     
     // Handle field change 
     const handleChange = () => e => {
@@ -94,7 +98,6 @@ const UserForm = props => {
     const handleGetEmployee = () => {
         //if setting up a new user, grab their info from the employee table once their userId/employeeId is entered
         if(user.userId){
-
             fetchEmployee(user.userId)()
                 .then(res => {
                     if(!res.error){
@@ -116,7 +119,8 @@ const UserForm = props => {
                             });
                         } else {                                
                             setUser({
-                                ...user, 
+                                ...user,
+                                userId: res.data.employeeId,
                                 firstName: res.data.firstName, 
                                 lastName: res.data.lastName, 
                                 email: res.data.email, 
@@ -179,7 +183,6 @@ const UserForm = props => {
         const formIsValid = handleValidateForm(); 
         // console.log(formIsValid)
         if(formIsValid && validationErrors.length === 0) {
-            console.log(user); 
             user.isExisting 
             ? 
             updateUser(user, currentUser.user.userId)()
@@ -327,7 +330,7 @@ const UserForm = props => {
                                         name="phone"
                                         label="Phone"
                                         placeholder="(555) 553-1234"
-                                        value={user.phone}
+                                        value={user.phone || ''}
                                         onChange={handleChange()}
                                         onBlur={(e) => {
                                             //inline validation.
@@ -431,17 +434,15 @@ const UserForm = props => {
                                     <Typography variant='subtitle2'>
                                         Note: Levels are somewhat arbitrary, and just give an idea of how much access one role has relative to other roles. 1 being the lowest level. 
                                     </Typography>
-                                    <Typography variant='body2'>
-                                        <List>
-                                            {lookupData.userRoles.map(r => {
-                                                return (
-                                                    <ListItem>
-                                                        <ListItemText primary={`${r.roleName} - Level ${r.roleLevel} - ${r.roleCapabilities}`}/>
-                                                    </ListItem>
-                                                )
-                                            })}
-                                        </List>
-                                    </Typography>
+                                    <List>
+                                        {lookupData.userRoles.map(r => {
+                                            return (
+                                                <ListItem key={r.userRoleId}>
+                                                    <ListItemText primary={`${r.roleName} - Level ${r.roleLevel} - ${r.roleCapabilities}`}/>
+                                                </ListItem>
+                                            )
+                                        })}
+                                    </List>
                                 </Grid>
                             </Grid>
                         </fieldset>

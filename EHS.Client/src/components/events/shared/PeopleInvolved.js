@@ -97,7 +97,7 @@ const PeopleInvolved = (props) => {
         //append the currentPeople that are not in the Employee list (they may be inactive or have a different hierarchyId now) https://dev.azure.com/dinkin-flicka-engineering/Incident-Investigation/_workitems/edit/41
 
         return (
-            <Paper className={classes.paper}>
+            <Paper key={section.value} className={classes.paper}>
                 <Typography variant='h5' gutterBottom>
                     {section.value}
                 </Typography>
@@ -120,7 +120,7 @@ const PeopleInvolved = (props) => {
                 <Grid item xs={12}>		
                     <TextField
                         key={section.hierarchyAttributeId}
-                        name={section.hierarchyAttributeId}
+                        name={`${section.hierarchyAttributeId}`}
                         placeholder={`${section.value} Comments...`}
                         variant='outlined'
                         className={classes.formControl}

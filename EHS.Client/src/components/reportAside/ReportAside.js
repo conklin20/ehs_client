@@ -35,10 +35,10 @@ const ReportAside = props => {
             });
     
 
-        return {
+        return () => {
 
         }
-    },[])
+    },[]);
     
     // console.log(reportData)
     return (     

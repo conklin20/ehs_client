@@ -45,7 +45,7 @@ const RecordablesForm = props => {
         switch(p.muiControl){
             case KeyboardDatePicker: 
                 return (
-                    <MuiPickersUtilsProvider utils={MomentUtils}>
+                    <MuiPickersUtilsProvider key={p.name} utils={MomentUtils}>
                         <KeyboardDatePicker
                             id={p.name}
                             autoOk
@@ -64,11 +64,12 @@ const RecordablesForm = props => {
             case AutoComplete: 
                 return (
                     <AutoComplete
-                        name="site"
+                        key={p.name}
+                        name={p.name}
                         options={logicalOptions}
                         className={classes.formControl}
-                        label="Logical Hierarchy"                     
-                        placeholder="Select Site"
+                        label={p.alias}                     
+                        placeholder={`Select ${p.alias}`}
                         handleChange={handleAutoCompleteChange}
                     />
                 )        
@@ -79,7 +80,7 @@ const RecordablesForm = props => {
 
     return (
         <form className={classes.form} onSubmit={handleSubmit(config)}>
-            <Typography className={classes.header} variant="h4" gutterbottom>
+            <Typography className={classes.header} variant="h4" >
                 <em>Recordables</em>
             </Typography>
             

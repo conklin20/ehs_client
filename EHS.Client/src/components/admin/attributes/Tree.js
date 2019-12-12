@@ -74,14 +74,35 @@ const StyledTreeItem = withStyles(theme => ({
     button: {
         padding: 0
     },
+    textField: {
+      marginLeft: theme.spacing(1),
+      marginRight: theme.spacing(1),
+      marginTop: 0,
+    },
+    button: {
+      margin: theme.spacing(1),
+    },
+    existingHAs: {
+        minWidth: '40vw',
+    },
+    li: {
+        margin: 0,
+        padding: 0, 
+        height: '1.5em',
+    },
+    newAttributeForm: {
+        display: 'flex', 
+        width: '40vw',
+        marginTop: theme.spacing(2),
+    }
   }))(props => {
-    const { classes, keyHierarchyAttributes, hierarchy, cat, handleChange, handleSubmit, handleEdit } = props
+    const { classes, keyHierarchyAttributes, hierarchy, cat, handleChange, handleSubmit, handleEdit, ...newProps } = props
     const [isMouseInside, setIsMouseInside] = useState(false); 
     
     return (
         <div className={classes.treeItem}>
             <TreeItem 
-                {...props} 
+                {...newProps} 
                 TransitionComponent={TransitionComponent}
                 
             >
@@ -90,6 +111,7 @@ const StyledTreeItem = withStyles(theme => ({
                 <ul className={classes.existingHAs}>
                     {keyHierarchyAttributes.map(kha => 
                         <li
+                            key={kha.hierarchyAttributeId}
                             className={classes.li}
                             onMouseEnter={() => setIsMouseInside(true)}
                             onMouseLeave={() => setIsMouseInside(false)}
@@ -99,7 +121,7 @@ const StyledTreeItem = withStyles(theme => ({
                                 ? 
                                     <IconButton 
                                         onClick={handleEdit(kha)}
-                                        className={props.classes.button} 
+                                        className={classes.button} 
                                     >
                                         <EditIcon fontSize="small" />
                                     </IconButton> 
@@ -137,27 +159,6 @@ const useStyles = makeStyles(theme => ({
         flexGrow: 1,
         textAlign: 'left',
     },
-    textField: {
-      marginLeft: theme.spacing(1),
-      marginRight: theme.spacing(1),
-      marginTop: 0,
-    },
-    button: {
-      margin: theme.spacing(1),
-    },
-    existingHAs: {
-        minWidth: '40vw',
-    },
-    li: {
-        margin: 0,
-        padding: 0, 
-        height: '1.5em',
-    },
-    newAttributeForm: {
-        display: 'flex', 
-        width: '40vw',
-        marginTop: theme.spacing(2),
-    }
   }));
 
 const Tree = props => {
@@ -176,7 +177,7 @@ const Tree = props => {
         if(hierarchyAttributes.length) generateTree(); 
 
 		return () => {
-			console.log('Tree Component Unmounting')
+			// console.log('Tree Component Unmounting')
 		}
 
     }, [hierarchyAttributes]); //this 2nd arg is important, it tells what to look for changes in, and will re-run the hook when this changes 
@@ -203,8 +204,9 @@ const Tree = props => {
                         .map(cat =>{
                         return (
                             <StyledTreeItem 
-                                id={cat.key}
-                                nodeId={cat.key}
+                                key={cat.key}
+                                id={`${cat.key}`}
+                                nodeId={`${cat.key}`}
                                 label={
                                     <Fragment>
                                         <strong>{cat.key}</strong>
@@ -216,13 +218,13 @@ const Tree = props => {
                             {
                                 (() => {
                                     return (
-                                        <ul className={classes.existingHAs}>
+                                        <ul key={cat.key} className={classes.existingHAs}>
                                             {
                                                 hierarchyAttributes
                                                 .filter(ha => ha.key === cat.key)
                                                 .map(ha => {
                                                     return (                                                 
-                                                        <li className={classes.li}>
+                                                        <li key={ha.key} className={classes.li}>
                                                             {ha.value}
                                                             {!cat.locked
                                                                 ?
@@ -274,12 +276,13 @@ const Tree = props => {
                         .map(cat =>{
                             return (
                                 <StyledTreeItem 
-                                    id={cat.key}
-                                    nodeId={cat.key}
+                                    key={cat.key}
+                                    id={`${cat.key}`}
+                                    nodeId={`${cat.key}`}
                                     label={
                                         <strong>{cat.key}</strong>
                                     }
-                                    classes={classes}
+                                    // classes={classes}
                                     keyHierarchyAttributes={null}
                                     hierarchy={null}
                                     cat={cat}
@@ -294,7 +297,7 @@ const Tree = props => {
                                                 .map((h1, i) => {
                                                     const keyHierarchyAttributes = hierarchyAttributes.filter(ha => ha.key === cat.key && ha.hierarchyId === h1.hierarchyId)
                                                     return (
-                                                        <Fragment>
+                                                        <Fragment key={h1.hierarchyId}>
                                                             <StyledTreeItem
                                                                 id={`${cat.key}-${h1.hierarchyId}`}
                                                                 nodeId={`${cat.key}-${h1.hierarchyId}`}
@@ -304,7 +307,7 @@ const Tree = props => {
                                                                         {cat.locked ?  <LockIcon fontSize="small" /> : null }
                                                                     </Fragment>
                                                                 }
-                                                                classes={classes}
+                                                                // classes={classes}
                                                                 keyHierarchyAttributes={keyHierarchyAttributes}
                                                                 hierarchy={h1}
                                                                 cat={cat}
@@ -320,7 +323,7 @@ const Tree = props => {
                                                                         .map((h2, i) => {
                                                                             const keyHierarchyAttributes = hierarchyAttributes.filter(ha => ha.key === cat.key && ha.hierarchyId === h2.hierarchyId)
                                                                             return (
-                                                                                <Fragment>
+                                                                                <Fragment key={h2.hierarchyId}>
                                                                                     <StyledTreeItem
                                                                                         id={`${cat.key}-${h2.hierarchyId}`}
                                                                                         nodeId={`${cat.key}-${h2.hierarchyId}`}
@@ -330,7 +333,7 @@ const Tree = props => {
                                                                                                 {cat.locked ?  <LockIcon fontSize="small" /> : null }
                                                                                             </Fragment>
                                                                                         }
-                                                                                        classes={classes}
+                                                                                        // classes={classes}
                                                                                         keyHierarchyAttributes={keyHierarchyAttributes}
                                                                                         hierarchy={h2}
                                                                                         cat={cat}
@@ -346,7 +349,7 @@ const Tree = props => {
                                                                                                 .map(h3=> {
                                                                                                     const keyHierarchyAttributes = hierarchyAttributes.filter(ha => ha.key === cat.key && ha.hierarchyId === h3.hierarchyId)
                                                                                                     return (
-                                                                                                        <Fragment>
+                                                                                                        <Fragment key={h3.hierarchyId}>
                                                                                                             <StyledTreeItem
                                                                                                                 id={`${cat.key}-${h3.hierarchyId}`}
                                                                                                                 nodeId={`${cat.key}-${h3.hierarchyId}`}
@@ -356,7 +359,7 @@ const Tree = props => {
                                                                                                                         {cat.locked ?  <LockIcon fontSize="small" /> : null }
                                                                                                                     </Fragment>
                                                                                                                 }
-                                                                                                                classes={classes}
+                                                                                                                // classes={classes}
                                                                                                                 keyHierarchyAttributes={keyHierarchyAttributes}
                                                                                                                 hierarchy={h3}
                                                                                                                 cat={cat}
@@ -372,7 +375,7 @@ const Tree = props => {
                                                                                                                         .map(h4 => {
                                                                                                                             const keyHierarchyAttributes = hierarchyAttributes.filter(ha => ha.key === cat.key && ha.hierarchyId === h4.hierarchyId)
                                                                                                                             return (
-                                                                                                                                <Fragment>
+                                                                                                                                <Fragment key={h4.hierarchyId}>
                                                                                                                                     <StyledTreeItem
                                                                                                                                         id={`${cat.key}-${h4.hierarchyId}`}
                                                                                                                                         nodeId={`${cat.key}-${h4.hierarchyId}`}
@@ -382,7 +385,7 @@ const Tree = props => {
                                                                                                                                                 {cat.locked ?  <LockIcon fontSize="small" /> : null }
                                                                                                                                             </Fragment>
                                                                                                                                         }
-                                                                                                                                        classes={classes}
+                                                                                                                                        // classes={classes}
                                                                                                                                         keyHierarchyAttributes={keyHierarchyAttributes}
                                                                                                                                         hierarchy={h4}
                                                                                                                                         cat={cat}
@@ -408,7 +411,7 @@ const Tree = props => {
                                                                                                                                                                         {cat.locked ?  <LockIcon fontSize="small" /> : null }
                                                                                                                                                                     </Fragment>
                                                                                                                                                                 }
-                                                                                                                                                                classes={classes}
+                                                                                                                                                                // classes={classes}
                                                                                                                                                                 keyHierarchyAttributes={keyHierarchyAttributes}
                                                                                                                                                                 hierarchy={h5}
                                                                                                                                                                 cat={cat}
@@ -457,7 +460,7 @@ const Tree = props => {
     return (
         <TreeView
             className={classes.tree}
-            defaultExpanded={hierarchyAttributes.map(ha => ha.hierarchyAttributeId)} 
+            defaultExpanded={hierarchyAttributes.map(ha => `${ha.hierarchyAttributeId}`)} 
             defaultCollapseIcon={<MinusSquare />}
             defaultExpandIcon={<PlusSquare />}
             defaultEndIcon={<CloseSquare />}        

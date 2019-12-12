@@ -85,7 +85,7 @@ const HierarchyManagement = props => {
         fetchData();         
 
 		return () => {
-			console.log('HierarchyManagement Component Unmounting')
+			// console.log('HierarchyManagement Component Unmounting')
 		}
 
     }, []); //this 2nd arg is important, it tells what to look for changes in, and will re-run the hook when this changes 
@@ -289,6 +289,9 @@ const HierarchyManagement = props => {
                         {`Hierarchies drive nearly all system functionality in terms of what users will see, and how the application will react when certain selections are made.
                         You have the flexibility to manage these hierarchies, but it is important that you ensure you know exactly what you're going to change, and what impacts
                         the changes may have on the system. `}
+                    </Typography>
+                    <Typography variant='overline'>
+                        {`important: you have to copy/paste values into the text boxes when creating new hierarchies nodes`}
                     </Typography>
                     <div className={classes.hierarchyContainer}>   
                         {logicalHierarchies.length && hierarchyLevels.length ?

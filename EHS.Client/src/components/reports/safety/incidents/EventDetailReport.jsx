@@ -59,7 +59,7 @@ class EventDetailReportWPO extends Component {
         const peopleInvolved = involvement.map(i => {
             const people = data.peopleInvolved.filter(r => r.roleId === i.hierarchyAttributeId)
             return (
-                <Grid item xs={12}>		
+                <Grid item key={i.hierarchyAttributeId} item xs={12}>		
                     <Typography variant="body2">
                         <span className={classes.span}> {`${i.value}: `} </span>
                         {`${people.map(p => ' ' + lookupData.employees.find(e => e.employeeId === p.employeeId).fullName)} `}
@@ -76,7 +76,7 @@ class EventDetailReportWPO extends Component {
         switch(causeType){
             case 'Immediate Causes':
                 return (
-                    <Grid item xs={12}>		
+                    <Grid item key={causeType} xs={12}>		
                         <Typography className={classes.label} variant="body2" >
                             <span className={classes.span}> {`${causeType}: `} </span>
                             {`
@@ -89,7 +89,7 @@ class EventDetailReportWPO extends Component {
                 );
             case 'Root Causes':
                 return (
-                    <Grid item xs={12}>		
+                    <Grid item key={causeType} xs={12}>		
                         <Typography className={classes.label} variant="body2" >
                             <span className={classes.span}> {`${causeType}: `} </span>
                             {`
@@ -102,7 +102,7 @@ class EventDetailReportWPO extends Component {
                 );
             case 'Contributing Factors':
                 return (
-                    <Grid item xs={12}>		
+                    <Grid item key={causeType} xs={12}>			
                         <Typography className={classes.label} variant="body2" >
                             <span className={classes.span}> {`${causeType}: `} </span>
                             {`
@@ -299,7 +299,7 @@ class EventDetailReportWPO extends Component {
                         {
                             data.actions.map(a => {
                                 return (			
-                                    <Grid container className={classes.action}>
+                                    <Grid container key={a.actionId} className={classes.action}>
                                         <Grid item xs={4} >		
                                             <Typography variant='body2' >
                                                 <span className={classes.span}>Assigned To: </span>
@@ -319,11 +319,9 @@ class EventDetailReportWPO extends Component {
                                             </Typography>	
                                         </Grid>  
                                         <Grid item xs={12} >	
-                                            <Typography variant='body2' >
-                                                <div className={classes.actionToTake}>                                                    
-                                                    <span className={classes.span}>Action To Take: </span>
-                                                    {a.actionToTake}
-                                                </div>                                                
+                                            <Typography variant='body2' className={classes.actionToTake}>     
+                                                <span className={classes.span}>Action To Take: </span>
+                                                {a.actionToTake}                        
                                             </Typography>	
                                         </Grid>
                                     </Grid>

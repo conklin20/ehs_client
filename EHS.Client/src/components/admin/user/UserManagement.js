@@ -52,14 +52,13 @@ const UserManagement = props => {
 
  	// Essentially what was componentDidMount and componentDidUpdate before Hooks
 	useEffect(() => {
-
         fetchData(); 
         
         //if route is /manage/users/:userId , show user form for the selected user 
         if(match.params.userId) setShowUserForm(true); 
 
 		return () => {
-			console.log('UserManagement Component Unmounting')
+			// console.log('UserManagement Component Unmounting')
 		}
 
 	}, [match]); //this 2nd arg is important, it tells what to look for changes in, and will re-run the hook when this changes 
@@ -80,7 +79,7 @@ const UserManagement = props => {
                 if(res.status === 200){
                     setUsers(res.data); 
                 } else {
-
+                    console.log(res)
                 }
             }); 
     };
@@ -93,7 +92,7 @@ const UserManagement = props => {
     
 	//handler for the search textbox
 	const handleSearchTextChange = e => {
-        console.log(e.target.value)
+        // console.log(e.target.value)
 		setSearchText(e.target.value)
 		//filter incident list 
     }
@@ -114,8 +113,8 @@ const UserManagement = props => {
 			: users
 		
 		return filteredUsers; 
-	}
-
+    }
+    
     return (
         <Paper className={classes.paper} square={true} >  
             <Typography variant='h4'  className={classes.header}>
@@ -124,7 +123,12 @@ const UserManagement = props => {
             { currentUser.user.roleLevel >= MIN_ADMIN_ROLE_LEVEL 
                 ?
                 <Fragment>
-                    {showUserForm && Object.keys(lookupData).length >= 3 ?
+                    {showUserForm 
+                        && Object.keys(lookupData).includes('physicalHierarchies')
+                        && Object.keys(lookupData).includes('logicalHierarchies')
+                        && Object.keys(lookupData).includes('userRoles') 
+                        && users.length
+                        ?
                         <UserForm 
                             showUserForm={showUserForm}
                             handleShowUserForm={handleShowUserForm}

@@ -66,8 +66,9 @@ const Media = (props) => {
     }
 
     const savedFiles = event.files.map(f => {
+        console.log(f)
         return (
-            <ListItem>
+            <ListItem key={f.eventFileId}>
                 <ListItemAvatar>
                     <Avatar>
                         <AttachmentIcon />
@@ -96,7 +97,7 @@ const Media = (props) => {
             </Typography>
             <Grid container spacing={2}>
                 <Grid item xs={12} md={7} >
-                    <form  enctype="multipart/form-data" onSubmit={handleSubmitFiles}>
+                    <form  encType="multipart/form-data" onSubmit={handleSubmitFiles}>
                         <DropzoneArea 
                             dropzoneText='Drag and Drop files here, or click anywhere on in the dropzone to select a file. '
                             filesLimit={5}

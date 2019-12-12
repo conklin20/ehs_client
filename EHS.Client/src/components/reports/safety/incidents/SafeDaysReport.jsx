@@ -75,7 +75,7 @@ class SafeDaysReportWPO extends Component {
             .map(h => {
                 return (
                     h.event.eventId
-                    ?   <ListItem>
+                    ?   <ListItem key={h.event.eventId}>
                             <Link to={`/events/si/${h.event.eventId}`} className={classes.link} >
                                 <ListItemText
                                     primary={h.event.department} 
@@ -84,7 +84,7 @@ class SafeDaysReportWPO extends Component {
                                 />
                             </Link>
                         </ListItem>
-                    :   <ListItem>
+                    :   <ListItem key={h.hierarchy.hierarchyName}>
                             <ListItemText
                                 primary={h.hierarchy.hierarchyName}
                                 secondary="0 Recordables Logged!"
