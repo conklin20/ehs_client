@@ -49,7 +49,7 @@ const EHSAppBar = (props) => {
 	const { currentUser } = props; 
 
 	const logout = e => {
-		props.onLogout();
+		props.handleLogout();
 	}
 
 	const handleMenuClick = (event) => {

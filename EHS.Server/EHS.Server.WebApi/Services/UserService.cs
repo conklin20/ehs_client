@@ -41,12 +41,12 @@ namespace EHS.Server.WebApi.Services
 
             if (user == null)
             {
-                _logger.LogError("User {0} not found.", username);
+                _logger.LogWarning("User {0} not found.", username);
                 return null;
             }
             if (!user.Enabled)
             {
-                _logger.LogError("{User {0} found, but the account is disabled", username);
+                _logger.LogWarning("{User {0} found, but the account is disabled", username);
                 return user;
             }
 
@@ -100,8 +100,9 @@ namespace EHS.Server.WebApi.Services
                     new Claim(ClaimTypes.UserData, user.LogicalHierarchyPath),
                     new Claim(ClaimTypes.UserData, user.PhysicalHierarchyPath)
                 }),
+                //Expires = DateTime.UtcNow.AddSeconds(10),
                 Expires = DateTime.UtcNow.AddDays(7),
-                //Expires = DateTime.UtcNow.AddHours(1),
+
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);

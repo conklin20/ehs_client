@@ -41,6 +41,19 @@ namespace EHS.Server.DataAccess.Repository
             }
         }
 
+        public Employee GetById(string id)
+        {
+            using (IDbConnection sqlCon = Connection)
+            {
+                string tsql = @"select e.EmployeeId, e.FirstName, e.LastName, e.BirthDate, e.Sex, e.SupervisorId, e.LastUpdatedOn, e.POET, e.Active, e.Email, e.HierarchyId, e.IsSupervisor
+                                from Employees e
+                                where e.EmployeeId = @employeeId ";
+
+                var result = sqlCon.Query<Employee>(tsql, new { employeeId = id });
+                return result.FirstOrDefault();
+            }
+        }
+
         public async Task<List<Employee>> GetAllAsync()
         {
             using (IDbConnection sqlCon = Connection)

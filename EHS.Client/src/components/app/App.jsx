@@ -2,7 +2,7 @@ import React  from 'react';
 import {Provider} from 'react-redux'; 
 import {configureStore} from '../../store'; 
 // import { BrowserRouter as Router } from 'react-router-dom';
-import { HashRouter as Router } from 'react-router-dom';
+import { HashRouter } from 'react-router-dom';
 import history from '../../services/history'; 
 import Routes from './Routes'; 
 import { setAuthorizationToken, setCurrentUser } from '../../store/actions/auth';
@@ -45,12 +45,15 @@ const theme = createMuiTheme({
 	},
 });
 
-if (sessionStorage.jwtToken) {
-	setAuthorizationToken(sessionStorage.jwtToken);
-	// prevent someone from manually tampering with the key of jwtToken in sessionStorage
+if (localStorage.jwtToken) {
+	//using localStorage now instead of sessionStorage because session breaks opening a new tab/window (a new session is created).
+	//need to confirm security around saving jwt tokens in localStorage
+	console.log(localStorage.jwtToken)
+	setAuthorizationToken(localStorage.jwtToken);
+	// prevent someone from manually tampering with the key of jwtToken in localStorage
 	try {    
-		// console.log(sessionStorage.jwtToken)
-		store.dispatch(setCurrentUser(jwtDecode(sessionStorage.jwtToken)));
+		// console.log(localStorage.jwtToken)
+		store.dispatch(setCurrentUser(jwtDecode(localStorage.jwtToken)));
 	} catch(err) {
 		//force logout
 		store.dispatch(setCurrentUser({}));
@@ -60,9 +63,9 @@ if (sessionStorage.jwtToken) {
 const App = () => (
   <Provider store={store}>
     <ThemeProvider theme={theme}>
-		<Router history={history}>
+		<HashRouter history={history}>
 			<Routes />
-      	</Router>
+      	</HashRouter>
     </ThemeProvider> 
   </Provider>
 )
