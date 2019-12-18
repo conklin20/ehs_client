@@ -206,7 +206,7 @@ namespace EHS.Server.DataAccess.Repository
             return result.Distinct().AsList();
         }
 
-        public async Task<int> AddAsync(SafetyEvent SafetyEventToAdd)
+        public int Add(SafetyEvent SafetyEventToAdd)
         {
             using IDbConnection sqlCon = Connection;
             DynamicParameters parameters = new DynamicParameters();
@@ -256,7 +256,7 @@ namespace EHS.Server.DataAccess.Repository
             return newId;
         }
 
-        public async Task<int> UpdateAsync(SafetyEvent SafetyEventToUpdate, int id, string userId)
+        public int Update(SafetyEvent SafetyEventToUpdate, int id, string userId)
         {
             using IDbConnection sqlCon = Connection;
             DynamicParameters parameters = new DynamicParameters();

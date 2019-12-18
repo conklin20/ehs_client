@@ -5,15 +5,16 @@ import { logout } from '../../store/actions/auth';
 
 class Logout extends Component {
 
-  componentWillMount() {
-    // console.log(this.props)
-    this.props.dispatch(logout())
-    this.props.history.push('/')
-  }
+    componentWillMount() {
+      console.log(this.props)
+      this.props.dispatch(logout())
+      this.props.history.push('/')
+    }
 
-  render() {
-    return null
-  }
+    render() {
+        console.log(this.props)
+        return null
+    }
 }
 // Logout.propTypes = {
 //   dispatch: PropTypes.func.isRequired,

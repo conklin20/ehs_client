@@ -32,7 +32,9 @@ import PeopleInvolved from '../../shared/PeopleInvolved';
 import Media from '../../shared/Media';
 import Review from '../../shared/Review'
 import { 
-	Button, 
+    Backdrop,
+    Button, 
+    CircularProgress,
 	Dialog,
 	DialogActions, 
 	DialogContent, 
@@ -129,7 +131,13 @@ const useStyles = makeStyles(theme => ({
     }, 
     safetySection: {
         margin: theme.spacing(2),
-    }
+    }, 
+    backdrop: {
+      zIndex: theme.zIndex.drawer + 1,
+      color: '#fff',
+      display: 'flex', 
+      flexDirection: 'column'
+    },
   }));
 
 const getSteps = () => {
@@ -154,8 +162,9 @@ const SafetyEventForm = props => {
     const steps = getSteps();
     
     const [event, setEvent] = useState({})
+    const [submitting, setSubmitting] = useState(false); 
 
-    const { currentUser, lookupData } = props
+    const { currentUser, lookupData } = props; 
     
     // Essentially what was componentDidMount and componentDidUpdate before Hooks
 	useEffect(() => {
@@ -362,18 +371,32 @@ const SafetyEventForm = props => {
                             refreshEventFiles={refreshEventFiles}
                         />     
             case 7: 
-                return <Review 
+                return (
+                    <Fragment>
+                        <Backdrop
+                            className={classes.backdrop}
+                            open={submitting}
+                            >
+                            <Typography variant='h4'>
+                                Submitting Draft...
+                            </Typography>
+                            <CircularProgress color="inherit" />
+                        </Backdrop>
+                        <Review 
                             useStyles={useStyles}
                             lookupData={lookupData} 
                             event={event}
                             handleSubmit={handleSubmit}
-                        />     
+                        />  
+                    </Fragment>
+                )
+                    
             default:
                 props.addNotification('Unkown Step', 'warning'); 
                 return 'Unknown Step';
         }
     }
-
+    
     const refreshActions = () => {
         props.fetchActionsByEventId(event.eventId)
             .then(res => {
@@ -488,11 +511,13 @@ const SafetyEventForm = props => {
             // change status to Open
             event.eventStatus = S_I_STATUS.OPEN;
             
-            props.updateSafetyIncident(event, currentUser.user.userId)
+            setSubmitting(true);
+            props.updateSafetyIncident(event, currentUser.user.userId, true)
                 .then(res => {
                     if(res.status === 202) {
                         setEvent( { ...event, ...res.data } )
                         props.addNotification(EVENT_SUBMITTED.replace('{0}', event.eventId), 'success')
+                        setSubmitting(false);
                         props.history.push('/dashboard')
                     } else {
                         // props.addNotification(EVENT_SUBMITTED.replace('{0}', event.eventId), 'error')
@@ -552,7 +577,6 @@ const SafetyEventForm = props => {
         return true
     }
 
-    // console.log(event)
 	return (
 		<div className={classes.root}>
             { (event && Object.keys(event).length) || (props.match.path.includes('/si/new'))  ?             
@@ -599,7 +623,7 @@ const SafetyEventForm = props => {
                                         );
                                     })}
                                 </Stepper>
-
+                                
                                 <Fragment>
                                     {allStepsCompleted() ? (
                                     <div>
@@ -694,8 +718,7 @@ const SafetyEventForm = props => {
                             Search!
                         </Button> */}
                     </DialogActions>
-                </Dialog>
-            
+                </Dialog>            
             : null}
 		</div>
 	);

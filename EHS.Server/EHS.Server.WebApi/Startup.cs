@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using EHS.Server.Common.Emailer;
 
 namespace EHS.Server.WebApi
 {
@@ -42,6 +43,10 @@ namespace EHS.Server.WebApi
             // configure strongly typed settings objects
             var appSettingsSection = Configuration.GetSection("AppSettings");
             services.Configure<AuthSettings>(appSettingsSection);
+
+            //configure email/ smtp settings
+            services.AddSingleton<IEmailConfiguration>(Configuration.GetSection("EmailConfiguration").Get<EmailConfiguration>());
+            services.AddTransient<IEmailService, EmailService>();
 
             // configure jwt authentication
             var appSettings = appSettingsSection.Get<AuthSettings>();
@@ -85,6 +90,7 @@ namespace EHS.Server.WebApi
             services.AddTransient<IEventFileRepository, EventFileRepository>();
             services.AddTransient<IUserRoleRepository, UserRoleRepository>();
             services.AddTransient<IFileSweeperRepository, FileSweeperRepository>();
+            services.AddTransient<IEmailRepository, EmailRepository>();
 
             // Utility for mapping DTO's to Models 
             var config = new AutoMapper.MapperConfiguration(cfg =>

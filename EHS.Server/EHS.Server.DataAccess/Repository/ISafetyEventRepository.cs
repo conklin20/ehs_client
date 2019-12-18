@@ -9,8 +9,8 @@ namespace EHS.Server.DataAccess.Repository
     {
         Task<SafetyEvent> GetByIdAsync(int id);
         Task<List<SafetyEvent>> GetAllAsync(List<DynamicParam> queryParams);
-        Task<int> AddAsync(SafetyEvent safetyEventAdd);
-        Task<int> UpdateAsync(SafetyEvent safetyEventUpdate, int id, string userId);
+        int Add(SafetyEvent safetyEventAdd);
+        int Update(SafetyEvent safetyEventUpdate, int id, string userId);
         Task<int> DeleteAsync(int eventId, string userId);
     }
 }

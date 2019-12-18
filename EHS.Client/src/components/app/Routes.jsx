@@ -86,13 +86,21 @@ const Routes = props => {
 
  	// Essentially what was componentDidMount and componentDidUpdate before Hooks
 	useEffect(() => {
+        
+        // console.log(props);
+        console.log(props.history);
+        console.log(window.history);
+        // console.log(currentUser.isAuthenticated)
+        // if(props.location.pathname === '/forcelogout' || props.location.hash === '#/forcelogout'){
+        //     props.logout();
+        //     props.history.push('/');
+        // }
+        
         //check user auth
         if(!currentUser.isAuthenticated){
-            // console.log('sending user to log in screen')
             props.history.push('/');
         } else {
-            // console.log(currentUser.user.logicalHierarchyPath.split('|'))
-            props.fetchEmployees();
+            props.fetchEmployees().then(res => console.log(res));
             props.fetchLogicalHierarchyTree(currentUser.user.logicalHierarchyPath.split('|')[currentUser.user.logicalHierarchyPath.split('|').length-1]);
             props.fetchPhysicalHierarchyTree(currentUser.user.physicalHierarchyPath.split('|')[currentUser.user.physicalHierarchyPath.split('|').length-1]);
             props.fetchGlobalHierarchyAttributes(1000, 'fulltree', '?attributetype=global&enabled=true'); //will be the root hierarchy 
@@ -105,9 +113,8 @@ const Routes = props => {
             // console.log('Routes Component Unmounting')
             
 		}
-    }, [currentUser.isAuthenticated]); //this 2nd arg is important, it tells what to look for changes in, and will re-run the hook when this changes 
-
-    // console.log(Object.keys(lookupData).length)
+    }, [currentUser.isAuthenticated, props.history]); //this 2nd arg is important, it tells what to look for changes in, and will re-run the hook when this changes 
+    
     return (
         <div className={classes.index}>
             {/* 
@@ -125,16 +132,16 @@ const Routes = props => {
             {/* 
             APP BODY STARTS HERE 
              */}
-                { currentUser.isAuthenticated ? <AppBar onLogout={props.logout} { ...props } /> : null }
+                { currentUser.isAuthenticated ? <AppBar handleLogout={props.logout} { ...props } /> : null }
            
                 <div id='body' className={classes.body}>
                     { currentUser.isAuthenticated && Object.keys(lookupData).length >= MIN_LOOKUP_DATA_LEN ? <Hidden smDown><div className={classes.reportAside}><ReportAside /> </div></Hidden> : null }
                     <Switch>
                         <Route path='/' exact component={Homepage} ></Route>
+                        <Route path='/logout' component={Logout} ></Route>
                         {currentUser.isAuthenticated && Object.keys(lookupData).length >= MIN_LOOKUP_DATA_LEN
                             ?   
                             <Fragment>
-                                <Route path='/logout' component={Logout} ></Route>
                                 <Route path='/dashboard' render={(props) => <div className={classes.main}><Dashboard /> </div> } ></Route>
                                 <Route path='/user/profile' exact render={(props) => <div className={classes.main}><UserProfile /> </div> }  ></Route>
                                 

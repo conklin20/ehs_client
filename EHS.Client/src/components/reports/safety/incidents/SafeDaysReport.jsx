@@ -76,7 +76,7 @@ class SafeDaysReportWPO extends Component {
                 return (
                     h.event.eventId
                     ?   <ListItem key={h.event.eventId}>
-                            <Link to={`/events/si/${h.event.eventId}`} className={classes.link} >
+                            <Link to={`/reports/si/event?eventId=${h.event.eventId}`} className={classes.link} >
                                 <ListItemText
                                     primary={h.event.department} 
                                     secondary={`${moment(h.event.eventDate).fromNow()} 

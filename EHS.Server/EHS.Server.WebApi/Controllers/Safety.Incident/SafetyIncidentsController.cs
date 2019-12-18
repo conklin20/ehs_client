@@ -12,6 +12,10 @@ using EHS.Server.DataAccess.Dtos;
 using AutoMapper;
 using EHS.Server.DataAccess.Queries;
 using EHS.Server.WebApi.Helpers.Queries;
+using Microsoft.Extensions.Configuration;
+using EHS.Server.WebApi.Services;
+using EHS.Server.Common.Emailer;
+using Microsoft.AspNetCore.Hosting;
 
 namespace EHS.Server.WebApi.Controllers.Common
 {
@@ -22,16 +26,30 @@ namespace EHS.Server.WebApi.Controllers.Common
     //[ApiController]
     public class SafetyIncidentsController : ControllerBase
     {
+        private readonly IConfiguration _config;
         private readonly ILogger<SafetyIncidentsController> _logger;
         private readonly ISafetyEventRepository _safetyEventsRepo;
+        private readonly IEmailRepository _emailRepository;
         private readonly IMapper _mapper;
+        private readonly IEmailService _emailService; 
         //private const string apiVersion = HttpContext.GetRequestedApiVersion();
 
-        public SafetyIncidentsController(ILogger<SafetyIncidentsController> logger, IMapper mapper, ISafetyEventRepository safetyEventsRepo)
+        //public IActionResult ForgetPW([FromServices] IEmailService Mailer);
+
+        public SafetyIncidentsController(
+            IConfiguration config, 
+            ILogger<SafetyIncidentsController> logger, 
+            IMapper mapper, 
+            ISafetyEventRepository safetyEventsRepo,
+            IEmailService emailService, 
+            IEmailRepository emailRepository)
         {
+            _config = config;
             _logger = logger;
             _safetyEventsRepo = safetyEventsRepo;
             _mapper = mapper;
+            _emailService = emailService;
+            _emailRepository = emailRepository;
         }
 
         // GET: api/Safety Events
@@ -148,7 +166,7 @@ namespace EHS.Server.WebApi.Controllers.Common
                 }
 
                 //map the new SafetyEvent from the incoming dto object to the domain/database model object so we can pass it to the Add() method
-                int newId = await _safetyEventsRepo.AddAsync(safetyEventToAdd);
+                int newId = _safetyEventsRepo.Add(safetyEventToAdd);
 
                 safetyEventToAdd.EventId = newId; // <--not how i should do this
                 return CreatedAtAction("Post", new { eventId = newId },  _mapper.Map<SafetyEvent, SafetyEventDto>(safetyEventToAdd));
@@ -162,7 +180,7 @@ namespace EHS.Server.WebApi.Controllers.Common
 
         // PUT: api/Safety Events/5
         [HttpPut("{eventId}")]
-        public async Task<ActionResult<SafetyEvent>> Put([FromBody]SafetyEvent safetyEventToUpdate, [FromRoute]int eventId, [FromQuery]string userId)
+        public async Task<ActionResult<SafetyEvent>> Put([FromBody]SafetyEvent safetyEventToUpdate, [FromRoute]int eventId, [FromQuery]string userId, [FromQuery]bool sendMail)
         {
             try
             {
@@ -174,7 +192,29 @@ namespace EHS.Server.WebApi.Controllers.Common
                 }
 
                 //map the SafetyEvent from the incoming dto object to the domain/database model object so we can pass it to the Update() method
-                var success = await _safetyEventsRepo.UpdateAsync(safetyEventToUpdate, eventId, userId);
+                var success = _safetyEventsRepo.Update(safetyEventToUpdate, eventId, userId);
+
+                //if successful update AND sendMail = true, trigger the email alerts 
+                if (sendMail && _config.GetValue("EmailConfiguration:EmailNotificationsEnabled", false))
+                {
+                    ///Event Email 
+                    //query db to get list of users subscribed to this event
+                    var subscribers = await _emailRepository.GetEventHierarchySubscribersAsync(eventId);
+                    //build the email 
+                    var newEventMessage = await _emailService.BuildNewSafetyIncidentEmailAsync(safetyEventToUpdate, subscribers);
+                    //send the email
+                    await _emailService.SendAsync(newEventMessage);
+
+                    ///Action Email(s) 
+                    ///Loop through Actions and send an email for EACH action 
+                    foreach(DataAccess.DatabaseModels.Action action in safetyEventToUpdate.Actions)
+                    {
+                        var newActionMessage = await _emailService.BuildAssignedActionEmailAsync(action);
+                        //send the email 
+                        await _emailService.SendAsync(newActionMessage); 
+                    }
+                    
+                }
 
                 //map back to dto, to pass back to client 
                 return Accepted(_mapper.Map<SafetyEvent, SafetyEventDto>(safetyEventToUpdate));

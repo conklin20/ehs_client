@@ -9,6 +9,7 @@ namespace EHS.Server.DataAccess.Repository
     public interface IEmployeeRepository
     {
         Task<Employee> GetByIdAsync(string id);
+        Employee GetById(string id);
         Task<List<Employee>> GetAllAsync();
     }
 }

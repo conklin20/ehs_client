@@ -67,27 +67,28 @@ export const postNewSafetyIncident = (safetyEventToAdd) => (dispatch, getState) 
 		})
 }
 
-export const updateSafetyIncident = (safetyEventToUpdate, userId) => (dispatch, getState) => {
-	// console.log(getState())
-	return apiCall('put', `/safetyincidents/${safetyEventToUpdate.eventId}?userId=${userId}`, safetyEventToUpdate )
-		.then(res => {
-			//success status = 202
-            // dispatch(addNotification(`Event ${safetyEventToUpdate.eventId} successfully updated!`, 'success'));
-			return res
-		})
-        .catch(res => {	
-			//check for validation (ModelValidation) error's from API.
-			//since these are coming from the API, they come with the verbiage, so we cant use the notificationMessage.js like normal
-			if(res.response.data && res.response.data){
-				const validationErrors = Object.keys(res.response.data.value)
-											.reduce((acc, val) => {
-												return acc.concat(` ${res.response.data.value[val]}`)
-											},[])
-				console.log(validationErrors)
-				dispatch(addNotification(`Validation Error(s): ${validationErrors.join()}`, 'error'));
-			}
-			return res
-		})
+export const updateSafetyIncident = (safetyEventToUpdate, userId, sendMail = false) =>
+	 (dispatch, getState) => {
+		// console.log(getState())
+		return apiCall('put', `/safetyincidents/${safetyEventToUpdate.eventId}?userId=${userId}&sendMail=${sendMail}`, safetyEventToUpdate )
+			.then(res => {
+				//success status = 202
+				// dispatch(addNotification(`Event ${safetyEventToUpdate.eventId} successfully updated!`, 'success'));
+				return res
+			})
+			.catch(res => {	
+				//check for validation (ModelValidation) error's from API.
+				//since these are coming from the API, they come with the verbiage, so we cant use the notificationMessage.js like normal
+				if(res.response.data && res.response.data){
+					const validationErrors = Object.keys(res.response.data.value)
+												.reduce((acc, val) => {
+													return acc.concat(` ${res.response.data.value[val]}`)
+												},[])
+					console.log(validationErrors)
+					dispatch(addNotification(`Validation Error(s): ${validationErrors.join()}`, 'error'));
+				}
+				return res
+			})
 }
 
 export const deleteSafetyIncident = (eventId, userId) => (dispatch, getState) => {

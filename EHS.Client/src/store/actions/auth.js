@@ -49,7 +49,10 @@ export function setAuthorizationToken(token) {
 
 export function logout(){
   return dispatch => {
-    sessionStorage.clear();
+    // sessionStorage.clear();
+    // localStorage.clear();
+    console.log(localStorage.jwtToken)
+    localStorage.removeItem('jwtToken');
     setAuthorizationToken(false); //clear the token/force log out
     dispatch(setCurrentUser({}));
   }
@@ -64,7 +67,8 @@ export function authUser(type, userData) {
       return apiCall("post", `/users/login`, userData)
         .then(res => {
           const { token, ...user } = res.data
-          sessionStorage.setItem("jwtToken", token);
+          // sessionStorage.setItem("jwtToken", token);
+          localStorage.setItem("jwtToken", token);
           setAuthorizationToken(token);
           dispatch(setCurrentUser(user));
           dispatch(removeNotification());

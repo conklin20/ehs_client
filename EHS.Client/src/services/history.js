@@ -1,6 +1,5 @@
-// history.js
-import { createBrowserHistory } from 'history'
+import createBrowserHistory from 'history/createBrowserHistory';
 
-export default createBrowserHistory({
-  /* pass a configuration object here if needed */
-})
+const ehsHistory = createBrowserHistory();
+
+export default ehsHistory;
