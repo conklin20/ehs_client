@@ -31,16 +31,17 @@ namespace EHS.Server.WebApi.Controllers.Common
         public ActionResult<IEnumerable<string>> Get()
         {
             _logger.LogInformation($"Web API Is Running! Environment: {environment}");
-            _logger.LogWarning("Warning, logging to a database is slow as...");
+            //_logger.LogWarning("Warning, logging to a database is slow as...");
 
-            try
-            {
-                throw new DivideByZeroException();
-            }
-            catch(DivideByZeroException ex)
-            {
-                _logger.LogError("Test Error", ex.InnerException); 
-            }
+            //try
+            //{
+            //    throw new DivideByZeroException();
+            //}
+            //catch(DivideByZeroException ex)
+            //{
+            //    _logger.LogError("Test Error", ex.InnerException); 
+            //}
+
             return new string[] 
             { 
                 "Web API Is Running!", 

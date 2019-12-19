@@ -86,21 +86,12 @@ const Routes = props => {
 
  	// Essentially what was componentDidMount and componentDidUpdate before Hooks
 	useEffect(() => {
-        
-        // console.log(props);
-        console.log(props.history);
-        console.log(window.history);
-        // console.log(currentUser.isAuthenticated)
-        // if(props.location.pathname === '/forcelogout' || props.location.hash === '#/forcelogout'){
-        //     props.logout();
-        //     props.history.push('/');
-        // }
-        
+               
         //check user auth
         if(!currentUser.isAuthenticated){
             props.history.push('/');
         } else {
-            props.fetchEmployees().then(res => console.log(res));
+            props.fetchEmployees();
             props.fetchLogicalHierarchyTree(currentUser.user.logicalHierarchyPath.split('|')[currentUser.user.logicalHierarchyPath.split('|').length-1]);
             props.fetchPhysicalHierarchyTree(currentUser.user.physicalHierarchyPath.split('|')[currentUser.user.physicalHierarchyPath.split('|').length-1]);
             props.fetchGlobalHierarchyAttributes(1000, 'fulltree', '?attributetype=global&enabled=true'); //will be the root hierarchy 
@@ -113,8 +104,19 @@ const Routes = props => {
             // console.log('Routes Component Unmounting')
             
 		}
-    }, [currentUser.isAuthenticated, props.history]); //this 2nd arg is important, it tells what to look for changes in, and will re-run the hook when this changes 
+    }, [currentUser.isAuthenticated]); //this 2nd arg is important, it tells what to look for changes in, and will re-run the hook when this changes 
     
+    // this is react-router, listening for any changes in the route. If there is a change in the route, call removeError() to remove any errors from the page
+    // props.history.listen((next) => {
+    //     // console.log(next.pathname)
+    //     // console.log(props.location.pathname)
+        
+    //     if(next.pathname === '/forcelogout') {
+    //         // props.logout();
+    //         // props.history.push('/logout');
+    //     }
+    // });
+
     return (
         <div className={classes.index}>
             {/* 

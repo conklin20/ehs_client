@@ -48,11 +48,13 @@ export function setAuthorizationToken(token) {
 }
 
 export function logout(){
+  // console.log('logout called')
   return dispatch => {
     // sessionStorage.clear();
     // localStorage.clear();
-    console.log(localStorage.jwtToken)
+    // console.log(localStorage.jwtToken)
     localStorage.removeItem('jwtToken');
+    // console.log(localStorage.jwtToken)
     setAuthorizationToken(false); //clear the token/force log out
     dispatch(setCurrentUser({}));
   }

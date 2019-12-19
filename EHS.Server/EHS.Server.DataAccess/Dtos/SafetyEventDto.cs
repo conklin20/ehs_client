@@ -49,6 +49,9 @@ namespace EHS.Server.DataAccess.Dtos
         public DateTime? VideoStartRef { get; set; }
         public DateTime? VideoEndRef { get; set; }
         public int LegacyIncidentId { get; set; }
+        
+        public EmployeeDto EmployeeInvolved { get; set; }
+        public EmployeeDto ReportedByEmployee { get; set; }
 
         public ICollection<ActionDto> Actions { get; set; }
         public ICollection<PeopleInvolvedDto> PeopleInvolved { get; set; }

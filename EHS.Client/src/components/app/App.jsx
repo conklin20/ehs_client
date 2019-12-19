@@ -48,7 +48,7 @@ const theme = createMuiTheme({
 if (localStorage.jwtToken) {
 	//using localStorage now instead of sessionStorage because session breaks opening a new tab/window (a new session is created).
 	//need to confirm security around saving jwt tokens in localStorage
-	console.log(localStorage.jwtToken)
+	// console.log(localStorage.jwtToken)
 	setAuthorizationToken(localStorage.jwtToken);
 	// prevent someone from manually tampering with the key of jwtToken in localStorage
 	try {    

@@ -9,7 +9,9 @@ const data = (state = {}, action) => {
         case CLEAR_REPORT_DATA:
             if(Object.keys(state).includes(action.report)){
                 delete state[action.report];
-                return state
+                return state;
+            } else {
+                return state;
             }
         default: 
             return state;  

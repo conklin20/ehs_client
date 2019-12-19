@@ -32,16 +32,22 @@ namespace EHS.Server.DataAccess.Repository
             using IDbConnection sqlCon = Connection;
             //build sql query 
             string tsql = @"select e.*
-	                                  ,a.*
-	                                  ,p.*
-                                      ,c.*
-                                      ,ef.*
-                                from SafetyEvents e
-	                                 left join Actions a on a.EventId = e.EventId 
-	                                 left join PeopleInvolved p on p.EventId = e.EventId
-                                     left join EventCauses c on c.EventId = e.EventId
-                                     left join EventFiles ef on ef.EventId = e.EventId
-                                where e.EventId = @EventId";
+	                                ,a.*
+	                                ,p.*
+                                    ,c.*
+                                    ,ef.*
+                                    ,ei.*
+                                    ,rb.*
+                                    ,ei.EmployeeId as EmployeeInvolvedId, ei.FirstName, ei.LastName, ei.Email
+                                    ,rb.EmployeeId as ReportedByEmployeeId, rb.FirstName, rb.LastName, rb.Email
+                            from SafetyEvents e
+	                                left join Actions a on a.EventId = e.EventId 
+	                                left join PeopleInvolved p on p.EventId = e.EventId
+                                    left join EventCauses c on c.EventId = e.EventId
+                                    left join EventFiles ef on ef.EventId = e.EventId
+                                    left join Employees ei on ei.EmployeeId = e.EmployeeId
+                                    left join Employees rb on rb.EmployeeId = e.ReportedBy
+                            where e.EventId = @EventId";
 
             //build param list 
             var p = new
@@ -51,9 +57,9 @@ namespace EHS.Server.DataAccess.Repository
 
             var safetyEventDictionary = new Dictionary<int, SafetyEvent>();
 
-            var result = await sqlCon.QueryAsync<SafetyEvent, Action, PeopleInvolved, Cause, EventFile, SafetyEvent>(
+            var result = await sqlCon.QueryAsync<SafetyEvent, Action, PeopleInvolved, Cause, EventFile, Employee, Employee, SafetyEvent >(
                 tsql,
-                (safetyEvent, action, personInvolved, cause, file) =>
+                (safetyEvent, action, personInvolved, cause, file, employeeInvolved, reportedByEmployee) =>
                 {
                     if (!safetyEventDictionary.TryGetValue(safetyEvent.EventId, out SafetyEvent eventEntry))
                     {
@@ -62,6 +68,8 @@ namespace EHS.Server.DataAccess.Repository
                         eventEntry.PeopleInvolved = new List<PeopleInvolved>();
                         eventEntry.Causes = new List<Cause>();
                         eventEntry.Files = new List<EventFile>();
+                        eventEntry.EmployeeInvolved = new Employee();
+                        eventEntry.ReportedByEmployee = new Employee(); 
                         safetyEventDictionary.Add(eventEntry.EventId, eventEntry);
                     }
 
@@ -101,10 +109,20 @@ namespace EHS.Server.DataAccess.Repository
                         }
                     }
 
+                    if (employeeInvolved != null)
+                    {
+                        eventEntry.EmployeeInvolved = employeeInvolved;
+                    }
+
+                    if (reportedByEmployee != null)
+                    {
+                        eventEntry.ReportedByEmployee = reportedByEmployee;
+                    }
+
                     return eventEntry;
                 },
                 p,
-                splitOn: "ActionId, PeopleInvolvedId, EventCauseId, EventFileId");
+                splitOn: "ActionId, PeopleInvolvedId, EventCauseId, EventFileId, EmployeeInvolvedId, ReportedByEmployeeId");
 
 
             return result.Distinct().FirstOrDefault();
@@ -115,16 +133,20 @@ namespace EHS.Server.DataAccess.Repository
             using IDbConnection sqlCon = Connection;
             //build sql query 
             string tsql = @"select e.*
-	                                  ,a.*
-	                                  ,p.*
-                                      ,c.*
-                                      ,ef.*
-                                from SafetyEvents e
-	                                 left join Actions a on a.EventId = e.EventId 
-	                                 left join PeopleInvolved p on p.EventId = e.EventId
-                                     left join EventCauses c on c.EventId = e.EventId
-                                     left join EventFiles ef on ef.EventId = e.EventId
-                                where 1 = 1 ";
+	                                ,a.*
+	                                ,p.*
+                                    ,c.*
+                                    ,ef.*
+                                    ,ei.EmployeeId as EmployeeInvolvedId, ei.FirstName, ei.LastName, ei.Email
+                                    ,rb.EmployeeId as ReportedByEmployeeId, rb.FirstName, rb.LastName, rb.Email
+                            from SafetyEvents e
+	                                left join Actions a on a.EventId = e.EventId 
+	                                left join PeopleInvolved p on p.EventId = e.EventId
+                                    left join EventCauses c on c.EventId = e.EventId
+                                    left join EventFiles ef on ef.EventId = e.EventId
+                                    left join Employees ei on ei.EmployeeId = e.EmployeeId
+                                    left join Employees rb on rb.EmployeeId = e.ReportedBy
+                            where 1 = 1 ";
 
             //build param list 
             DynamicParameters paramList = new DynamicParameters();
@@ -147,9 +169,9 @@ namespace EHS.Server.DataAccess.Repository
 
             var safetyEventDictionary = new Dictionary<int, SafetyEvent>();
 
-                var result = await sqlCon.QueryAsync<SafetyEvent, Action, PeopleInvolved, Cause, EventFile, SafetyEvent>(
+                var result = await sqlCon.QueryAsync<SafetyEvent, Action, PeopleInvolved, Cause, EventFile, Employee, Employee, SafetyEvent>(
                 tsql,
-                (safetyEvent, action, personInvolved, cause, file) =>
+                (safetyEvent, action, personInvolved, cause, file, employeeInvolved, reportedByEmployee) =>
                 {
                     if (!safetyEventDictionary.TryGetValue(safetyEvent.EventId, out SafetyEvent eventEntry))
                     {
@@ -158,11 +180,13 @@ namespace EHS.Server.DataAccess.Repository
                         eventEntry.PeopleInvolved = new List<PeopleInvolved>();
                         eventEntry.Causes = new List<Cause>();
                         eventEntry.Files = new List<EventFile>();
+                        eventEntry.EmployeeInvolved = new Employee();
+                        eventEntry.ReportedByEmployee = new Employee();
                         safetyEventDictionary.Add(eventEntry.EventId, eventEntry);
                     }
 
-                        //check if this action has already been added to the event
-                        if (!eventEntry.Actions.Any(actionToAdd => actionToAdd.ActionId == action.ActionId))
+                    //check if this action has already been added to the event
+                    if (!eventEntry.Actions.Any(actionToAdd => actionToAdd.ActionId == action.ActionId))
                     {
                         if (action != null)
                         {
@@ -170,8 +194,8 @@ namespace EHS.Server.DataAccess.Repository
                         }
                     }
 
-                        //check if this person has already been added to the event
-                        if (!eventEntry.PeopleInvolved.Any(personToAdd => personToAdd.PeopleInvolvedId == personInvolved.PeopleInvolvedId))
+                    //check if this person has already been added to the event
+                    if (!eventEntry.PeopleInvolved.Any(personToAdd => personToAdd.PeopleInvolvedId == personInvolved.PeopleInvolvedId))
                     {
                         if (personInvolved != null)
                         {
@@ -179,8 +203,8 @@ namespace EHS.Server.DataAccess.Repository
                         }
                     }
 
-                        //check if this cause has already been added to the event
-                        if (!eventEntry.Causes.Any(causeToAdd => causeToAdd.EventCauseId == cause.EventCauseId))
+                    //check if this cause has already been added to the event
+                    if (!eventEntry.Causes.Any(causeToAdd => causeToAdd.EventCauseId == cause.EventCauseId))
                     {
                         if (cause != null)
                         {
@@ -188,8 +212,8 @@ namespace EHS.Server.DataAccess.Repository
                         }
                     }
 
-                        //check if this file has already been added to the event
-                        if (!eventEntry.Files.Any(fileToAdd => fileToAdd.EventFileId == file.EventFileId))
+                    //check if this file has already been added to the event
+                    if (!eventEntry.Files.Any(fileToAdd => fileToAdd.EventFileId == file.EventFileId))
                     {
                         if (file != null)
                         {
@@ -197,10 +221,20 @@ namespace EHS.Server.DataAccess.Repository
                         }
                     }
 
+                    if (employeeInvolved != null)
+                    {
+                        eventEntry.EmployeeInvolved = employeeInvolved;
+                    }
+
+                    if (reportedByEmployee != null)
+                    {
+                        eventEntry.ReportedByEmployee = reportedByEmployee; 
+                    }
+
                     return eventEntry;
                 },
                 paramList,
-                splitOn: "ActionId, PeopleInvolvedId, EventCauseId, EventFileId");
+                splitOn: "ActionId, PeopleInvolvedId, EventCauseId, EventFileId, EmployeeInvolvedId, ReportedByEmployeeId");
 
 
             return result.Distinct().AsList();

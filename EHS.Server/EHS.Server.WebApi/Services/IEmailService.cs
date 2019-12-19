@@ -9,16 +9,21 @@ namespace EHS.Server.WebApi.Services
 {
     public interface IEmailService
     {
+        // Send Methods 
         void Send(EmailMessage emailMessage);
         Task SendAsync(EmailMessage emailMessage);
-        Task<List<EmailAddress>> BuildToListAsync(List<EventHierarchySubscriber> subscribers); 
+
+        //Build Methods 
+        List<EmailAddress> BuildToList(List<EventHierarchySubscriber> subscribers);
         string BuildHtmlHead();
         string BuildFooter();
 
+        //Safety Incident Specific
         Task<EmailMessage> BuildNewSafetyIncidentEmailAsync(SafetyEvent safetyEvent, List<EventHierarchySubscriber> subscribers);
-        Task<string> BuildBodyAsync<T>(T data) where T : SafetyEvent;
-        Task<string> BuildBodyAsync<T>(T data, string message) where T : SafetyEvent;
+        string BuildBody<T>(T data) where T : SafetyEvent;
+        string BuildBody<T>(T data, string message) where T : SafetyEvent;
 
+        //Action Specific 
         Task<EmailMessage> BuildAssignedActionEmailAsync(DataAccess.DatabaseModels.Action action);
         Task<string> BuildActionBodyAsync<T>(T data, string message) where T : DataAccess.DatabaseModels.Action;
 

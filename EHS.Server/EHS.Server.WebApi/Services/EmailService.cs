@@ -45,9 +45,11 @@ namespace EHS.Server.WebApi.Services
 
             //moving the FromAddress code into the service as it wont change within the environment
             List<EmailAddress> fromAddresses = new List<EmailAddress>();
-            EmailAddress fromAddress = new EmailAddress();
-            fromAddress.Address = _emailConfiguration.FromAddress.Address;
-            fromAddress.Name = _emailConfiguration.FromAddress.Name;
+            EmailAddress fromAddress = new EmailAddress
+            {
+                Address = _emailConfiguration.FromAddress.Address,
+                Name = _emailConfiguration.FromAddress.Name
+            };
             fromAddresses.Add(fromAddress);
             message.From.AddRange(fromAddresses.Select(x => new MailboxAddress(x.Name, x.Address)));
 
@@ -69,9 +71,8 @@ namespace EHS.Server.WebApi.Services
             //Be careful that the SmtpClient class is the one from Mailkit not the framework!
             using (var emailClient = new SmtpClient())
             {
-                //The last parameter here is to use SSL (Which you should!)
-                emailClient.Connect(_emailConfiguration.SmtpServer, _emailConfiguration.SmtpPort);
-
+                emailClient.Connect(_emailConfiguration.SmtpServer, _emailConfiguration.SmtpPort, MailKit.Security.SecureSocketOptions.None);
+                
                 //Remove any OAuth functionality as we won't be using it. 
                 emailClient.AuthenticationMechanisms.Remove("XOAUTH2");
 
@@ -95,9 +96,11 @@ namespace EHS.Server.WebApi.Services
 
                 //moving the FromAddress code into the service as it wont change within the environment
                 List<EmailAddress> fromAddresses = new List<EmailAddress>();
-                EmailAddress fromAddress = new EmailAddress();
-                fromAddress.Address = _emailConfiguration.FromAddress.Address;
-                fromAddress.Name = _emailConfiguration.FromAddress.Name;
+                EmailAddress fromAddress = new EmailAddress
+                {
+                    Address = _emailConfiguration.FromAddress.Address,
+                    Name = _emailConfiguration.FromAddress.Name
+                };
                 fromAddresses.Add(fromAddress);
                 message.From.AddRange(fromAddresses.Select(x => new MailboxAddress(x.Name, x.Address)));
 
@@ -124,22 +127,24 @@ namespace EHS.Server.WebApi.Services
                 //Be careful that the SmtpClient class is the one from Mailkit not the framework!
                 using (var emailClient = new SmtpClient())
                 {
-                    //The last parameter here is to use SSL (Which you should!)
-                    emailClient.Connect(_emailConfiguration.SmtpServer, _emailConfiguration.SmtpPort);
-
+                    //when sending from the App server, not MailGun
+                    await emailClient.ConnectAsync(_emailConfiguration.SmtpServer, _emailConfiguration.SmtpPort, MailKit.Security.SecureSocketOptions.None);
+                    
                     //Remove any OAuth functionality as we won't be using it. 
                     emailClient.AuthenticationMechanisms.Remove("XOAUTH2");
 
                     if (_config.GetValue("EmailConfiguration:AnonymousAuth", false) == false)
                     {
-                        emailClient.Authenticate(_emailConfiguration.SmtpUsername, _emailConfiguration.SmtpPassword);
+                        await emailClient.AuthenticateAsync(_emailConfiguration.SmtpUsername, _emailConfiguration.SmtpPassword);
                     }
 
                     var options = FormatOptions.Default.Clone();
 
+                    _logger.LogDebug($"Sending email to: {string.Join("|", message.To)}");
                     await emailClient.SendAsync(options, message);
+                    _logger.LogDebug($"Sending email to: {string.Join("|", message.To)}");
 
-                    emailClient.Disconnect(true);
+                    await emailClient.DisconnectAsync(true);
                 }
             }
             catch (Exception ex)
@@ -151,15 +156,17 @@ namespace EHS.Server.WebApi.Services
         public async Task<EmailMessage> BuildNewSafetyIncidentEmailAsync(SafetyEvent safetyEvent, List<EventHierarchySubscriber> subscribers)
         {
             //build TO list
-            List<EmailAddress> emailAddresses = await BuildToListAsync(subscribers);
+            List<EmailAddress> emailAddresses = BuildToList(subscribers);
 
             //attachment list 
             List<EmailAttachment> attachments = new List<EmailAttachment>(); 
             foreach(var file in safetyEvent.Files)
             {
-                EmailAttachment attachment = new EmailAttachment();
-                attachment.FileName = file.UserFileName;
-                attachment.SysFileName = file.ServerFileName;
+                EmailAttachment attachment = new EmailAttachment
+                {
+                    FileName = file.UserFileName,
+                    SysFileName = file.ServerFileName
+                };
                 attachments.Add(attachment);
             }
 
@@ -167,7 +174,7 @@ namespace EHS.Server.WebApi.Services
             {
                 ToAddresses = emailAddresses,
                 Subject = $"New Safety Incident Reported - {safetyEvent.EventId.ToString()}",
-                Content = await BuildBodyAsync(safetyEvent, "New Safety Incident Reported") +
+                Content = BuildBody(safetyEvent, "New Safety Incident Reported") +
                           BuildFooter(),
                 Attachments = attachments
             };
@@ -197,16 +204,15 @@ namespace EHS.Server.WebApi.Services
             EmailMessage newEventMessage = new EmailMessage
             {
                 ToAddresses = emailAddresses,
-                Subject = $"You've been assigned an action - {action.EventId.ToString()}",
+                Subject = $"You've been assigned an action - {action.ActionId.ToString()}",
                 Content = await BuildActionBodyAsync(action, "New Action Assignment") +
                           BuildFooter()
             };
 
             return newEventMessage;
         }
-
-
-        public async Task<List<EmailAddress>> BuildToListAsync(List<EventHierarchySubscriber> subscribers)
+        
+        public List<EmailAddress> BuildToList(List<EventHierarchySubscriber> subscribers)
         {
             List<EmailAddress> emailAddresses = new List<EmailAddress>();
             //if in Development, only send to specified addresses
@@ -236,7 +242,7 @@ namespace EHS.Server.WebApi.Services
             return emailAddresses;
         }
         
-        public async Task<string> BuildBodyAsync<T>(T data) where T : SafetyEvent
+        public string BuildBody<T>(T data) where T : SafetyEvent
         {
             string body = BuildHtmlHead() +
                     $"<body itemscope itemtype=\"http://schema.org/EmailMessage\" style=\"font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; box-sizing: border-box; font-size: 14px; -webkit-font-smoothing: antialiased; -webkit-text-size-adjust: none; width: 100% !important; height: 100%; line-height: 1.6em; background-color: #f6f6f6; margin: 0;\" bgcolor='#f6f6f6' > " +
@@ -248,9 +254,8 @@ namespace EHS.Server.WebApi.Services
             return body;
         }
 
-        public async Task<string> BuildBodyAsync<T>(T data, string message) where T : SafetyEvent
+        public string BuildBody<T>(T data, string message) where T : SafetyEvent
         {
-            Employee employee = _employeesRepo.GetById(data.EmployeeId);
             const string YES = "Yes";
             const string NO = "No";
 
@@ -261,11 +266,11 @@ namespace EHS.Server.WebApi.Services
                             "<ul>" +
                                 $"<li><span>Event #</span><a href={_rootUrl}/reports/si/event?eventId={data.EventId} target=\"_blank\">{data.EventId}</a></li>" +
                                 $"<li><span>Reported On: </span>{data.ReportedOn.ToShortDateString()}</li>" +
-                                $"<li><span>Reported By: </span>{(_employeesRepo.GetById(data.ReportedBy) != null ? _employeesRepo.GetById(data.ReportedBy).FullName : data.ReportedBy)}</li>" +
+                                $"<li><span>Reported By: </span>{(data.ReportedByEmployee != null ? data.ReportedByEmployee.FullName : data.ReportedBy)}</li>" +
                                 $"<li><span>Logical Hierarchy: </span>{data.Division} > {data.Site} > {data.Area} > {data.Department}</li>" +
                                 $"<li><span>Physical Hierarchy: </span>{data.LocaleRegion} > {data.LocaleSite} > {data.LocalePlant} > {data.LocalePlantArea}</li>" +
                                 $"<li><span>Event Date: </span>{data.EventDate.ToShortDateString()}</li>" +
-                                $"<li><span>Employee: </span>{(employee != null ? employee.FullName : data.EmployeeId)}</li>" +
+                                $"<li><span>Employee: </span>{(data.EmployeeInvolved != null ? data.EmployeeInvolved.FullName : data.EmployeeId)}</li>" +
                                 $"<li><span>Catagory: </span>{(string.IsNullOrEmpty(data.ResultingCategory) ? data.InitialCategory : $"Initial Catagory: {data.InitialCategory} / Resulting Catagory: {data.ResultingCategory}")}</li>" +
                                 $"<li><span>Shift: </span>{data.Shift}</li>" +
                                 $"<li><span>Job: </span>{data.JobTitle}</li>" +
@@ -350,6 +355,7 @@ namespace EHS.Server.WebApi.Services
                                 }
                                 p {
                                     margin-left: 20px;
+                                    white-space: pre-line;
                                 }
                                 .event-body {
                                     margin: 20px;

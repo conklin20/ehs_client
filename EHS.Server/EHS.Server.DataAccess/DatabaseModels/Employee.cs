@@ -21,9 +21,9 @@ namespace EHS.Server.DataAccess.DatabaseModels
         {
             get { return FirstName + " " + LastName; }
         }
-        [Required, DataType(DataType.Date)]
+        [DataType(DataType.Date)]
         public DateTime BirthDate { get; set; }
-        [Required, MaxLength(15)]
+        [MaxLength(15)]
         public string Sex { get; set; }
         public string SupervisorId { get; set; }
         public DateTime LastUpdatedOn { get; set; }

@@ -42,6 +42,10 @@ const useStyles = makeStyles(theme => ({
         justifyContent: 'center', 
         marginTop: theme.spacing(1),
     }, 
+    actionToTake: {
+        marginBottom: '0.035em', 
+        whiteSpace: 'pre-line',
+    },
     spanButton: {
         backgroundColor: theme.palette.secondary.light,
     },
@@ -200,7 +204,7 @@ const ActionItem = (props) => {
                                                             .format('lll')}` 
                             }
                         </Typography>
-                        <Typography variant="body2" gutterBottom>
+                        <Typography variant="body2" className={classes.actionToTake} >
                             {action.actionToTake}
                         </Typography>
                         <Divider />                        

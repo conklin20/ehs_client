@@ -1,5 +1,5 @@
 import axios from "axios"; //lib for making ajax requests
-import history from './history'; 
+import { logout } from '../store/actions/auth';
 
 const APIVERSION = 1;
 const AUTHORIZATION_HEADER = 'Authorization';
@@ -20,7 +20,6 @@ export function setTokenHeader(token){
  * @param {object} data (optional) data in JSON form for POST requests
  */
 export function apiCall(method, path, data){
-    // console.log(history)
     path = `/api/v${APIVERSION}${path}`;
     // console.log(method, path, data); 
     return  new Promise((resolve, reject) => {
@@ -33,8 +32,8 @@ export function apiCall(method, path, data){
                 // console.log(err);
                 //if the reqs are returning 401, the user is no longer authenticated (could mean their token expired). Log the user out 
                 if(err.response.status === 401) { //unauthorized 
-                    console.log('force log user out. ', history)
-                    history.push('/#/forcelogout')// this seems to be a different history object than whats in App.js
+                    // console.log('calling logout()')
+                    // dispatch(logout()); 
                 }
 
                 return reject({

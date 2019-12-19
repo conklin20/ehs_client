@@ -212,8 +212,7 @@ namespace EHS.Server.WebApi.Controllers.Common
                         var newActionMessage = await _emailService.BuildAssignedActionEmailAsync(action);
                         //send the email 
                         await _emailService.SendAsync(newActionMessage); 
-                    }
-                    
+                    }                    
                 }
 
                 //map back to dto, to pass back to client 

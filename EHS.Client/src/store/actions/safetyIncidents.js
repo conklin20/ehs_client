@@ -15,7 +15,7 @@ export const fetchSafetyIncidents = (query) => {
 			.then(res => {
 				dispatch(loadSafetyIncidents(res.data));
 			})
-			.catch(res => {	
+			.catch(res => {
 				console.log(res)
 				dispatch(addNotification(`TODO: Customize Error Message. ${res.response.status} (see console)`, 'error'));
 		});

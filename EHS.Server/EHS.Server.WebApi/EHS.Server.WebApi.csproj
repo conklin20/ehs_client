@@ -30,12 +30,13 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="wwwroot\static\css\main.abfb5c91.chunk.css.map" />
-    <None Include="wwwroot\static\js\2.b628140a.chunk.js" />
-    <None Include="wwwroot\static\js\2.b628140a.chunk.js.map" />
-    <None Include="wwwroot\static\js\main.4e97809e.chunk.js" />
-    <None Include="wwwroot\static\js\main.4e97809e.chunk.js.map" />
-    <None Include="wwwroot\static\js\runtime~main.a8a9905a.js" />
-    <None Include="wwwroot\static\js\runtime~main.a8a9905a.js.map" />
+    <None Include="wwwroot\static\js\2.d796f708.chunk.js" />
+    <None Include="wwwroot\static\js\2.d796f708.chunk.js.LICENSE" />
+    <None Include="wwwroot\static\js\2.d796f708.chunk.js.map" />
+    <None Include="wwwroot\static\js\main.c2a42992.chunk.js" />
+    <None Include="wwwroot\static\js\main.c2a42992.chunk.js.map" />
+    <None Include="wwwroot\static\js\runtime-main.e9af5092.js" />
+    <None Include="wwwroot\static\js\runtime-main.e9af5092.js.map" />
   </ItemGroup>
 
   <ItemGroup>
