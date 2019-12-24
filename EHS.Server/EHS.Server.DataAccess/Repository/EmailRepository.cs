@@ -5,8 +5,9 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Text;
+using System.Linq;
 using System.Threading.Tasks;
+using Action = EHS.Server.DataAccess.DatabaseModels.Action;
 
 namespace EHS.Server.DataAccess.Repository
 {
@@ -91,6 +92,58 @@ namespace EHS.Server.DataAccess.Repository
             var result = sqlCon.Query<EventHierarchySubscriber>(tsql, p);
 
             return result.AsList();
+        }
+
+        public async Task<List<NagMail>> GetNagMailAsync(string type)
+        {
+            using IDbConnection sqlCon = Connection;
+            {
+                //build sql query
+                string tsql = @" select ae.*
+	                                ,a.*
+                                from Actions a 
+	                                    join SafetyEvents e on e.EventId = a.EventId
+	                                    join Employees ae on ae.EmployeeId = a.AssignedTo
+                                where a.DueDate <= GETUTCDATE()
+	                                    and a.CompletionDate is null
+								        and ae.Active = 1
+	                                    and e.EventStatus = 'Open' 
+                                order by ae.EmployeeId ";
+
+                var nagMailDict = new Dictionary<string, NagMail>();
+
+                var result = await sqlCon.QueryAsync<NagMail, Employee, Action, NagMail>(
+                    tsql,
+
+                    (nagMail, employee, action) =>
+                    {
+                        if (!nagMailDict.TryGetValue(nagMail.Employee.EmployeeId, out NagMail nagMailEntry))
+                        {
+                            nagMailEntry = nagMail;
+                            nagMailEntry.Type = type;
+                            nagMailEntry.Employee = new Employee();
+                            nagMailEntry.Actions = new List<Action>();
+                            nagMailDict.Add(nagMailEntry.Employee.EmployeeId, nagMailEntry);
+                        }
+
+                        nagMailEntry.Employee = employee;
+
+                        //check if this action has already been added to the dictionary 
+                        if (!nagMailEntry.Actions.Any(actionToAdd => actionToAdd.ActionId == action.ActionId))
+                        {
+                            if (action != null)
+                            {
+                                nagMailEntry.Actions.Add(action);
+                            }
+                        }
+
+                        return nagMailEntry;
+                    },
+                    splitOn: "ActionId");
+
+                //return result.Distinct().AsList();
+                return nagMailDict.Values.ToList();
+            }
         }
     }
 }

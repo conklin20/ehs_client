@@ -12,9 +12,9 @@ namespace EHS.Server.DataAccess.DatabaseModels
     {
         [MaxLength(50)]
         public string EmployeeId { get; set; }
-        [Required, MaxLength(100)]
+        [MaxLength(100)]
         public string FirstName { get; set; }
-        [Required, MaxLength(100)]
+        [MaxLength(100)]
         public string LastName { get; set; }
         [Display(Name = "Full Name")]
         public string FullName

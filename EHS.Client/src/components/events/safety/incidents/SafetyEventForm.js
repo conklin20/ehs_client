@@ -90,13 +90,13 @@ const useStyles = makeStyles(theme => ({
 		margin: 'auto',
         // width: 'fit-content',
         height: '70vh',
-      },
+    },
 	formControl: {
 		marginTop: theme.spacing(2),
 		marginRight: theme.spacing(1),
 		minWidth: 250,
 	},
-		formControlLabel: {
+    formControlLabel: {
 		// marginTop: theme.spacing(1),
     },	
     slider: {
@@ -138,7 +138,10 @@ const useStyles = makeStyles(theme => ({
       display: 'flex', 
       flexDirection: 'column'
     },
-  }));
+    close: {
+        color: theme.palette.primary.light, 
+    }
+}));
 
 const getSteps = () => {
     return [
@@ -591,7 +594,7 @@ const SafetyEventForm = props => {
                             { event.eventStatus ? `${event.eventType} - ${event.eventId || ' New '} - ${event.eventStatus}` : 'Loading Data...'} 
                         
                             <Link to='/dashboard'>
-                                <Icon color="secondary" fontSize="large">
+                                <Icon className={classes.close} fontSize="large">
                                     cancel_circle
                                 </Icon>
                             </Link>
@@ -661,7 +664,7 @@ const SafetyEventForm = props => {
                                                                         onClick={handleSaveDraft}
                                                                         className={classes.button}
                                                                     >
-                                                                        {event.eventId ? 'Save & Continue' : 'Submit Draft' }
+                                                                        {event.eventId ? 'Save & Continue' : 'Save Draft' }
                                                                     </Button>
                                                                 :
                                                                     activeStep !== steps.length &&

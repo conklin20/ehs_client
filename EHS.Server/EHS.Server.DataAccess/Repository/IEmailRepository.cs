@@ -10,5 +10,8 @@ namespace EHS.Server.DataAccess.Repository
     {
         Task<List<EventHierarchySubscriber>> GetEventHierarchySubscribersAsync(int eventId);
         List<EventHierarchySubscriber> GetEventHierarchySubscribers(int eventId);
+
+        //Nag Mail
+        Task<List<NagMail>> GetNagMailAsync(string type); 
     }
 }

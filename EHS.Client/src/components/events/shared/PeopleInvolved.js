@@ -19,6 +19,9 @@ const useStyles = makeStyles(theme => ({
       padding: theme.spacing(3, 2),
       margin: theme.spacing(2), 
     },
+    button: {
+        backgroundColor: theme.palette.primary.light, 
+    }
 }));
 
 const PeopleInvolved = (props) => {
@@ -152,7 +155,6 @@ const PeopleInvolved = (props) => {
                     type="submit"
                     name='savePeople'
                     variant='contained' 
-                    color="secondary" 
                     className={classes.button}
                     fullWidth
                 >

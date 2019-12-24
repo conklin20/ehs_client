@@ -13,15 +13,16 @@ using EHS.Server.DataAccess.Repository;
 
 namespace EHS.Server.Worker
 {
-    public class Worker : BackgroundService, ILogSweeper
+    public class FileSweeperWorker : BackgroundService, ILogSweeper
     {
-        private readonly ILogger<Worker> _logger;
-        //private readonly IConfiguration _config; can inject this to pull config values from the WebApi project
+        private readonly ILogger<FileSweeperWorker> _logger;
+        private readonly IConfiguration _config; 
         private readonly IFileSweeperRepository _fileSweeperRepository;
 
-        public Worker(ILogger<Worker> logger, IFileSweeperRepository fileSweeperRepository)
+        public FileSweeperWorker(ILogger<FileSweeperWorker> logger, IConfiguration config, IFileSweeperRepository fileSweeperRepository)
         {
             _logger = logger;
+            _config = config; 
             _fileSweeperRepository = fileSweeperRepository;
         }
 
@@ -30,8 +31,9 @@ namespace EHS.Server.Worker
             while (!stoppingToken.IsCancellationRequested)
             {
                 _logger.LogInformation("Starting File Sweeper process...");
-                MoveLogFiles(); 
-                await Task.Delay(600000, stoppingToken); //10 minutes
+                MoveLogFiles();
+                int delay = _config.GetValue("WorkerSettings:FileSweeper:Interval", 600000); //default to 10 mins if no value in appSettings.{env}.json
+                await Task.Delay(delay, stoppingToken); 
             }
         }
 
@@ -91,10 +93,16 @@ namespace EHS.Server.Worker
             dt.Columns.Add("Exception", typeof(string));
             dt.Columns.Add("StackTrace", typeof(string));
 
+
+            //NEED TO FIND OUT HOW TO PARSE THE FILE WHEN IT SPANS MULTIPLE LINES (ON ERRORS) 
             var lines = File.ReadAllLines(fileName);
 
+            //byte[] bytes = File.ReadAllBytes(fileName);
+            //var fs = new FileStream(fileName, FileMode.Open, FileAccess.Read);
+            //var file = fs.Read(bytes, 1, bytes.Length);
+
+
             // reading rest of the data
-            var lineCount = lines.Count(); 
             for (int i = 1; i < lines.Count(); i++)
             {
                 try

@@ -57,7 +57,7 @@ namespace EHS.Server.DataAccess.Repository
 
             var safetyEventDictionary = new Dictionary<int, SafetyEvent>();
 
-            var result = await sqlCon.QueryAsync<SafetyEvent, Action, PeopleInvolved, Cause, EventFile, Employee, Employee, SafetyEvent >(
+            var result = await sqlCon.QueryAsync<SafetyEvent, Action, PeopleInvolved, Cause, EventFile, Employee, Employee, SafetyEvent>(
                 tsql,
                 (safetyEvent, action, personInvolved, cause, file, employeeInvolved, reportedByEmployee) =>
                 {
@@ -69,12 +69,12 @@ namespace EHS.Server.DataAccess.Repository
                         eventEntry.Causes = new List<Cause>();
                         eventEntry.Files = new List<EventFile>();
                         eventEntry.EmployeeInvolved = new Employee();
-                        eventEntry.ReportedByEmployee = new Employee(); 
+                        eventEntry.ReportedByEmployee = new Employee();
                         safetyEventDictionary.Add(eventEntry.EventId, eventEntry);
                     }
 
-                        //check if this action has already been added to the event
-                        if (!eventEntry.Actions.Any(actionToAdd => actionToAdd.ActionId == action.ActionId))
+                    //check if this action has already been added to the event
+                    if (!eventEntry.Actions.Any(actionToAdd => actionToAdd.ActionId == action.ActionId))
                     {
                         if (action != null)
                         {
@@ -82,8 +82,8 @@ namespace EHS.Server.DataAccess.Repository
                         }
                     }
 
-                        //check if this person has already been added to the event
-                        if (!eventEntry.PeopleInvolved.Any(personToAdd => personToAdd.PeopleInvolvedId == personInvolved.PeopleInvolvedId))
+                    //check if this person has already been added to the event
+                    if (!eventEntry.PeopleInvolved.Any(personToAdd => personToAdd.PeopleInvolvedId == personInvolved.PeopleInvolvedId))
                     {
                         if (personInvolved != null)
                         {
@@ -91,8 +91,8 @@ namespace EHS.Server.DataAccess.Repository
                         }
                     }
 
-                        //check if this cause has already been added to the event
-                        if (!eventEntry.Causes.Any(causeToAdd => causeToAdd.EventCauseId == cause.EventCauseId))
+                    //check if this cause has already been added to the event
+                    if (!eventEntry.Causes.Any(causeToAdd => causeToAdd.EventCauseId == cause.EventCauseId))
                     {
                         if (cause != null)
                         {
@@ -100,8 +100,8 @@ namespace EHS.Server.DataAccess.Repository
                         }
                     }
 
-                        //check if this file has already been added to the event
-                        if (!eventEntry.Files.Any(fileToAdd => fileToAdd.EventFileId == file.EventFileId))
+                    //check if this file has already been added to the event
+                    if (!eventEntry.Files.Any(fileToAdd => fileToAdd.EventFileId == file.EventFileId))
                     {
                         if (file != null)
                         {
