@@ -106,8 +106,12 @@ namespace EHS.Server.WebApi
             {
             });
 
-            //adding the WorkerService (handles saving log files to the db) 
-            services.AddHostedService<Worker.Worker>();
+            //// configure strongly typed settings objects
+            //var workerSettings = Configuration.GetSection("WorkerSettings");
+            //services.Configure<string[]>(workerSettings);
+            //adding the WorkerService (handles various things such as saving the log files to the db, sending nag mail etc)
+            services.AddHostedService<Worker.FileSweeperWorker>();
+            services.AddHostedService<Worker.NagMailWorker>(); 
 
             services.AddMvc(o =>
             {

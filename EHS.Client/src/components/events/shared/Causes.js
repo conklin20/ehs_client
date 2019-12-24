@@ -9,9 +9,12 @@ import { ATTR_CATS } from '../../../helpers/attributeCategoryEnum';
 
 const useStyles = makeStyles(theme => ({
     paper: {
-      padding: theme.spacing(3, 2),
-      margin: theme.spacing(2), 
+        padding: theme.spacing(3, 2),
+        margin: theme.spacing(2), 
     },
+    button: {
+        backgroundColor: theme.palette.primary.light, 
+    }
 }));
 
 // function removeDups(value, index, self) { 
@@ -271,8 +274,7 @@ const Causes = (props) => {
                 <Button 
                     type="submit"
                     name='savePeople'
-                    variant='contained' 
-                    color="secondary" 
+                    variant='contained'
                     className={classes.button}
                     fullWidth
                 >

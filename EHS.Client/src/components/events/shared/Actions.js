@@ -24,7 +24,10 @@ const useStyles = makeStyles(theme => ({
     buttonContainer: {
         textAlign: 'center',
     },
-  }));
+    button: {
+        backgroundColor: theme.palette.primary.light, 
+    }
+}));
 
 
 const Actions = (props) => {
@@ -270,7 +273,6 @@ const Actions = (props) => {
                                         type="submit"
                                         name='assignNewAction'
                                         variant='contained' 
-                                        color="secondary" 
                                         className={classes.button}
                                     >
                                         Create Action

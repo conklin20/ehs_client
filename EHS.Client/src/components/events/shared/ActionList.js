@@ -9,7 +9,8 @@ const useStyles = makeStyles(theme => ({
     }, 
     button: {
         margin: theme.spacing(2), 
-        width: '20%'
+        width: '20%',
+        backgroundColor: theme.palette.primary.light, 
     },
 })); 
 
@@ -74,7 +75,6 @@ const ActionList = (props) => {
                             <Button 
                                 name='assignNewAction'
                                 variant='contained' 
-                                color="secondary" 
                                 className={classes.button}
                                 onClick={handleSavePendingActions}
                             >

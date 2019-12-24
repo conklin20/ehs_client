@@ -13,9 +13,9 @@ const MyApprovals = props => {
 
     // console.log(props.pendingApprovals); 
     const pendingApprovals = props.pendingApprovals.map(a => {
-        // console.log(a.action)
+        // console.log(a)
         return (
-            <Fragment>   
+            <Fragment key={a.action.actionId}>   
                 <Tooltip title='Event # - Action # - Action Completion Date' placement="top" >
                     <ListItem>
                         <Link to={`/events/si/${a.action.eventId}/step/4`} className={classes.link} >

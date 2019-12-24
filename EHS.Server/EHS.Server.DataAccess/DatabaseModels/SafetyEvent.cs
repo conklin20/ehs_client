@@ -102,6 +102,7 @@ namespace EHS.Server.DataAccess.DatabaseModels
         public DateTime? VideoEndRef { get; set; }
         public int LegacyIncidentId { get; set; }
 
+        [ConditionallyAllowNulls]
         public Employee EmployeeInvolved { get; set; }
         public Employee ReportedByEmployee { get; set; }
 
