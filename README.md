@@ -5,4 +5,4 @@ This is the Front-End React App code only. I have not included any of the Server
 
 You obviously will not be able to pull this down and run it, as it is dependant upon the Back-end Web API. I will also send over some screenshots of the Web App so you can get an idea of what the React App actually looks like.
 
-
+I'll also note that I am still finishing up this project, and there is quite a bit of cleanup I have planned (not all React components are named with the .jsx extension, which annoys me). 
